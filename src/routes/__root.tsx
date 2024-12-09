@@ -1,12 +1,22 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/components/misc/ThemeProvider";
+import MainSidebar from "@/components/layout/MainSidebar";
+
 import "../index.css";
 
 export const Route = createRootRoute({
   component: () => (
-    <>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <SidebarProvider>
+        <MainSidebar />
+        <Outlet />
+      </SidebarProvider>
+    </ThemeProvider>
   ),
 });

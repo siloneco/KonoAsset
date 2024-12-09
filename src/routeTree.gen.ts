@@ -8,28 +8,23 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
-
-// Create Virtual Routes
-
-const AboutLazyImport = createFileRoute('/about')()
+import { Route as EditAssetIdImport } from './routes/edit.$assetId'
 
 // Create/Update Routes
-
-const AboutLazyRoute = AboutLazyImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EditAssetIdRoute = EditAssetIdImport.update({
+  id: '/edit/$assetId',
+  path: '/edit/$assetId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -44,11 +39,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutLazyImport
+    '/edit/$assetId': {
+      id: '/edit/$assetId'
+      path: '/edit/$assetId'
+      fullPath: '/edit/$assetId'
+      preLoaderRoute: typeof EditAssetIdImport
       parentRoute: typeof rootRoute
     }
   }
@@ -58,37 +53,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutLazyRoute
+  '/edit/$assetId': typeof EditAssetIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutLazyRoute
+  '/edit/$assetId': typeof EditAssetIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutLazyRoute
+  '/edit/$assetId': typeof EditAssetIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths: '/' | '/edit/$assetId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/edit/$assetId'
+  id: '__root__' | '/' | '/edit/$assetId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutLazyRoute: typeof AboutLazyRoute
+  EditAssetIdRoute: typeof EditAssetIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutLazyRoute: AboutLazyRoute,
+  EditAssetIdRoute: EditAssetIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,14 +97,14 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/edit/$assetId"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/about": {
-      "filePath": "about.lazy.tsx"
+    "/edit/$assetId": {
+      "filePath": "edit.$assetId.tsx"
     }
   }
 }
