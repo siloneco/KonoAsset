@@ -1,38 +1,52 @@
 use tauri::State;
-use uuid::Uuid;
 
 use crate::{
-    data_store::basic_store::BasicStore,
+    data_store::provider::StoreProvider,
     definitions::{
-        entities::{AssetItem, AssetType},
-        pre::PreAssetItem,
+        entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
+        pre::PreAvatarAsset,
     },
-    factory,
 };
 
 #[tauri::command]
-pub fn get_assets(basic_store: State<'_, BasicStore>, asset_type: AssetType) -> Vec<AssetItem> {
-    basic_store.get_assets(asset_type)
+pub fn get_avatar_assets(basic_store: State<'_, StoreProvider>) -> Vec<AvatarAsset> {
+    basic_store
+        .get_avatar_store()
+        .get_assets()
+        .iter()
+        .cloned()
+        .collect()
 }
 
 #[tauri::command]
-pub fn create_asset_and_save(basic_store: State<'_, BasicStore>, pre_asset_item: PreAssetItem) {
-    println!("Create called");
-    let asset = factory::create_asset(pre_asset_item);
-
-    println!("Asset created");
-    for asset_type in asset.types.clone() {
-        println!("Saving as: {}", asset_type.display_name());
-        basic_store.add_asset_and_save(asset_type, asset.clone());
-    }
-    println!("Done");
+pub fn get_avatar_related_assets(basic_store: State<'_, StoreProvider>) -> Vec<AvatarRelatedAsset> {
+    basic_store
+        .get_avatar_related_store()
+        .get_assets()
+        .iter()
+        .cloned()
+        .collect()
 }
 
 #[tauri::command]
-pub fn delete_asset_and_save(
-    basic_store: State<'_, BasicStore>,
-    asset_type: AssetType,
-    id: Uuid,
-) -> bool {
-    basic_store.delete_asset_and_save(asset_type, id)
+pub fn get_world_assets(basic_store: State<'_, StoreProvider>) -> Vec<WorldAsset> {
+    basic_store
+        .get_world_store()
+        .get_assets()
+        .iter()
+        .cloned()
+        .collect()
+}
+
+#[tauri::command]
+pub fn create_avatar_asset(
+    basic_store: State<'_, StoreProvider>,
+    pre_avatar_asset: PreAvatarAsset,
+) -> AvatarAsset {
+    let asset = AvatarAsset::create(pre_avatar_asset.description);
+    basic_store
+        .get_avatar_store()
+        .add_asset_and_save(asset.clone());
+
+    asset
 }

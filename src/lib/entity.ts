@@ -1,33 +1,33 @@
-export type AssetItem = {
-  id: string;
+export type AssetDescription = {
   title: string;
   author: string;
-  types: AssetType[];
   image_src: string;
-  category: AssetCategory;
   asset_dirs: string[];
-  tags: AssetTag[];
+  tags: string[];
   created_at: string;
 };
 
-export type PreAssetItem = {
-  title: string;
-  author: string;
-  types: AssetType[];
-  image_src: string;
-  category: AssetCategory;
-  asset_dirs: string[];
-  tags: AssetTag[];
+export type AvatarAsset = {
+  id: string;
+  description: AssetDescription;
 };
 
-export type AssetTag = {
-  name: string;
-  color: string;
+export type AvatarRelatedAssets = {
+  id: string;
+  description: AssetDescription;
+  category: string;
+  supported_avatars: Set<string>;
 };
 
-export type AssetCategory = {
-  display_name: string;
+export type WorldRelatedAssets = {
+  id: string;
+  description: AssetDescription;
+  category: string;
 };
+
+export type PreAvatarAsset = Omit<AvatarAsset, "id">;
+export type PreAvatarRelatedAssets = Omit<AvatarRelatedAssets, "id">;
+export type PreWorldRelatedAssets = Omit<WorldRelatedAssets, "id">;
 
 export enum AssetType {
   Avatar = "Avatar",

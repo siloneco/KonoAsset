@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/misc/ThemeProvider";
 import MainSidebar from "@/components/layout/MainSidebar";
 
 import "../index.css";
+import { Toaster } from "@/components/ui/toaster";
 
 export const Route = createRootRoute({
   component: () => (
@@ -16,6 +17,7 @@ export const Route = createRootRoute({
       <SidebarProvider>
         <MainSidebar />
         <Outlet />
+        <Toaster />
       </SidebarProvider>
     </ThemeProvider>
   ),

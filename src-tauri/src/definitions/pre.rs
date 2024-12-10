@@ -1,36 +1,52 @@
+use std::collections::HashSet;
+
 use serde::{Deserialize, Serialize};
 
-use super::entities::{AssetCategory, AssetTag, AssetType};
+use super::entities::AssetDescription;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PreAssetItem {
-    pub title: String,
-    pub author: String,
-    pub types: Vec<AssetType>,
-    pub image_src: String,
-    pub category: AssetCategory,
-    pub asset_dirs: Vec<String>,
-    pub tags: Vec<AssetTag>,
+pub struct PreAvatarAsset {
+    pub description: AssetDescription,
 }
 
-impl PreAssetItem {
+impl PreAvatarAsset {
+    pub fn create(description: AssetDescription) -> Self {
+        Self { description }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PreAvatarRelatedAsset {
+    pub description: AssetDescription,
+    pub category: String,
+    pub supported_avatars: HashSet<String>,
+}
+
+impl PreAvatarRelatedAsset {
     pub fn create(
-        title: String,
-        author: String,
-        types: Vec<AssetType>,
-        image_src: String,
-        category: AssetCategory,
-        asset_dirs: Vec<String>,
-        tags: Vec<AssetTag>,
+        description: AssetDescription,
+        category: String,
+        supported_avatars: HashSet<String>,
     ) -> Self {
         Self {
-            title,
-            author,
-            types,
-            image_src,
+            description,
             category,
-            asset_dirs,
-            tags,
+            supported_avatars,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PreWorldRelatedAsset {
+    pub description: AssetDescription,
+    pub category: String,
+}
+
+impl PreWorldRelatedAsset {
+    pub fn create(description: AssetDescription, category: String) -> Self {
+        Self {
+            description,
+            category,
         }
     }
 }

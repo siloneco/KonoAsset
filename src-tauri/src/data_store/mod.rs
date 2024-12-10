@@ -1,1 +1,2 @@
-pub mod basic_store;
+pub mod json_store;
+pub mod provider;
