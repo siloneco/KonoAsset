@@ -8,9 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type Props = {}
-
-const NavBar = ({}: Props) => {
+const NavBar = () => {
   return (
     <div className="m-4">
       <div className="flex flex-row w-full">

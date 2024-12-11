@@ -9,8 +9,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type Props = {}
-
 const tmp_avatars = [
   'マヌカ',
   '桔梗',
@@ -26,7 +24,7 @@ const tmp_avatars = [
 
 const tmp_categories = ['衣装', '髪', '装飾品', 'ギミック']
 
-const AvatarAssetNarrowing = ({}: Props) => {
+const AvatarAssetNarrowing = () => {
   return (
     <div className="p-1 space-y-2">
       <div className="space-y-2">

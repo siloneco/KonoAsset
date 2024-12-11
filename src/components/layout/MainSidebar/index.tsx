@@ -27,8 +27,6 @@ import { AvatarAsset, PreAvatarAsset } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
 import { useToast } from '@/hooks/use-toast'
 
-type Props = {}
-
 const examplePreAsset: PreAvatarAsset = {
   description: {
     title: 'オリジナル3Dモデル「しなの」',
@@ -41,7 +39,7 @@ const examplePreAsset: PreAvatarAsset = {
   },
 }
 
-const MainSidebar = ({}: Props) => {
+const MainSidebar = () => {
   const { setTheme } = useTheme()
   const { toast } = useToast()
 

@@ -2,9 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
-type Props = {}
-
-const TypeSelector = ({}: Props) => {
+const TypeSelector = () => {
   return (
     <RadioGroup defaultValue="all" className="space-y-2">
       <div className="flex items-center space-x-2">
