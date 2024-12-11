@@ -1,0 +1,38 @@
+name: Code Style Test
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - "renovate.json"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - "renovate.json"
+
+jobs:
+  build-test:
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    name: Code Style Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.11.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: node --version
+      - run: pnpm --version
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run lint
+      - run: pnpm run type-check
