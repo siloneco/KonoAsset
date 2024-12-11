@@ -7,8 +7,8 @@ VRChat 向けのアバターアセットやワールドアセットを管理す�
 以下をインストールすると良いです
 
 - [VS Code](https://code.visualstudio.com/)
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Node.js](https://nodejs.org/en/download/package-manager)
+- [Rust (v1.83.0)](https://www.rust-lang.org/tools/install)
+- [Node.js (v23.4.0)](https://nodejs.org/en/download/package-manager)
 
 ## pnpm のインストール
 
