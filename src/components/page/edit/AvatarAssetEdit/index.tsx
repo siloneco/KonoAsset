@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AssetItem } from '@/lib/entity'
+import { AvatarAsset } from '@/lib/entity'
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -22,17 +22,17 @@ const formSchema = z.object({
 })
 
 type Props = {
-  asset: AssetItem
+  asset: AvatarAsset
 }
 
 const AvatarAssetEdit = ({ asset }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: asset.title,
-      author: asset.author,
+      title: asset.description.title,
+      author: asset.description.author,
       tags: [],
-      image_src: asset.image_src,
+      image_src: asset.description.image_src,
     },
   })
 
@@ -48,7 +48,7 @@ const AvatarAssetEdit = ({ asset }: Props) => {
           <div className="flex flex-row">
             <div className="w-2/5 m-8">
               <img
-                src={asset.image_src}
+                src={asset.description.image_src}
                 alt={asset.id}
                 className="rounded-2xl"
               />
