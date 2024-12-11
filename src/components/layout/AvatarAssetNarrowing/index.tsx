@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -7,24 +7,24 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
-type Props = {};
+type Props = {}
 
 const tmp_avatars = [
-  "マヌカ",
-  "桔梗",
-  "セレスティア",
-  "まめひなた",
-  "キプフェル",
-  "しなの",
-  "カリン",
-  "舞夜",
-  "森羅",
-  "萌",
-];
+  'マヌカ',
+  '桔梗',
+  'セレスティア',
+  'まめひなた',
+  'キプフェル',
+  'しなの',
+  'カリン',
+  '舞夜',
+  '森羅',
+  '萌',
+]
 
-const tmp_categories = ["衣装", "髪", "装飾品", "ギミック"];
+const tmp_categories = ['衣装', '髪', '装飾品', 'ギミック']
 
 const AvatarAssetNarrowing = ({}: Props) => {
   return (
@@ -100,7 +100,7 @@ const AvatarAssetNarrowing = ({}: Props) => {
         </Select>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AvatarAssetNarrowing;
+export default AvatarAssetNarrowing

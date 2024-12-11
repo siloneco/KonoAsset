@@ -1,28 +1,28 @@
-import NavBar from "@/components/page/top/NavBar";
-import AssetListItem from "@/components/page/top/AssetListItem";
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { AvatarAsset } from "@/lib/entity";
+import NavBar from '@/components/page/top/NavBar'
+import AssetListItem from '@/components/page/top/AssetListItem'
+import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { invoke } from '@tauri-apps/api/core'
+import { AvatarAsset } from '@/lib/entity'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const [assets, setAssets] = useState<AvatarAsset[]>([]);
+  const [assets, setAssets] = useState<AvatarAsset[]>([])
 
   const updateAssets = async () => {
-    let result = await invoke("get_avatar_assets");
-    let avatars: AvatarAsset[] = result as AvatarAsset[];
-    setAssets(avatars);
+    const result = await invoke('get_avatar_assets')
+    const avatars: AvatarAsset[] = result as AvatarAsset[]
+    setAssets(avatars)
 
-    console.log(avatars[0]);
-  };
+    console.log(avatars[0])
+  }
 
   useEffect(() => {
-    updateAssets();
-  }, []);
+    updateAssets()
+  }, [])
 
   return (
     <main className="w-full">
@@ -33,5 +33,5 @@ function RouteComponent() {
         ))}
       </div>
     </main>
-  );
+  )
 }

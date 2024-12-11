@@ -3,59 +3,59 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import TypeSelector from "../TypeSelector";
-import AvatarAssetNarrowing from "../AvatarAssetNarrowing";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Moon, Plus, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { AvatarAsset, PreAvatarAsset } from "@/lib/entity";
-import { invoke } from "@tauri-apps/api/core";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/dropdown-menu'
+import TypeSelector from '../TypeSelector'
+import AvatarAssetNarrowing from '../AvatarAssetNarrowing'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Moon, Plus, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { AvatarAsset, PreAvatarAsset } from '@/lib/entity'
+import { invoke } from '@tauri-apps/api/core'
+import { useToast } from '@/hooks/use-toast'
 
-type Props = {};
+type Props = {}
 
 const examplePreAsset: PreAvatarAsset = {
   description: {
-    title: "オリジナル3Dモデル「しなの」",
-    author: "ポンデロニウム研究所",
+    title: 'オリジナル3Dモデル「しなの」',
+    author: 'ポンデロニウム研究所',
     image_src:
-      "https://booth.pximg.net/ed52788c-0b3b-4e38-9ded-1e5797daf0ef/i/6106863/07bd77df-a8ee-4244-8c4e-16cf7cb584bb_base_resized.jpg",
+      'https://booth.pximg.net/ed52788c-0b3b-4e38-9ded-1e5797daf0ef/i/6106863/07bd77df-a8ee-4244-8c4e-16cf7cb584bb_base_resized.jpg',
     asset_dirs: [],
     tags: [],
-    created_at: "2024-12-11T00:00:00Z",
+    created_at: '2024-12-11T00:00:00Z',
   },
-};
+}
 
 const MainSidebar = ({}: Props) => {
-  const { setTheme } = useTheme();
-  const { toast } = useToast();
+  const { setTheme } = useTheme()
+  const { toast } = useToast()
 
   const sendCreateAssetRequest = async () => {
-    const result: AvatarAsset = await invoke("create_avatar_asset", {
+    const result: AvatarAsset = await invoke('create_avatar_asset', {
       preAvatarAsset: examplePreAsset,
-    });
-    console.log(result);
+    })
+    console.log(result)
 
     toast({
-      title: "データを1つ追加しました！",
-      description: "「しなの」のサンプルデータを追加しました",
-    });
-  };
+      title: 'データを1つ追加しました！',
+      description: '「しなの」のサンプルデータを追加しました',
+    })
+  }
 
   return (
     <Sidebar>
@@ -71,13 +71,13 @@ const MainSidebar = ({}: Props) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>
+              <DropdownMenuItem onClick={() => setTheme('light')}>
                 Light
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
                 Dark
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
                 System
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -97,7 +97,7 @@ const MainSidebar = ({}: Props) => {
             <Accordion
               type="multiple"
               className="w-full"
-              defaultValue={["type-selector"]}
+              defaultValue={['type-selector']}
             >
               <AccordionItem value="type-selector">
                 <AccordionTrigger>タイプ選択</AccordionTrigger>
@@ -116,7 +116,7 @@ const MainSidebar = ({}: Props) => {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
-};
+  )
+}
 
-export default MainSidebar;
+export default MainSidebar

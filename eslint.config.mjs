@@ -1,24 +1,22 @@
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default [
-  ...compat.extends("next/core-web-vitals"),
+export default tseslint.config(
+  eslint.configs.recommended,
+  tseslint.configs.recommended,
   {
     files: ["**/*.ts", "**/*.js", "**/*.tsx"],
 
     plugins: {
       "unused-imports": unusedImports,
+    },
+
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 2019,
+        sourceType: "module",
+      },
     },
 
     rules: {
@@ -55,5 +53,5 @@ export default [
         },
       ],
     },
-  },
-];
+  }
+);

@@ -1,4 +1,4 @@
-import { Label } from "@/components/ui/label";
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
-type Props = {};
+type Props = {}
 
 const NavBar = ({}: Props) => {
   return (
@@ -42,7 +42,7 @@ const NavBar = ({}: Props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar

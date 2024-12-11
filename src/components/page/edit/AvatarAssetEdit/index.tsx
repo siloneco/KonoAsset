@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -7,23 +7,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AssetItem } from "@/lib/entity";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AssetItem } from '@/lib/entity'
 
 const formSchema = z.object({
   title: z.string().min(1),
   author: z.string().min(1),
   tags: z.array(z.string()),
   image_src: z.string(),
-});
+})
 
 type Props = {
-  asset: AssetItem;
-};
+  asset: AssetItem
+}
 
 const AvatarAssetEdit = ({ asset }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,11 +34,11 @@ const AvatarAssetEdit = ({ asset }: Props) => {
       tags: [],
       image_src: asset.image_src,
     },
-  });
+  })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Temp. For debugging
-    console.log(values);
+    console.log(values)
   }
 
   return (
@@ -94,7 +94,7 @@ const AvatarAssetEdit = ({ asset }: Props) => {
         </form>
       </Form>
     </div>
-  );
-};
+  )
+}
 
-export default AvatarAssetEdit;
+export default AvatarAssetEdit

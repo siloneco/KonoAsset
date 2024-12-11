@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { AvatarAsset } from "@/lib/entity";
-import { Edit, Folder } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { AvatarAsset } from '@/lib/entity'
+import { Edit, Folder } from 'lucide-react'
 
 type Props = {
-  asset: AvatarAsset;
-  onDelete: () => void;
-};
+  asset: AvatarAsset
+  onDelete: () => void
+}
 
 const AssetListItem = ({ asset }: Props) => {
   function openEditPage() {
-    document.location.href = `/edit/${asset.id}`;
+    document.location.href = `/edit/${asset.id}`
   }
 
   return (
@@ -37,7 +37,7 @@ const AssetListItem = ({ asset }: Props) => {
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default AssetListItem;
+export default AssetListItem
