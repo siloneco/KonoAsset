@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.16.0",
-    "@tanstack/router-devtools": "1.87.7",
+    "@tanstack/router-devtools": "1.87.9",
     "@tanstack/router-plugin": "1.87.7",
     "@tauri-apps/cli": "2.1.0",
     "@types/node": "22.10.2",
