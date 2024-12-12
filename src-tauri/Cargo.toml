@@ -24,3 +24,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4.39", features = ["serde"] }
+showfile = { version = "0.1.1" }
+opener = { version = "0.7.2" }
+tauri-plugin-dialog = "2"

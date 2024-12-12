@@ -37,12 +37,12 @@ impl PreAvatarRelatedAsset {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PreWorldRelatedAsset {
+pub struct PreWorldAsset {
     pub description: AssetDescription,
     pub category: String,
 }
 
-impl PreWorldRelatedAsset {
+impl PreWorldAsset {
     pub fn create(description: AssetDescription, category: String) -> Self {
         Self {
             description,

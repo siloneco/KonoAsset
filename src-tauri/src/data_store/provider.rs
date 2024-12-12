@@ -23,10 +23,23 @@ impl StoreProvider {
         }
     }
 
-    pub fn load_all_assets_from_files(&self) {
-        self.avatar_store.load_assets_from_file();
-        self.avatar_related_store.load_assets_from_file();
-        self.world_store.load_assets_from_file();
+    pub fn load_all_assets_from_files(&self) -> Result<(), String> {
+        match self.avatar_store.load_assets_from_file() {
+            Ok(_) => {}
+            Err(e) => return Err(e),
+        }
+
+        match self.avatar_related_store.load_assets_from_file() {
+            Ok(_) => {}
+            Err(e) => return Err(e),
+        }
+
+        match self.world_store.load_assets_from_file() {
+            Ok(_) => {}
+            Err(e) => return Err(e),
+        }
+
+        Ok(())
     }
 
     pub fn get_avatar_store(&self) -> &JsonStore<AvatarAsset> {
@@ -39,5 +52,9 @@ impl StoreProvider {
 
     pub fn get_world_store(&self) -> &JsonStore<WorldAsset> {
         &self.world_store
+    }
+
+    pub fn app_data_dir(&self) -> PathBuf {
+        self.app_data_dir.clone()
     }
 }

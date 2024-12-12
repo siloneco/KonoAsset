@@ -29,20 +29,35 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         self.assets.lock().unwrap().clone()
     }
 
-    pub fn load_assets_from_file(&self) {
+    pub fn load_assets_from_file(&self) -> Result<(), String> {
         let mut path = self.app_data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
 
         if !path.exists() {
-            return;
+            return Ok(());
+        }
+
+        let file_open_result = File::open(path);
+
+        if file_open_result.is_err() {
+            return Err("Failed to open file".into());
         }
 
         let mut assets = self.assets.lock().unwrap();
-        *assets = serde_json::from_reader(File::open(path).unwrap()).unwrap();
+        let result: Result<HashSet<T>, serde_json::Error> =
+            serde_json::from_reader(file_open_result.unwrap());
+
+        match result {
+            Ok(deserialized) => {
+                *assets = deserialized;
+                Ok(())
+            }
+            Err(e) => Err(format!("Failed to deserialize file: {}", e)),
+        }
     }
 
-    pub fn add_asset_and_save(&self, asset: T) {
+    pub fn add_asset_and_save(&self, asset: T) -> Result<(), String> {
         let mut assets = self.assets.lock().unwrap();
         assets.insert(asset.clone());
 
@@ -50,16 +65,26 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         path.push("metadata");
         path.push(T::filename());
 
-        let file = File::create(path).unwrap();
-        serde_json::to_writer(file, &*assets).unwrap();
+        let file_open_result = File::create(path);
+
+        if file_open_result.is_err() {
+            return Err("Failed to open file".into());
+        }
+
+        let result = serde_json::to_writer(file_open_result.unwrap(), &*assets);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Failed to serialize file: {}", e)),
+        }
     }
 
-    pub fn delete_asset_and_save(&self, id: Uuid) -> bool {
+    pub fn delete_asset_and_save(&self, id: Uuid) -> Result<(), String> {
         let mut assets = self.assets.lock().unwrap();
         let asset = assets.iter().find(|asset| asset.get_id() == id).cloned();
 
         if asset.is_none() {
-            return false;
+            return Ok(());
         }
 
         assets.remove(&asset.unwrap());
@@ -68,9 +93,20 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         path.push("metadata");
         path.push(T::filename());
 
-        let file = File::create(path).unwrap();
-        serde_json::to_writer(file, &*assets).unwrap();
+        let file_open_result = File::create(path);
+        // serde_json::to_writer(file, &*assets).unwrap();
 
-        true
+        // true
+
+        if file_open_result.is_err() {
+            return Err("Failed to open file".into());
+        }
+
+        let result = serde_json::to_writer(file_open_result.unwrap(), &*assets);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Failed to serialize file: {}", e)),
+        }
     }
 }

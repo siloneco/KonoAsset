@@ -2,7 +2,6 @@ export type AssetDescription = {
   title: string
   author: string
   image_src: string
-  asset_dirs: string[]
   tags: string[]
   created_at: string
 }
@@ -33,4 +32,20 @@ export enum AssetType {
   Avatar = 'Avatar',
   AvatarRelatedAssets = 'AvatarRelatedAssets',
   WorldRelatedAssets = 'WorldRelatedAssets',
+}
+
+export type AssetImportRequest = {
+  pre_asset: PreAvatarAsset | PreAvatarRelatedAssets | PreWorldRelatedAssets
+  file_or_dir_absolute_path: string
+}
+
+export type AssetImportResult = {
+  success: boolean
+  asset?: AvatarAsset | AvatarRelatedAssets | WorldRelatedAssets
+  error_message?: string
+}
+
+export type DirectoryOpenResult = {
+  success: boolean
+  error_message?: string
 }

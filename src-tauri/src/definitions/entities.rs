@@ -11,7 +11,6 @@ pub struct AssetDescription {
     pub title: String,
     pub author: String,
     pub image_src: String,
-    pub asset_dirs: Vec<String>,
     pub tags: Vec<String>,
     pub created_at: DateTime<Local>,
 }
@@ -21,7 +20,6 @@ impl AssetDescription {
         title: String,
         author: String,
         image_src: String,
-        asset_dirs: Vec<String>,
         tags: Vec<String>,
         created_at: DateTime<Local>,
     ) -> Self {
@@ -29,7 +27,6 @@ impl AssetDescription {
             title,
             author,
             image_src,
-            asset_dirs,
             tags,
             created_at,
         }

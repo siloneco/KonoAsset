@@ -18,22 +18,23 @@ import {
 } from '@/components/ui/dropdown-menu'
 import TypeSelector from '../TypeSelector'
 import AvatarAssetNarrowing from '../AvatarAssetNarrowing'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Moon, Plus, Sun } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { AvatarAsset, PreAvatarAsset } from '@/lib/entity'
+import {
+  AssetImportRequest,
+  AssetImportResult,
+  PreAvatarAsset,
+} from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
 import { useToast } from '@/hooks/use-toast'
-
+import { open } from '@tauri-apps/plugin-dialog'
 const examplePreAsset: PreAvatarAsset = {
   description: {
-    title: 'オリジナル3Dモデル「しなの」',
-    author: 'ポンデロニウム研究所',
+    title: '『シフォン』-Chiffon-【オリジナル3Dモデル】',
+    author: 'あまとうさぎ',
     image_src:
-      'https://booth.pximg.net/ed52788c-0b3b-4e38-9ded-1e5797daf0ef/i/6106863/07bd77df-a8ee-4244-8c4e-16cf7cb584bb_base_resized.jpg',
-    asset_dirs: [],
+      'https://booth.pximg.net/61a3b2d7-b4b1-4f97-9e48-ffe959b26ae9/i/5354471/c42b543c-a334-4f18-bd26-a5cf23e2a61b_base_resized.jpg',
     tags: [],
     created_at: '2024-12-11T00:00:00Z',
   },
@@ -43,15 +44,31 @@ const MainSidebar = () => {
   const { setTheme } = useTheme()
   const { toast } = useToast()
 
-  const sendCreateAssetRequest = async () => {
-    const result: AvatarAsset = await invoke('create_avatar_asset', {
-      preAvatarAsset: examplePreAsset,
-    })
-    console.log(result)
+  const sendCreateAssetRequest = async (path: string) => {
+    const request: AssetImportRequest = {
+      pre_asset: examplePreAsset,
+      file_or_dir_absolute_path: path,
+    }
+
+    const result: AssetImportResult = await invoke(
+      'request_avatar_asset_import',
+      {
+        request,
+      },
+    )
+
+    if (result.success) {
+      toast({
+        title: 'データのインポートが完了しました！',
+        description: result.asset?.description.title,
+      })
+
+      return
+    }
 
     toast({
-      title: 'データを1つ追加しました！',
-      description: '「しなの」のサンプルデータを追加しました',
+      title: 'データのインポートに失敗しました',
+      description: result.error_message,
     })
   }
 
@@ -84,14 +101,32 @@ const MainSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent className="p-2">
             <Button
-              className="w-full h-12 mb-6"
-              onClick={() => sendCreateAssetRequest()}
+              className="w-full"
+              onClick={async () => {
+                const path = await open({ multiple: false, directory: true })
+
+                if (path !== null) {
+                  console.log(path)
+                  await sendCreateAssetRequest(path)
+                }
+              }}
             >
-              <Plus size={24} />
-              アセット追加
+              アセット追加 (Dir)
             </Button>
-            <Label>テキスト検索</Label>
-            <Input placeholder="テキストを入力..." className="mt-2" />
+            <Button
+              className="w-full"
+              onClick={async () => {
+                const path = await open({ multiple: false })
+
+                if (path !== null) {
+                  console.log(path)
+                  await sendCreateAssetRequest(path)
+                }
+              }}
+            >
+              アセット追加 (File)
+            </Button>
+
             <Accordion
               type="multiple"
               className="w-full"
