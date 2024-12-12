@@ -9,7 +9,6 @@ const exampleAsset: AvatarAsset = {
     author: 'ポンデロニウム研究所',
     image_src:
       'https://booth.pximg.net/ed52788c-0b3b-4e38-9ded-1e5797daf0ef/i/6106863/07bd77df-a8ee-4244-8c4e-16cf7cb584bb_base_resized.jpg',
-    asset_dirs: [],
     tags: [],
     created_at: '2024-12-11T00:00:00Z',
   },
