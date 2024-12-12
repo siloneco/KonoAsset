@@ -55,6 +55,10 @@ const MainSidebar = () => {
     })
   }
 
+  function openAboutPage() {
+    document.location.href = `/about`
+  }
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -113,6 +117,9 @@ const MainSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <Button className="w-full h-12 mt-auto" onClick={() => openAboutPage()}>
+        このアプリについて
+      </Button>
     </Sidebar>
   )
 }

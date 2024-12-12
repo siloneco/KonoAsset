@@ -1,5 +1,7 @@
 import NavBar from '@/components/page/top/NavBar'
-import AssetListItem from '@/components/page/top/AssetListItem'
+import AssetListItem from '@/components/page/top/AssetCard'
+import MainSidebar from '@/components/layout/MainSidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
@@ -25,13 +27,18 @@ function RouteComponent() {
   }, [])
 
   return (
-    <main className="w-full">
-      <NavBar />
-      <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-5">
-        {assets.map((asset) => (
-          <AssetListItem key={asset.id} asset={asset} onDelete={() => {}} />
-        ))}
-      </div>
-    </main>
+    <div>
+      <SidebarProvider>
+        <MainSidebar />
+        <main className="w-full">
+          <NavBar />
+          <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-5">
+            {assets.map((asset) => (
+              <AssetListItem key={asset.id} asset={asset} onDelete={() => {}} />
+            ))}
+          </div>
+        </main>
+      </SidebarProvider>
+    </div>
   )
 }
