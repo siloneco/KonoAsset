@@ -103,8 +103,8 @@ importers:
         specifier: 9.16.0
         version: 9.16.0
       '@tanstack/router-plugin':
-        specifier: 1.87.7
-        version: 1.87.7(vite@6.0.3(@types/node@22.10.2)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.6.1))
+        specifier: 1.87.11
+        version: 1.87.11(vite@6.0.3(@types/node@22.10.2)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.6.1))
       '@tauri-apps/cli':
         specifier: 2.1.0
         version: 2.1.0
@@ -1232,8 +1232,8 @@ packages:
     resolution: {integrity: sha512-w9Px1C6DM0YNVXvu1VjUuZ5el0ykOeofEmEZBW83VUTzvCXFpcjPCHncU9FO9uXup8NFIxNfGz+xpwf93GoFnQ==}
     engines: {node: '>=12'}
 
-  '@tanstack/router-plugin@1.87.7':
-    resolution: {integrity: sha512-3QdDyanjZkGW9yqqiDbjrFIEnrDpJGydNB5pawTbv2UsWO3vXQfzFY6wYuUZGjbXjXxXZ+C0H2f/igIP0dDDqg==}
+  '@tanstack/router-plugin@1.87.11':
+    resolution: {integrity: sha512-mg8Ci9IT2H5aDBM6DippwKr1AHTBc6eudgpvHRMelGxLl4VY7vlKNx5Ds5yZeqE9Jp6VNr2z7E0xx70e8cFoBg==}
     engines: {node: '>=12'}
     peerDependencies:
       '@rsbuild/core': '>=1.0.2'
@@ -3657,7 +3657,7 @@ snapshots:
       tsx: 4.19.2
       zod: 3.24.1
 
-  '@tanstack/router-plugin@1.87.7(vite@6.0.3(@types/node@22.10.2)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.6.1))':
+  '@tanstack/router-plugin@1.87.11(vite@6.0.3(@types/node@22.10.2)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/generator': 7.26.3
