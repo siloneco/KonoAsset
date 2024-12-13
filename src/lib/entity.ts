@@ -49,3 +49,9 @@ export type DirectoryOpenResult = {
   success: boolean
   error_message?: string
 }
+
+export type FetchAssetDescriptionFromBoothResult = {
+  success: boolean
+  asset_description?: AssetDescription
+  error_message?: string
+}

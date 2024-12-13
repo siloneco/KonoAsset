@@ -21,56 +21,50 @@ import AvatarAssetNarrowing from '../AvatarAssetNarrowing'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import {
-  AssetImportRequest,
-  AssetImportResult,
-  PreAvatarAsset,
-} from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
-import { useToast } from '@/hooks/use-toast'
-import { open } from '@tauri-apps/plugin-dialog'
-const examplePreAsset: PreAvatarAsset = {
-  description: {
-    title: '『シフォン』-Chiffon-【オリジナル3Dモデル】',
-    author: 'あまとうさぎ',
-    image_src:
-      'https://booth.pximg.net/61a3b2d7-b4b1-4f97-9e48-ffe959b26ae9/i/5354471/c42b543c-a334-4f18-bd26-a5cf23e2a61b_base_resized.jpg',
-    tags: [],
-    created_at: '2024-12-11T00:00:00Z',
-  },
-}
+import AddAssetModal from '../AddAssetModal'
+
+// const examplePreAsset: PreAvatarAsset = {
+//   description: {
+//     title: '『シフォン』-Chiffon-【オリジナル3Dモデル】',
+//     author: 'あまとうさぎ',
+//     image_src:
+//       'https://booth.pximg.net/61a3b2d7-b4b1-4f97-9e48-ffe959b26ae9/i/5354471/c42b543c-a334-4f18-bd26-a5cf23e2a61b_base_resized.jpg',
+//     tags: [],
+//     created_at: '2024-12-11T00:00:00Z',
+//   },
+// }
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
-  const { toast } = useToast()
+  // const { toast } = useToast()
 
-  const sendCreateAssetRequest = async (path: string) => {
-    const request: AssetImportRequest = {
-      pre_asset: examplePreAsset,
-      file_or_dir_absolute_path: path,
-    }
+  // const sendCreateAssetRequest = async (path: string) => {
+  //   const request: AssetImportRequest = {
+  //     pre_asset: examplePreAsset,
+  //     file_or_dir_absolute_path: path,
+  //   }
 
-    const result: AssetImportResult = await invoke(
-      'request_avatar_asset_import',
-      {
-        request,
-      },
-    )
+  //   const result: AssetImportResult = await invoke(
+  //     'request_avatar_asset_import',
+  //     {
+  //       request,
+  //     },
+  //   )
 
-    if (result.success) {
-      toast({
-        title: 'データのインポートが完了しました！',
-        description: result.asset?.description.title,
-      })
+  //   if (result.success) {
+  //     toast({
+  //       title: 'データのインポートが完了しました！',
+  //       description: result.asset?.description.title,
+  //     })
 
-      return
-    }
+  //     return
+  //   }
 
-    toast({
-      title: 'データのインポートに失敗しました',
-      description: result.error_message,
-    })
-  }
+  //   toast({
+  //     title: 'データのインポートに失敗しました',
+  //     description: result.error_message,
+  //   })
+  // }
 
   function openAboutPage() {
     document.location.href = `/about`
@@ -104,33 +98,7 @@ const MainSidebar = () => {
         </div>
         <SidebarGroup>
           <SidebarGroupContent className="p-2">
-            <Button
-              className="w-full"
-              onClick={async () => {
-                const path = await open({ multiple: false, directory: true })
-
-                if (path !== null) {
-                  console.log(path)
-                  await sendCreateAssetRequest(path)
-                }
-              }}
-            >
-              アセット追加 (Dir)
-            </Button>
-            <Button
-              className="w-full"
-              onClick={async () => {
-                const path = await open({ multiple: false })
-
-                if (path !== null) {
-                  console.log(path)
-                  await sendCreateAssetRequest(path)
-                }
-              }}
-            >
-              アセット追加 (File)
-            </Button>
-
+            <AddAssetModal />
             <Accordion
               type="multiple"
               className="w-full"

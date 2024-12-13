@@ -1,20 +1,15 @@
-use std::{
-    fs,
-    path::{PathBuf, MAIN_SEPARATOR_STR},
-    result,
-};
+use std::{fs, path::PathBuf};
 
 use tauri::State;
-use uuid::Uuid;
 
 use crate::{
     data_store::provider::StoreProvider,
     definitions::{
         entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
         import_request::{AvatarAssetImportRequest, AvatarAssetImportResult},
-        pre::PreAvatarAsset,
-        results::DirectoryOpenResult,
+        results::{DirectoryOpenResult, FetchAssetDescriptionFromBoothResult},
     },
+    fetcher::booth_fetcher::fetch_asset_as_asset_description,
     files::asset_importer,
 };
 
@@ -87,6 +82,22 @@ pub fn request_avatar_asset_import(
     let result = asset_importer::import_asset(&src_import_asset_path, &destination);
 
     if result.is_err() {
+        let delete_result = basic_store
+            .get_avatar_store()
+            .delete_asset_and_save(asset.id);
+
+        if delete_result.is_err() {
+            return AvatarAssetImportResult {
+                success: false,
+                avatar_asset: None,
+                error_message: Some(format!(
+                    "{}, {}",
+                    result.err().unwrap(),
+                    delete_result.err().unwrap()
+                )),
+            };
+        }
+
         return AvatarAssetImportResult {
             success: false,
             avatar_asset: None,
@@ -123,5 +134,23 @@ pub fn open_in_file_manager(
     match result {
         Ok(_) => DirectoryOpenResult::create(true, None),
         Err(e) => DirectoryOpenResult::create(false, Some(e.to_string())),
+    }
+}
+
+#[tauri::command]
+pub fn get_asset_description_from_booth(url: String) -> FetchAssetDescriptionFromBoothResult {
+    let result = fetch_asset_as_asset_description(&url);
+
+    match result {
+        Ok(asset_description) => FetchAssetDescriptionFromBoothResult {
+            success: true,
+            asset_description: Some(asset_description),
+            error_message: None,
+        },
+        Err(e) => FetchAssetDescriptionFromBoothResult {
+            success: false,
+            asset_description: None,
+            error_message: Some(e.to_string()),
+        },
     }
 }

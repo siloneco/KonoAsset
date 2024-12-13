@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::entities::AssetDescription;
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DirectoryOpenResult {
     pub success: bool,
@@ -13,4 +15,11 @@ impl DirectoryOpenResult {
             error_message,
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FetchAssetDescriptionFromBoothResult {
+    pub success: bool,
+    pub asset_description: Option<AssetDescription>,
+    pub error_message: Option<String>,
 }
