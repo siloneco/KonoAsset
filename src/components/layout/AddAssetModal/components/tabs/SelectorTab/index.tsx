@@ -10,17 +10,21 @@ import { TabsContent } from '@/components/ui/tabs'
 import SelectDirectoryCard from '../../Selector/SelectDirectoryCard'
 import SelectFileCard from '../../Selector/SelectFileCard'
 import { open } from '@tauri-apps/plugin-dialog'
+import { useContext } from 'react'
+import { AddAssetModalContext } from '../../..'
 
 type Props = {
   setTab: (tab: string) => void
 }
 
 const SelectorTab = ({ setTab }: Props) => {
+  const { setAssetPath } = useContext(AddAssetModalContext)
+
   const openFileOrDirSelector = async (dir: boolean) => {
     const path = await open({ multiple: false, directory: dir })
 
     if (path !== null) {
-      //   await sendCreateAssetRequest(path)
+      setAssetPath(path)
       setTab('booth-input')
     }
   }

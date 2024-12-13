@@ -23,48 +23,8 @@ import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import AddAssetModal from '../AddAssetModal'
 
-// const examplePreAsset: PreAvatarAsset = {
-//   description: {
-//     title: '『シフォン』-Chiffon-【オリジナル3Dモデル】',
-//     author: 'あまとうさぎ',
-//     image_src:
-//       'https://booth.pximg.net/61a3b2d7-b4b1-4f97-9e48-ffe959b26ae9/i/5354471/c42b543c-a334-4f18-bd26-a5cf23e2a61b_base_resized.jpg',
-//     tags: [],
-//     created_at: '2024-12-11T00:00:00Z',
-//   },
-// }
-
 const MainSidebar = () => {
   const { setTheme } = useTheme()
-  // const { toast } = useToast()
-
-  // const sendCreateAssetRequest = async (path: string) => {
-  //   const request: AssetImportRequest = {
-  //     pre_asset: examplePreAsset,
-  //     file_or_dir_absolute_path: path,
-  //   }
-
-  //   const result: AssetImportResult = await invoke(
-  //     'request_avatar_asset_import',
-  //     {
-  //       request,
-  //     },
-  //   )
-
-  //   if (result.success) {
-  //     toast({
-  //       title: 'データのインポートが完了しました！',
-  //       description: result.asset?.description.title,
-  //     })
-
-  //     return
-  //   }
-
-  //   toast({
-  //     title: 'データのインポートに失敗しました',
-  //     description: result.error_message,
-  //   })
-  // }
 
   function openAboutPage() {
     document.location.href = `/about`

@@ -18,7 +18,7 @@ type Props = {
   setTab: (tab: string) => void
 }
 
-const shopBoothUrlRegex = /^https:\/\/[a-z]+\.booth\.pm\/items\/[0-9]+$/
+const shopBoothUrlRegex = /^https:\/\/[a-z-]+\.booth\.pm\/items\/[0-9]+$/
 const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
 
 const isBoothUrl = (url: string) => {

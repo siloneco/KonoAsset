@@ -17,13 +17,21 @@ import {
 } from '@/components/ui/form'
 import { useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
+import { useToast } from '@/hooks/use-toast'
+import {
+  AssetImportRequest,
+  AssetImportResult,
+  PreAvatarAsset,
+} from '@/lib/entity'
+import { invoke } from '@tauri-apps/api/core'
 
 type Props = {
   setTab: (tab: string) => void
 }
 
 const ManualInputTab = ({ setTab }: Props) => {
-  const { form } = useContext(AddAssetModalContext)
+  const { toast } = useToast()
+  const { form, assetPath } = useContext(AddAssetModalContext)
 
   if (!form) {
     return <div>Loading...</div>
@@ -31,6 +39,44 @@ const ManualInputTab = ({ setTab }: Props) => {
 
   const backToBoothInputTab = () => {
     setTab('booth-input')
+  }
+
+  const submit = async () => {
+    const preAsset: PreAvatarAsset = {
+      description: {
+        title: form.getValues('title'),
+        author: form.getValues('author'),
+        image_src: form.getValues('image_src'),
+        tags: [],
+        created_at: new Date().toISOString(),
+      },
+    }
+
+    const request: AssetImportRequest = {
+      pre_asset: preAsset,
+      file_or_dir_absolute_path: assetPath!,
+    }
+
+    const result: AssetImportResult = await invoke(
+      'request_avatar_asset_import',
+      {
+        request,
+      },
+    )
+
+    if (result.success) {
+      toast({
+        title: 'データのインポートが完了しました！',
+        description: result.asset?.description.title,
+      })
+
+      return
+    }
+
+    toast({
+      title: 'データのインポートに失敗しました',
+      description: result.error_message,
+    })
   }
 
   return (
@@ -43,7 +89,7 @@ const ManualInputTab = ({ setTab }: Props) => {
       </DialogHeader>
       <div className="my-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(() => {})} className="space-y-4">
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="flex flex-row space-x-6">
               <div className="w-1/3">
                 <img

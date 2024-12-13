@@ -13,8 +13,10 @@
     "windows": [
       {
         "title": "vrc-asset-manager",
-        "width": 800,
-        "height": 600
+        "width": 1000,
+        "height": 800,
+        "minHeight": 400,
+        "minWidth": 800
       }
     ],
     "security": {

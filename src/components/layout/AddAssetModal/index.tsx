@@ -22,10 +22,15 @@ export const AddAssetModalContext = createContext<{
     any,
     undefined
   >
-}>({})
+  assetPath?: string
+  setAssetPath: (path: string) => void
+}>({
+  setAssetPath: () => {},
+})
 
 const AddAssetModal = () => {
   const [tab, setTab] = useState('selector')
+  const [assetPath, setAssetPath] = useState<string>('')
 
   const formSchema = z.object({
     title: z.string().min(1),
@@ -52,7 +57,9 @@ const AddAssetModal = () => {
       </DialogTrigger>
       <DialogContent className="max-w-[650px]">
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <AddAssetModalContext.Provider value={{ form }}>
+          <AddAssetModalContext.Provider
+            value={{ form, assetPath, setAssetPath }}
+          >
             <SelectorTab setTab={setTab} />
             <BoothInputTab setTab={setTab} />
             <ManualInputTab setTab={setTab} />
