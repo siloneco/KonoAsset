@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
+import { AddAssetModalContext } from '../../..'
 
 type Props = {
   setTab: (tab: string) => void
@@ -27,6 +28,8 @@ const isBoothUrl = (url: string) => {
 const BoothInputTab = ({ setTab }: Props) => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
   const [fetching, setFetching] = useState(false)
+
+  const { form } = useContext(AddAssetModalContext)
 
   const backToSelect = () => {
     setTab('selector')
@@ -49,7 +52,13 @@ const BoothInputTab = ({ setTab }: Props) => {
       )
 
       if (result.success) {
+        form?.setValue('title', result.asset_description!.title)
+        form?.setValue('author', result.asset_description!.author)
+        form?.setValue('image_src', result.asset_description!.image_src)
+
         console.log(result.asset_description)
+
+        setTab('manual-input')
       } else {
         console.log(`Error: ${result.error_message}`)
       }

@@ -6,9 +6,6 @@ import {
 } from '@/components/ui/dialog'
 import { TabsContent } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
   FormControl,
@@ -18,24 +15,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { useContext } from 'react'
+import { AddAssetModalContext } from '../../..'
 
 type Props = {
   setTab: (tab: string) => void
 }
 
 const ManualInputTab = ({ setTab }: Props) => {
-  const formSchema = z.object({
-    title: z.string().min(1),
-    author: z.string().min(1),
-  })
+  const { form } = useContext(AddAssetModalContext)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      author: '',
-    },
-  })
+  if (!form) {
+    return <div>Loading...</div>
+  }
 
   const backToBoothInputTab = () => {
     setTab('booth-input')
@@ -55,8 +47,8 @@ const ManualInputTab = ({ setTab }: Props) => {
             <div className="flex flex-row space-x-6">
               <div className="w-1/3">
                 <img
-                  src="https://booth.pximg.net/61a3b2d7-b4b1-4f97-9e48-ffe959b26ae9/i/5354471/c42b543c-a334-4f18-bd26-a5cf23e2a61b_base_resized.jpg"
-                  alt="hoge"
+                  src={form.getValues('image_src')}
+                  alt="asset_image"
                   className="rounded-lg"
                 />
               </div>
