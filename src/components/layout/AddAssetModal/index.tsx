@@ -12,7 +12,6 @@ import { useForm, UseFormReturn } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
 import { AssetType } from '@/lib/entity'
 
-// create context
 export const AddAssetModalContext = createContext<{
   form?: UseFormReturn<
     {
@@ -67,7 +66,12 @@ const AddAssetModal = () => {
           アセットを追加する
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[650px]">
+      <DialogContent
+        className="max-w-[650px]"
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <AddAssetModalContext.Provider
             value={{ form, assetPath, setAssetPath, assetType, setAssetType }}
