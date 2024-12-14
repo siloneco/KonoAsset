@@ -8,7 +8,6 @@ import { Edit, Folder } from 'lucide-react'
 
 type Props = {
   asset: AvatarAsset
-  onDelete: () => void
 }
 
 const AssetCard = ({ asset }: Props) => {

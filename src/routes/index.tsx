@@ -1,44 +1,52 @@
-import NavBar from '@/components/page/top/NavBar'
-import AssetCard from '@/components/page/top/AssetCard'
 import MainSidebar from '@/components/layout/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import { invoke } from '@tauri-apps/api/core'
-import { AvatarRelatedAssets } from '@/lib/entity'
+import { useState } from 'react'
+import { AssetType } from '@/lib/entity'
+import {
+  AssetFilterContext,
+  AssetFilterContextType,
+} from '@/components/layout/AssetFilterContext'
+import TopPageMainContent from '@/components/layout/TopPageMainContent'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const [assets, setAssets] = useState<AvatarRelatedAssets[]>([])
+  const [textFilter, setTextFilter] = useState('')
+  const [assetType, setAssetType] = useState<AssetType | undefined>(undefined)
+  const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
+    [],
+  )
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([])
+  const [tagFilter, setTagFilter] = useState<string[]>([])
 
-  const updateAssets = async () => {
-    const result = await invoke('get_avatar_related_assets')
-    const avatars: AvatarRelatedAssets[] = result as AvatarRelatedAssets[]
-    setAssets(avatars)
+  const filterContextValue: AssetFilterContextType = {
+    textFilter: textFilter,
+    setTextFilter: setTextFilter,
 
-    console.log(avatars[0])
+    assetType: assetType,
+    setAssetType: setAssetType,
+
+    supportedAvatarFilter,
+    setSupportedAvatarFilter,
+
+    categoryFilter,
+    setCategoryFilter,
+
+    tagFilter,
+    setTagFilter,
   }
-
-  useEffect(() => {
-    updateAssets()
-  }, [])
 
   return (
     <div>
-      <SidebarProvider>
-        <MainSidebar />
-        <main className="w-full">
-          <NavBar />
-          <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-5">
-            {assets.map((asset) => (
-              <AssetCard key={asset.id} asset={asset} onDelete={() => {}} />
-            ))}
-          </div>
-        </main>
-      </SidebarProvider>
+      <AssetFilterContext.Provider value={filterContextValue}>
+        <SidebarProvider>
+          <MainSidebar />
+          <TopPageMainContent />
+        </SidebarProvider>
+      </AssetFilterContext.Provider>
     </div>
   )
 }
