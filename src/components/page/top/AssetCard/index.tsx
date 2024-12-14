@@ -32,17 +32,19 @@ const AssetCard = ({ asset }: Props) => {
 
   return (
     <Card className="w-full bg-card m-1">
-      <CardContent className="p-4">
-        <img
-          src={asset.description.image_src}
-          alt={asset.description.title}
-          className="w-full rounded-sm"
-        />
-        <CardTitle className="text-lg mt-2">
-          {asset.description.title}
-        </CardTitle>
-        <Label className="text-sm">{asset.description.author}</Label>
-        <div className="flex flex-row mt-2 w">
+      <CardContent className="p-4 h-full">
+        <div className="h-[calc(100%-3rem)]">
+          <img
+            src={asset.description.image_src}
+            alt={asset.description.title}
+            className="w-full rounded-sm"
+          />
+          <CardTitle className="text-lg mt-2">
+            {asset.description.title}
+          </CardTitle>
+          <Label className="text-sm">{asset.description.author}</Label>
+        </div>
+        <div className="flex flex-row mt-2 h-12">
           <Button className="w-full mr-2" onClick={openInFileManager}>
             <Folder size={24} />
             <p>開く</p>

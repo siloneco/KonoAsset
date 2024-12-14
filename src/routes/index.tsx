@@ -6,7 +6,7 @@ import { AssetType } from '@/lib/entity'
 import {
   AssetFilterContext,
   AssetFilterContextType,
-} from '@/components/layout/AssetFilterContext'
+} from '@/components/context/AssetFilterContext'
 import TopPageMainContent from '@/components/layout/TopPageMainContent'
 
 export const Route = createFileRoute('/')({

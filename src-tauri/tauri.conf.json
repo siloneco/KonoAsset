@@ -14,9 +14,9 @@
       {
         "title": "vrc-asset-manager",
         "width": 1000,
-        "height": 800,
+        "height": 900,
         "minHeight": 400,
-        "minWidth": 800
+        "minWidth": 900
       }
     ],
     "security": {

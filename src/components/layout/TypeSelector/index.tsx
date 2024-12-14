@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useContext } from 'react'
-import { AssetFilterContext } from '../AssetFilterContext'
+import { AssetFilterContext } from '../../context/AssetFilterContext'
 import { AssetType } from '@/lib/entity'
 
 const TypeSelector = () => {

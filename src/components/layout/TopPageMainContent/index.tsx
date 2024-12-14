@@ -1,7 +1,7 @@
 import AssetCard from '@/components/page/top/AssetCard'
 import NavBar from '@/components/page/top/NavBar'
 import { useContext, useEffect, useState } from 'react'
-import { AssetFilterContext } from '../AssetFilterContext'
+import { AssetFilterContext } from '../../context/AssetFilterContext'
 import {
   AssetType,
   AvatarAsset,
@@ -52,7 +52,7 @@ const TopPageMainContent = () => {
   return (
     <main className="w-full">
       <NavBar />
-      <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {assets.map((asset) => (
           <AssetCard key={asset.id} asset={asset} />
         ))}
