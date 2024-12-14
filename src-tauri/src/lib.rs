@@ -1,6 +1,7 @@
 use commands::{
-    get_asset_description_from_booth, get_avatar_assets, get_avatar_related_assets,
-    get_world_assets, open_in_file_manager, request_avatar_asset_import,
+    get_all_asset_tags, get_asset_description_from_booth, get_avatar_assets,
+    get_avatar_related_assets, get_avatar_related_categories, get_world_assets,
+    open_in_file_manager, request_avatar_asset_import, request_avatar_related_asset_import,
 };
 use data_store::provider::StoreProvider;
 use tauri::{App, Manager};
@@ -16,14 +17,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![
-            get_avatar_assets,
-            get_avatar_related_assets,
-            get_world_assets,
-            request_avatar_asset_import,
-            open_in_file_manager,
-            get_asset_description_from_booth
-        ])
+        .invoke_handler(generate_handler())
         .setup(|app| {
             let basic_store = init(&app);
             app.manage(basic_store);
@@ -44,4 +38,18 @@ fn init(handler: &App) -> StoreProvider {
     }
 
     store
+}
+
+fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
+    tauri::generate_handler![
+        get_avatar_assets,
+        get_avatar_related_assets,
+        get_world_assets,
+        request_avatar_asset_import,
+        request_avatar_related_asset_import,
+        open_in_file_manager,
+        get_asset_description_from_booth,
+        get_all_asset_tags,
+        get_avatar_related_categories
+    ]
 }

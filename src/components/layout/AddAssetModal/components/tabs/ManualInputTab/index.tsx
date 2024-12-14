@@ -21,9 +21,21 @@ import { useToast } from '@/hooks/use-toast'
 import {
   AssetImportRequest,
   AssetImportResult,
-  PreAvatarAsset,
+  PreAvatarRelatedAssets,
 } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import TagPicker from '@/components/model/TagPicker'
+import TagList from '@/components/model/TagList'
+import { Separator } from '@/components/ui/separator'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 type Props = {
   setTab: (tab: string) => void
@@ -37,12 +49,12 @@ const ManualInputTab = ({ setTab }: Props) => {
     return <div>Loading...</div>
   }
 
-  const backToBoothInputTab = () => {
-    setTab('booth-input')
+  const backToAssetTypeSelectorTab = () => {
+    setTab('asset-type-selector')
   }
 
   const submit = async () => {
-    const preAsset: PreAvatarAsset = {
+    const preAsset: PreAvatarRelatedAssets = {
       description: {
         title: form.getValues('title'),
         author: form.getValues('author'),
@@ -50,6 +62,8 @@ const ManualInputTab = ({ setTab }: Props) => {
         tags: [],
         created_at: new Date().toISOString(),
       },
+      category: form.getValues('category'),
+      supported_avatars: [],
     }
 
     const request: AssetImportRequest = {
@@ -58,7 +72,7 @@ const ManualInputTab = ({ setTab }: Props) => {
     }
 
     const result: AssetImportResult = await invoke(
-      'request_avatar_asset_import',
+      'request_avatar_related_asset_import',
       {
         request,
       },
@@ -79,10 +93,12 @@ const ManualInputTab = ({ setTab }: Props) => {
     })
   }
 
+  const image_src = form.getValues('image_src')
+
   return (
     <TabsContent value="manual-input">
       <DialogHeader>
-        <DialogTitle>③ アセット情報の入力</DialogTitle>
+        <DialogTitle>(4/4) アセット情報の入力</DialogTitle>
         <DialogDescription>
           アセットの情報を入力してください！
         </DialogDescription>
@@ -91,12 +107,19 @@ const ManualInputTab = ({ setTab }: Props) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="flex flex-row space-x-6">
-              <div className="w-1/3">
-                <img
-                  src={form.getValues('image_src')}
-                  alt="asset_image"
-                  className="rounded-lg"
-                />
+              <div className="w-1/3 rounded-lg">
+                <AspectRatio ratio={1}>
+                  {image_src && (
+                    <img
+                      src={form.getValues('image_src')}
+                      alt="asset_image"
+                      className="rounded-lg"
+                    />
+                  )}
+                  {!image_src && (
+                    <div className="w-full h-full bg-slate-400 rounded-lg"></div>
+                  )}
+                </AspectRatio>
               </div>
               <div className="w-2/3 space-y-2">
                 <FormField
@@ -140,22 +163,77 @@ const ManualInputTab = ({ setTab }: Props) => {
               </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="author"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>なんかこの辺でタグとか入力したい (適当)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="タグ入力する場所" {...field} />
-                  </FormControl>
-                  <FormDescription></FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="w-full flex flex-row space-x-2">
+              <div className="w-1/2">
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => {
+                    if (field.value === undefined) {
+                      form.setValue('tags', [])
+                      field.value = []
+                    }
+
+                    return (
+                      <FormItem>
+                        <FormLabel>タグ</FormLabel>
+                        <TagList tags={field.value || []}>
+                          <TagPicker
+                            tags={field.value || []}
+                            setTags={(tags) => form.setValue('tags', tags)}
+                            className="mb-2 mr-2"
+                          />
+                        </TagList>
+                        <FormDescription>
+                          タグはアセットの絞り込みや分類に利用されます
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )
+                  }}
+                />
+              </div>
+              <Separator orientation="vertical" className="h-32 my-auto" />
+              <div className="w-1/2">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={() => {
+                    return (
+                      <FormItem>
+                        <FormLabel>カテゴリ</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            form.setValue('category', value)
+                            console.log(value)
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="カテゴリを選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="hair">髪</SelectItem>
+                              <SelectItem value="costume">衣装</SelectItem>
+                              <SelectItem value="accessory">
+                                アクセサリ
+                              </SelectItem>
+                              <SelectItem value="halo">ヘイロー</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          カテゴリはアセットの絞り込みや分類に利用されます
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )
+                  }}
+                />
+              </div>
+            </div>
             <div className="w-full flex justify-between">
-              <Button variant="outline" onClick={backToBoothInputTab}>
+              <Button variant="outline" onClick={backToAssetTypeSelectorTab}>
                 戻る
               </Button>
               <Button type="submit">アセットを追加</Button>

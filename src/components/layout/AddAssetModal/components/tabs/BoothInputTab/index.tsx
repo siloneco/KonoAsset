@@ -11,7 +11,7 @@ import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
 import { useContext, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
+import { AssetType, FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
 
 type Props = {
@@ -29,14 +29,14 @@ const BoothInputTab = ({ setTab }: Props) => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
   const [fetching, setFetching] = useState(false)
 
-  const { form } = useContext(AddAssetModalContext)
+  const { form, setAssetType } = useContext(AddAssetModalContext)
 
   const backToSelect = () => {
     setTab('selector')
   }
 
-  const moveToManualInputTab = () => {
-    setTab('manual-input')
+  const moveToNextTab = () => {
+    setTab('asset-type-selector')
   }
 
   const getAssetDescriptionFromBooth = async (url: string) => {
@@ -56,9 +56,11 @@ const BoothInputTab = ({ setTab }: Props) => {
         form?.setValue('author', result.asset_description!.author)
         form?.setValue('image_src', result.asset_description!.image_src)
 
-        console.log(result.asset_description)
+        console.log(result.estimated_asset_type)
+        console.log(AssetType.AvatarRelated)
+        setAssetType(result.estimated_asset_type ?? AssetType.Avatar)
 
-        setTab('manual-input')
+        moveToNextTab()
       } else {
         console.log(`Error: ${result.error_message}`)
       }
@@ -70,7 +72,7 @@ const BoothInputTab = ({ setTab }: Props) => {
   return (
     <TabsContent value="booth-input">
       <DialogHeader>
-        <DialogTitle>② アセット情報を取得</DialogTitle>
+        <DialogTitle>(2/4) アセット情報を取得</DialogTitle>
         <DialogDescription>
           Boothのリンクを入力すると、自動でアセット情報が入力されます！
         </DialogDescription>
@@ -99,7 +101,7 @@ const BoothInputTab = ({ setTab }: Props) => {
           <Button
             className="block w-48 h-12"
             variant={'outline'}
-            onClick={moveToManualInputTab}
+            onClick={moveToNextTab}
           >
             自動取得をスキップ
           </Button>

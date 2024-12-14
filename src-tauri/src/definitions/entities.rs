@@ -117,3 +117,10 @@ impl AssetTrait for WorldAsset {
         self.id
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum AssetType {
+    Avatar,
+    AvatarRelated,
+    World,
+}

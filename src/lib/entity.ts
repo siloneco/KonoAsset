@@ -15,7 +15,7 @@ export type AvatarRelatedAssets = {
   id: string
   description: AssetDescription
   category: string
-  supported_avatars: Set<string>
+  supported_avatars: string[]
 }
 
 export type WorldRelatedAssets = {
@@ -30,8 +30,8 @@ export type PreWorldRelatedAssets = Omit<WorldRelatedAssets, 'id'>
 
 export enum AssetType {
   Avatar = 'Avatar',
-  AvatarRelatedAssets = 'AvatarRelatedAssets',
-  WorldRelatedAssets = 'WorldRelatedAssets',
+  AvatarRelated = 'AvatarRelated',
+  World = 'World',
 }
 
 export type AssetImportRequest = {
@@ -53,5 +53,6 @@ export type DirectoryOpenResult = {
 export type FetchAssetDescriptionFromBoothResult = {
   success: boolean
   asset_description?: AssetDescription
+  estimated_asset_type?: AssetType
   error_message?: string
 }

@@ -5,18 +5,18 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { AvatarAsset } from '@/lib/entity'
+import { AvatarRelatedAssets } from '@/lib/entity'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const [assets, setAssets] = useState<AvatarAsset[]>([])
+  const [assets, setAssets] = useState<AvatarRelatedAssets[]>([])
 
   const updateAssets = async () => {
-    const result = await invoke('get_avatar_assets')
-    const avatars: AvatarAsset[] = result as AvatarAsset[]
+    const result = await invoke('get_avatar_related_assets')
+    const avatars: AvatarRelatedAssets[] = result as AvatarRelatedAssets[]
     setAssets(avatars)
 
     console.log(avatars[0])

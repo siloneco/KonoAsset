@@ -7,8 +7,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { TabsContent } from '@/components/ui/tabs'
-import SelectDirectoryCard from '../../Selector/SelectDirectoryCard'
-import SelectFileCard from '../../Selector/SelectFileCard'
+import SelectDirectoryCard from './selector/SelectDirectoryCard'
+import SelectFileCard from './selector/SelectFileCard'
 import { open } from '@tauri-apps/plugin-dialog'
 import { useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
@@ -32,7 +32,7 @@ const SelectorTab = ({ setTab }: Props) => {
   return (
     <TabsContent value="selector">
       <DialogHeader>
-        <DialogTitle>① どちらを追加しますか？</DialogTitle>
+        <DialogTitle>(1/4) どちらを追加しますか？</DialogTitle>
         <DialogDescription>
           フォルダとファイルのどちらを追加するか選択してください！
         </DialogDescription>

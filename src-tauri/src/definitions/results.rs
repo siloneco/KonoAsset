@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::entities::AssetDescription;
+use super::entities::{AssetDescription, AssetType};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DirectoryOpenResult {
@@ -21,5 +21,6 @@ impl DirectoryOpenResult {
 pub struct FetchAssetDescriptionFromBoothResult {
     pub success: bool,
     pub asset_description: Option<AssetDescription>,
+    pub estimated_asset_type: Option<AssetType>,
     pub error_message: Option<String>,
 }

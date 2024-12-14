@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -19,14 +19,14 @@ impl PreAvatarAsset {
 pub struct PreAvatarRelatedAsset {
     pub description: AssetDescription,
     pub category: String,
-    pub supported_avatars: HashSet<String>,
+    pub supported_avatars: BTreeSet<String>,
 }
 
 impl PreAvatarRelatedAsset {
     pub fn create(
         description: AssetDescription,
         category: String,
-        supported_avatars: HashSet<String>,
+        supported_avatars: BTreeSet<String>,
     ) -> Self {
         Self {
             description,
