@@ -34,7 +34,7 @@ const MainSidebar = () => {
     <Sidebar>
       <SidebarContent>
         <div className="flex flex-row items-center">
-          <div className="m-2 border-2 text-lg">VRC Asset Manager</div>
+          <div className="m-2 border-2 text-lg">KonoAsset</div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

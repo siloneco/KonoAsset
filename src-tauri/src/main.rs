@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    vrc_asset_manager_lib::run()
+    konoasset_lib::run()
 }

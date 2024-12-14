@@ -1,4 +1,4 @@
-# VRC Asset Manager (仮)
+# KonoAsset
 
 VRChat 向けのアバターアセットやワールドアセットを管理するデスクトップアプリ
 

@@ -5,7 +5,7 @@ const AboutPage: React.FC = () => {
   return (
     <div className="flex flex-col mx-8 my-5">
       <div className="border-2 self-center text-center text-lg w-56">
-        VRC Asset Manager
+        KonoAsset
       </div>
       <div className="flex flex-col space-x-2 mt-4 text-center">
         <span className="text-lg">このアプリについて</span>

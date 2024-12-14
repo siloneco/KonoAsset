@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "vrc-asset-manager",
+  "productName": "konoasset",
   "version": "0.1.0",
-  "identifier": "net.silolab.vrc-asset-mgr.app",
+  "identifier": "dev.konoasset.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "vrc-asset-manager",
+        "title": "konoasset",
         "width": 1000,
         "height": 900,
         "minHeight": 400,
