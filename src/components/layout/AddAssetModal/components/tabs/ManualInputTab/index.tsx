@@ -18,12 +18,7 @@ import {
 import { useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { useToast } from '@/hooks/use-toast'
-import {
-  AssetImportRequest,
-  AssetImportResult,
-  PreAvatarRelatedAssets,
-} from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
+
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import TagPicker from '@/components/model/TagPicker'
 import TagList from '@/components/model/TagList'
@@ -36,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { createPreAsset, sendAssetImportRequest } from './logic'
 
 type Props = {
   setTab: (tab: string) => void
@@ -43,7 +39,7 @@ type Props = {
 
 const ManualInputTab = ({ setTab }: Props) => {
   const { toast } = useToast()
-  const { form, assetPath } = useContext(AddAssetModalContext)
+  const { form, assetPath, assetType } = useContext(AddAssetModalContext)
 
   if (!form) {
     return <div>Loading...</div>
@@ -54,34 +50,37 @@ const ManualInputTab = ({ setTab }: Props) => {
   }
 
   const submit = async () => {
-    const preAsset: PreAvatarRelatedAssets = {
+    const preAsset = createPreAsset({
+      assetType: assetType!,
       description: {
         title: form.getValues('title'),
         author: form.getValues('author'),
         image_src: form.getValues('image_src'),
-        tags: [],
+        tags: form.getValues('tags'),
         created_at: new Date().toISOString(),
       },
       category: form.getValues('category'),
-      supported_avatars: [],
+      supportedAvatars: [],
+    })
+
+    if (preAsset.isFailure()) {
+      toast({
+        title: 'データのインポートに失敗しました',
+        description: preAsset.error.message,
+      })
+
+      return
     }
 
-    const request: AssetImportRequest = {
-      pre_asset: preAsset,
-      file_or_dir_absolute_path: assetPath!,
-    }
-
-    const result: AssetImportResult = await invoke(
-      'request_avatar_related_asset_import',
-      {
-        request,
-      },
+    const result = await sendAssetImportRequest(
+      assetType!,
+      assetPath!,
+      preAsset.value,
     )
 
-    if (result.success) {
+    if (result.isSuccess()) {
       toast({
         title: 'データのインポートが完了しました！',
-        description: result.asset?.description.title,
       })
 
       return
@@ -89,7 +88,7 @@ const ManualInputTab = ({ setTab }: Props) => {
 
     toast({
       title: 'データのインポートに失敗しました',
-      description: result.error_message,
+      description: result.error.message,
     })
   }
 

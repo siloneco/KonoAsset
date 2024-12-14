@@ -1,16 +1,18 @@
+use data_store::provider::StoreProvider;
+use tauri::{App, Manager};
+
 use commands::{
     get_all_asset_tags, get_asset_description_from_booth, get_avatar_assets,
     get_avatar_related_assets, get_avatar_related_categories, get_world_assets,
     open_in_file_manager, request_avatar_asset_import, request_avatar_related_asset_import,
+    request_world_asset_import,
 };
-use data_store::provider::StoreProvider;
-use tauri::{App, Manager};
 
 mod commands;
 mod data_store;
 mod definitions;
 mod fetcher;
-mod files;
+mod importer;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -47,6 +49,7 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         get_world_assets,
         request_avatar_asset_import,
         request_avatar_related_asset_import,
+        request_world_asset_import,
         open_in_file_manager,
         get_asset_description_from_booth,
         get_all_asset_tags,

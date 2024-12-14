@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fs, path::PathBuf};
+use std::collections::HashSet;
 
 use tauri::State;
 
@@ -8,12 +8,14 @@ use crate::{
         entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
         import_request::{
             AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
-            AvatarRelatedAssetImportResult,
+            AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
         results::{DirectoryOpenResult, FetchAssetDescriptionFromBoothResult},
     },
     fetcher::booth_fetcher::fetch_asset_details_from_booth,
-    files::asset_importer,
+    importer::import_wrapper::{
+        import_avatar_asset, import_avatar_related_asset, import_world_asset,
+    },
 };
 
 #[tauri::command]
@@ -51,68 +53,7 @@ pub fn request_avatar_asset_import(
     basic_store: State<'_, StoreProvider>,
     request: AvatarAssetImportRequest,
 ) -> AvatarAssetImportResult {
-    let asset = AvatarAsset::create(request.pre_asset.description);
-    let result = basic_store
-        .get_avatar_store()
-        .add_asset_and_save(asset.clone());
-
-    let src_import_asset_path = PathBuf::from(request.file_or_dir_absolute_path);
-    let mut destination = basic_store.app_data_dir();
-
-    destination.push("data");
-    destination.push(asset.id.to_string());
-
-    if !destination.exists() {
-        let result = fs::create_dir_all(&destination);
-
-        if result.is_err() {
-            return AvatarAssetImportResult {
-                success: false,
-                avatar_asset: None,
-                error_message: Some(result.err().unwrap().to_string()),
-            };
-        }
-    }
-
-    if result.is_err() {
-        return AvatarAssetImportResult {
-            success: false,
-            avatar_asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
-    }
-
-    let result = asset_importer::import_asset(&src_import_asset_path, &destination);
-
-    if result.is_err() {
-        let delete_result = basic_store
-            .get_avatar_store()
-            .delete_asset_and_save(asset.id);
-
-        if delete_result.is_err() {
-            return AvatarAssetImportResult {
-                success: false,
-                avatar_asset: None,
-                error_message: Some(format!(
-                    "{}, {}",
-                    result.err().unwrap(),
-                    delete_result.err().unwrap()
-                )),
-            };
-        }
-
-        return AvatarAssetImportResult {
-            success: false,
-            avatar_asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
-    }
-
-    AvatarAssetImportResult {
-        success: true,
-        avatar_asset: Some(asset),
-        error_message: None,
-    }
+    import_avatar_asset(&basic_store, request)
 }
 
 #[tauri::command]
@@ -120,72 +61,15 @@ pub fn request_avatar_related_asset_import(
     basic_store: State<'_, StoreProvider>,
     request: AvatarRelatedAssetImportRequest,
 ) -> AvatarRelatedAssetImportResult {
-    let asset = AvatarRelatedAsset::create(
-        request.pre_asset.description,
-        request.pre_asset.category,
-        request.pre_asset.supported_avatars,
-    );
-    let result = basic_store
-        .get_avatar_related_store()
-        .add_asset_and_save(asset.clone());
+    import_avatar_related_asset(&basic_store, request)
+}
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.file_or_dir_absolute_path);
-    let mut destination = basic_store.app_data_dir();
-
-    destination.push("data");
-    destination.push(asset.id.to_string());
-
-    if !destination.exists() {
-        let result = fs::create_dir_all(&destination);
-
-        if result.is_err() {
-            return AvatarRelatedAssetImportResult {
-                success: false,
-                avatar_related_asset: None,
-                error_message: Some(result.err().unwrap().to_string()),
-            };
-        }
-    }
-
-    if result.is_err() {
-        return AvatarRelatedAssetImportResult {
-            success: false,
-            avatar_related_asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
-    }
-
-    let result = asset_importer::import_asset(&src_import_asset_path, &destination);
-
-    if result.is_err() {
-        let delete_result = basic_store
-            .get_avatar_store()
-            .delete_asset_and_save(asset.id);
-
-        if delete_result.is_err() {
-            return AvatarRelatedAssetImportResult {
-                success: false,
-                avatar_related_asset: None,
-                error_message: Some(format!(
-                    "{}, {}",
-                    result.err().unwrap(),
-                    delete_result.err().unwrap()
-                )),
-            };
-        }
-
-        return AvatarRelatedAssetImportResult {
-            success: false,
-            avatar_related_asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
-    }
-
-    AvatarRelatedAssetImportResult {
-        success: true,
-        avatar_related_asset: Some(asset),
-        error_message: None,
-    }
+#[tauri::command]
+pub fn request_world_asset_import(
+    basic_store: State<'_, StoreProvider>,
+    request: WorldAssetImportRequest,
+) -> WorldAssetImportResult {
+    import_world_asset(&basic_store, request)
 }
 
 #[tauri::command]

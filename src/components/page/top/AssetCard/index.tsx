@@ -48,7 +48,7 @@ const AssetCard = ({ asset }: Props) => {
             <Folder size={24} />
             <p>開く</p>
           </Button>
-          <Button onClick={() => openEditPage()}>
+          <Button onClick={() => openEditPage()} variant={'secondary'}>
             <Edit size={24} />
           </Button>
         </div>
