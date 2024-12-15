@@ -22,10 +22,16 @@ import { cn } from '@/lib/utils'
 type Props = {
   tags: string[]
   setTags: (_tags: string[]) => void
+  disabled?: boolean
   className?: string
 }
 
-const TagPicker: FC<Props> = ({ tags, setTags, className }) => {
+const TagPicker: FC<Props> = ({
+  tags,
+  setTags,
+  disabled = false,
+  className,
+}) => {
   const { sortedAllTags, setSortedAllTags } = useTagPicker()
 
   return (
@@ -35,6 +41,7 @@ const TagPicker: FC<Props> = ({ tags, setTags, className }) => {
           variant="outline"
           role="combobox"
           className={cn('w-6 h-6', className)}
+          disabled={disabled}
         >
           <PlusIcon className="h-4 w-4 shrink-0 opacity-50" />
         </Button>

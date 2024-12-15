@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { useToast } from '@/hooks/use-toast'
 
@@ -32,14 +32,26 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { createPreAsset, sendAssetImportRequest } from './logic'
+import { Loader2 } from 'lucide-react'
+import {
+  AssetType,
+  AvatarAsset,
+  AvatarRelatedAssets,
+  WorldRelatedAssets,
+} from '@/lib/entity'
+import { AssetContext } from '@/components/context/AssetContext'
 
 type Props = {
   setTab: (tab: string) => void
+  setDialogOpen: (open: boolean) => void
 }
 
-const ManualInputTab = ({ setTab }: Props) => {
+const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
+  const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
   const { form, assetPath, assetType } = useContext(AddAssetModalContext)
+  const { addAvatarAsset, addAvatarRelatedAsset, addWorldAsset } =
+    useContext(AssetContext)
 
   if (!form) {
     return <div>Loading...</div>
@@ -50,46 +62,66 @@ const ManualInputTab = ({ setTab }: Props) => {
   }
 
   const submit = async () => {
-    const preAsset = createPreAsset({
-      assetType: assetType!,
-      description: {
-        title: form.getValues('title'),
-        author: form.getValues('author'),
-        image_src: form.getValues('image_src'),
-        tags: form.getValues('tags'),
-        created_at: new Date().toISOString(),
-      },
-      category: form.getValues('category'),
-      supportedAvatars: [],
-    })
+    if (submitting) {
+      return
+    }
 
-    if (preAsset.isFailure()) {
+    setSubmitting(true)
+
+    try {
+      const preAsset = createPreAsset({
+        assetType: assetType!,
+        description: {
+          title: form.getValues('title'),
+          author: form.getValues('author'),
+          image_src: form.getValues('image_src'),
+          tags: form.getValues('tags'),
+          created_at: new Date().toISOString(),
+        },
+        category: form.getValues('category'),
+        supportedAvatars: [],
+      })
+
+      if (preAsset.isFailure()) {
+        toast({
+          title: 'データのインポートに失敗しました',
+          description: preAsset.error.message,
+        })
+
+        return
+      }
+
+      const result = await sendAssetImportRequest(
+        assetType!,
+        assetPath!,
+        preAsset.value,
+      )
+
+      if (result.isSuccess()) {
+        console.log(result.value)
+        if (assetType === AssetType.Avatar) {
+          addAvatarAsset(result.value as AvatarAsset)
+        } else if (assetType === AssetType.AvatarRelated) {
+          addAvatarRelatedAsset(result.value as AvatarRelatedAssets)
+        } else if (assetType === AssetType.World) {
+          addWorldAsset(result.value as WorldRelatedAssets)
+        }
+
+        toast({
+          title: 'データのインポートが完了しました！',
+        })
+
+        setDialogOpen(false)
+        return
+      }
+
       toast({
         title: 'データのインポートに失敗しました',
-        description: preAsset.error.message,
+        description: result.error.message,
       })
-
-      return
+    } finally {
+      setSubmitting(false)
     }
-
-    const result = await sendAssetImportRequest(
-      assetType!,
-      assetPath!,
-      preAsset.value,
-    )
-
-    if (result.isSuccess()) {
-      toast({
-        title: 'データのインポートが完了しました！',
-      })
-
-      return
-    }
-
-    toast({
-      title: 'データのインポートに失敗しました',
-      description: result.error.message,
-    })
   }
 
   const image_src = form.getValues('image_src')
@@ -130,6 +162,7 @@ const ManualInputTab = ({ setTab }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="アセットの名前を入力..."
+                          disabled={submitting}
                           {...field}
                         />
                       </FormControl>
@@ -149,6 +182,7 @@ const ManualInputTab = ({ setTab }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="ショップの名前を入力..."
+                          disabled={submitting}
                           {...field}
                         />
                       </FormControl>
@@ -180,6 +214,7 @@ const ManualInputTab = ({ setTab }: Props) => {
                           <TagPicker
                             tags={field.value || []}
                             setTags={(tags) => form.setValue('tags', tags)}
+                            disabled={submitting}
                             className="mb-2 mr-2"
                           />
                         </TagList>
@@ -206,6 +241,7 @@ const ManualInputTab = ({ setTab }: Props) => {
                             form.setValue('category', value)
                             console.log(value)
                           }}
+                          disabled={submitting}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="カテゴリを選択" />
@@ -232,10 +268,17 @@ const ManualInputTab = ({ setTab }: Props) => {
               </div>
             </div>
             <div className="w-full flex justify-between">
-              <Button variant="outline" onClick={backToAssetTypeSelectorTab}>
+              <Button
+                variant="outline"
+                onClick={backToAssetTypeSelectorTab}
+                disabled={submitting}
+              >
                 戻る
               </Button>
-              <Button type="submit">アセットを追加</Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting && <Loader2 className="animate-spin" />}
+                アセットを追加
+              </Button>
             </div>
           </form>
         </Form>

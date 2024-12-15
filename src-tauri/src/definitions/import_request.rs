@@ -26,20 +26,20 @@ pub struct WorldAssetImportRequest {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AvatarAssetImportResult {
     pub success: bool,
-    pub avatar_asset: Option<AvatarAsset>,
+    pub asset: Option<AvatarAsset>,
     pub error_message: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AvatarRelatedAssetImportResult {
     pub success: bool,
-    pub avatar_related_asset: Option<AvatarRelatedAsset>,
+    pub asset: Option<AvatarRelatedAsset>,
     pub error_message: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WorldAssetImportResult {
     pub success: bool,
-    pub world_asset: Option<WorldAsset>,
+    pub asset: Option<WorldAsset>,
     pub error_message: Option<String>,
 }

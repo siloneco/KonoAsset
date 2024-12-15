@@ -25,7 +25,7 @@ pub fn import_avatar_asset(
     if result.is_err() {
         return AvatarAssetImportResult {
             success: false,
-            avatar_asset: None,
+            asset: None,
             error_message: Some(result.err().unwrap().to_string()),
         };
     }
@@ -45,7 +45,7 @@ pub fn import_avatar_asset(
 
         return AvatarAssetImportResult {
             success: false,
-            avatar_asset: None,
+            asset: None,
             error_message: Some(match delete_asset_result {
                 Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
                 Err(e) => format!(
@@ -59,7 +59,7 @@ pub fn import_avatar_asset(
 
     AvatarAssetImportResult {
         success: true,
-        avatar_asset: Some(asset),
+        asset: Some(asset),
         error_message: None,
     }
 }
@@ -80,7 +80,7 @@ pub fn import_avatar_related_asset(
     if result.is_err() {
         return AvatarRelatedAssetImportResult {
             success: false,
-            avatar_related_asset: None,
+            asset: None,
             error_message: Some(result.err().unwrap().to_string()),
         };
     }
@@ -100,7 +100,7 @@ pub fn import_avatar_related_asset(
 
         return AvatarRelatedAssetImportResult {
             success: false,
-            avatar_related_asset: None,
+            asset: None,
             error_message: Some(match delete_asset_result {
                 Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
                 Err(e) => format!(
@@ -114,7 +114,7 @@ pub fn import_avatar_related_asset(
 
     AvatarRelatedAssetImportResult {
         success: true,
-        avatar_related_asset: Some(asset),
+        asset: Some(asset),
         error_message: None,
     }
 }
@@ -131,7 +131,7 @@ pub fn import_world_asset(
     if result.is_err() {
         return WorldAssetImportResult {
             success: false,
-            world_asset: None,
+            asset: None,
             error_message: Some(result.err().unwrap().to_string()),
         };
     }
@@ -151,7 +151,7 @@ pub fn import_world_asset(
 
         return WorldAssetImportResult {
             success: false,
-            world_asset: None,
+            asset: None,
             error_message: Some(match delete_asset_result {
                 Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
                 Err(e) => format!(
@@ -165,7 +165,7 @@ pub fn import_world_asset(
 
     WorldAssetImportResult {
         success: true,
-        world_asset: Some(asset),
+        asset: Some(asset),
         error_message: None,
     }
 }

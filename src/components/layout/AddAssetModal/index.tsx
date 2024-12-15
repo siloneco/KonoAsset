@@ -38,6 +38,7 @@ const AddAssetModal = () => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
   const [assetType, setAssetType] = useState<AssetType>(AssetType.Avatar)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const formSchema = z.object({
     title: z.string().min(1),
@@ -59,7 +60,7 @@ const AddAssetModal = () => {
   })
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button className="w-full h-12" onClick={() => setTab('selector')}>
           <Plus size={24} />
@@ -79,7 +80,7 @@ const AddAssetModal = () => {
             <SelectorTab setTab={setTab} />
             <BoothInputTab setTab={setTab} />
             <AssetTypeSelectorTab setTab={setTab} />
-            <ManualInputTab setTab={setTab} />
+            <ManualInputTab setTab={setTab} setDialogOpen={setDialogOpen} />
           </AddAssetModalContext.Provider>
         </Tabs>
       </DialogContent>
