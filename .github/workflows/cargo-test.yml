@@ -1,5 +1,8 @@
 name: Cargo Test
 on:
+  push:
+    paths:
+      - "src-tauri/**"
   pull_request:
     types:
       - reopened
@@ -13,6 +16,7 @@ permissions:
 
 jobs:
   test:
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
     name: Run cargo test
     runs-on: ubuntu-latest
     steps:
