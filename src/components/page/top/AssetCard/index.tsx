@@ -3,7 +3,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { AvatarAsset, DirectoryOpenResult } from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
+import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { Edit, Folder } from 'lucide-react'
 
 type Props = {
@@ -35,7 +35,7 @@ const AssetCard = ({ asset }: Props) => {
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
           <img
-            src={asset.description.image_src}
+            src={convertFileSrc(asset.description.image_src)}
             alt={asset.description.title}
             className="w-full rounded-sm"
           />

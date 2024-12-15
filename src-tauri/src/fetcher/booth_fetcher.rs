@@ -1,9 +1,10 @@
-use std::time::Duration;
-
 use chrono::Local;
+use regex::Regex;
 use serde::Deserialize;
 
 use crate::definitions::entities::{AssetDescription, AssetType};
+
+use super::common::get_reqwest_client;
 
 #[derive(Deserialize)]
 struct BoothJson {
@@ -31,6 +32,10 @@ struct BoothCategory {
 pub fn fetch_asset_details_from_booth(
     url: &str,
 ) -> Result<(AssetDescription, Option<AssetType>), Box<dyn std::error::Error>> {
+    if !validate_booth_url(url) {
+        return Err(format!("Invalid Booth URL specified: {}", url).into());
+    }
+
     let url = format!("{}.json", url);
     let response: BoothJson = get_reqwest_client().get(url).send()?.json()?;
 
@@ -63,10 +68,41 @@ pub fn fetch_asset_details_from_booth(
     ))
 }
 
-fn get_reqwest_client() -> reqwest::blocking::Client {
-    reqwest::blocking::Client::builder()
-        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
-        .timeout(Duration::from_secs(5))
-        .build()
-        .unwrap()
+pub fn validate_booth_url(url: &str) -> bool {
+    let top_regex = Regex::new(r"^https://booth\.pm/[a-z-]{2,5}/items/[0-9]+$").unwrap();
+    let shop_regex = Regex::new(r"^https://[a-z-]+\.booth\.pm/items/[0-9]+$").unwrap();
+
+    top_regex.is_match(url) || shop_regex.is_match(url)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_validate_booth_url() {
+        // 正常系 ( booth.pm )
+        assert_eq!(validate_booth_url("https://booth.pm/ja/items/123456"), true);
+        assert_eq!(validate_booth_url("https://booth.pm/ja/items/123456"), true);
+        assert_eq!(validate_booth_url("https://booth.pm/en/items/123456"), true);
+        assert_eq!(validate_booth_url("https://booth.pm/zh-tw/items/123456"), true);
+
+        // 異常系 ( <shop-name>.booth.pm )
+        assert_eq!(validate_booth_url("https://shop.booth.pm/items/123456"), true);
+        assert_eq!(validate_booth_url("https://shop-name-that-contains-hyphen.booth.pm/items/123456"), true);
+
+        // 異常系: HTTP
+        assert_eq!(validate_booth_url("http://booth.pm/ja/items/123456"), false);
+        assert_eq!(validate_booth_url("http://shop.booth.pm/items/123456"), false);
+
+        // 異常系: 商品IDが数字で構成されていない場合
+        assert_eq!(validate_booth_url("https://booth.pm/ja/items/abc123"), false);
+        assert_eq!(validate_booth_url("https://shop.booth.pm/items/abc123"), false);
+
+        // 異常系: ショップのURLなのに言語指定がある場合
+        assert_eq!(validate_booth_url("https://shop.booth.pm/ja/items/123456"), false);
+
+        // 異常系: 不適切ドメイン
+        assert_eq!(validate_booth_url("https://example.com/ja/items/123456"), false);
+    }
 }

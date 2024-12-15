@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "chrono",
+        "pximg",
+        "reqwest",
         "tauri"
     ],
     "prettier.semi": false,
