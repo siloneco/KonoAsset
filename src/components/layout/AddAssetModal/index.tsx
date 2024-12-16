@@ -29,15 +29,20 @@ export const AddAssetModalContext = createContext<{
   setAssetPath: (path: string) => void
   assetType?: AssetType
   setAssetType: (type: AssetType) => void
+
+  supportedAvatars?: string[]
+  setSupportedAvatars: (avatars: string[]) => void
 }>({
   setAssetPath: () => {},
   setAssetType: () => {},
+  setSupportedAvatars: () => {},
 })
 
 const AddAssetModal = () => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
   const [assetType, setAssetType] = useState<AssetType>(AssetType.Avatar)
+  const [supportedAvatars, setSupportedAvatars] = useState<string[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const formSchema = z.object({
@@ -59,6 +64,17 @@ const AddAssetModal = () => {
     },
   })
 
+  const contextValue = {
+    form,
+    assetPath,
+    setAssetPath,
+    assetType,
+    setAssetType,
+
+    supportedAvatars,
+    setSupportedAvatars,
+  }
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
@@ -74,9 +90,7 @@ const AddAssetModal = () => {
         }}
       >
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <AddAssetModalContext.Provider
-            value={{ form, assetPath, setAssetPath, assetType, setAssetType }}
-          >
+          <AddAssetModalContext.Provider value={contextValue}>
             <SelectorTab setTab={setTab} />
             <BoothInputTab setTab={setTab} />
             <AssetTypeSelectorTab setTab={setTab} />

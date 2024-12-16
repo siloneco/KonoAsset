@@ -26,21 +26,36 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext } from 'react'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
+import { AssetType } from '@/lib/entity'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
 
-  const { textFilter, setTextFilter } = useContext(AssetFilterContext)
+  const { assetType, textFilter, setTextFilter } =
+    useContext(AssetFilterContext)
 
   function openAboutPage() {
     document.location.href = `/about`
+  }
+
+  let assetTypeDisplay
+  if (assetType === '') {
+    assetTypeDisplay = 'すべて'
+  } else if (assetType === AssetType.Avatar) {
+    assetTypeDisplay = 'アバター'
+  } else if (assetType === AssetType.AvatarRelated) {
+    assetTypeDisplay = 'アバター関連'
+  } else if (assetType === AssetType.World) {
+    assetTypeDisplay = 'ワールド'
   }
 
   return (
     <Sidebar>
       <SidebarContent>
         <div className="flex flex-row items-center">
-          <div className="m-2 border-2 text-lg">KonoAsset</div>
+          <div className="m-2 border-2 text-lg p-1 px-4 rounded-lg">
+            KonoAsset
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -84,7 +99,12 @@ const MainSidebar = () => {
               defaultValue={['type-selector']}
             >
               <AccordionItem value="type-selector">
-                <AccordionTrigger>タイプ選択</AccordionTrigger>
+                <AccordionTrigger>
+                  タイプ選択
+                  <span className="ml-2 mr-auto text-foreground/50">
+                    ({assetTypeDisplay})
+                  </span>
+                </AccordionTrigger>
                 <AccordionContent>
                   <TypeSelector />
                 </AccordionContent>

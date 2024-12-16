@@ -20,17 +20,7 @@ import { AddAssetModalContext } from '../../..'
 import { useToast } from '@/hooks/use-toast'
 
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import TagPicker from '@/components/model/TagPicker'
-import TagList from '@/components/model/TagList'
-import { Separator } from '@/components/ui/separator'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { Loader2 } from 'lucide-react'
 import {
@@ -40,6 +30,9 @@ import {
   WorldAsset,
 } from '@/lib/entity'
 import { AssetContext } from '@/components/context/AssetContext'
+import AvatarLayout from './layout/AvatarLayout'
+import AvatarRelatedLayout from './layout/AvatarRelatedLayout'
+import WorldLayout from './layout/WorldLayout'
 
 type Props = {
   setTab: (tab: string) => void
@@ -49,7 +42,8 @@ type Props = {
 const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
   const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
-  const { form, assetPath, assetType } = useContext(AddAssetModalContext)
+  const { form, assetPath, assetType, supportedAvatars } =
+    useContext(AddAssetModalContext)
   const { addAvatarAsset, addAvatarRelatedAsset, addWorldAsset } =
     useContext(AssetContext)
 
@@ -79,7 +73,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
           created_at: new Date().toISOString(),
         },
         category: form.getValues('category'),
-        supportedAvatars: [],
+        supportedAvatars: supportedAvatars,
       })
 
       if (preAsset.isFailure()) {
@@ -196,77 +190,16 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
               </div>
             </div>
 
-            <div className="w-full flex flex-row space-x-2">
-              <div className="w-1/2">
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => {
-                    if (field.value === undefined) {
-                      form.setValue('tags', [])
-                      field.value = []
-                    }
+            {assetType === AssetType.Avatar && (
+              <AvatarLayout submitting={submitting} />
+            )}
+            {assetType === AssetType.AvatarRelated && (
+              <AvatarRelatedLayout submitting={submitting} />
+            )}
+            {assetType === AssetType.World && (
+              <WorldLayout submitting={submitting} />
+            )}
 
-                    return (
-                      <FormItem>
-                        <FormLabel>タグ</FormLabel>
-                        <TagList tags={field.value || []}>
-                          <TagPicker
-                            tags={field.value || []}
-                            setTags={(tags) => form.setValue('tags', tags)}
-                            disabled={submitting}
-                            className="mb-2 mr-2"
-                          />
-                        </TagList>
-                        <FormDescription>
-                          タグはアセットの絞り込みや分類に利用されます
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )
-                  }}
-                />
-              </div>
-              <Separator orientation="vertical" className="h-32 my-auto" />
-              <div className="w-1/2">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={() => {
-                    return (
-                      <FormItem>
-                        <FormLabel>カテゴリ</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            form.setValue('category', value)
-                            console.log(value)
-                          }}
-                          disabled={submitting}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="カテゴリを選択" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="hair">髪</SelectItem>
-                              <SelectItem value="costume">衣装</SelectItem>
-                              <SelectItem value="accessory">
-                                アクセサリ
-                              </SelectItem>
-                              <SelectItem value="halo">ヘイロー</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          カテゴリはアセットの絞り込みや分類に利用されます
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )
-                  }}
-                />
-              </div>
-            </div>
             <div className="w-full flex justify-between">
               <Button
                 variant="outline"

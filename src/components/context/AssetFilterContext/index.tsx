@@ -5,8 +5,8 @@ export type AssetFilterContextType = {
   textFilter: string
   setTextFilter: (filter: string) => void
 
-  assetType?: AssetType
-  setAssetType: (type: AssetType | undefined) => void
+  assetType: AssetType | ''
+  setAssetType: (type: AssetType | '') => void
 
   supportedAvatarFilter: string[]
   setSupportedAvatarFilter: (filter: string[]) => void
@@ -22,6 +22,7 @@ export const AssetFilterContext = createContext<AssetFilterContextType>({
   textFilter: '',
   setTextFilter: () => {},
 
+  assetType: '',
   setAssetType: () => {},
 
   supportedAvatarFilter: [],

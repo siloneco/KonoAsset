@@ -1,4 +1,5 @@
-import { Label } from '@/components/ui/label'
+import { AssetFilterContext } from '@/components/context/AssetFilterContext'
+import { Card } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -7,20 +8,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { AssetType } from '@/lib/entity'
+import { useContext } from 'react'
 
 const NavBar = () => {
+  const { assetType, textFilter } = useContext(AssetFilterContext)
+
+  let assetTypeDisplay
+
+  if (assetType === AssetType.Avatar) {
+    assetTypeDisplay = 'アバター'
+  } else if (assetType === AssetType.AvatarRelated) {
+    assetTypeDisplay = 'アバター関連'
+  } else if (assetType === AssetType.World) {
+    assetTypeDisplay = 'ワールド'
+  }
+
   return (
     <div className="m-4">
       <div className="flex flex-row w-full">
-        <div className="flex flex-row text-center items-center pl-4 space-x-6 rounded-lg w-full bg-red-100 dark:bg-red-200">
-          <Label className="text-base dark:text-black">
-            <span className="text-gray-700/50">タイプ: </span>
-            アバター関連アセット
-          </Label>
-          <Label className="text-base dark:text-black">
-            <span className="text-gray-700/50">対応アバター: </span>マヌカ,
-            セレスティア
-          </Label>
+        <div className="w-full">
+          <Card className="p-3 pl-4 h-12 flex flex-row">
+            {assetType !== '' && (
+              <div className="">
+                <span className="text-foreground/70">タイプ: </span>
+                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
+                  {assetTypeDisplay}
+                </span>
+              </div>
+            )}
+            {textFilter !== '' && (
+              <div>
+                <span className="text-foreground/70">文字検索: </span>
+                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
+                  {textFilter}
+                </span>
+              </div>
+            )}
+          </Card>
         </div>
         <div className="w-fit mx-2 flex items-center">
           <Select>

@@ -34,11 +34,11 @@ const AssetList = () => {
   const filterEnforced = isFilterEnforced(textFilter)
 
   const displayAvatarAssets =
-    assetType === undefined || assetType === AssetType.Avatar
+    (assetType as string) === '' || assetType === AssetType.Avatar
   const displayAvatarRelatedAssets =
-    assetType === undefined || assetType === AssetType.AvatarRelated
+    (assetType as string) === '' || assetType === AssetType.AvatarRelated
   const displayWorldAssets =
-    assetType === undefined || assetType === AssetType.World
+    (assetType as string) === '' || assetType === AssetType.World
 
   return (
     <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

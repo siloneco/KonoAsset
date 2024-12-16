@@ -25,7 +25,7 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const [textFilter, setTextFilter] = useState('')
-  const [assetType, setAssetType] = useState<AssetType | undefined>(undefined)
+  const [assetType, setAssetType] = useState<AssetType | ''>('')
   const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
     [],
   )
