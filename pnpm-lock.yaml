@@ -148,7 +148,7 @@ importers:
         specifier: 15.13.0
         version: 15.13.0
       husky:
-        specifier: ^9.1.7
+        specifier: 9.1.7
         version: 9.1.7
       postcss:
         specifier: 8.4.49
