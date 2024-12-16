@@ -18,21 +18,32 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { useContext } from 'react'
+import { invoke } from '@tauri-apps/api/core'
+import { useContext, useEffect, useState } from 'react'
 
 type Props = {
   submitting: boolean
 }
 
-const OPTIONS: Option[] = [
-  { label: 'マヌカ', value: 'マヌカ' },
-  { label: 'シフォン', value: 'シフォン' },
-  { label: 'ライム', value: 'ライム' },
-  { label: 'しなの', value: 'しなの' },
-]
-
 const AvatarRelatedLayout = ({ submitting }: Props) => {
   const { form, setSupportedAvatars } = useContext(AddAssetModalContext)
+  const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
+    Option[]
+  >([])
+
+  const fetchSupportedAvatars = async () => {
+    const result: string[] = await invoke('get_all_supported_avatar_values')
+
+    const options = result.map((value) => {
+      return { label: value, value }
+    })
+
+    setSupportedAvatarCandidates(options)
+  }
+
+  useEffect(() => {
+    fetchSupportedAvatars()
+  }, [])
 
   if (!form) {
     return <div>Loading...</div>
@@ -50,11 +61,13 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                 <FormItem>
                   <FormLabel>対応アバター</FormLabel>
                   <MultipleSelector
-                    defaultOptions={OPTIONS}
+                    defaultOptions={supportedAvatarCandidates}
                     placeholder="対応アバターを選択..."
+                    hidePlaceholderWhenSelected
+                    creatable
                     emptyIndicator={
-                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                        no results found.
+                      <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                        入力して作成
                       </p>
                     }
                     onChange={(value) => {

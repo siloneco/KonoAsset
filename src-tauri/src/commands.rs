@@ -156,6 +156,23 @@ pub fn get_all_asset_tags(basic_store: State<'_, StoreProvider>) -> Vec<String> 
 }
 
 #[tauri::command]
+pub fn get_all_supported_avatar_values(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+    let mut values: HashSet<String> = HashSet::new();
+
+    basic_store
+        .get_avatar_related_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            asset.supported_avatars.iter().for_each(|val| {
+                values.insert(val.clone());
+            });
+        });
+
+    values.into_iter().collect()
+}
+
+#[tauri::command]
 pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> Vec<String> {
     let mut categories: HashSet<String> = HashSet::new();
 

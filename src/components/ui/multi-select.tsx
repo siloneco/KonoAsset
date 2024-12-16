@@ -381,7 +381,7 @@ const MultipleSelector = React.forwardRef<
             onChange?.(newOptions)
           }}
         >
-          {`Create "${inputValue}"`}
+          {`新しく作成: "${inputValue}"`}
         </CommandItem>
       )
 
