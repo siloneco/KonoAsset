@@ -2,8 +2,8 @@ import { createContext } from 'react'
 import {
   AssetType,
   AvatarAsset,
-  AvatarRelatedAssets,
-  WorldRelatedAssets,
+  AvatarRelatedAsset,
+  WorldAsset,
 } from '@/lib/entity'
 
 export type AssetContextType = {
@@ -12,14 +12,14 @@ export type AssetContextType = {
   addAvatarAsset: (asset: AvatarAsset) => void
   deleteAvatarAsset: (id: string) => void
 
-  avatarRelatedAssets: AvatarRelatedAssets[]
-  setAvatarRelatedAssets: (assets: AvatarRelatedAssets[]) => void
-  addAvatarRelatedAsset: (asset: AvatarRelatedAssets) => void
+  avatarRelatedAssets: AvatarRelatedAsset[]
+  setAvatarRelatedAssets: (assets: AvatarRelatedAsset[]) => void
+  addAvatarRelatedAsset: (asset: AvatarRelatedAsset) => void
   deleteAvatarRelatedAsset: (id: string) => void
 
-  worldAssets: WorldRelatedAssets[]
-  setWorldAssets: (assets: WorldRelatedAssets[]) => void
-  addWorldAsset: (asset: WorldRelatedAssets) => void
+  worldAssets: WorldAsset[]
+  setWorldAssets: (assets: WorldAsset[]) => void
+  addWorldAsset: (asset: WorldAsset) => void
   deleteWorldAsset: (id: string) => void
 
   refreshAssets: (assetType?: AssetType) => Promise<void>

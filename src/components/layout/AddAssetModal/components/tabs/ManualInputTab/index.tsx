@@ -36,8 +36,8 @@ import { Loader2 } from 'lucide-react'
 import {
   AssetType,
   AvatarAsset,
-  AvatarRelatedAssets,
-  WorldRelatedAssets,
+  AvatarRelatedAsset,
+  WorldAsset,
 } from '@/lib/entity'
 import { AssetContext } from '@/components/context/AssetContext'
 
@@ -102,9 +102,9 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
         if (assetType === AssetType.Avatar) {
           addAvatarAsset(result.value as AvatarAsset)
         } else if (assetType === AssetType.AvatarRelated) {
-          addAvatarRelatedAsset(result.value as AvatarRelatedAssets)
+          addAvatarRelatedAsset(result.value as AvatarRelatedAsset)
         } else if (assetType === AssetType.World) {
-          addWorldAsset(result.value as WorldRelatedAssets)
+          addWorldAsset(result.value as WorldAsset)
         }
 
         toast({

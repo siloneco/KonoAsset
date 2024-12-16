@@ -4,11 +4,11 @@ import {
   AssetImportResult,
   AssetType,
   AvatarAsset,
-  AvatarRelatedAssets,
+  AvatarRelatedAsset,
   PreAvatarAsset,
-  PreAvatarRelatedAssets,
-  PreWorldRelatedAssets,
-  WorldRelatedAssets,
+  PreAvatarRelatedAsset,
+  PreWorldAsset,
+  WorldAsset,
 } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
 import { Failure, Result, Success } from '@/lib/Result'
@@ -26,7 +26,7 @@ export const createPreAsset = ({
   category,
   supportedAvatars,
 }: CreatePreAssetProps): Result<
-  PreAvatarAsset | PreAvatarRelatedAssets | PreWorldRelatedAssets,
+  PreAvatarAsset | PreAvatarRelatedAsset | PreWorldAsset,
   Error
 > => {
   if (assetType === AssetType.Avatar) {
@@ -36,7 +36,7 @@ export const createPreAsset = ({
 
     return new Success(preAsset)
   } else if (assetType === AssetType.AvatarRelated) {
-    const preAsset: PreAvatarRelatedAssets = {
+    const preAsset: PreAvatarRelatedAsset = {
       description,
       category: category!,
       supported_avatars: supportedAvatars!,
@@ -44,7 +44,7 @@ export const createPreAsset = ({
 
     return new Success(preAsset)
   } else if (assetType === AssetType.World) {
-    const preAsset: PreWorldRelatedAssets = {
+    const preAsset: PreWorldAsset = {
       description,
       category: category!,
     }
@@ -58,10 +58,8 @@ export const createPreAsset = ({
 export const sendAssetImportRequest = async (
   assetType: AssetType,
   assetPath: string,
-  preAsset: PreAvatarAsset | PreAvatarRelatedAssets | PreWorldRelatedAssets,
-): Promise<
-  Result<AvatarAsset | AvatarRelatedAssets | WorldRelatedAssets, Error>
-> => {
+  preAsset: PreAvatarAsset | PreAvatarRelatedAsset | PreWorldAsset,
+): Promise<Result<AvatarAsset | AvatarRelatedAsset | WorldAsset, Error>> => {
   const request: AssetImportRequest = {
     file_or_dir_absolute_path: assetPath,
     pre_asset: preAsset,

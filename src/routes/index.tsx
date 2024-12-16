@@ -5,8 +5,8 @@ import { useState } from 'react'
 import {
   AssetType,
   AvatarAsset,
-  AvatarRelatedAssets,
-  WorldRelatedAssets,
+  AvatarRelatedAsset,
+  WorldAsset,
 } from '@/lib/entity'
 import {
   AssetFilterContext,
@@ -34,9 +34,9 @@ function RouteComponent() {
 
   const [avatarAssets, setAvatarAssets] = useState<AvatarAsset[]>([])
   const [avatarRelatedAssets, setAvatarRelatedAssets] = useState<
-    AvatarRelatedAssets[]
+    AvatarRelatedAsset[]
   >([])
-  const [worldAssets, setWorldAssets] = useState<WorldRelatedAssets[]>([])
+  const [worldAssets, setWorldAssets] = useState<WorldAsset[]>([])
 
   const assetContextValue: AssetContextType = {
     avatarAssets: avatarAssets,
@@ -50,7 +50,7 @@ function RouteComponent() {
 
     avatarRelatedAssets: avatarRelatedAssets,
     setAvatarRelatedAssets: setAvatarRelatedAssets,
-    addAvatarRelatedAsset: (asset: AvatarRelatedAssets) => {
+    addAvatarRelatedAsset: (asset: AvatarRelatedAsset) => {
       setAvatarRelatedAssets([...avatarRelatedAssets, asset])
     },
     deleteAvatarRelatedAsset: (id: string) => {
@@ -61,7 +61,7 @@ function RouteComponent() {
 
     worldAssets: worldAssets,
     setWorldAssets: setWorldAssets,
-    addWorldAsset: (asset: WorldRelatedAssets) => {
+    addWorldAsset: (asset: WorldAsset) => {
       setWorldAssets([...worldAssets, asset])
     },
     deleteWorldAsset: (id: string) => {
@@ -75,11 +75,11 @@ function RouteComponent() {
       }
       if (assetType === undefined || assetType === AssetType.AvatarRelated) {
         const result = await invoke('get_avatar_related_assets')
-        setAvatarRelatedAssets(result as AvatarRelatedAssets[])
+        setAvatarRelatedAssets(result as AvatarRelatedAsset[])
       }
       if (assetType === undefined || assetType === AssetType.World) {
         const result = await invoke('get_world_assets')
-        setWorldAssets(result as WorldRelatedAssets[])
+        setWorldAssets(result as WorldAsset[])
       }
     },
   }

@@ -11,22 +11,22 @@ export type AvatarAsset = {
   description: AssetDescription
 }
 
-export type AvatarRelatedAssets = {
+export type AvatarRelatedAsset = {
   id: string
   description: AssetDescription
   category: string
   supported_avatars: string[]
 }
 
-export type WorldRelatedAssets = {
+export type WorldAsset = {
   id: string
   description: AssetDescription
   category: string
 }
 
 export type PreAvatarAsset = Omit<AvatarAsset, 'id'>
-export type PreAvatarRelatedAssets = Omit<AvatarRelatedAssets, 'id'>
-export type PreWorldRelatedAssets = Omit<WorldRelatedAssets, 'id'>
+export type PreAvatarRelatedAsset = Omit<AvatarRelatedAsset, 'id'>
+export type PreWorldAsset = Omit<WorldAsset, 'id'>
 
 export enum AssetType {
   Avatar = 'Avatar',
@@ -35,13 +35,13 @@ export enum AssetType {
 }
 
 export type AssetImportRequest = {
-  pre_asset: PreAvatarAsset | PreAvatarRelatedAssets | PreWorldRelatedAssets
+  pre_asset: PreAvatarAsset | PreAvatarRelatedAsset | PreWorldAsset
   file_or_dir_absolute_path: string
 }
 
 export type AssetImportResult = {
   success: boolean
-  asset?: AvatarAsset | AvatarRelatedAssets | WorldRelatedAssets
+  asset?: AvatarAsset | AvatarRelatedAsset | WorldAsset
   error_message?: string
 }
 
