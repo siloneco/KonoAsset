@@ -9,17 +9,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from '@/components/ui/select'
+
 import { Separator } from '@/components/ui/separator'
 import { invoke } from '@tauri-apps/api/core'
 import { useContext, useEffect, useState } from 'react'
+import CategorySelector from '../../components/CategorySelector'
 
 type Props = {
   submitting: boolean
@@ -30,6 +24,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
+  const [categoryCandidates, setCategoryCandidates] = useState<string[]>([])
 
   const fetchSupportedAvatars = async () => {
     const result: string[] = await invoke('get_all_supported_avatar_values')
@@ -41,8 +36,14 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
     setSupportedAvatarCandidates(options)
   }
 
+  const fetchExistingCategories = async () => {
+    const result: string[] = await invoke('get_avatar_related_categories')
+    setCategoryCandidates(result)
+  }
+
   useEffect(() => {
     fetchSupportedAvatars()
+    fetchExistingCategories()
   }, [])
 
   if (!form) {
@@ -61,7 +62,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                 <FormItem>
                   <FormLabel>対応アバター</FormLabel>
                   <MultipleSelector
-                    defaultOptions={supportedAvatarCandidates}
+                    options={supportedAvatarCandidates}
                     placeholder="対応アバターを選択..."
                     hidePlaceholderWhenSelected
                     creatable
@@ -92,24 +93,16 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
               return (
                 <FormItem>
                   <FormLabel>カテゴリ</FormLabel>
-                  <Select
+                  <CategorySelector
                     onValueChange={(value) => {
                       form.setValue('category', value)
                     }}
-                    disabled={submitting}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="カテゴリを選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="hair">髪</SelectItem>
-                        <SelectItem value="costume">衣装</SelectItem>
-                        <SelectItem value="accessory">アクセサリ</SelectItem>
-                        <SelectItem value="halo">ヘイロー</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    categoryCandidates={categoryCandidates}
+                    addNewCategory={(value) => {
+                      setCategoryCandidates((prev) => [...prev, value])
+                    }}
+                    submitting={submitting}
+                  />
                   <FormDescription>
                     カテゴリはアセットの絞り込みや分類に利用されます
                   </FormDescription>
