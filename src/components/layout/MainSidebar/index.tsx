@@ -22,9 +22,15 @@ import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import AddAssetModal from '../AddAssetModal'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useContext } from 'react'
+import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
+
+  const { textFilter, setTextFilter } = useContext(AssetFilterContext)
 
   function openAboutPage() {
     document.location.href = `/about`
@@ -63,6 +69,15 @@ const MainSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent className="p-2">
             <AddAssetModal />
+            <div className="my-4">
+              <Label>テキストで検索</Label>
+              <Input
+                placeholder="キーワードを入力..."
+                className="mt-1"
+                value={textFilter}
+                onChange={(e) => setTextFilter(e.target.value)}
+              />
+            </div>
             <Accordion
               type="multiple"
               className="w-full"

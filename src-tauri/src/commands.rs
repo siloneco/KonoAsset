@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 
 use tauri::State;
+use uuid::Uuid;
 
 use crate::{
-    data_store::provider::StoreProvider,
+    data_store::{provider::StoreProvider, search::text_search},
     definitions::{
         entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
         import_request::{
@@ -167,4 +168,9 @@ pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> V
         });
 
     categories.into_iter().collect()
+}
+
+#[tauri::command]
+pub fn filter_by_text(basic_store: State<'_, StoreProvider>, text: String) -> Vec<Uuid> {
+    text_search(&basic_store, &text)
 }
