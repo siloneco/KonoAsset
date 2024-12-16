@@ -1,0 +1,1 @@
+cd src-tauri && cargo test --all-features
