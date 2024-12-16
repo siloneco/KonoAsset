@@ -118,9 +118,18 @@ impl AssetTrait for WorldAsset {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum AssetType {
     Avatar,
     AvatarRelated,
     World,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FilterRequest {
+    pub asset_type: Option<AssetType>,
+    pub query: Option<String>,
+    pub categories: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
+    pub supported_avatars: Option<Vec<String>>,
 }

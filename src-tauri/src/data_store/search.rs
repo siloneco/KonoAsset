@@ -1,43 +1,103 @@
 use uuid::Uuid;
 
-use crate::definitions::entities::AssetDescription;
+use crate::definitions::{entities::{AssetDescription, AssetType, FilterRequest}, traits::AssetTrait};
 
 use super::provider::StoreProvider;
 
-pub fn text_search(store: &StoreProvider, query: &str) -> Vec<Uuid> {
-    let texts = split_by_space(query);
+pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
     let mut results = Vec::new();
 
-    store
-        .get_avatar_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            if check_text_contains(&asset.description, &texts)
-            {
-                results.push(asset.id);
-            }
-        });
+    let query_texts: Option<Vec<&str>> = match &request.query {
+        Some(query) => Some(split_by_space(query)),
+        None => None,
+    };
 
-    store.get_avatar_related_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            if check_text_contains(&asset.description, &texts)
-            {
-                results.push(asset.id);
+    if request.asset_type.is_none() || request.asset_type.as_ref().unwrap() == &AssetType::Avatar {
+        store.get_avatar_store().get_assets().iter().for_each(|asset| {
+            // カテゴリが指定されている場合はアバターにカテゴリの概念がないので全部スキップ
+            if request.categories.is_some() {
+                return;
             }
-        });
-        
-    store.get_world_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            if check_text_contains(&asset.description, &texts)
-            {
-                results.push(asset.id);
+            // 対応アバターが指定されている場合はアバターに対応アバターの概念がないので全部スキップ
+            if request.supported_avatars.is_some() {
+                return;
             }
+            // クエリが指定されている場合は、テキストに含まれているかを確認
+            if query_texts.clone().is_some() {
+                if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                    return;
+                }
+            }
+            // タグが指定されている場合は、そのタグが全て設定されているかを確認
+            if request.tags.is_some() {
+                if !request.tags.clone().unwrap().iter().all(|tag| asset.description.tags.contains(&tag)) {
+                    return;
+                }
+            }
+
+            results.push(asset.get_id());
         });
+    }
+
+    if request.asset_type.is_none() || request.asset_type.as_ref().unwrap() == &AssetType::AvatarRelated {
+        store.get_avatar_related_store().get_assets().iter().for_each(|asset| {
+            // クエリが指定されている場合は、テキストに含まれているかを確認
+            if query_texts.clone().is_some() {
+                if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                    return;
+                }
+            }
+            // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
+            if request.categories.is_some() {
+                if !request.categories.clone().unwrap().contains(&asset.category) {
+                    return;
+                }
+            }
+            // 対応アバターが指定されている場合は、そのアバターのうちどれか1つでも設定されているかを確認 (OR)
+            if request.supported_avatars.is_some() {
+                if !request.supported_avatars.clone().unwrap().iter().any(|avatar| asset.supported_avatars.contains(avatar)) {
+                    return;
+                }
+            }
+            // タグが指定されている場合は、そのタグが全て設定されているかを確認
+            if request.tags.is_some() {
+                if !request.tags.clone().unwrap().iter().all(|tag| asset.description.tags.contains(&tag)) {
+                    return;
+                }
+            }
+
+            results.push(asset.get_id());
+        });
+    }
+
+    if request.asset_type.is_none() || request.asset_type.as_ref().unwrap() == &AssetType::World {
+        store.get_world_store().get_assets().iter().for_each(|asset| {
+            // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ
+            if request.supported_avatars.is_some() {
+                return;
+            }
+            // クエリが指定されている場合は、テキストに含まれているかを確認
+            if query_texts.clone().is_some() {
+                if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                    return;
+                }
+            }
+            // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
+            if request.categories.is_some() {
+                if !request.categories.clone().unwrap().contains(&asset.category) {
+                    return;
+                }
+            }
+            // タグが指定されている場合は、そのタグが全て設定されているかを確認
+            if request.tags.is_some() {
+                if !request.tags.clone().unwrap().iter().all(|tag| asset.description.tags.contains(&tag)) {
+                    return;
+                }
+            }
+
+            results.push(asset.get_id());
+        });
+    }
 
     results
 }

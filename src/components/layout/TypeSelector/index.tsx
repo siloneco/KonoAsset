@@ -11,7 +11,7 @@ const TypeSelector = () => {
   return (
     <RadioGroup
       defaultValue="all"
-      className="space-y-2"
+      className="space-y-1 mt-3"
       onValueChange={(v) => setAssetType(v as AssetType)}
       value={assetType}
     >

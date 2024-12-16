@@ -4,9 +4,12 @@ use tauri::State;
 use uuid::Uuid;
 
 use crate::{
-    data_store::{provider::StoreProvider, search::text_search},
+    data_store::{
+        provider::StoreProvider,
+        search::{self},
+    },
     definitions::{
-        entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
+        entities::{AvatarAsset, AvatarRelatedAsset, FilterRequest, WorldAsset},
         import_request::{
             AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
@@ -188,6 +191,26 @@ pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> V
 }
 
 #[tauri::command]
-pub fn filter_by_text(basic_store: State<'_, StoreProvider>, text: String) -> Vec<Uuid> {
-    text_search(&basic_store, &text)
+pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+    let mut supported_avatars: HashSet<String> = HashSet::new();
+
+    basic_store
+        .get_avatar_related_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            asset.supported_avatars.iter().for_each(|val| {
+                supported_avatars.insert(val.clone());
+            });
+        });
+
+    supported_avatars.into_iter().collect()
+}
+
+#[tauri::command]
+pub fn get_filtered_asset_ids(
+    basic_store: State<'_, StoreProvider>,
+    request: FilterRequest,
+) -> Vec<Uuid> {
+    search::filter(&basic_store, &request)
 }

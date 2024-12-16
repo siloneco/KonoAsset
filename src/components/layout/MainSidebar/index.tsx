@@ -4,12 +4,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import TypeSelector from '../TypeSelector'
-import AvatarAssetNarrowing from '../AvatarAssetNarrowing'
+import AvatarRelatedAssetFilter from './layout/AvatarRelatedAssetFilter'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -27,26 +22,15 @@ import { Label } from '@/components/ui/label'
 import { useContext } from 'react'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { AssetType } from '@/lib/entity'
+import WorldAssetFilter from './layout/WorldAssetFilter'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
-
   const { assetType, textFilter, setTextFilter } =
     useContext(AssetFilterContext)
 
   function openAboutPage() {
     document.location.href = `/about`
-  }
-
-  let assetTypeDisplay
-  if (assetType === '') {
-    assetTypeDisplay = 'すべて'
-  } else if (assetType === AssetType.Avatar) {
-    assetTypeDisplay = 'アバター'
-  } else if (assetType === AssetType.AvatarRelated) {
-    assetTypeDisplay = 'アバター関連'
-  } else if (assetType === AssetType.World) {
-    assetTypeDisplay = 'ワールド'
   }
 
   return (
@@ -93,29 +77,12 @@ const MainSidebar = () => {
                 onChange={(e) => setTextFilter(e.target.value)}
               />
             </div>
-            <Accordion
-              type="multiple"
-              className="w-full"
-              defaultValue={['type-selector']}
-            >
-              <AccordionItem value="type-selector">
-                <AccordionTrigger>
-                  タイプ選択
-                  <span className="ml-2 mr-auto text-foreground/50">
-                    ({assetTypeDisplay})
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <TypeSelector />
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="narrowing">
-                <AccordionTrigger>詳細な絞り込み</AccordionTrigger>
-                <AccordionContent>
-                  <AvatarAssetNarrowing />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <Label>アセットタイプ</Label>
+            <TypeSelector />
+            {(assetType === '' || assetType === AssetType.AvatarRelated) && (
+              <AvatarRelatedAssetFilter />
+            )}
+            {assetType === AssetType.World && <WorldAssetFilter />}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

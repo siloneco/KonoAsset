@@ -2,10 +2,11 @@ use data_store::provider::StoreProvider;
 use tauri::{App, Manager};
 
 use commands::{
-    filter_by_text, get_all_asset_tags, get_all_supported_avatar_values,
-    get_asset_description_from_booth, get_avatar_assets, get_avatar_related_assets,
-    get_avatar_related_categories, get_world_assets, open_in_file_manager,
-    request_avatar_asset_import, request_avatar_related_asset_import, request_world_asset_import,
+    get_all_asset_tags, get_all_supported_avatar_values, get_asset_description_from_booth,
+    get_avatar_assets, get_avatar_related_assets, get_avatar_related_categories,
+    get_avatar_related_supported_avatars, get_filtered_asset_ids, get_world_assets,
+    open_in_file_manager, request_avatar_asset_import, request_avatar_related_asset_import,
+    request_world_asset_import,
 };
 
 mod commands;
@@ -55,6 +56,7 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         get_all_asset_tags,
         get_all_supported_avatar_values,
         get_avatar_related_categories,
-        filter_by_text
+        get_avatar_related_supported_avatars,
+        get_filtered_asset_ids
     ]
 }

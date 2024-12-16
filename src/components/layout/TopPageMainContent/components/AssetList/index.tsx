@@ -2,36 +2,55 @@ import AssetCard from '@/components/page/top/AssetCard'
 import { useContext, useEffect, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
-import { AssetType } from '@/lib/entity'
+import { AssetType, FilterRequest } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
-
-const isFilterEnforced = (textFilter: string) => {
-  return textFilter !== ''
-}
+import { createFilterRequest, isFilterEnforced } from './logic'
 
 const AssetList = () => {
   const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
+  const [filterEnforced, setFilterEnforced] = useState(false)
 
-  const { assetType, textFilter } = useContext(AssetFilterContext)
+  const {
+    assetType,
+    textFilter,
+    categoryFilter,
+    tagFilter,
+    supportedAvatarFilter,
+  } = useContext(AssetFilterContext)
   const { avatarAssets, avatarRelatedAssets, worldAssets, refreshAssets } =
     useContext(AssetContext)
 
   const updateMatchedAssetIDs = async () => {
-    const uuidList: string[] = await invoke('filter_by_text', {
-      text: textFilter,
+    const filterRequest: FilterRequest = createFilterRequest({
+      assetType: assetType,
+      query: textFilter,
+      categories: categoryFilter,
+      tags: tagFilter,
+      supported_avatars: supportedAvatarFilter,
+    })
+
+    const currentFilterEnforced = isFilterEnforced(filterRequest)
+    setFilterEnforced(currentFilterEnforced)
+
+    if (!currentFilterEnforced) {
+      return
+    }
+
+    console.log(filterRequest)
+
+    const uuidList: string[] = await invoke('get_filtered_asset_ids', {
+      request: filterRequest,
     })
     setMatchedAssetIDs(uuidList)
   }
 
   useEffect(() => {
     updateMatchedAssetIDs()
-  }, [textFilter])
+  }, [textFilter, categoryFilter, tagFilter, supportedAvatarFilter])
 
   useEffect(() => {
     refreshAssets()
   }, [assetType])
-
-  const filterEnforced = isFilterEnforced(textFilter)
 
   const displayAvatarAssets =
     (assetType as string) === '' || assetType === AssetType.Avatar

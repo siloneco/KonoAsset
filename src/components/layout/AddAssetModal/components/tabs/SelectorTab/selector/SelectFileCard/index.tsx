@@ -11,7 +11,10 @@ const SelectFileCard = ({ onClick }: Props) => {
     <Card className="w-[250px]">
       <CardContent>
         <div className="m-8 mb-2">
-          <File size={80} className="block mx-auto" />
+          <File
+            size={80}
+            className="block mx-auto text-yellow-600 dark:text-foreground"
+          />
         </div>
       </CardContent>
       <CardFooter>

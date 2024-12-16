@@ -56,3 +56,11 @@ export type FetchAssetDescriptionFromBoothResult = {
   estimated_asset_type?: AssetType
   error_message?: string
 }
+
+export type FilterRequest = {
+  asset_type?: AssetType
+  query?: string
+  categories?: string[]
+  tags?: string[]
+  supported_avatars?: string[]
+}
