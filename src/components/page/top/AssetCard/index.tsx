@@ -1,21 +1,30 @@
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { AvatarAsset, DirectoryOpenResult } from '@/lib/entity'
+import {
+  AssetDeleteResult,
+  AssetDescription,
+  AssetType,
+  DirectoryOpenResult,
+} from '@/lib/entity'
 import { convertFileSrc, invoke } from '@tauri-apps/api/core'
-import { Edit, Folder } from 'lucide-react'
+import { Folder } from 'lucide-react'
+import { MoreButton } from './components/MoreButton'
 
 type Props = {
-  asset: AvatarAsset
+  id: string
+  assetType: AssetType
+  assetDescription: AssetDescription
 }
 
-const AssetCard = ({ asset }: Props) => {
+const AssetCard = ({ id, assetType, assetDescription }: Props) => {
   const { toast } = useToast()
 
   const openInFileManager = async () => {
     const result: DirectoryOpenResult = await invoke('open_in_file_manager', {
-      id: asset.id,
+      id,
     })
 
     if (!result.success) {
@@ -26,8 +35,21 @@ const AssetCard = ({ asset }: Props) => {
     }
   }
 
-  const openEditPage = () => {
-    document.location.href = `/edit/${asset.id}`
+  const deleteAsset = async () => {
+    const result: AssetDeleteResult = await invoke('request_asset_deletion', {
+      id,
+    })
+
+    if (result.success) {
+      toast({
+        title: '正常に削除されました！',
+      })
+    } else {
+      toast({
+        title: '削除に失敗しました',
+        description: result.error_message,
+      })
+    }
   }
 
   return (
@@ -35,23 +57,32 @@ const AssetCard = ({ asset }: Props) => {
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
           <img
-            src={convertFileSrc(asset.description.image_src)}
-            alt={asset.description.title}
+            src={convertFileSrc(assetDescription.image_src)}
+            alt={assetDescription.title}
             className="w-full rounded-sm"
           />
+          <div className="mt-3">
+            {assetType === AssetType.Avatar && (
+              <Badge variant="avatar">アバター素体</Badge>
+            )}
+            {assetType === AssetType.AvatarRelated && (
+              <Badge variant="avatarRelated">アバター関連</Badge>
+            )}
+            {assetType === AssetType.World && (
+              <Badge variant="world">ワールドアセット</Badge>
+            )}
+          </div>
           <CardTitle className="text-lg mt-2">
-            {asset.description.title}
+            {assetDescription.title}
           </CardTitle>
-          <Label className="text-sm">{asset.description.author}</Label>
+          <Label className="text-sm">{assetDescription.author}</Label>
         </div>
-        <div className="flex flex-row mt-2 h-12">
-          <Button className="w-full mr-2" onClick={openInFileManager}>
+        <div className="flex flex-row mt-2">
+          <Button className={'w-full mr-2'} onClick={openInFileManager}>
             <Folder size={24} />
             <p>開く</p>
           </Button>
-          <Button onClick={() => openEditPage()} variant={'secondary'}>
-            <Edit size={24} />
-          </Button>
+          <MoreButton id={id} executeAssetDeletion={deleteAsset} />
         </div>
       </CardContent>
     </Card>

@@ -13,7 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
-import { Route as EditAssetIdImport } from './routes/edit.$assetId'
+import { Route as EditIdImport } from './routes/edit.$id'
 
 // Create/Update Routes
 
@@ -29,9 +29,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const EditAssetIdRoute = EditAssetIdImport.update({
-  id: '/edit/$assetId',
-  path: '/edit/$assetId',
+const EditIdRoute = EditIdImport.update({
+  id: '/edit/$id',
+  path: '/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,11 +53,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/edit/$assetId': {
-      id: '/edit/$assetId'
-      path: '/edit/$assetId'
-      fullPath: '/edit/$assetId'
-      preLoaderRoute: typeof EditAssetIdImport
+    '/edit/$id': {
+      id: '/edit/$id'
+      path: '/edit/$id'
+      fullPath: '/edit/$id'
+      preLoaderRoute: typeof EditIdImport
       parentRoute: typeof rootRoute
     }
   }
@@ -68,41 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/edit/$assetId': typeof EditAssetIdRoute
+  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/edit/$assetId': typeof EditAssetIdRoute
+  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/edit/$assetId': typeof EditAssetIdRoute
+  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/edit/$assetId'
+  fullPaths: '/' | '/about' | '/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/edit/$assetId'
-  id: '__root__' | '/' | '/about' | '/edit/$assetId'
+  to: '/' | '/about' | '/edit/$id'
+  id: '__root__' | '/' | '/about' | '/edit/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  EditAssetIdRoute: typeof EditAssetIdRoute
+  EditIdRoute: typeof EditIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  EditAssetIdRoute: EditAssetIdRoute,
+  EditIdRoute: EditIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +117,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/edit/$assetId"
+        "/edit/$id"
       ]
     },
     "/": {
@@ -126,8 +126,8 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about.tsx"
     },
-    "/edit/$assetId": {
-      "filePath": "edit.$assetId.tsx"
+    "/edit/$id": {
+      "filePath": "edit.$id.tsx"
     }
   }
 }

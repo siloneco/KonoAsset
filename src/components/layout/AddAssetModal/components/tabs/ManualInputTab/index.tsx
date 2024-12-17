@@ -15,24 +15,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { useContext, useState } from 'react'
-import { AddAssetModalContext } from '../../..'
-import { useToast } from '@/hooks/use-toast'
 
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 
-import { createPreAsset, sendAssetImportRequest } from './logic'
-import { Loader2 } from 'lucide-react'
-import {
-  AssetType,
-  AvatarAsset,
-  AvatarRelatedAsset,
-  WorldAsset,
-} from '@/lib/entity'
-import { AssetContext } from '@/components/context/AssetContext'
+import { ImagePlus, Loader2 } from 'lucide-react'
+import { AssetType } from '@/lib/entity'
 import AvatarLayout from './layout/AvatarLayout'
 import AvatarRelatedLayout from './layout/AvatarRelatedLayout'
 import WorldLayout from './layout/WorldLayout'
+import { useManualInputTabHooks } from './hook'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 type Props = {
   setTab: (tab: string) => void
@@ -40,85 +32,15 @@ type Props = {
 }
 
 const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
-  const [submitting, setSubmitting] = useState(false)
-  const { toast } = useToast()
-  const { form, assetPath, assetType, supportedAvatars } =
-    useContext(AddAssetModalContext)
-  const { addAvatarAsset, addAvatarRelatedAsset, addWorldAsset } =
-    useContext(AssetContext)
-
-  if (!form) {
-    return <div>Loading...</div>
-  }
-
-  const backToAssetTypeSelectorTab = () => {
-    setTab('asset-type-selector')
-  }
-
-  const submit = async () => {
-    if (submitting) {
-      return
-    }
-
-    setSubmitting(true)
-
-    try {
-      const preAsset = createPreAsset({
-        assetType: assetType!,
-        description: {
-          title: form.getValues('title'),
-          author: form.getValues('author'),
-          image_src: form.getValues('image_src'),
-          tags: form.getValues('tags'),
-          created_at: new Date().toISOString(),
-        },
-        category: form.getValues('category'),
-        supportedAvatars: supportedAvatars,
-      })
-
-      if (preAsset.isFailure()) {
-        toast({
-          title: 'データのインポートに失敗しました',
-          description: preAsset.error.message,
-        })
-
-        return
-      }
-
-      const result = await sendAssetImportRequest(
-        assetType!,
-        assetPath!,
-        preAsset.value,
-      )
-
-      if (result.isSuccess()) {
-        console.log(result.value)
-        if (assetType === AssetType.Avatar) {
-          addAvatarAsset(result.value as AvatarAsset)
-        } else if (assetType === AssetType.AvatarRelated) {
-          addAvatarRelatedAsset(result.value as AvatarRelatedAsset)
-        } else if (assetType === AssetType.World) {
-          addWorldAsset(result.value as WorldAsset)
-        }
-
-        toast({
-          title: 'データのインポートが完了しました！',
-        })
-
-        setDialogOpen(false)
-        return
-      }
-
-      toast({
-        title: 'データのインポートに失敗しました',
-        description: result.error.message,
-      })
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const image_src = form.getValues('image_src')
+  const {
+    form,
+    backToAssetTypeSelectorTab,
+    openImageSelector,
+    submit,
+    submitting,
+    assetType,
+    imageSrc,
+  } = useManualInputTabHooks({ setTab, setDialogOpen })
 
   return (
     <TabsContent value="manual-input">
@@ -134,16 +56,29 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
             <div className="flex flex-row space-x-6">
               <div className="w-1/3 rounded-lg">
                 <AspectRatio ratio={1}>
-                  {image_src && (
+                  {imageSrc && imageSrc.startsWith('https://') && (
                     <img
-                      src={form.getValues('image_src')}
+                      src={imageSrc}
                       alt="asset_image"
                       className="rounded-lg"
                     />
                   )}
-                  {!image_src && (
+                  {imageSrc && !imageSrc.startsWith('https://') && (
+                    <img
+                      src={convertFileSrc(imageSrc)}
+                      alt="asset_image"
+                      className="rounded-lg"
+                    />
+                  )}
+                  {!imageSrc && (
                     <div className="w-full h-full bg-slate-400 rounded-lg"></div>
                   )}
+                  <div
+                    className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-50"
+                    onClick={openImageSelector}
+                  >
+                    <ImagePlus size={50} />
+                  </div>
                 </AspectRatio>
               </div>
               <div className="w-2/3 space-y-2">

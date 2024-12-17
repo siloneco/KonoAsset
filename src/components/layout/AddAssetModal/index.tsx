@@ -75,10 +75,30 @@ const AddAssetModal = () => {
     setSupportedAvatars,
   }
 
+  const clearForm = () => {
+    form.reset({
+      title: '',
+      author: '',
+      image_src: '',
+      tags: [],
+      category: '',
+    })
+
+    setAssetPath('')
+    setAssetType(AssetType.Avatar)
+    setSupportedAvatars([])
+  }
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full h-12" onClick={() => setTab('selector')}>
+        <Button
+          className="w-full h-12"
+          onClick={() => {
+            clearForm()
+            setTab('selector')
+          }}
+        >
           <Plus size={24} />
           アセットを追加する
         </Button>

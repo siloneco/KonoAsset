@@ -65,21 +65,36 @@ const AssetList = () => {
         avatarAssets.map(
           (asset) =>
             (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard key={asset.id} asset={asset} />
+              <AssetCard
+                key={asset.id}
+                id={asset.id}
+                assetType={AssetType.Avatar}
+                assetDescription={asset.description}
+              />
             ),
         )}
       {displayAvatarRelatedAssets &&
         avatarRelatedAssets.map(
           (asset) =>
             (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard key={asset.id} asset={asset} />
+              <AssetCard
+                key={asset.id}
+                id={asset.id}
+                assetType={AssetType.AvatarRelated}
+                assetDescription={asset.description}
+              />
             ),
         )}
       {displayWorldAssets &&
         worldAssets.map(
           (asset) =>
             (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard key={asset.id} asset={asset} />
+              <AssetCard
+                key={asset.id}
+                id={asset.id}
+                assetType={AssetType.World}
+                assetDescription={asset.description}
+              />
             ),
         )}
     </div>

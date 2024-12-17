@@ -64,3 +64,8 @@ export type FilterRequest = {
   tags?: string[]
   supported_avatars?: string[]
 }
+
+export type AssetDeleteResult = {
+  success: boolean
+  error_message?: string
+}

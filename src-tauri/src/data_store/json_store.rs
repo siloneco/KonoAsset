@@ -79,12 +79,12 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
     }
 
-    pub fn delete_asset_and_save(&self, id: Uuid) -> Result<(), String> {
+    pub fn delete_asset_and_save(&self, id: Uuid) -> Result<bool, String> {
         let mut assets = self.assets.lock().unwrap();
         let asset = assets.iter().find(|asset| asset.get_id() == id).cloned();
 
         if asset.is_none() {
-            return Ok(());
+            return Ok(false);
         }
 
         assets.remove(&asset.unwrap());
@@ -94,10 +94,6 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         path.push(T::filename());
 
         let file_open_result = File::create(path);
-        // serde_json::to_writer(file, &*assets).unwrap();
-
-        // true
-
         if file_open_result.is_err() {
             return Err("Failed to open file".into());
         }
@@ -105,7 +101,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         let result = serde_json::to_writer(file_open_result.unwrap(), &*assets);
 
         match result {
-            Ok(_) => Ok(()),
+            Ok(_) => Ok(true),
             Err(e) => Err(format!("Failed to serialize file: {}", e)),
         }
     }

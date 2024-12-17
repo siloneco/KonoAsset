@@ -1,10 +1,11 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, path::PathBuf};
 
 use tauri::State;
 use uuid::Uuid;
 
 use crate::{
     data_store::{
+        delete::delete_asset,
         provider::StoreProvider,
         search::{self},
     },
@@ -14,7 +15,7 @@ use crate::{
             AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
-        results::{DirectoryOpenResult, FetchAssetDescriptionFromBoothResult},
+        results::{AssetDeleteResult, DirectoryOpenResult, FetchAssetDescriptionFromBoothResult},
     },
     fetcher::booth_fetcher::fetch_asset_details_from_booth,
     importer::import_wrapper::{
@@ -208,9 +209,36 @@ pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider
 }
 
 #[tauri::command]
+pub fn request_asset_deletion(
+    basic_store: State<'_, StoreProvider>,
+    id: Uuid,
+) -> AssetDeleteResult {
+    delete_asset(&basic_store, id)
+}
+
+#[tauri::command]
 pub fn get_filtered_asset_ids(
     basic_store: State<'_, StoreProvider>,
     request: FilterRequest,
 ) -> Vec<Uuid> {
     search::filter(&basic_store, &request)
+}
+
+#[tauri::command]
+pub fn copy_image_file_to_images(basic_store: State<'_, StoreProvider>, path: String) -> String {
+    let path = PathBuf::from(path);
+    let mut new_path = basic_store.app_data_dir();
+    new_path.push("images");
+    new_path.push(format!(
+        "{}.{}",
+        Uuid::new_v4().to_string(),
+        path.extension()
+            .unwrap_or(std::ffi::OsStr::new("png"))
+            .to_str()
+            .unwrap()
+    ));
+
+    std::fs::copy(&path, &new_path).unwrap();
+
+    new_path.to_str().unwrap().to_string()
 }

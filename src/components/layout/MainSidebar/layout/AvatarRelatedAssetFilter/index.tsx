@@ -61,7 +61,7 @@ const AvatarRelatedAssetFilter = () => {
           }
         />
       </div>
-      <div>
+      <div className="h-40">
         <Label className="text-base">タグ</Label>
         <MultipleSelector
           className="mt-2"
