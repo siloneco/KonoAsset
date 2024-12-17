@@ -15,7 +15,10 @@ use crate::{
             AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
-        results::{AssetDeleteResult, DirectoryOpenResult, FetchAssetDescriptionFromBoothResult},
+        results::{
+            AssetDeleteResult, DirectoryOpenResult, FetchAssetDescriptionFromBoothResult,
+            GetAssetResult,
+        },
     },
     fetcher::booth_fetcher::fetch_asset_details_from_booth,
     importer::import_wrapper::{
@@ -51,6 +54,26 @@ pub fn get_world_assets(basic_store: State<'_, StoreProvider>) -> Vec<WorldAsset
         .iter()
         .cloned()
         .collect()
+}
+
+#[tauri::command]
+pub fn get_asset(basic_store: State<'_, StoreProvider>, id: Uuid) -> GetAssetResult {
+    let avatar_asset = basic_store.get_avatar_store().get_asset(id);
+    if let Some(avatar_asset) = avatar_asset {
+        return GetAssetResult::avatar(avatar_asset);
+    }
+
+    let avatar_related_asset = basic_store.get_avatar_related_store().get_asset(id);
+    if let Some(avatar_related_asset) = avatar_related_asset {
+        return GetAssetResult::avatar_related(avatar_related_asset);
+    }
+
+    let world_asset = basic_store.get_world_store().get_asset(id);
+    if let Some(world_asset) = world_asset {
+        return GetAssetResult::world(world_asset);
+    }
+
+    GetAssetResult::error("Asset not found".into())
 }
 
 #[tauri::command]

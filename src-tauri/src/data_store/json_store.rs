@@ -29,6 +29,15 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         self.assets.lock().unwrap().clone()
     }
 
+    pub fn get_asset(&self, id: Uuid) -> Option<T> {
+        self.assets
+            .lock()
+            .unwrap()
+            .iter()
+            .find(|asset| asset.get_id() == id)
+            .cloned()
+    }
+
     pub fn load_assets_from_file(&self) -> Result<(), String> {
         let mut path = self.app_data_dir.clone();
         path.push("metadata");
