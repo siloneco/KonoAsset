@@ -56,13 +56,11 @@ const BoothInputTab = ({ setTab }: Props) => {
         form?.setValue('author', result.asset_description!.author)
         form?.setValue('image_src', result.asset_description!.image_src)
 
-        console.log(result.estimated_asset_type)
-        console.log(AssetType.AvatarRelated)
         setAssetType(result.estimated_asset_type ?? AssetType.Avatar)
 
         moveToNextTab()
       } else {
-        console.log(`Error: ${result.error_message}`)
+        console.error(result.error_message)
       }
     } finally {
       setFetching(false)

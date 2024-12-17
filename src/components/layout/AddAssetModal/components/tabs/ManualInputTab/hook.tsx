@@ -93,7 +93,6 @@ export const useManualInputTabHooks = ({
       )
 
       if (result.isSuccess()) {
-        console.log(result.value)
         if (assetType === AssetType.Avatar) {
           addAvatarAsset(result.value as AvatarAsset)
         } else if (assetType === AssetType.AvatarRelated) {

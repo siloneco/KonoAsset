@@ -69,3 +69,12 @@ export type AssetDeleteResult = {
   success: boolean
   error_message?: string
 }
+
+export type GetAssetResult = {
+  success: boolean
+  error_message?: string
+
+  avatar_asset?: AvatarAsset
+  avatar_related_asset?: AvatarRelatedAsset
+  world_asset?: WorldAsset
+}

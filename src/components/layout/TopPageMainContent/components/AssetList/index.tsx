@@ -36,8 +36,6 @@ const AssetList = () => {
       return
     }
 
-    console.log(filterRequest)
-
     const uuidList: string[] = await invoke('get_filtered_asset_ids', {
       request: filterRequest,
     })
@@ -46,7 +44,7 @@ const AssetList = () => {
 
   useEffect(() => {
     updateMatchedAssetIDs()
-  }, [textFilter, categoryFilter, tagFilter, supportedAvatarFilter])
+  }, [assetType, textFilter, categoryFilter, tagFilter, supportedAvatarFilter])
 
   useEffect(() => {
     refreshAssets()

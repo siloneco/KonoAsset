@@ -1,5 +1,3 @@
-import MainSidebar from '@/components/layout/MainSidebar'
-import { SidebarProvider } from '@/components/ui/sidebar'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
@@ -18,6 +16,8 @@ import {
   AssetContextType,
 } from '@/components/context/AssetContext'
 import { invoke } from '@tauri-apps/api/core'
+import MainSidebar from '@/components/layout/MainSidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,

@@ -11,6 +11,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
 type Props = {
+  value?: string
   onValueChange: (value: string) => void
   submitting: boolean
 
@@ -19,6 +20,7 @@ type Props = {
 }
 
 const CategorySelector = ({
+  value,
   onValueChange,
   submitting,
   categoryCandidates,
@@ -42,7 +44,7 @@ const CategorySelector = ({
   }
 
   return (
-    <Select onValueChange={onValueChange} disabled={submitting}>
+    <Select onValueChange={onValueChange} disabled={submitting} value={value}>
       <SelectTrigger>
         <SelectValue placeholder="カテゴリを選択" />
       </SelectTrigger>

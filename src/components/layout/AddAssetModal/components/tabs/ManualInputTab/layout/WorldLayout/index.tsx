@@ -43,7 +43,6 @@ const WorldLayout = ({ submitting }: Props) => {
                 <Select
                   onValueChange={(value) => {
                     form.setValue('category', value)
-                    console.log(value)
                   }}
                   disabled={submitting}
                 >
