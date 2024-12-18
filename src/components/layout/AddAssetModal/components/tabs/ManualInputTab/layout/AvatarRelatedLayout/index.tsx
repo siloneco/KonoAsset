@@ -33,8 +33,6 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
       return { label: value, value }
     })
 
-    console.log(options)
-
     setSupportedAvatarCandidates(options)
   }
 

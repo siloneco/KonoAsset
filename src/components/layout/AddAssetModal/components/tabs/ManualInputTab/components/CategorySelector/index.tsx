@@ -43,8 +43,6 @@ const CategorySelector = ({
     setNewValue('')
   }
 
-  console.log(categoryCandidates)
-
   return (
     <Select onValueChange={onValueChange} disabled={submitting} value={value}>
       <SelectTrigger>
@@ -52,11 +50,14 @@ const CategorySelector = ({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {categoryCandidates.map((category) => (
-            <SelectItem key={category} value={category}>
-              {category}
-            </SelectItem>
-          ))}
+          {categoryCandidates.map(
+            (category) =>
+              category.length > 0 && (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ),
+          )}
           <Separator className="my-1" />
           <div className="h-8 flex flex-row items-center space-x-2">
             <Plus size={16} className="w-6" />
