@@ -103,7 +103,7 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
 }
 
 fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> bool {
-    texts.iter().map(|text| text.to_ascii_lowercase()).any(|text| {
+    texts.iter().map(|text| text.to_ascii_lowercase()).all(|text| {
         return // タイトルに含まれているか
         description
             .title
