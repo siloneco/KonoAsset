@@ -145,7 +145,7 @@ mod tests {
             author: "これは制作者の名前です".to_string(),
             image_src: "".into(),
             tags: vec!["タグ1".to_string(), "タグ2".to_string()],
-            created_at: chrono::Local::now(),
+            created_at: chrono::Local::now().timestamp_millis(),
         };
 
         assert_eq!(check_text_contains(&description, &vec!["アセット"]), true);

@@ -63,7 +63,7 @@ pub fn fetch_asset_details_from_booth(
     };
 
     Ok((
-        AssetDescription::create(title, author, image_src, vec![], Local::now()),
+        AssetDescription::create(title, author, image_src, vec![], Local::now().timestamp_millis()),
         estimated_asset_type,
     ))
 }

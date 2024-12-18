@@ -1,6 +1,5 @@
 use std::collections::BTreeSet;
 
-use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -12,7 +11,7 @@ pub struct AssetDescription {
     pub author: String,
     pub image_src: String,
     pub tags: Vec<String>,
-    pub created_at: DateTime<Local>,
+    pub created_at: i64,
 }
 
 impl AssetDescription {
@@ -21,7 +20,7 @@ impl AssetDescription {
         author: String,
         image_src: String,
         tags: Vec<String>,
-        created_at: DateTime<Local>,
+        created_at: i64,
     ) -> Self {
         Self {
             title,

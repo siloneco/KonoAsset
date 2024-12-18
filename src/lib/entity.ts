@@ -3,7 +3,7 @@ export type AssetDescription = {
   author: string
   image_src: string
   tags: string[]
-  created_at: string
+  created_at: number
 }
 
 export type AvatarAsset = {
