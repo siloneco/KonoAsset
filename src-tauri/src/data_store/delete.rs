@@ -42,6 +42,12 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
     store: &JsonStore<T>,
     id: Uuid,
 ) -> Result<bool, String> {
+    let asset = store.get_asset(id);
+    if asset.is_none() {
+        return Ok(false);
+    }
+    let asset = asset.unwrap();
+
     let result = store.delete_asset_and_save(id);
 
     if result.is_err() {
@@ -54,6 +60,7 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
         return Ok(false);
     }
 
+    // アセット本体削除
     let mut path = app_dir.clone();
     path.push("data");
     path.push(id.to_string());
@@ -62,6 +69,26 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
 
     if dir_delete_result.is_err() {
         return Err("Failed to delete asset directory".into());
+    }
+
+    // 画像削除
+    let mut images_path = app_dir.clone();
+    images_path.push("images");
+
+    let path = PathBuf::from(asset.get_description().image_src.clone()).canonicalize();
+    if path.is_err() {
+        return Err(format!("Failed to get image path: {:?}", path.err()));
+    }
+    let path = path.unwrap();
+
+    if !path.starts_with(&images_path) {
+        return Err("Invalid image path. Image path must be under app's images directory".into());
+    }
+
+    let image_delete_result = fs::remove_file(path);
+
+    if image_delete_result.is_err() {
+        return Err("Failed to delete image file".into());
     }
 
     Ok(true)

@@ -56,6 +56,10 @@ impl AssetTrait for AvatarAsset {
     fn get_id(&self) -> Uuid {
         self.id
     }
+
+    fn get_description(&self) -> &AssetDescription {
+        &self.description
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
@@ -89,6 +93,10 @@ impl AssetTrait for AvatarRelatedAsset {
     fn get_id(&self) -> Uuid {
         self.id
     }
+
+    fn get_description(&self) -> &AssetDescription {
+        &self.description
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
@@ -115,6 +123,10 @@ impl AssetTrait for WorldAsset {
 
     fn get_id(&self) -> Uuid {
         self.id
+    }
+
+    fn get_description(&self) -> &AssetDescription {
+        &self.description
     }
 }
 
