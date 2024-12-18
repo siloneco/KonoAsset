@@ -64,7 +64,7 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
             <img
               src={convertFileSrc(assetDescription.image_src)}
               alt={assetDescription.title}
-              className="w-full rounded-sm"
+              className="w-full"
             />
           </AspectRatio>
           <div className="mt-3">
@@ -78,7 +78,7 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
               <Badge variant="world">ワールドアセット</Badge>
             )}
           </div>
-          <CardTitle className="text-lg mt-2">
+          <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
             {assetDescription.title}
           </CardTitle>
           <Label className="text-sm">{assetDescription.author}</Label>
