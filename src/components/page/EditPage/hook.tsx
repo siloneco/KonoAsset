@@ -7,8 +7,10 @@ import {
   fetchAssetInformation,
   fetchCategoryCandidates,
   fetchSupportedAvatars,
+  updateAsset,
 } from './logic'
-import { AssetType } from '@/lib/entity'
+import { AssetType, SimpleResult } from '@/lib/entity'
+import { useToast } from '@/hooks/use-toast'
 
 type Props = {
   id: string
@@ -38,6 +40,7 @@ type ReturnProps = {
 }
 
 export const useEditPageHook = ({ id }: Props): ReturnProps => {
+  const { toast } = useToast()
   const [initializing, setInitializing] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
@@ -71,7 +74,17 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
   const submit = async () => {
     setSubmitting(true)
     try {
-      console.log('submit')
+      const result: SimpleResult = await updateAsset({ id, form })
+
+      if (!result.success) {
+        toast({
+          title: 'アップデートに失敗しました.',
+          description: result.error_message,
+        })
+        return
+      }
+
+      document.location.href = '/'
     } finally {
       setSubmitting(false)
     }

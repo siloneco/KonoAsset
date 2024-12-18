@@ -6,4 +6,5 @@ pub trait AssetTrait {
     fn filename() -> String;
     fn get_id(&self) -> Uuid;
     fn get_description(&self) -> &AssetDescription;
+    fn get_description_as_mut(&mut self) -> &mut AssetDescription;
 }

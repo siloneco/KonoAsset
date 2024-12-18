@@ -273,6 +273,11 @@ fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
 }
 
 fn save_image_if_external_url_specified(url: &str, dest: &PathBuf) -> Result<bool, String> {
+    // URLがファイルパスでファイルが実在するか確認する
+    if PathBuf::from(url).exists() {
+        return Ok(false);
+    }
+
     let parsed = reqwest::Url::parse(url);
     if parsed.is_err() {
         return Ok(false);

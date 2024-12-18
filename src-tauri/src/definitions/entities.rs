@@ -59,6 +59,10 @@ impl AssetTrait for AvatarAsset {
     fn get_description(&self) -> &AssetDescription {
         &self.description
     }
+
+    fn get_description_as_mut(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
@@ -86,7 +90,7 @@ impl AvatarRelatedAsset {
 
 impl AssetTrait for AvatarRelatedAsset {
     fn filename() -> String {
-        "avatar_related_assets.json".into()
+        "avatar_related.json".into()
     }
 
     fn get_id(&self) -> Uuid {
@@ -95,6 +99,10 @@ impl AssetTrait for AvatarRelatedAsset {
 
     fn get_description(&self) -> &AssetDescription {
         &self.description
+    }
+
+    fn get_description_as_mut(&mut self) -> &mut AssetDescription {
+        &mut self.description
     }
 }
 
@@ -117,7 +125,7 @@ impl WorldAsset {
 
 impl AssetTrait for WorldAsset {
     fn filename() -> String {
-        "world_related_assets.json".into()
+        "world.json".into()
     }
 
     fn get_id(&self) -> Uuid {
@@ -126,6 +134,10 @@ impl AssetTrait for WorldAsset {
 
     fn get_description(&self) -> &AssetDescription {
         &self.description
+    }
+
+    fn get_description_as_mut(&mut self) -> &mut AssetDescription {
+        &mut self.description
     }
 }
 

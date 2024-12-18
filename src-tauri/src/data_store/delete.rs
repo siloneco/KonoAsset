@@ -3,38 +3,38 @@ use std::{fs, hash::Hash, path::PathBuf};
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
-use crate::definitions::{results::AssetDeleteResult, traits::AssetTrait};
+use crate::definitions::{results::SimpleResult, traits::AssetTrait};
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
-pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> AssetDeleteResult {
+pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
     let app_dir = provider.app_data_dir();
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id);
     if result.is_err() {
-        return AssetDeleteResult::error(result.err().unwrap());
+        return SimpleResult::error(result.err().unwrap());
     }
     if result.unwrap() {
-        return AssetDeleteResult::success();
+        return SimpleResult::success();
     }
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_related_store(), id);
     if result.is_err() {
-        return AssetDeleteResult::error(result.err().unwrap());
+        return SimpleResult::error(result.err().unwrap());
     }
     if result.unwrap() {
-        return AssetDeleteResult::success();
+        return SimpleResult::success();
     }
 
     let result = delete_asset_from_store(&app_dir, &provider.get_world_store(), id);
     if result.is_err() {
-        return AssetDeleteResult::error(result.err().unwrap());
+        return SimpleResult::error(result.err().unwrap());
     }
     if result.unwrap() {
-        return AssetDeleteResult::success();
+        return SimpleResult::success();
     }
 
-    AssetDeleteResult::error("Asset not found".into())
+    SimpleResult::error("Asset not found".into())
 }
 
 fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash>(
@@ -71,7 +71,11 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
         return Err("Failed to delete asset directory".into());
     }
 
-    // 画像削除
+    // 画像削除をしてそのまま結果を返す
+    delete_asset_image(app_dir, &asset.get_description().image_src)
+}
+
+pub fn delete_asset_image(app_dir: &PathBuf, image_src: &str) -> Result<bool, String> {
     let mut images_path = app_dir.clone();
     images_path.push("images");
 
@@ -84,7 +88,7 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
     }
     let images_path = images_path.unwrap();
 
-    let path = PathBuf::from(asset.get_description().image_src.clone()).canonicalize();
+    let path = PathBuf::from(image_src).canonicalize();
     if path.is_err() {
         return Err(format!("Failed to get image path: {:?}", path.err()));
     }

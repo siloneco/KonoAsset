@@ -4,7 +4,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import {
-  AssetDeleteResult,
+  SimpleResult,
   AssetDescription,
   AssetType,
   DirectoryOpenResult,
@@ -13,6 +13,8 @@ import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { Folder } from 'lucide-react'
 import { MoreButton } from './components/MoreButton'
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
+import { AssetContext } from '@/components/context/AssetContext'
+import { useContext } from 'react'
 
 type Props = {
   id: string
@@ -21,6 +23,8 @@ type Props = {
 }
 
 const AssetCard = ({ id, assetType, assetDescription }: Props) => {
+  const { deleteAvatarAsset, deleteAvatarRelatedAsset, deleteWorldAsset } =
+    useContext(AssetContext)
   const { toast } = useToast()
 
   const openInFileManager = async () => {
@@ -37,11 +41,16 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
   }
 
   const deleteAsset = async () => {
-    const result: AssetDeleteResult = await invoke('request_asset_deletion', {
+    const result: SimpleResult = await invoke('request_asset_deletion', {
       id,
     })
 
     if (result.success) {
+      // アセットを一覧から削除
+      deleteAvatarAsset(id)
+      deleteAvatarRelatedAsset(id)
+      deleteWorldAsset(id)
+
       toast({
         title: '正常に削除されました！',
       })

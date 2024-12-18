@@ -16,8 +16,7 @@ use crate::{
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
         results::{
-            AssetDeleteResult, DirectoryOpenResult, FetchAssetDescriptionFromBoothResult,
-            GetAssetResult,
+            DirectoryOpenResult, FetchAssetDescriptionFromBoothResult, GetAssetResult, SimpleResult,
         },
     },
     fetcher::booth_fetcher::fetch_asset_details_from_booth,
@@ -98,6 +97,47 @@ pub fn request_world_asset_import(
     request: WorldAssetImportRequest,
 ) -> WorldAssetImportResult {
     import_world_asset(&basic_store, request)
+}
+
+#[tauri::command]
+pub fn update_avatar_asset(
+    basic_store: State<'_, StoreProvider>,
+    asset: AvatarAsset,
+) -> SimpleResult {
+    let result = basic_store.get_avatar_store().update_asset_and_save(asset);
+
+    match result {
+        Ok(_) => SimpleResult::success(),
+        Err(e) => SimpleResult::error(e),
+    }
+}
+
+#[tauri::command]
+pub fn update_avatar_related_asset(
+    basic_store: State<'_, StoreProvider>,
+    asset: AvatarRelatedAsset,
+) -> SimpleResult {
+    let result = basic_store
+        .get_avatar_related_store()
+        .update_asset_and_save(asset);
+
+    match result {
+        Ok(_) => SimpleResult::success(),
+        Err(e) => SimpleResult::error(e),
+    }
+}
+
+#[tauri::command]
+pub fn update_world_asset(
+    basic_store: State<'_, StoreProvider>,
+    asset: WorldAsset,
+) -> SimpleResult {
+    let result = basic_store.get_world_store().update_asset_and_save(asset);
+
+    match result {
+        Ok(_) => SimpleResult::success(),
+        Err(e) => SimpleResult::error(e),
+    }
 }
 
 #[tauri::command]
@@ -232,10 +272,7 @@ pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider
 }
 
 #[tauri::command]
-pub fn request_asset_deletion(
-    basic_store: State<'_, StoreProvider>,
-    id: Uuid,
-) -> AssetDeleteResult {
+pub fn request_asset_deletion(basic_store: State<'_, StoreProvider>, id: Uuid) -> SimpleResult {
     delete_asset(&basic_store, id)
 }
 

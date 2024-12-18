@@ -6,7 +6,8 @@ use commands::{
     get_asset_description_from_booth, get_avatar_assets, get_avatar_related_assets,
     get_avatar_related_categories, get_avatar_related_supported_avatars, get_filtered_asset_ids,
     get_world_assets, open_in_file_manager, request_asset_deletion, request_avatar_asset_import,
-    request_avatar_related_asset_import, request_world_asset_import,
+    request_avatar_related_asset_import, request_world_asset_import, update_avatar_asset,
+    update_avatar_related_asset, update_world_asset,
 };
 
 mod commands;
@@ -45,21 +46,33 @@ fn init(handler: &App) -> StoreProvider {
 
 fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
     tauri::generate_handler![
+        // アセット取得
+        get_asset,
         get_avatar_assets,
         get_avatar_related_assets,
         get_world_assets,
-        get_asset,
+        // アセット作成リクエスト
         request_avatar_asset_import,
         request_avatar_related_asset_import,
         request_world_asset_import,
-        open_in_file_manager,
-        get_asset_description_from_booth,
+        // アセット削除
+        request_asset_deletion,
+        // アセット更新
+        update_avatar_asset,
+        update_avatar_related_asset,
+        update_world_asset,
+        // フィールドごとの全情報取得系
         get_all_asset_tags,
         get_all_supported_avatar_values,
         get_avatar_related_categories,
         get_avatar_related_supported_avatars,
-        get_filtered_asset_ids,
+        // 画像新規作成
         copy_image_file_to_images,
-        request_asset_deletion
+        // ファイルマネージャで開く
+        open_in_file_manager,
+        // Boothからアセット情報を取得する
+        get_asset_description_from_booth,
+        // 検索関数
+        get_filtered_asset_ids
     ]
 }

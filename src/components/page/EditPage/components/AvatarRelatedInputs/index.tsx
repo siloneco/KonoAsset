@@ -9,6 +9,7 @@ import {
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { Separator } from '@/components/ui/separator'
 import { AssetType } from '@/lib/entity'
+import { cn } from '@/lib/utils'
 import { UseFormReturn } from 'react-hook-form'
 
 type Props = {
@@ -48,7 +49,7 @@ const AvatarRelatedInputs = ({
         <div className="w-1/2">
           <FormField
             control={form.control}
-            name="category"
+            name="supportedAvatars"
             render={() => {
               return (
                 <FormItem>
@@ -56,9 +57,10 @@ const AvatarRelatedInputs = ({
                   <MultipleSelector
                     options={supportedAvatarCandidates}
                     placeholder="対応アバターを選択..."
-                    className="bg-background"
+                    className={cn('bg-background', disabled && 'opacity-50')}
                     hidePlaceholderWhenSelected
                     creatable
+                    disabled={disabled}
                     emptyIndicator={
                       <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
                         入力して作成

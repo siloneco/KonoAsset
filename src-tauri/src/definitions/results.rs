@@ -26,12 +26,12 @@ pub struct FetchAssetDescriptionFromBoothResult {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AssetDeleteResult {
+pub struct SimpleResult {
     pub success: bool,
     pub error_message: Option<String>,
 }
 
-impl AssetDeleteResult {
+impl SimpleResult {
     pub fn success() -> Self {
         Self {
             success: true,
