@@ -13,7 +13,13 @@ import { AssetType, SortBy } from '@/lib/entity'
 import { useContext } from 'react'
 
 const NavBar = () => {
-  const { assetType, textFilter } = useContext(AssetFilterContext)
+  const {
+    assetType,
+    textFilter,
+    categoryFilter,
+    supportedAvatarFilter,
+    tagFilter,
+  } = useContext(AssetFilterContext)
   const { setSortBy, setReverseOrder } = useContext(AssetContext)
 
   let assetTypeDisplay
@@ -51,7 +57,7 @@ const NavBar = () => {
     <div className="m-4">
       <div className="flex flex-row w-full">
         <div className="w-full">
-          <Card className="p-3 pl-4 h-12 flex flex-row">
+          <Card className="p-3 pl-4 min-h-12 grid grid-cols-2 xl:grid-cols-4">
             {assetType !== '' && (
               <div className="">
                 <span className="text-foreground/70">タイプ: </span>
@@ -65,6 +71,30 @@ const NavBar = () => {
                 <span className="text-foreground/70">文字検索: </span>
                 <span className="bg-primary text-primary-foreground px-2 rounded-lg">
                   {textFilter}
+                </span>
+              </div>
+            )}
+            {categoryFilter.length > 0 && (
+              <div>
+                <span className="text-foreground/70">カテゴリ: </span>
+                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
+                  {categoryFilter.length}件
+                </span>
+              </div>
+            )}
+            {supportedAvatarFilter.length > 0 && (
+              <div>
+                <span className="text-foreground/70">対応アバター: </span>
+                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
+                  {supportedAvatarFilter.length}件
+                </span>
+              </div>
+            )}
+            {tagFilter.length > 0 && (
+              <div>
+                <span className="text-foreground/70">タグ: </span>
+                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
+                  {tagFilter.length}件
                 </span>
               </div>
             )}
