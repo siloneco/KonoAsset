@@ -70,7 +70,7 @@ pub fn fetch_asset_details_from_booth(
 
 pub fn validate_booth_url(url: &str) -> bool {
     let top_regex = Regex::new(r"^https://booth\.pm/[a-z-]{2,5}/items/[0-9]+$").unwrap();
-    let shop_regex = Regex::new(r"^https://[a-z-]+\.booth\.pm/items/[0-9]+$").unwrap();
+    let shop_regex = Regex::new(r"^https://[0-9a-z-]+\.booth\.pm/items/[0-9]+$").unwrap();
 
     top_regex.is_match(url) || shop_regex.is_match(url)
 }
@@ -87,9 +87,10 @@ mod tests {
         assert_eq!(validate_booth_url("https://booth.pm/en/items/123456"), true);
         assert_eq!(validate_booth_url("https://booth.pm/zh-tw/items/123456"), true);
 
-        // 異常系 ( <shop-name>.booth.pm )
+        // 正常系 ( <shop-name>.booth.pm )
         assert_eq!(validate_booth_url("https://shop.booth.pm/items/123456"), true);
         assert_eq!(validate_booth_url("https://shop-name-that-contains-hyphen.booth.pm/items/123456"), true);
+        assert_eq!(validate_booth_url("https://shop-name-that-contains-number-12345.booth.pm/items/123456"), true);
 
         // 異常系: HTTP
         assert_eq!(validate_booth_url("http://booth.pm/ja/items/123456"), false);

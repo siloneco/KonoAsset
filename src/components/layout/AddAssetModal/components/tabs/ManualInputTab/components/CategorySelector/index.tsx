@@ -43,6 +43,8 @@ const CategorySelector = ({
     setNewValue('')
   }
 
+  console.log(categoryCandidates)
+
   return (
     <Select onValueChange={onValueChange} disabled={submitting} value={value}>
       <SelectTrigger>
