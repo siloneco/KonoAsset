@@ -55,23 +55,18 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
           <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="flex flex-row space-x-6">
               <div className="w-1/3 rounded-lg">
-                <AspectRatio ratio={1}>
+                <AspectRatio
+                  ratio={1}
+                  className="w-full flex items-center bg-white rounded-lg overflow-hidden"
+                >
                   {imageSrc && imageSrc.startsWith('https://') && (
-                    <img
-                      src={imageSrc}
-                      alt="asset_image"
-                      className="rounded-lg"
-                    />
+                    <img src={imageSrc} alt="asset_image" />
                   )}
                   {imageSrc && !imageSrc.startsWith('https://') && (
-                    <img
-                      src={convertFileSrc(imageSrc)}
-                      alt="asset_image"
-                      className="rounded-lg"
-                    />
+                    <img src={convertFileSrc(imageSrc)} alt="asset_image" />
                   )}
                   {!imageSrc && (
-                    <div className="w-full h-full bg-slate-400 rounded-lg"></div>
+                    <div className="w-full h-full bg-slate-400"></div>
                   )}
                   <div
                     className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-50"

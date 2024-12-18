@@ -57,7 +57,10 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
     <Card className="w-full bg-card m-1">
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
-          <AspectRatio ratio={1} className="w-full">
+          <AspectRatio
+            ratio={1}
+            className="w-full flex items-center bg-white rounded-lg overflow-hidden"
+          >
             <img
               src={convertFileSrc(assetDescription.image_src)}
               alt={assetDescription.title}

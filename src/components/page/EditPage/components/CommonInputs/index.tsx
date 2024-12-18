@@ -56,7 +56,10 @@ const CommonInputs = ({ form, disabled }: Props) => {
   return (
     <div className="w-full flex flex-row space-x-6 mt-8">
       <div className="w-2/5">
-        <AspectRatio ratio={1}>
+        <AspectRatio
+          ratio={1}
+          className="w-full flex items-center bg-white rounded-lg overflow-hidden"
+        >
           <ImageWrapper src={imageSrc} />
           <div
             className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-50"
