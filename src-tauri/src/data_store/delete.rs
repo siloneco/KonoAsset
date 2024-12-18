@@ -75,6 +75,15 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
     let mut images_path = app_dir.clone();
     images_path.push("images");
 
+    let images_path = images_path.canonicalize();
+    if images_path.is_err() {
+        return Err(format!(
+            "Failed to get images path: {:?}",
+            images_path.err()
+        ));
+    }
+    let images_path = images_path.unwrap();
+
     let path = PathBuf::from(asset.get_description().image_src.clone()).canonicalize();
     if path.is_err() {
         return Err(format!("Failed to get image path: {:?}", path.err()));
