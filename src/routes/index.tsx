@@ -1,11 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import {
-  AssetType,
-  AvatarAsset,
-  AvatarRelatedAsset,
-  WorldAsset,
-} from '@/lib/entity'
+import { useEffect, useState } from 'react'
+import { AssetDisplay, AssetType, SortBy } from '@/lib/entity'
 import {
   AssetFilterContext,
   AssetFilterContextType,
@@ -15,9 +10,9 @@ import {
   AssetContext,
   AssetContextType,
 } from '@/components/context/AssetContext'
-import { invoke } from '@tauri-apps/api/core'
 import MainSidebar from '@/components/layout/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
+import { invoke } from '@tauri-apps/api/core'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -32,55 +27,36 @@ function RouteComponent() {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [tagFilter, setTagFilter] = useState<string[]>([])
 
-  const [avatarAssets, setAvatarAssets] = useState<AvatarAsset[]>([])
-  const [avatarRelatedAssets, setAvatarRelatedAssets] = useState<
-    AvatarRelatedAsset[]
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.CreatedAt)
+  const [reverseOrder, setReverseOrder] = useState(true)
+  const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
+    AssetDisplay[]
   >([])
-  const [worldAssets, setWorldAssets] = useState<WorldAsset[]>([])
 
   const assetContextValue: AssetContextType = {
-    avatarAssets: avatarAssets,
-    setAvatarAssets: setAvatarAssets,
-    addAvatarAsset: (asset: AvatarAsset) => {
-      setAvatarAssets([...avatarAssets, asset])
-    },
-    deleteAvatarAsset: (id: string) => {
-      setAvatarAssets(avatarAssets.filter((asset) => asset.id !== id))
-    },
+    sortBy: sortBy,
+    setSortBy: setSortBy,
+    reverseOrder: reverseOrder,
+    setReverseOrder: setReverseOrder,
 
-    avatarRelatedAssets: avatarRelatedAssets,
-    setAvatarRelatedAssets: setAvatarRelatedAssets,
-    addAvatarRelatedAsset: (asset: AvatarRelatedAsset) => {
-      setAvatarRelatedAssets([...avatarRelatedAssets, asset])
-    },
-    deleteAvatarRelatedAsset: (id: string) => {
-      setAvatarRelatedAssets(
-        avatarRelatedAssets.filter((asset) => asset.id !== id),
+    assetDisplaySortedList: assetDisplaySortedList,
+    setAssetDisplaySortedList: setAssetDisplaySortedList,
+
+    deleteAssetById: async (id: string) => {
+      setAssetDisplaySortedList((prev) =>
+        prev.filter((asset) => asset.id !== id),
       )
     },
 
-    worldAssets: worldAssets,
-    setWorldAssets: setWorldAssets,
-    addWorldAsset: (asset: WorldAsset) => {
-      setWorldAssets([...worldAssets, asset])
-    },
-    deleteWorldAsset: (id: string) => {
-      setWorldAssets(worldAssets.filter((asset) => asset.id !== id))
-    },
+    refreshAssets: async () => {
+      const assets: AssetDisplay[] = await invoke(
+        'get_sorted_assets_for_display',
+        {
+          sortBy: sortBy,
+        },
+      )
 
-    refreshAssets: async (assetType?: AssetType) => {
-      if (assetType === undefined || assetType === AssetType.Avatar) {
-        const result = await invoke('get_avatar_assets')
-        setAvatarAssets(result as AvatarAsset[])
-      }
-      if (assetType === undefined || assetType === AssetType.AvatarRelated) {
-        const result = await invoke('get_avatar_related_assets')
-        setAvatarRelatedAssets(result as AvatarRelatedAsset[])
-      }
-      if (assetType === undefined || assetType === AssetType.World) {
-        const result = await invoke('get_world_assets')
-        setWorldAssets(result as WorldAsset[])
-      }
+      setAssetDisplaySortedList(assets)
     },
   }
 
@@ -100,6 +76,10 @@ function RouteComponent() {
     tagFilter,
     setTagFilter,
   }
+
+  useEffect(() => {
+    assetContextValue.refreshAssets()
+  }, [sortBy])
 
   return (
     <div>

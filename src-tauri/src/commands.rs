@@ -1,4 +1,7 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{
+    collections::{HashMap, HashSet},
+    path::PathBuf,
+};
 
 use tauri::State;
 use uuid::Uuid;
@@ -10,7 +13,10 @@ use crate::{
         search::{self},
     },
     definitions::{
-        entities::{AvatarAsset, AvatarRelatedAsset, FilterRequest, WorldAsset},
+        entities::{
+            AssetDisplay, AssetType, AvatarAsset, AvatarRelatedAsset, FilterRequest, SortBy,
+            WorldAsset,
+        },
         import_request::{
             AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
@@ -26,33 +32,81 @@ use crate::{
 };
 
 #[tauri::command]
-pub fn get_avatar_assets(basic_store: State<'_, StoreProvider>) -> Vec<AvatarAsset> {
+pub fn get_sorted_assets_for_display(
+    basic_store: State<'_, StoreProvider>,
+    sort_by: SortBy,
+) -> Vec<AssetDisplay> {
+    let mut created_at_map: HashMap<Uuid, i64> = HashMap::new();
+    let mut result: Vec<AssetDisplay> = Vec::new();
+
     basic_store
         .get_avatar_store()
         .get_assets()
         .iter()
-        .cloned()
-        .collect()
-}
+        .for_each(|asset| {
+            let description = &asset.description;
+            result.push(AssetDisplay::create(
+                asset.id,
+                AssetType::Avatar,
+                description.title.clone(),
+                description.author.clone(),
+                description.image_src.clone(),
+            ));
 
-#[tauri::command]
-pub fn get_avatar_related_assets(basic_store: State<'_, StoreProvider>) -> Vec<AvatarRelatedAsset> {
+            if sort_by == SortBy::CreatedAt {
+                created_at_map.insert(asset.id, description.created_at);
+            }
+        });
+
     basic_store
         .get_avatar_related_store()
         .get_assets()
         .iter()
-        .cloned()
-        .collect()
-}
+        .for_each(|asset| {
+            let description = &asset.description;
+            result.push(AssetDisplay::create(
+                asset.id,
+                AssetType::AvatarRelated,
+                description.title.clone(),
+                description.author.clone(),
+                description.image_src.clone(),
+            ));
 
-#[tauri::command]
-pub fn get_world_assets(basic_store: State<'_, StoreProvider>) -> Vec<WorldAsset> {
+            if sort_by == SortBy::CreatedAt {
+                created_at_map.insert(asset.id, description.created_at);
+            }
+        });
+
     basic_store
         .get_world_store()
         .get_assets()
         .iter()
-        .cloned()
-        .collect()
+        .for_each(|asset| {
+            let description = &asset.description;
+            result.push(AssetDisplay::create(
+                asset.id,
+                AssetType::World,
+                description.title.clone(),
+                description.author.clone(),
+                description.image_src.clone(),
+            ));
+
+            if sort_by == SortBy::CreatedAt {
+                created_at_map.insert(asset.id, description.created_at);
+            }
+        });
+
+    match sort_by {
+        SortBy::Title => result.sort_by(|a, b| a.title.cmp(&b.title)),
+        SortBy::CreatedAt => result.sort_by(|a, b| {
+            created_at_map
+                .get(&a.id)
+                .unwrap()
+                .cmp(&created_at_map.get(&b.id).unwrap())
+        }),
+    }
+
+    result
 }
 
 #[tauri::command]

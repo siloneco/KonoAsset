@@ -1,11 +1,6 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
-import {
-  AssetType,
-  AvatarAsset,
-  AvatarRelatedAsset,
-  WorldAsset,
-} from '@/lib/entity'
+import { AssetType } from '@/lib/entity'
 import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
@@ -47,8 +42,7 @@ export const useManualInputTabHooks = ({
   const { toast } = useToast()
   const { form, assetPath, assetType, supportedAvatars } =
     useContext(AddAssetModalContext)
-  const { addAvatarAsset, addAvatarRelatedAsset, addWorldAsset } =
-    useContext(AssetContext)
+  const { refreshAssets } = useContext(AssetContext)
 
   const imageSrc = form?.watch('image_src')
 
@@ -93,13 +87,7 @@ export const useManualInputTabHooks = ({
       )
 
       if (result.isSuccess()) {
-        if (assetType === AssetType.Avatar) {
-          addAvatarAsset(result.value as AvatarAsset)
-        } else if (assetType === AssetType.AvatarRelated) {
-          addAvatarRelatedAsset(result.value as AvatarRelatedAsset)
-        } else if (assetType === AssetType.World) {
-          addWorldAsset(result.value as WorldAsset)
-        }
+        await refreshAssets()
 
         toast({
           title: 'データのインポートが完了しました！',

@@ -1,3 +1,11 @@
+export type AssetDisplay = {
+  id: string
+  asset_type: AssetType
+  title: string
+  author: string
+  image_src: string
+}
+
 export type AssetDescription = {
   title: string
   author: string
@@ -32,6 +40,11 @@ export enum AssetType {
   Avatar = 'Avatar',
   AvatarRelated = 'AvatarRelated',
   World = 'World',
+}
+
+export enum SortBy {
+  Title = 'Title',
+  CreatedAt = 'CreatedAt',
 }
 
 export type AssetImportRequest = {

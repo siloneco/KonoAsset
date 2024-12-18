@@ -1,3 +1,4 @@
+import { AssetContext } from '@/components/context/AssetContext'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { Card } from '@/components/ui/card'
 import {
@@ -8,11 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { AssetType } from '@/lib/entity'
+import { AssetType, SortBy } from '@/lib/entity'
 import { useContext } from 'react'
 
 const NavBar = () => {
   const { assetType, textFilter } = useContext(AssetFilterContext)
+  const { setSortBy, setReverseOrder } = useContext(AssetContext)
 
   let assetTypeDisplay
 
@@ -22,6 +24,27 @@ const NavBar = () => {
     assetTypeDisplay = 'アバター関連'
   } else if (assetType === AssetType.World) {
     assetTypeDisplay = 'ワールド'
+  }
+
+  const handleSortByChange = (value: string) => {
+    switch (value) {
+      case 'created_at_desc':
+        setSortBy(SortBy.CreatedAt)
+        setReverseOrder(true)
+        break
+      case 'created_at_asc':
+        setSortBy(SortBy.CreatedAt)
+        setReverseOrder(false)
+        break
+      case 'title_asc':
+        setSortBy(SortBy.Title)
+        setReverseOrder(false)
+        break
+      case 'title_desc':
+        setSortBy(SortBy.Title)
+        setReverseOrder(true)
+        break
+    }
   }
 
   return (
@@ -48,17 +71,23 @@ const NavBar = () => {
           </Card>
         </div>
         <div className="w-fit mx-2 flex items-center">
-          <Select>
+          <Select
+            onValueChange={handleSortByChange}
+            defaultValue="created_at_desc"
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="ソート設定" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="apple">追加順(新しいものから)</SelectItem>
-                <SelectItem value="banana">追加順(古いものから)</SelectItem>
-                <SelectItem value="blueberry">カテゴリ名</SelectItem>
-                <SelectItem value="grapes">タイトル(A-Z順)</SelectItem>
-                <SelectItem value="pineapple">タイトル(Z-A順)</SelectItem>
+                <SelectItem value="created_at_desc">
+                  追加順(新しいものから)
+                </SelectItem>
+                <SelectItem value="created_at_asc">
+                  追加順(古いものから)
+                </SelectItem>
+                <SelectItem value="title_asc">タイトル(A-Z順)</SelectItem>
+                <SelectItem value="title_desc">タイトル(Z-A順)</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

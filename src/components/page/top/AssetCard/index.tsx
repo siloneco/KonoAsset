@@ -3,12 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import {
-  SimpleResult,
-  AssetDescription,
-  AssetType,
-  DirectoryOpenResult,
-} from '@/lib/entity'
+import { SimpleResult, AssetType, DirectoryOpenResult } from '@/lib/entity'
 import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { Folder } from 'lucide-react'
 import { MoreButton } from './components/MoreButton'
@@ -19,12 +14,13 @@ import { useContext } from 'react'
 type Props = {
   id: string
   assetType: AssetType
-  assetDescription: AssetDescription
+  title: string
+  author: string
+  image_src: string
 }
 
-const AssetCard = ({ id, assetType, assetDescription }: Props) => {
-  const { deleteAvatarAsset, deleteAvatarRelatedAsset, deleteWorldAsset } =
-    useContext(AssetContext)
+const AssetCard = ({ id, assetType, title, author, image_src }: Props) => {
+  const { deleteAssetById } = useContext(AssetContext)
   const { toast } = useToast()
 
   const openInFileManager = async () => {
@@ -47,9 +43,7 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
 
     if (result.success) {
       // アセットを一覧から削除
-      deleteAvatarAsset(id)
-      deleteAvatarRelatedAsset(id)
-      deleteWorldAsset(id)
+      deleteAssetById(id)
 
       toast({
         title: '正常に削除されました！',
@@ -71,8 +65,8 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
             className="w-full flex items-center bg-white rounded-lg overflow-hidden"
           >
             <img
-              src={convertFileSrc(assetDescription.image_src)}
-              alt={assetDescription.title}
+              src={convertFileSrc(image_src)}
+              alt={title}
               className="w-full"
             />
           </AspectRatio>
@@ -88,9 +82,9 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
             )}
           </div>
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
-            {assetDescription.title}
+            {title}
           </CardTitle>
-          <Label className="text-sm">{assetDescription.author}</Label>
+          <Label className="text-sm">{author}</Label>
         </div>
         <div className="flex flex-row mt-2">
           <Button className={'w-full mr-2'} onClick={openInFileManager}>

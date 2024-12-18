@@ -1,45 +1,30 @@
 import { createContext } from 'react'
-import {
-  AssetType,
-  AvatarAsset,
-  AvatarRelatedAsset,
-  WorldAsset,
-} from '@/lib/entity'
+import { AssetDisplay, AssetType, SortBy } from '@/lib/entity'
 
 export type AssetContextType = {
-  avatarAssets: AvatarAsset[]
-  setAvatarAssets: (assets: AvatarAsset[]) => void
-  addAvatarAsset: (asset: AvatarAsset) => void
-  deleteAvatarAsset: (id: string) => void
+  sortBy: SortBy
+  setSortBy: (sortBy: SortBy) => void
+  reverseOrder: boolean
+  setReverseOrder: (reverseOrder: boolean) => void
 
-  avatarRelatedAssets: AvatarRelatedAsset[]
-  setAvatarRelatedAssets: (assets: AvatarRelatedAsset[]) => void
-  addAvatarRelatedAsset: (asset: AvatarRelatedAsset) => void
-  deleteAvatarRelatedAsset: (id: string) => void
+  assetDisplaySortedList: AssetDisplay[]
+  setAssetDisplaySortedList: (assetDisplaySortedList: AssetDisplay[]) => void
 
-  worldAssets: WorldAsset[]
-  setWorldAssets: (assets: WorldAsset[]) => void
-  addWorldAsset: (asset: WorldAsset) => void
-  deleteWorldAsset: (id: string) => void
+  deleteAssetById: (id: string) => void
 
   refreshAssets: (assetType?: AssetType) => Promise<void>
 }
 
 export const AssetContext = createContext<AssetContextType>({
-  avatarAssets: [],
-  setAvatarAssets: () => {},
-  addAvatarAsset: () => {},
-  deleteAvatarAsset: () => {},
+  sortBy: SortBy.Title,
+  setSortBy: () => {},
+  reverseOrder: false,
+  setReverseOrder: () => {},
 
-  avatarRelatedAssets: [],
-  setAvatarRelatedAssets: () => {},
-  addAvatarRelatedAsset: () => {},
-  deleteAvatarRelatedAsset: () => {},
+  assetDisplaySortedList: [],
+  setAssetDisplaySortedList: () => {},
 
-  worldAssets: [],
-  setWorldAssets: () => {},
-  addWorldAsset: () => {},
-  deleteWorldAsset: () => {},
+  deleteAssetById: () => {},
 
   refreshAssets: async () => {},
 })

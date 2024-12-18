@@ -5,6 +5,33 @@ use uuid::Uuid;
 
 use super::traits::AssetTrait;
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct AssetDisplay {
+    pub id: Uuid,
+    pub asset_type: AssetType,
+    pub title: String,
+    pub author: String,
+    pub image_src: String,
+}
+
+impl AssetDisplay {
+    pub fn create(
+        id: Uuid,
+        asset_type: AssetType,
+        title: String,
+        author: String,
+        image_src: String,
+    ) -> Self {
+        Self {
+            id,
+            asset_type,
+            title,
+            author,
+            image_src,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AssetDescription {
     pub title: String,
@@ -146,6 +173,12 @@ pub enum AssetType {
     Avatar,
     AvatarRelated,
     World,
+}
+
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub enum SortBy {
+    Title,
+    CreatedAt,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
