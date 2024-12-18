@@ -6,6 +6,7 @@ import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { UseFormReturn } from 'react-hook-form'
 import { open } from '@tauri-apps/plugin-dialog'
+import { downloadDir } from '@tauri-apps/api/path'
 import { invoke } from '@tauri-apps/api/core'
 
 export type Props = {
@@ -110,6 +111,7 @@ export const useManualInputTabHooks = ({
     const path = await open({
       multiple: false,
       directory: false,
+      defaultPath: await downloadDir(),
       filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg'] }],
     })
 

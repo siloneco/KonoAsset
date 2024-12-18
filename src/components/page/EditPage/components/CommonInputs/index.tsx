@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-dialog'
+import { downloadDir } from '@tauri-apps/api/path'
 import { ImagePlus } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import ImageWrapper from '../ImageWrapper'
@@ -40,6 +41,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
     const path = await open({
       multiple: false,
       directory: false,
+      defaultPath: await downloadDir(),
       filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg'] }],
     })
 
