@@ -12,6 +12,7 @@ import {
 import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { Folder } from 'lucide-react'
 import { MoreButton } from './components/MoreButton'
+import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 
 type Props = {
   id: string
@@ -56,11 +57,13 @@ const AssetCard = ({ id, assetType, assetDescription }: Props) => {
     <Card className="w-full bg-card m-1">
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
-          <img
-            src={convertFileSrc(assetDescription.image_src)}
-            alt={assetDescription.title}
-            className="w-full rounded-sm"
-          />
+          <AspectRatio ratio={1} className="w-full">
+            <img
+              src={convertFileSrc(assetDescription.image_src)}
+              alt={assetDescription.title}
+              className="w-full rounded-sm"
+            />
+          </AspectRatio>
           <div className="mt-3">
             {assetType === AssetType.Avatar && (
               <Badge variant="avatar">アバター素体</Badge>
