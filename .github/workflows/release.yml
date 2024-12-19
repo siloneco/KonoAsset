@@ -82,8 +82,8 @@ jobs:
           mkdir -p upload/manifests
           mkdir -p upload/installer
           mv latest.json ./upload/manifests/
-          mv ./src-tauri/target/release/bundle/msi/ ./upload/installer/
-          mv ./src-tauri/target/release/bundle/nsis/ ./upload/installer/
+          mv ./src-tauri/target/release/bundle/msi/* ./upload/installer/
+          mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
       - name: Upload artifacts
         uses: ryand56/r2-upload-action@latest
