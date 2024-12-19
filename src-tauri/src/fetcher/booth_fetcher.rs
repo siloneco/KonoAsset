@@ -55,15 +55,19 @@ pub fn fetch_asset_details_from_booth(
         216 | // 3Dモーション・アニメーション
         127 // 3Dモデル（その他）
         => Some(AssetType::AvatarRelated),
-
         211  // 3D環境・ワールド
         => Some(AssetType::World),
-        
         _ => None,
     };
 
     Ok((
-        AssetDescription::create(title, author, image_src, vec![], Local::now().timestamp_millis()),
+        AssetDescription::create(
+            title,
+            author,
+            image_src,
+            vec![],
+            Local::now().timestamp_millis(),
+        ),
         estimated_asset_type,
     ))
 }
@@ -85,25 +89,54 @@ mod tests {
         assert_eq!(validate_booth_url("https://booth.pm/ja/items/123456"), true);
         assert_eq!(validate_booth_url("https://booth.pm/ja/items/123456"), true);
         assert_eq!(validate_booth_url("https://booth.pm/en/items/123456"), true);
-        assert_eq!(validate_booth_url("https://booth.pm/zh-tw/items/123456"), true);
+        assert_eq!(
+            validate_booth_url("https://booth.pm/zh-tw/items/123456"),
+            true
+        );
 
         // 正常系 ( <shop-name>.booth.pm )
-        assert_eq!(validate_booth_url("https://shop.booth.pm/items/123456"), true);
-        assert_eq!(validate_booth_url("https://shop-name-that-contains-hyphen.booth.pm/items/123456"), true);
-        assert_eq!(validate_booth_url("https://shop-name-that-contains-number-12345.booth.pm/items/123456"), true);
+        assert_eq!(
+            validate_booth_url("https://shop.booth.pm/items/123456"),
+            true
+        );
+        assert_eq!(
+            validate_booth_url("https://shop-name-that-contains-hyphen.booth.pm/items/123456"),
+            true
+        );
+        assert_eq!(
+            validate_booth_url(
+                "https://shop-name-that-contains-number-12345.booth.pm/items/123456"
+            ),
+            true
+        );
 
         // 異常系: HTTP
         assert_eq!(validate_booth_url("http://booth.pm/ja/items/123456"), false);
-        assert_eq!(validate_booth_url("http://shop.booth.pm/items/123456"), false);
+        assert_eq!(
+            validate_booth_url("http://shop.booth.pm/items/123456"),
+            false
+        );
 
         // 異常系: 商品IDが数字で構成されていない場合
-        assert_eq!(validate_booth_url("https://booth.pm/ja/items/abc123"), false);
-        assert_eq!(validate_booth_url("https://shop.booth.pm/items/abc123"), false);
+        assert_eq!(
+            validate_booth_url("https://booth.pm/ja/items/abc123"),
+            false
+        );
+        assert_eq!(
+            validate_booth_url("https://shop.booth.pm/items/abc123"),
+            false
+        );
 
         // 異常系: ショップのURLなのに言語指定がある場合
-        assert_eq!(validate_booth_url("https://shop.booth.pm/ja/items/123456"), false);
+        assert_eq!(
+            validate_booth_url("https://shop.booth.pm/ja/items/123456"),
+            false
+        );
 
         // 異常系: 不適切ドメイン
-        assert_eq!(validate_booth_url("https://example.com/ja/items/123456"), false);
+        assert_eq!(
+            validate_booth_url("https://example.com/ja/items/123456"),
+            false
+        );
     }
 }

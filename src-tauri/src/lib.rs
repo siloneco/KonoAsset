@@ -1,5 +1,6 @@
 use data_store::provider::StoreProvider;
 use tauri::{App, Manager};
+use tauri_plugin_updater::UpdaterExt;
 
 use commands::{
     copy_image_file_to_images, get_all_asset_tags, get_all_supported_avatar_values, get_asset,
@@ -21,10 +22,16 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(generate_handler())
         .setup(|app| {
+            let handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                update(handle).await.unwrap();
+            });
+
             let basic_store = init(&app);
             app.manage(basic_store);
             Ok(())
@@ -82,4 +89,28 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         // 検索関数
         get_filtered_asset_ids
     ]
+}
+
+async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
+    if let Some(update) = app.updater()?.check().await? {
+        let mut downloaded = 0;
+
+        // alternatively we could also call update.download() and update.install() separately
+        update
+            .download_and_install(
+                |chunk_length, content_length| {
+                    downloaded += chunk_length;
+                    println!("downloaded {downloaded} from {content_length:?}");
+                },
+                || {
+                    println!("download finished");
+                },
+            )
+            .await?;
+
+        println!("update installed");
+        app.restart();
+    }
+
+    Ok(())
 }
