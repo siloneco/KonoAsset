@@ -309,6 +309,21 @@ pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> V
 }
 
 #[tauri::command]
+pub fn get_world_categories(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+    let mut categories: HashSet<String> = HashSet::new();
+
+    basic_store
+        .get_world_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            categories.insert(asset.category.clone());
+        });
+
+    categories.into_iter().collect()
+}
+
+#[tauri::command]
 pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider>) -> Vec<String> {
     let mut supported_avatars: HashSet<String> = HashSet::new();
 

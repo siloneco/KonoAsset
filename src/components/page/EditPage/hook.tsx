@@ -5,8 +5,9 @@ import { useForm, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import {
   fetchAssetInformation,
-  fetchCategoryCandidates,
+  fetchAvatarRelatedCategoryCandidates,
   fetchSupportedAvatars,
+  fetchWorldCategoryCandidates,
   updateAsset,
 } from './logic'
 import { AssetType, SimpleResult } from '@/lib/entity'
@@ -34,8 +35,10 @@ type ReturnProps = {
   submit: () => Promise<void>
   submitting: boolean
   supportedAvatarCandidates: Option[]
-  categoryCandidates: string[]
-  addNewCategoryCandidates: (value: string) => void
+  avatarRelatedCategoryCandidates: string[]
+  addAvatarRelatedCategoryCandidates: (value: string) => void
+  worldCategoryCandidates: string[]
+  addWorldCategoryCandidates: (value: string) => void
   initializing: boolean
 }
 
@@ -46,7 +49,11 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
-  const [categoryCandidates, setCategoryCandidates] = useState<string[]>([])
+  const [avatarRelatedCategoryCandidates, setAvatarRelatedCategoryCandidates] =
+    useState<string[]>([])
+  const [worldCategoryCandidates, setWorldCategoryCandidates] = useState<
+    string[]
+  >([])
 
   const formSchema = z.object({
     assetType: z.nativeEnum(AssetType),
@@ -90,8 +97,12 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     }
   }
 
-  const addNewCategoryCandidates = (value: string) => {
-    setCategoryCandidates((prev) => [...prev, value])
+  const addAvatarRelatedCategoryCandidates = (value: string) => {
+    setAvatarRelatedCategoryCandidates((prev) => [...prev, value])
+  }
+
+  const addWorldCategoryCandidates = (value: string) => {
+    setWorldCategoryCandidates((prev) => [...prev, value])
   }
 
   const updateSupportedAvatars = async () => {
@@ -100,8 +111,12 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
   }
 
   const updateCategoryCandidates = async () => {
-    const result: string[] = await fetchCategoryCandidates()
-    setCategoryCandidates(result)
+    const avatarRelatedResult: string[] =
+      await fetchAvatarRelatedCategoryCandidates()
+    setAvatarRelatedCategoryCandidates(avatarRelatedResult)
+
+    const worldResult: string[] = await fetchWorldCategoryCandidates()
+    setWorldCategoryCandidates(worldResult)
   }
 
   const initializeFields = async () => {
@@ -161,8 +176,10 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     submit,
     submitting,
     supportedAvatarCandidates,
-    categoryCandidates,
-    addNewCategoryCandidates,
+    avatarRelatedCategoryCandidates,
+    addAvatarRelatedCategoryCandidates,
+    worldCategoryCandidates,
+    addWorldCategoryCandidates,
     initializing,
   }
 }

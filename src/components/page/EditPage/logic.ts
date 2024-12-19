@@ -133,8 +133,13 @@ export const fetchSupportedAvatars = async (): Promise<Option[]> => {
   return options
 }
 
-export const fetchCategoryCandidates = async () => {
+export const fetchAvatarRelatedCategoryCandidates = async () => {
   const result: string[] = await invoke('get_avatar_related_categories')
+  return result
+}
+
+export const fetchWorldCategoryCandidates = async () => {
+  const result: string[] = await invoke('get_world_categories')
   return result
 }
 

@@ -18,8 +18,10 @@ const EditPage = ({ id }: Props) => {
     submit,
     submitting,
     supportedAvatarCandidates,
-    categoryCandidates,
-    addNewCategoryCandidates,
+    avatarRelatedCategoryCandidates,
+    addAvatarRelatedCategoryCandidates,
+    worldCategoryCandidates,
+    addWorldCategoryCandidates,
   } = useEditPageHook({ id })
 
   const assetType: AssetType = form.watch('assetType')
@@ -41,16 +43,18 @@ const EditPage = ({ id }: Props) => {
                     form={form}
                     disabled={submitting}
                     supportedAvatarCandidates={supportedAvatarCandidates}
-                    categoryCandidates={categoryCandidates}
-                    addNewCategoryCandidates={addNewCategoryCandidates}
+                    categoryCandidates={avatarRelatedCategoryCandidates}
+                    addNewCategoryCandidates={
+                      addAvatarRelatedCategoryCandidates
+                    }
                   />
                 )}
                 {assetType === AssetType.World && (
                   <WorldInputs
                     form={form}
                     disabled={submitting}
-                    categoryCandidates={categoryCandidates}
-                    addNewCategoryCandidates={addNewCategoryCandidates}
+                    categoryCandidates={worldCategoryCandidates}
+                    addNewCategoryCandidates={addWorldCategoryCandidates}
                   />
                 )}
                 <div className="mt-8 flex justify-between">

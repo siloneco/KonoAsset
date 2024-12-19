@@ -8,16 +8,13 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from '@/components/ui/select'
+
 import { Separator } from '@/components/ui/separator'
 import { useContext } from 'react'
+import CategorySelector from '../../components/CategorySelector'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { invoke } from '@tauri-apps/api/core'
 
 type Props = {
   submitting: boolean
@@ -25,6 +22,16 @@ type Props = {
 
 const WorldLayout = ({ submitting }: Props) => {
   const { form } = useContext(AddAssetModalContext)
+  const [categoryCandidates, setCategoryCandidates] = useState<string[]>([])
+
+  const fetchExistingCategories = async () => {
+    const result: string[] = await invoke('get_world_categories')
+    setCategoryCandidates(result)
+  }
+
+  useEffect(() => {
+    fetchExistingCategories()
+  }, [])
 
   if (!form) {
     return <div>Loading...</div>
@@ -40,24 +47,16 @@ const WorldLayout = ({ submitting }: Props) => {
             return (
               <FormItem>
                 <FormLabel>カテゴリ</FormLabel>
-                <Select
+                <CategorySelector
                   onValueChange={(value) => {
                     form.setValue('category', value)
                   }}
-                  disabled={submitting}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="カテゴリを選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="hair">髪</SelectItem>
-                      <SelectItem value="costume">衣装</SelectItem>
-                      <SelectItem value="accessory">アクセサリ</SelectItem>
-                      <SelectItem value="halo">ヘイロー</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  categoryCandidates={categoryCandidates}
+                  addNewCategory={(value) => {
+                    setCategoryCandidates((prev) => [...prev, value])
+                  }}
+                  submitting={submitting}
+                />
                 <FormDescription>
                   カテゴリはアセットの絞り込みや分類に利用されます
                 </FormDescription>
