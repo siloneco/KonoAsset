@@ -36,8 +36,10 @@ pub fn fetch_asset_details_from_booth(
         return Err(format!("Invalid Booth URL specified: {}", url).into());
     }
 
-    let url = format!("{}.json", url);
-    let response: BoothJson = get_reqwest_client().get(url).send()?.json()?;
+    let normalized_url = normalize_url_into_basic_url(&url);
+
+    let url = format!("{}.json", normalized_url);
+    let response: BoothJson = get_reqwest_client().get(&url).send()?.json()?;
 
     let title = response.name;
     let author = response.shop.name;
@@ -66,6 +68,7 @@ pub fn fetch_asset_details_from_booth(
             author,
             image_src,
             vec![],
+            Some(normalize_url_into_basic_url(&normalized_url)),
             Local::now().timestamp_millis(),
         ),
         estimated_asset_type,
@@ -77,6 +80,17 @@ pub fn validate_booth_url(url: &str) -> bool {
     let shop_regex = Regex::new(r"^https://[0-9a-z-]+\.booth\.pm/items/[0-9]+$").unwrap();
 
     top_regex.is_match(url) || shop_regex.is_match(url)
+}
+
+pub fn normalize_url_into_basic_url(url: &str) -> String {
+    let shop_regex = Regex::new(r"^https://[0-9a-z-]+\.booth\.pm/items/[0-9]+$").unwrap();
+
+    if !shop_regex.is_match(url) {
+        return url.into();
+    }
+
+    let item_id = url.split("/").last().unwrap();
+    format!("https://booth.pm/ja/items/{}", item_id)
 }
 
 #[cfg(test)]
@@ -137,6 +151,33 @@ mod tests {
         assert_eq!(
             validate_booth_url("https://example.com/ja/items/123456"),
             false
+        );
+    }
+
+    #[test]
+    fn test_normalize_url_into_basic_url() {
+        // booth.pm
+        assert_eq!(
+            normalize_url_into_basic_url("https://booth.pm/ja/items/123456"),
+            "https://booth.pm/ja/items/123456"
+        );
+
+        // <shop-name>.booth.pm
+        assert_eq!(
+            normalize_url_into_basic_url("https://shop.booth.pm/items/123456"),
+            "https://booth.pm/ja/items/123456"
+        );
+        assert_eq!(
+            normalize_url_into_basic_url(
+                "https://shop-name-that-contains-hyphen.booth.pm/items/123456"
+            ),
+            "https://booth.pm/ja/items/123456"
+        );
+        assert_eq!(
+            normalize_url_into_basic_url(
+                "https://shop-name-that-contains-number-12345.booth.pm/items/123456"
+            ),
+            "https://booth.pm/ja/items/123456"
         );
     }
 }

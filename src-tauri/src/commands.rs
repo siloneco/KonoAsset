@@ -51,6 +51,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
+                description.booth_url.clone(),
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -70,6 +71,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
+                description.booth_url.clone(),
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -89,6 +91,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
+                description.booth_url.clone(),
             ));
 
             if sort_by == SortBy::CreatedAt {

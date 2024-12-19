@@ -58,6 +58,7 @@ const AssetList = () => {
                 title={asset.title}
                 author={asset.author}
                 image_src={asset.image_src}
+                booth_url={asset.booth_url ?? undefined}
               />
             ),
         )}
@@ -76,6 +77,7 @@ const AssetList = () => {
                   title={asset.title}
                   author={asset.author}
                   image_src={asset.image_src}
+                  booth_url={asset.booth_url ?? undefined}
                 />
               ),
           )}
