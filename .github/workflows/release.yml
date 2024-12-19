@@ -55,8 +55,8 @@ jobs:
         uses: tauri-apps/tauri-action@ecd2eff64572601ddde25cc4962c2704435736e9 # v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: "konoasset-v__VERSION__"
           releaseName: "KonoAsset v__VERSION__"
