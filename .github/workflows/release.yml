@@ -77,7 +77,7 @@ jobs:
 
             fs.writeFileSync(latestJsonPath, JSON.stringify(latestJson, null, 2));
 
-      - name: Create manifests Directory
+      - name: Create upload Directory
         run: |
           mkdir -p upload/manifests
           mkdir -p upload/installer
