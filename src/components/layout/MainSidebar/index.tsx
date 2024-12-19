@@ -23,10 +23,6 @@ const MainSidebar = () => {
   const { assetType, textFilter, setTextFilter } =
     useContext(AssetFilterContext)
 
-  function openAboutPage() {
-    document.location.href = `/about`
-  }
-
   const onClick = () => {
     setTheme?.((theme) => (theme === 'dark' ? 'light' : 'dark'))
   }
@@ -70,9 +66,6 @@ const MainSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <Button className="w-full h-12 mt-auto" onClick={() => openAboutPage()}>
-        このアプリについて
-      </Button>
     </Sidebar>
   )
 }
