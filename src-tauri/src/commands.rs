@@ -224,8 +224,14 @@ pub fn open_in_file_manager(
 }
 
 #[tauri::command]
-pub fn get_asset_description_from_booth(url: String) -> FetchAssetDescriptionFromBoothResult {
-    let result = fetch_asset_details_from_booth(&url);
+pub fn get_asset_description_from_booth(
+    basic_store: State<'_, StoreProvider>,
+    url: String,
+) -> FetchAssetDescriptionFromBoothResult {
+    let mut images_dir = basic_store.app_data_dir();
+    images_dir.push("images");
+
+    let result = fetch_asset_details_from_booth(&url, images_dir);
 
     match result {
         Ok((asset_description, estimated_asset_type)) => FetchAssetDescriptionFromBoothResult {

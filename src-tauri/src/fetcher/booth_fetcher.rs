@@ -1,10 +1,13 @@
+use std::path::PathBuf;
+
 use chrono::Local;
 use regex::Regex;
 use serde::Deserialize;
+use uuid::Uuid;
 
 use crate::definitions::entities::{AssetDescription, AssetType};
 
-use super::common::get_reqwest_client;
+use super::{common::get_reqwest_client, image_saver::save_image_from_url};
 
 #[derive(Deserialize)]
 struct BoothJson {
@@ -31,6 +34,7 @@ struct BoothCategory {
 
 pub fn fetch_asset_details_from_booth(
     url: &str,
+    images_dir: PathBuf,
 ) -> Result<(AssetDescription, Option<AssetType>), Box<dyn std::error::Error>> {
     if !validate_booth_url(url) {
         return Err(format!("Invalid Booth URL specified: {}", url).into());
@@ -44,6 +48,16 @@ pub fn fetch_asset_details_from_booth(
     let title = response.name;
     let author = response.shop.name;
     let image_src = response.images.first().unwrap().original.clone();
+
+    let mut path = images_dir;
+    path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
+
+    let result = save_image_from_url(&image_src, &path);
+    if result.is_err() {
+        return Err(result.err().unwrap());
+    }
+
+    let image_src = path.to_str().unwrap().to_string();
 
     let estimated_asset_type = match response.category.id {
         208 // 3Dキャラクター
@@ -68,7 +82,7 @@ pub fn fetch_asset_details_from_booth(
             author,
             image_src,
             vec![],
-            Some(normalize_shop_booth_url_into_basic_url(&normalized_url)),
+            Some(normalized_url),
             Local::now().timestamp_millis(),
         ),
         estimated_asset_type,
