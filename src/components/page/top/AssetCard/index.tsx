@@ -17,9 +17,17 @@ type Props = {
   title: string
   author: string
   image_src: string
+  booth_url?: string
 }
 
-const AssetCard = ({ id, assetType, title, author, image_src }: Props) => {
+const AssetCard = ({
+  id,
+  assetType,
+  title,
+  author,
+  image_src,
+  booth_url,
+}: Props) => {
   const { deleteAssetById } = useContext(AssetContext)
   const { toast } = useToast()
 
@@ -91,7 +99,11 @@ const AssetCard = ({ id, assetType, title, author, image_src }: Props) => {
             <Folder size={24} />
             <p>開く</p>
           </Button>
-          <MoreButton id={id} executeAssetDeletion={deleteAsset} />
+          <MoreButton
+            id={id}
+            executeAssetDeletion={deleteAsset}
+            booth_url={booth_url}
+          />
         </div>
       </CardContent>
     </Card>

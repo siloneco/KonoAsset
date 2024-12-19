@@ -4,6 +4,7 @@ export type AssetDisplay = {
   title: string
   author: string
   image_src: string
+  booth_url: string | null
 }
 
 export type AssetDescription = {
@@ -11,6 +12,7 @@ export type AssetDescription = {
   author: string
   image_src: string
   tags: string[]
+  booth_url: string | null
   created_at: number
 }
 

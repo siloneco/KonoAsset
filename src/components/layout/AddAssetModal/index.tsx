@@ -21,6 +21,7 @@ export const AddAssetModalContext = createContext<{
       image_src: string
       tags: string[]
       category: string
+      booth_url?: string
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,

@@ -5,6 +5,7 @@ import {
   GetAssetResult,
   SimpleResult,
 } from '@/lib/entity'
+import { isBoothURL } from '@/lib/utils'
 import { invoke } from '@tauri-apps/api/core'
 import { UseFormReturn } from 'react-hook-form'
 
@@ -17,6 +18,7 @@ type UpdateAssetProps = {
       author: string
       image_src: string
       tags: string[]
+      booth_url: string | null
       category: string
       supportedAvatars: string[]
     },
@@ -52,12 +54,18 @@ const updateAvatarAsset = async ({
   const image_src = form.getValues('image_src')
   const tags = form.getValues('tags')
 
+  let booth_url = form.getValues('booth_url')
+  if (booth_url !== null && !isBoothURL(booth_url)) {
+    booth_url = null
+  }
+
   const asset: AvatarAsset = {
     id,
     description: {
       title,
       author,
       image_src,
+      booth_url,
       tags,
       created_at: 0, // unused on updating
     },
@@ -78,12 +86,18 @@ const updateAvatarRelatedAsset = async ({
   const category = form.getValues('category')
   const supportedAvatars = form.getValues('supportedAvatars')
 
+  let booth_url = form.getValues('booth_url')
+  if (booth_url !== null && !isBoothURL(booth_url)) {
+    booth_url = null
+  }
+
   const asset = {
     id,
     description: {
       title,
       author,
       image_src,
+      booth_url,
       tags,
       created_at: 0, // unused on updating
     },
@@ -107,12 +121,18 @@ const updateWorldAsset = async ({
   const tags = form.getValues('tags')
   const category = form.getValues('category')
 
+  let booth_url = form.getValues('booth_url')
+  if (booth_url !== null && !isBoothURL(booth_url)) {
+    booth_url = null
+  }
+
   const asset = {
     id,
     description: {
       title,
       author,
       image_src,
+      booth_url,
       tags,
       created_at: 0, // unused on updating
     },

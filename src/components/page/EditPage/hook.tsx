@@ -24,6 +24,7 @@ type ReturnProps = {
       title: string
       author: string
       image_src: string
+      booth_url: string | null
       tags: string[]
       category: string
       supportedAvatars: string[]
@@ -60,6 +61,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     title: z.string().min(1),
     author: z.string().min(1),
     image_src: z.string().min(1),
+    booth_url: z.string().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
@@ -135,6 +137,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('title', asset.description.title)
         form.setValue('author', asset.description.author)
         form.setValue('image_src', asset.description.image_src)
+        form.setValue('booth_url', asset.description.booth_url)
         form.setValue('tags', asset.description.tags)
       } else if (
         result.avatar_related_asset !== undefined &&
@@ -145,6 +148,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('title', asset.description.title)
         form.setValue('author', asset.description.author)
         form.setValue('image_src', asset.description.image_src)
+        form.setValue('booth_url', asset.description.booth_url)
         form.setValue('tags', asset.description.tags)
         form.setValue('category', asset.category)
         form.setValue('supportedAvatars', asset.supported_avatars)
@@ -157,6 +161,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('title', asset.description.title)
         form.setValue('author', asset.description.author)
         form.setValue('image_src', asset.description.image_src)
+        form.setValue('booth_url', asset.description.booth_url)
         form.setValue('tags', asset.description.tags)
         form.setValue('category', asset.category)
       }

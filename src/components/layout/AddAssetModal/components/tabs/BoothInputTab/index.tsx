@@ -59,6 +59,8 @@ const BoothInputTab = ({ setTab }: Props) => {
 
         setAssetType(result.estimated_asset_type ?? AssetType.Avatar)
 
+        form?.setValue('booth_url', boothUrlInput)
+
         moveToNextTab()
       } else {
         console.error(result.error_message)

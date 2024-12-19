@@ -18,13 +18,21 @@ import {
 } from '@/components/ui/alert-dialog'
 import { MoreHorizontal, ExternalLink, Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 type Props = {
   id: string
+  booth_url?: string
   executeAssetDeletion: () => Promise<void>
 }
 
-export const MoreButton = ({ id, executeAssetDeletion }: Props) => {
+export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
 
@@ -47,17 +55,26 @@ export const MoreButton = ({ id, executeAssetDeletion }: Props) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <a
-            href={`/article/`}
-            className="decoration-inherit text-inherit"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink size={16} className="text-card-foreground/40" />
-            Boothで開く
-          </a>
-        </DropdownMenuItem>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-default">
+              <DropdownMenuItem asChild disabled={booth_url === undefined}>
+                <a
+                  href={booth_url}
+                  className="decoration-inherit text-inherit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink size={16} className="text-card-foreground/40" />
+                  Boothで開く
+                </a>
+              </DropdownMenuItem>
+            </TooltipTrigger>
+            <TooltipContent className={cn(booth_url !== undefined && 'hidden')}>
+              <p>Booth URLが設定されていません！</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <DropdownMenuItem asChild>
           <a href={`/edit/${id}`} className="decoration-inherit text-inherit">
             編集

@@ -63,16 +63,38 @@ jobs:
           includeUpdaterJson: true
           args: ${{ matrix.args }}
 
+      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        with:
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const latestJsonPath = path.join(process.cwd(), 'latest.json');
+            const latestJson = JSON.parse(fs.readFileSync(latestJsonPath, 'utf8'));
+
+            const url = latestJson['platforms']['windows-x86_64']['url'];
+            const filename = path.basename(url);
+            const newUrl = `https://releases.konoasset.dev/installer/${filename}`;
+
+            latestJson['platforms']['windows-x86_64']['url'] = newUrl;
+
+            fs.writeFileSync(latestJsonPath, JSON.stringify(latestJson, null, 2));
+
       - name: Create manifests Directory
         run: |
-          mkdir manifests
-          mv latest.json manifests/
+          mkdir -p upload/manifests
+          mkdir -p upload/installer
+          mv latest.json ./upload/manifests/
+          mv ./src-tauri/target/release/bundle/msi/ ./upload/installer/
+          mv ./src-tauri/target/release/bundle/nsis/ ./upload/installer/
 
-      - uses: ryand56/r2-upload-action@latest
+      - name: Upload artifacts
+        uses: ryand56/r2-upload-action@latest
         with:
           r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2-bucket: ${{ secrets.R2_BUCKET }}
-          source-dir: manifests
-          destination-dir: ./manifests/
+          source-dir: upload/
+          destination-dir: ./

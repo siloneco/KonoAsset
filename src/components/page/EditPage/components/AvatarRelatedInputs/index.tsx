@@ -19,6 +19,7 @@ type Props = {
       title: string
       author: string
       image_src: string
+      booth_url: string | null
       tags: string[]
       category: string
       supportedAvatars: string[]

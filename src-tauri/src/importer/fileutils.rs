@@ -1,5 +1,27 @@
 use std::{error::Error, fs, path::PathBuf};
 
+use crate::fetcher::image_saver;
+
+pub fn save_image_if_external_url_specified(url: &str, dest: &PathBuf) -> Result<bool, String> {
+    // URLがファイルパスでファイルが実在するか確認する
+    if PathBuf::from(url).exists() {
+        return Ok(false);
+    }
+
+    let parsed = reqwest::Url::parse(url);
+    if parsed.is_err() {
+        return Ok(false);
+    }
+
+    let result = image_saver::save_image_from_url(url, dest);
+
+    if result.is_err() {
+        return Err(result.err().unwrap().to_string());
+    }
+
+    Ok(true)
+}
+
 pub fn import_asset(
     src_import_asset_path: &PathBuf,
     destination: &PathBuf,

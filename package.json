@@ -1,7 +1,7 @@
 {
   "name": "konoasset",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -32,7 +32,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.2",
-    "@radix-ui/react-tooltip": "^1.1.4",
+    "@radix-ui/react-tooltip": "^1.1.6",
     "@tanstack/react-router": "^1.86.1",
     "@tanstack/router-devtools": "^1.86.1",
     "@tauri-apps/api": "^2",
@@ -70,6 +70,6 @@
     "tailwindcss": "3.4.17",
     "typescript": "5.7.2",
     "typescript-eslint": "8.18.1",
-    "vite": "6.0.3"
+    "vite": "6.0.4"
   }
 }

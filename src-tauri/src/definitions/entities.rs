@@ -12,6 +12,7 @@ pub struct AssetDisplay {
     pub title: String,
     pub author: String,
     pub image_src: String,
+    pub booth_url: Option<String>,
 }
 
 impl AssetDisplay {
@@ -21,6 +22,7 @@ impl AssetDisplay {
         title: String,
         author: String,
         image_src: String,
+        booth_url: Option<String>,
     ) -> Self {
         Self {
             id,
@@ -28,6 +30,7 @@ impl AssetDisplay {
             title,
             author,
             image_src,
+            booth_url,
         }
     }
 }
@@ -38,7 +41,13 @@ pub struct AssetDescription {
     pub author: String,
     pub image_src: String,
     pub tags: Vec<String>,
+    #[serde(default = "default_booth_url")]
+    pub booth_url: Option<String>,
     pub created_at: i64,
+}
+
+fn default_booth_url() -> Option<String> {
+    None
 }
 
 impl AssetDescription {
@@ -47,6 +56,7 @@ impl AssetDescription {
         author: String,
         image_src: String,
         tags: Vec<String>,
+        booth_url: Option<String>,
         created_at: i64,
     ) -> Self {
         Self {
@@ -54,6 +64,7 @@ impl AssetDescription {
             author,
             image_src,
             tags,
+            booth_url,
             created_at,
         }
     }

@@ -3,7 +3,11 @@ use std::{collections::HashSet, fs::File, hash::Hash, path::PathBuf, sync::Mutex
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
-use crate::definitions::traits::AssetTrait;
+use crate::{
+    definitions::traits::AssetTrait,
+    fetcher::booth_fetcher::normalize_shop_booth_url_into_basic_url,
+    importer::save_image_if_external_url_specified,
+};
 
 use super::delete::delete_asset_image;
 
@@ -107,9 +111,6 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
 
         let old_asset = old_asset.unwrap();
 
-        assets.remove(&old_asset);
-        assets.insert(asset.clone());
-
         if old_asset.get_description().image_src != asset.get_description().image_src {
             let delete_result =
                 delete_asset_image(&self.app_data_dir, &old_asset.get_description().image_src);
@@ -121,7 +122,31 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             if !delete_result.unwrap() {
                 return Err("Failed to delete old image".into());
             }
+
+            let mut path = self.app_data_dir.clone();
+            path.push("images");
+            path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+
+            let result =
+                save_image_if_external_url_specified(&asset.get_description().image_src, &path);
+
+            if result.is_err() {
+                return Err(result.err().unwrap());
+            }
+
+            if result.unwrap() {
+                asset.get_description_as_mut().image_src = path.to_str().unwrap().to_string();
+            }
         }
+
+        if asset.get_description().booth_url.is_some() {
+            let url = asset.get_description().booth_url.as_ref().unwrap();
+            asset.get_description_as_mut().booth_url =
+                Some(normalize_shop_booth_url_into_basic_url(url));
+        }
+
+        assets.remove(&old_asset);
+        assets.insert(asset.clone());
 
         let mut path = self.app_data_dir.clone();
         path.push("metadata");

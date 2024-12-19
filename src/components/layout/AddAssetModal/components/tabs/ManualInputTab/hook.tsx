@@ -66,6 +66,7 @@ export const useManualInputTabHooks = ({
           author: form!.getValues('author'),
           image_src: form!.getValues('image_src'),
           tags: form!.getValues('tags'),
+          booth_url: form!.getValues('booth_url') ?? null,
           created_at: new Date().getTime(),
         },
         category: form!.getValues('category'),
