@@ -6,7 +6,7 @@ use uuid::Uuid;
 use crate::{
     definitions::traits::AssetTrait,
     fetcher::booth_fetcher::normalize_shop_booth_url_into_basic_url,
-    importer::save_image_if_external_url_specified,
+    importer::execute_image_fixation,
 };
 
 use super::delete::delete_asset_image;
@@ -127,8 +127,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             path.push("images");
             path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-            let result =
-                save_image_if_external_url_specified(&asset.get_description().image_src, &path);
+            let result = execute_image_fixation(&asset.get_description().image_src, &path);
 
             if result.is_err() {
                 return Err(result.err().unwrap());

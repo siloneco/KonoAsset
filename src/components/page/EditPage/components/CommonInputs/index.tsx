@@ -50,7 +50,10 @@ const CommonInputs = ({ form, disabled }: Props) => {
       return
     }
 
-    const result: string = await invoke('copy_image_file_to_images', { path })
+    const result: string = await invoke('copy_image_file_to_images', {
+      path,
+      temporary: true,
+    })
     form.setValue('image_src', result)
   }
 

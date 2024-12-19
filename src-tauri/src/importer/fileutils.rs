@@ -2,18 +2,32 @@ use std::{error::Error, fs, path::PathBuf};
 
 use crate::fetcher::image_saver;
 
-pub fn save_image_if_external_url_specified(url: &str, dest: &PathBuf) -> Result<bool, String> {
-    // URLがファイルパスでファイルが実在するか確認する
-    if PathBuf::from(url).exists() {
+pub fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
+    let path = PathBuf::from(url_or_path);
+    if PathBuf::from(url_or_path).exists() {
+        // ファイル名が temp_ で始まっている場合、次回再起動時に削除されないようにdestに移動する
+        if path
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .starts_with("temp_")
+        {
+            let result = fs::rename(&path, dest);
+            if result.is_err() {
+                return Err(result.err().unwrap().to_string());
+            }
+            return Ok(true);
+        }
         return Ok(false);
     }
 
-    let parsed = reqwest::Url::parse(url);
+    let parsed = reqwest::Url::parse(url_or_path);
     if parsed.is_err() {
         return Ok(false);
     }
 
-    let result = image_saver::save_image_from_url(url, dest);
+    let result = image_saver::save_image_from_url(url_or_path, dest);
 
     if result.is_err() {
         return Err(result.err().unwrap().to_string());

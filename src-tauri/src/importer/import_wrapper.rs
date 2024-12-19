@@ -13,7 +13,7 @@ use crate::{
     },
 };
 
-use super::fileutils::{self, save_image_if_external_url_specified};
+use super::fileutils::{self, execute_image_fixation};
 
 pub fn import_avatar_asset(
     basic_store: &StoreProvider,
@@ -23,20 +23,18 @@ pub fn import_avatar_asset(
     image_cache_dest.push("images");
     image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    let image_save_result = save_image_if_external_url_specified(
-        &request.pre_asset.description.image_src,
-        &image_cache_dest,
-    );
+    let image_fixation_result =
+        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
 
-    if image_save_result.is_err() {
+    if image_fixation_result.is_err() {
         return AvatarAssetImportResult {
             success: false,
             asset: None,
-            error_message: Some(image_save_result.err().unwrap()),
+            error_message: Some(image_fixation_result.err().unwrap()),
         };
     }
 
-    let request = if image_save_result.unwrap() {
+    let request = if image_fixation_result.unwrap() {
         let mut new_request = request.clone();
         new_request.pre_asset.description.image_src =
             image_cache_dest.to_str().unwrap().to_string();
@@ -101,10 +99,8 @@ pub fn import_avatar_related_asset(
     image_cache_dest.push("images");
     image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    let image_save_result = save_image_if_external_url_specified(
-        &request.pre_asset.description.image_src,
-        &image_cache_dest,
-    );
+    let image_save_result =
+        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
 
     if image_save_result.is_err() {
         return AvatarRelatedAssetImportResult {
@@ -183,10 +179,8 @@ pub fn import_world_asset(
     image_cache_dest.push("images");
     image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    let image_save_result = save_image_if_external_url_specified(
-        &request.pre_asset.description.image_src,
-        &image_cache_dest,
-    );
+    let image_save_result =
+        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
 
     if image_save_result.is_err() {
         return WorldAssetImportResult {

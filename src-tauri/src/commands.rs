@@ -1,5 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
+    fs,
     path::PathBuf,
 };
 
@@ -357,20 +358,38 @@ pub fn get_filtered_asset_ids(
 }
 
 #[tauri::command]
-pub fn copy_image_file_to_images(basic_store: State<'_, StoreProvider>, path: String) -> String {
+pub fn copy_image_file_to_images(
+    basic_store: State<'_, StoreProvider>,
+    path: String,
+    temporary: bool,
+) -> String {
     let path = PathBuf::from(path);
     let mut new_path = basic_store.app_data_dir();
     new_path.push("images");
-    new_path.push(format!(
-        "{}.{}",
-        Uuid::new_v4().to_string(),
-        path.extension()
-            .unwrap_or(std::ffi::OsStr::new("png"))
-            .to_str()
-            .unwrap()
-    ));
 
-    std::fs::copy(&path, &new_path).unwrap();
+    let filename = if temporary {
+        format!(
+            "temp_{}.{}",
+            Uuid::new_v4().to_string(),
+            path.extension()
+                .unwrap_or(std::ffi::OsStr::new("png"))
+                .to_str()
+                .unwrap()
+        )
+    } else {
+        format!(
+            "{}.{}",
+            Uuid::new_v4().to_string(),
+            path.extension()
+                .unwrap_or(std::ffi::OsStr::new("png"))
+                .to_str()
+                .unwrap()
+        )
+    };
+
+    new_path.push(filename);
+
+    fs::copy(&path, &new_path).unwrap();
 
     new_path.to_str().unwrap().to_string()
 }

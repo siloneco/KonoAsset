@@ -1,4 +1,4 @@
-use data_store::provider::StoreProvider;
+use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use tauri::{App, Manager};
 use tauri_plugin_updater::UpdaterExt;
 
@@ -46,6 +46,11 @@ fn init(handler: &App) -> StoreProvider {
         .unwrap()
         .set_title(&format!("KonoAsset v{}", VERSION))
         .unwrap();
+
+    let result = delete_temporary_images(&handler.path().app_local_data_dir().unwrap());
+    if result.is_err() {
+        eprintln!("Failed to delete temporary images: {}", result.unwrap_err());
+    }
 
     let dir = handler.path().app_local_data_dir().unwrap();
     let store = StoreProvider::create(dir);
