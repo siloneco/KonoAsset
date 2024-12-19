@@ -106,3 +106,41 @@ pub fn delete_asset_image(app_dir: &PathBuf, image_src: &str) -> Result<bool, St
 
     Ok(true)
 }
+
+pub fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
+    let mut images_path = app_dir.clone();
+    images_path.push("images");
+
+    let entries = fs::read_dir(&images_path);
+    if entries.is_err() {
+        return Err(format!(
+            "Failed to read images directory: {:?}",
+            entries.err()
+        ));
+    }
+
+    for entry in entries.unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        if !path.is_file() {
+            continue;
+        }
+
+        let file_name = path.file_name().unwrap().to_str().unwrap();
+        if !file_name.starts_with("temp_") {
+            continue;
+        }
+
+        let delete_result = fs::remove_file(path);
+
+        if delete_result.is_err() {
+            return Err(format!(
+                "Failed to delete image file: {:?}",
+                delete_result.err()
+            ));
+        }
+    }
+
+    Ok(())
+}

@@ -72,12 +72,20 @@ export type FetchAssetDescriptionFromBoothResult = {
   error_message?: string
 }
 
+export enum MatchType {
+  AND = 'AND',
+  OR = 'OR',
+}
+
 export type FilterRequest = {
   asset_type?: AssetType
   query?: string
   categories?: string[]
+  category_match_type: MatchType
   tags?: string[]
+  tag_match_type: MatchType
   supported_avatars?: string[]
+  supported_avatar_match_type: MatchType
 }
 
 export type SimpleResult = {

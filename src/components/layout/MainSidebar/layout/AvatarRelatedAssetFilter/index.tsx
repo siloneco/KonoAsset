@@ -8,14 +8,24 @@ import {
   fetchAllSupportedAvatars,
   fetchAllTags,
 } from './logic'
+import { MatchType } from '@/lib/entity'
 
 const AvatarRelatedAssetFilter = () => {
   const [categories, setCategories] = useState<Option[]>([])
   const [supportedAvatars, setSupportedAvatars] = useState<Option[]>([])
   const [tags, setTags] = useState<Option[]>([])
 
-  const { setCategoryFilter, setTagFilter, setSupportedAvatarFilter } =
-    useContext(AssetFilterContext)
+  const {
+    setCategoryFilter,
+    setTagFilter,
+    setSupportedAvatarFilter,
+    categoryFilterMatchType,
+    setCategoryFilterMatchType,
+    supportedAvatarFilterMatchType,
+    setSupportedAvatarFilterMatchType,
+    tagFilterMatchType,
+    setTagFilterMatchType,
+  } = useContext(AssetFilterContext)
 
   const updateCategoriesAndTags = async () => {
     setTags(await fetchAllTags())
@@ -27,10 +37,27 @@ const AvatarRelatedAssetFilter = () => {
     updateCategoriesAndTags()
   }, [])
 
+  const toggle = (matchType: MatchType) => {
+    if (matchType === MatchType.AND) {
+      return MatchType.OR
+    }
+    return MatchType.AND
+  }
+
   return (
     <div className="mt-4 space-y-4">
       <div>
-        <Label className="text-base">カテゴリ</Label>
+        <div className="flex flex-row">
+          <Label className="text-base w-full">カテゴリ</Label>
+          <div
+            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
+            onClick={() =>
+              setCategoryFilterMatchType(toggle(categoryFilterMatchType))
+            }
+          >
+            <span>{categoryFilterMatchType}</span>
+          </div>
+        </div>
         <MultipleSelector
           className="mt-2"
           options={categories}
@@ -45,7 +72,19 @@ const AvatarRelatedAssetFilter = () => {
         />
       </div>
       <div>
-        <Label className="text-base">対応アバター</Label>
+        <div className="flex flex-row">
+          <Label className="text-base w-full">対応アバター</Label>
+          <div
+            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
+            onClick={() =>
+              setSupportedAvatarFilterMatchType(
+                toggle(supportedAvatarFilterMatchType),
+              )
+            }
+          >
+            <span>{supportedAvatarFilterMatchType}</span>
+          </div>
+        </div>
         <MultipleSelector
           className="mt-2"
           options={supportedAvatars}
@@ -62,7 +101,15 @@ const AvatarRelatedAssetFilter = () => {
         />
       </div>
       <div className="h-40">
-        <Label className="text-base">タグ</Label>
+        <div className="flex flex-row">
+          <Label className="text-base w-full">タグ</Label>
+          <div
+            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
+            onClick={() => setTagFilterMatchType(toggle(tagFilterMatchType))}
+          >
+            <span>{tagFilterMatchType}</span>
+          </div>
+        </div>
         <MultipleSelector
           className="mt-2"
           options={tags}

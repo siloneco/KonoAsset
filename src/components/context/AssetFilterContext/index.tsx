@@ -1,4 +1,4 @@
-import { AssetType } from '@/lib/entity'
+import { AssetType, MatchType } from '@/lib/entity'
 import { createContext } from 'react'
 
 export type AssetFilterContextType = {
@@ -8,14 +8,20 @@ export type AssetFilterContextType = {
   assetType: AssetType | ''
   setAssetType: (type: AssetType | '') => void
 
-  supportedAvatarFilter: string[]
-  setSupportedAvatarFilter: (filter: string[]) => void
-
   categoryFilter: string[]
   setCategoryFilter: (filter: string[]) => void
+  categoryFilterMatchType: MatchType
+  setCategoryFilterMatchType: (matchType: MatchType) => void
 
   tagFilter: string[]
   setTagFilter: (filter: string[]) => void
+  tagFilterMatchType: MatchType
+  setTagFilterMatchType: (matchType: MatchType) => void
+
+  supportedAvatarFilter: string[]
+  setSupportedAvatarFilter: (filter: string[]) => void
+  supportedAvatarFilterMatchType: MatchType
+  setSupportedAvatarFilterMatchType: (matchType: MatchType) => void
 }
 
 export const AssetFilterContext = createContext<AssetFilterContextType>({
@@ -25,12 +31,18 @@ export const AssetFilterContext = createContext<AssetFilterContextType>({
   assetType: '',
   setAssetType: () => {},
 
-  supportedAvatarFilter: [],
-  setSupportedAvatarFilter: () => {},
-
   categoryFilter: [],
   setCategoryFilter: () => {},
+  categoryFilterMatchType: MatchType.OR,
+  setCategoryFilterMatchType: () => {},
 
   tagFilter: [],
   setTagFilter: () => {},
+  tagFilterMatchType: MatchType.OR,
+  setTagFilterMatchType: () => {},
+
+  supportedAvatarFilter: [],
+  setSupportedAvatarFilter: () => {},
+  supportedAvatarFilterMatchType: MatchType.OR,
+  setSupportedAvatarFilterMatchType: () => {},
 })

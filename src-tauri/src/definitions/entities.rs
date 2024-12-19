@@ -192,11 +192,20 @@ pub enum SortBy {
     CreatedAt,
 }
 
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
+pub enum MatchType {
+    AND,
+    OR,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
     pub query: Option<String>,
     pub categories: Option<Vec<String>>,
+    pub category_match_type: MatchType,
     pub tags: Option<Vec<String>>,
+    pub tag_match_type: MatchType,
     pub supported_avatars: Option<Vec<String>>,
+    pub supported_avatar_match_type: MatchType,
 }

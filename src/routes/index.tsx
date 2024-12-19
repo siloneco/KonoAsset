@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { AssetDisplay, AssetType, SortBy } from '@/lib/entity'
+import { AssetDisplay, AssetType, MatchType, SortBy } from '@/lib/entity'
 import {
   AssetFilterContext,
   AssetFilterContextType,
@@ -23,11 +23,18 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
   const [textFilter, setTextFilter] = useState('')
   const [assetType, setAssetType] = useState<AssetType | ''>('')
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([])
+  const [tagFilter, setTagFilter] = useState<string[]>([])
   const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
     [],
   )
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([])
-  const [tagFilter, setTagFilter] = useState<string[]>([])
+
+  const [categoryFilterMatchType, setCategoryFilterMatchType] = useState(
+    MatchType.OR,
+  )
+  const [tagFilterMatchType, setTagFilterMatchType] = useState(MatchType.OR)
+  const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
+    useState(MatchType.OR)
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.CreatedAt)
   const [reverseOrder, setReverseOrder] = useState(true)
@@ -71,14 +78,20 @@ function RouteComponent() {
     assetType: assetType,
     setAssetType: setAssetType,
 
-    supportedAvatarFilter,
-    setSupportedAvatarFilter,
-
     categoryFilter,
     setCategoryFilter,
+    categoryFilterMatchType,
+    setCategoryFilterMatchType,
 
     tagFilter,
     setTagFilter,
+    tagFilterMatchType,
+    setTagFilterMatchType,
+
+    supportedAvatarFilter,
+    setSupportedAvatarFilter,
+    supportedAvatarFilterMatchType,
+    setSupportedAvatarFilterMatchType,
   }
 
   useEffect(() => {
