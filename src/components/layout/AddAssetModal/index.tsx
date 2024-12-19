@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
 import { AssetType } from '@/lib/entity'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 
 export const AddAssetModalContext = createContext<{
   form?: UseFormReturn<
@@ -88,6 +89,16 @@ const AddAssetModal = () => {
     setAssetType(AssetType.Avatar)
     setSupportedAvatars([])
   }
+
+  getCurrentWindow().onDragDropEvent((event) => {
+    if (event.payload.type == 'drop') {
+      const filepath = event.payload.paths[0]
+
+      setAssetPath(filepath)
+      setDialogOpen(true)
+      setTab('booth-input')
+    }
+  })
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

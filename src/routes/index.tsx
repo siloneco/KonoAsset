@@ -13,6 +13,8 @@ import {
 import MainSidebar from '@/components/layout/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { invoke } from '@tauri-apps/api/core'
+import { cn } from '@/lib/utils'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -32,6 +34,8 @@ function RouteComponent() {
   const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
     AssetDisplay[]
   >([])
+
+  const [isDragAndHover, setDragAndHover] = useState(false)
 
   const assetContextValue: AssetContextType = {
     sortBy: sortBy,
@@ -81,8 +85,16 @@ function RouteComponent() {
     assetContextValue.refreshAssets()
   }, [sortBy])
 
+  getCurrentWindow().onDragDropEvent((event) => {
+    if (event.payload.type == 'enter' || event.payload.type == 'over') {
+      setDragAndHover(true)
+    } else {
+      setDragAndHover(false)
+    }
+  })
+
   return (
-    <div>
+    <div className="flex">
       <AssetContext.Provider value={assetContextValue}>
         <AssetFilterContext.Provider value={filterContextValue}>
           <SidebarProvider>
@@ -91,6 +103,18 @@ function RouteComponent() {
           </SidebarProvider>
         </AssetFilterContext.Provider>
       </AssetContext.Provider>
+      <div
+        className={cn(
+          'fixed h-full w-full opacity-0 z-10 pointer-events-none transition-opacity',
+          isDragAndHover && 'opacity-100',
+        )}
+      >
+        <div className="h-full w-full bg-black/80 flex items-center justify-center">
+          <div className="bg-card p-12 rounded-3xl border-2 border-primary border-dashed">
+            <p className="text-2xl">ファイルをドロップしてアセットを追加</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { useContext, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { AssetType, FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
+import { sep } from '@tauri-apps/api/path'
 
 type Props = {
   setTab: (tab: string) => void
@@ -29,7 +30,7 @@ const BoothInputTab = ({ setTab }: Props) => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
   const [fetching, setFetching] = useState(false)
 
-  const { form, setAssetType } = useContext(AddAssetModalContext)
+  const { form, assetPath, setAssetType } = useContext(AddAssetModalContext)
 
   const backToSelect = () => {
     setTab('selector')
@@ -67,6 +68,8 @@ const BoothInputTab = ({ setTab }: Props) => {
     }
   }
 
+  const filename = assetPath!.split(sep()).pop()
+
   return (
     <TabsContent value="booth-input">
       <DialogHeader>
@@ -76,6 +79,14 @@ const BoothInputTab = ({ setTab }: Props) => {
         </DialogDescription>
       </DialogHeader>
       <div className="my-8 space-y-6">
+        <div className="flex justify-center">
+          <p>
+            <span className="text-foreground/60">
+              ファイルまたはフォルダ名:
+            </span>{' '}
+            {filename}
+          </p>
+        </div>
         <div>
           <Label className="text-base ml-1">Boothから情報を取得する</Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
