@@ -47,10 +47,6 @@ jobs:
         with:
           workspaces: "./src-tauri -> target"
 
-      - name: Get Package Version
-        id: get-package-version
-        uses: stevenbenitez/get-package-version-action@v1
-
       - name: Build and Create Release
         uses: tauri-apps/tauri-action@ecd2eff64572601ddde25cc4962c2704435736e9 # v0
         env:
