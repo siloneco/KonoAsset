@@ -7,6 +7,7 @@ import AvatarRelatedInputs from './components/AvatarRelatedInputs'
 import { AssetType } from '@/lib/entity'
 import WorldInputs from './components/WorldInputs'
 import { Loader2 } from 'lucide-react'
+import BoothInputs from './components/BoothInputs'
 
 type Props = {
   id: string
@@ -37,6 +38,7 @@ const EditPage = ({ id }: Props) => {
                 className="space-y-4"
                 autoComplete="off"
               >
+                <BoothInputs form={form} disabled={submitting} />
                 <CommonInputs form={form} disabled={submitting} />
                 {assetType === AssetType.AvatarRelated && (
                   <AvatarRelatedInputs
@@ -59,6 +61,7 @@ const EditPage = ({ id }: Props) => {
                 )}
                 <div className="mt-8 flex justify-between">
                   <Button
+                    type="button"
                     variant={'secondary'}
                     onClick={() => (document.location.href = `/`)}
                   >

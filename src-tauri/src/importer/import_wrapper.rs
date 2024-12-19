@@ -11,10 +11,9 @@ use crate::{
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
     },
-    fetcher::image_saver,
 };
 
-use super::fileutils;
+use super::fileutils::{self, save_image_if_external_url_specified};
 
 pub fn import_avatar_asset(
     basic_store: &StoreProvider,
@@ -270,24 +269,4 @@ fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
     }
 
     Ok(())
-}
-
-fn save_image_if_external_url_specified(url: &str, dest: &PathBuf) -> Result<bool, String> {
-    // URLがファイルパスでファイルが実在するか確認する
-    if PathBuf::from(url).exists() {
-        return Ok(false);
-    }
-
-    let parsed = reqwest::Url::parse(url);
-    if parsed.is_err() {
-        return Ok(false);
-    }
-
-    let result = image_saver::save_image_from_url(url, dest);
-
-    if result.is_err() {
-        return Err(result.err().unwrap().to_string());
-    }
-
-    Ok(true)
 }
