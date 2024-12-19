@@ -64,7 +64,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
         >
           <ImageWrapper src={imageSrc} />
           <div
-            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-50"
+            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-30 dark:hover:opacity-100 dark:hover:bg-opacity-50"
             onClick={openImageSelector}
           >
             <ImagePlus size={50} />
