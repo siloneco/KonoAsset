@@ -14,8 +14,11 @@ const AssetList = () => {
     assetType,
     textFilter,
     categoryFilter,
+    categoryFilterMatchType,
     tagFilter,
+    tagFilterMatchType,
     supportedAvatarFilter,
+    supportedAvatarFilterMatchType,
   } = useContext(AssetFilterContext)
   const { assetDisplaySortedList, reverseOrder } = useContext(AssetContext)
   const updateMatchedAssetIDs = async () => {
@@ -23,8 +26,11 @@ const AssetList = () => {
       assetType: assetType,
       query: textFilter,
       categories: categoryFilter,
+      categoryMatchType: categoryFilterMatchType,
       tags: tagFilter,
+      tagMatchType: tagFilterMatchType,
       supported_avatars: supportedAvatarFilter,
+      supportedAvatarMatchType: supportedAvatarFilterMatchType,
     })
 
     const currentFilterEnforced = isFilterEnforced(filterRequest)
@@ -42,7 +48,16 @@ const AssetList = () => {
 
   useEffect(() => {
     updateMatchedAssetIDs()
-  }, [assetType, textFilter, categoryFilter, tagFilter, supportedAvatarFilter])
+  }, [
+    assetType,
+    textFilter,
+    categoryFilter,
+    tagFilter,
+    supportedAvatarFilter,
+    categoryFilterMatchType,
+    tagFilterMatchType,
+    supportedAvatarFilterMatchType,
+  ])
 
   return (
     <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">

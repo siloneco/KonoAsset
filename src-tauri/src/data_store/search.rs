@@ -1,7 +1,7 @@
 use uuid::Uuid;
 
 use crate::definitions::{
-    entities::{AssetDescription, AssetType, FilterRequest},
+    entities::{AssetDescription, AssetType, FilterRequest, MatchType},
     traits::AssetTrait,
 };
 
@@ -35,16 +35,22 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
                         return;
                     }
                 }
-                // タグが指定されている場合は、そのタグが全て設定されているかを確認
+
+                // タグが指定されている場合
                 if request.tags.is_some() {
-                    if !request
-                        .tags
-                        .clone()
-                        .unwrap()
-                        .iter()
-                        .all(|tag| asset.description.tags.contains(&tag))
-                    {
-                        return;
+                    let tags = request.tags.clone().unwrap();
+                    let mut iter = tags.iter();
+
+                    if request.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
+                    } else if request.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
                     }
                 }
 
@@ -66,39 +72,57 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
                         return;
                     }
                 }
-                // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
+
+                // カテゴリが指定されている場合
                 if request.categories.is_some() {
-                    if !request
-                        .categories
-                        .clone()
-                        .unwrap()
-                        .contains(&asset.category)
-                    {
-                        return;
+                    let categories = request.categories.clone().unwrap();
+                    let mut iter = categories.iter();
+
+                    if request.category_match_type == MatchType::AND {
+                        // カテゴリ検索がANDの場合
+                        if !iter.all(|category| asset.category.contains(category)) {
+                            return;
+                        }
+                    } else if request.category_match_type == MatchType::OR {
+                        // カテゴリ検索がORの場合
+                        if !iter.any(|category| asset.category.contains(category)) {
+                            return;
+                        }
                     }
                 }
-                // 対応アバターが指定されている場合は、そのアバターのうちどれか1つでも設定されているかを確認 (OR)
+                // 対応アバターが指定されている場合
                 if request.supported_avatars.is_some() {
-                    if !request
-                        .supported_avatars
-                        .clone()
-                        .unwrap()
-                        .iter()
-                        .any(|avatar| asset.supported_avatars.contains(avatar))
-                    {
-                        return;
+                    let supported_avatars = request.supported_avatars.clone().unwrap();
+                    let mut iter = supported_avatars.iter();
+
+                    if request.supported_avatar_match_type == MatchType::AND {
+                        // 対応アバター検索がANDの場合
+                        if !iter.all(|avatar| asset.supported_avatars.contains(avatar)) {
+                            return;
+                        }
+                    } else if request.supported_avatar_match_type == MatchType::OR {
+                        // 対応アバター検索がORの場合
+                        if !iter.any(|avatar| asset.supported_avatars.contains(avatar)) {
+                            return;
+                        }
                     }
                 }
+
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
                 if request.tags.is_some() {
-                    if !request
-                        .tags
-                        .clone()
-                        .unwrap()
-                        .iter()
-                        .all(|tag| asset.description.tags.contains(&tag))
-                    {
-                        return;
+                    let tags = request.tags.clone().unwrap();
+                    let mut iter = tags.iter();
+
+                    if request.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
+                    } else if request.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
                     }
                 }
 
@@ -124,25 +148,36 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
                 }
                 // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
                 if request.categories.is_some() {
-                    if !request
-                        .categories
-                        .clone()
-                        .unwrap()
-                        .contains(&asset.category)
-                    {
-                        return;
+                    let categories = request.categories.clone().unwrap();
+                    let mut iter = categories.iter();
+
+                    if request.category_match_type == MatchType::AND {
+                        // カテゴリ検索がANDの場合
+                        if !iter.all(|category| asset.category.contains(category)) {
+                            return;
+                        }
+                    } else if request.category_match_type == MatchType::OR {
+                        // カテゴリ検索がORの場合
+                        if !iter.any(|category| asset.category.contains(category)) {
+                            return;
+                        }
                     }
                 }
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
                 if request.tags.is_some() {
-                    if !request
-                        .tags
-                        .clone()
-                        .unwrap()
-                        .iter()
-                        .all(|tag| asset.description.tags.contains(&tag))
-                    {
-                        return;
+                    let tags = request.tags.clone().unwrap();
+                    let mut iter = tags.iter();
+
+                    if request.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
+                    } else if request.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
                     }
                 }
 
