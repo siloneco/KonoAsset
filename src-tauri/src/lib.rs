@@ -16,6 +16,8 @@ mod definitions;
 mod fetcher;
 mod importer;
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -32,6 +34,12 @@ pub fn run() {
 }
 
 fn init(handler: &App) -> StoreProvider {
+    handler
+        .get_webview_window("main")
+        .unwrap()
+        .set_title(&format!("KonoAsset v{}", VERSION))
+        .unwrap();
+
     let dir = handler.path().app_local_data_dir().unwrap();
     let store = StoreProvider::create(dir);
 
