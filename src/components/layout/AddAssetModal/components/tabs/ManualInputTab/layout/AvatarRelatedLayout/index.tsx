@@ -1,6 +1,4 @@
 import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
-import TagList from '@/components/model/TagList'
-import TagPicker from '@/components/model/TagPicker'
 import {
   FormField,
   FormItem,
@@ -11,9 +9,9 @@ import {
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 import { Separator } from '@/components/ui/separator'
+import TextInputSelect from '@/components/ui/text-input-select'
 import { invoke } from '@tauri-apps/api/core'
 import { useContext, useEffect, useState } from 'react'
-import CategorySelector from '../../components/CategorySelector'
 
 type Props = {
   submitting: boolean
@@ -21,10 +19,11 @@ type Props = {
 
 const AvatarRelatedLayout = ({ submitting }: Props) => {
   const { form, setSupportedAvatars } = useContext(AddAssetModalContext)
+  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
-  const [categoryCandidates, setCategoryCandidates] = useState<string[]>([])
+  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchSupportedAvatars = async () => {
     const result: string[] = await invoke('get_all_supported_avatar_values')
@@ -38,12 +37,18 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
 
   const fetchExistingCategories = async () => {
     const result: string[] = await invoke('get_avatar_related_categories')
-    setCategoryCandidates(result)
+    setCategoryCandidates(result.map((value) => ({ label: value, value })))
+  }
+
+  const fetchTagCandidates = async () => {
+    const result: string[] = await invoke('get_all_asset_tags')
+    setTagCandidates(result.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {
     fetchSupportedAvatars()
     fetchExistingCategories()
+    fetchTagCandidates()
   }, [])
 
   if (!form) {
@@ -64,6 +69,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                   <MultipleSelector
                     options={supportedAvatarCandidates}
                     placeholder="対応アバターを選択..."
+                    disabled={submitting}
                     hidePlaceholderWhenSelected
                     creatable
                     emptyIndicator={
@@ -93,18 +99,22 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
               return (
                 <FormItem>
                   <FormLabel>カテゴリ</FormLabel>
-                  <CategorySelector
-                    onValueChange={(value) => {
-                      form.setValue('category', value)
+                  <TextInputSelect
+                    options={categoryCandidates}
+                    placeholder="カテゴリを選択..."
+                    disabled={submitting}
+                    creatable
+                    emptyIndicator={
+                      <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                        入力して作成
+                      </p>
+                    }
+                    onChange={(value) => {
+                      form.setValue('category', value?.value as string)
                     }}
-                    categoryCandidates={categoryCandidates}
-                    addNewCategory={(value) => {
-                      setCategoryCandidates((prev) => [...prev, value])
-                    }}
-                    submitting={submitting}
                   />
                   <FormDescription>
-                    カテゴリはアセットの絞り込みや分類に利用されます
+                    カテゴリはアセットの絞り込みに利用されます
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -113,29 +123,34 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
           />
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-1/2">
         <FormField
           control={form.control}
           name="tags"
-          render={({ field }) => {
-            if (field.value === undefined) {
-              form.setValue('tags', [])
-              field.value = []
-            }
-
+          render={() => {
             return (
               <FormItem>
                 <FormLabel>タグ</FormLabel>
-                <TagList tags={field.value || []}>
-                  <TagPicker
-                    tags={field.value || []}
-                    setTags={(tags) => form.setValue('tags', tags)}
-                    disabled={submitting}
-                    className="mb-2 mr-2"
-                  />
-                </TagList>
+                <MultipleSelector
+                  options={tagCandidates}
+                  placeholder="タグを選択..."
+                  disabled={submitting}
+                  hidePlaceholderWhenSelected
+                  creatable
+                  emptyIndicator={
+                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                      入力して作成
+                    </p>
+                  }
+                  onChange={(value) => {
+                    form.setValue(
+                      'tags',
+                      value.map((v) => v.value),
+                    )
+                  }}
+                />
                 <FormDescription>
-                  タグはアセットの絞り込みや分類に利用されます
+                  タグはアセットの絞り込みに利用されます
                 </FormDescription>
                 <FormMessage />
               </FormItem>

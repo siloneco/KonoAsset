@@ -1,5 +1,3 @@
-import TagList from '@/components/model/TagList'
-import TagPicker from '@/components/model/TagPicker'
 import {
   FormField,
   FormItem,
@@ -12,6 +10,9 @@ import { Input } from '@/components/ui/input'
 import { UseFormReturn } from 'react-hook-form'
 import { AssetType } from '@/lib/entity'
 import ImagePicker from '@/components/model/ImagePicker'
+import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { invoke } from '@tauri-apps/api/core'
+import { useState, useEffect } from 'react'
 
 type Props = {
   form: UseFormReturn<
@@ -33,7 +34,19 @@ type Props = {
 }
 
 const CommonInputs = ({ form, disabled }: Props) => {
+  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+
+  const fetchTagCandidates = async () => {
+    const result: string[] = await invoke('get_all_asset_tags')
+    setTagCandidates(result.map((value) => ({ label: value, value })))
+  }
+
+  useEffect(() => {
+    fetchTagCandidates()
+  }, [])
+
   const imageSrc = form.watch('image_src')
+  const tags = form.watch('tags')
 
   return (
     <div className="w-full flex flex-row space-x-6 mt-8">
@@ -87,25 +100,32 @@ const CommonInputs = ({ form, disabled }: Props) => {
         <FormField
           control={form.control}
           name="tags"
-          render={({ field }) => {
-            if (field.value === undefined) {
-              form.setValue('tags', [])
-              field.value = []
-            }
-
+          render={() => {
             return (
               <FormItem>
                 <FormLabel>タグ</FormLabel>
-                <TagList tags={field.value || []}>
-                  <TagPicker
-                    tags={field.value || []}
-                    setTags={(tags) => form.setValue('tags', tags)}
-                    disabled={disabled}
-                    className="mb-2 mr-2"
-                  />
-                </TagList>
+                <MultipleSelector
+                  options={tagCandidates}
+                  placeholder="タグを選択..."
+                  className="bg-background"
+                  disabled={disabled}
+                  value={tags.map((tag) => ({ label: tag, value: tag }))}
+                  hidePlaceholderWhenSelected
+                  creatable
+                  emptyIndicator={
+                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                      入力して作成
+                    </p>
+                  }
+                  onChange={(value) => {
+                    form.setValue(
+                      'tags',
+                      value.map((v) => v.value),
+                    )
+                  }}
+                />
                 <FormDescription>
-                  タグはアセットの絞り込みや分類に利用されます
+                  タグはアセットの絞り込みに利用されます
                 </FormDescription>
                 <FormMessage />
               </FormItem>
