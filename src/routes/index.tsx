@@ -5,7 +5,6 @@ import {
   AssetFilterContext,
   AssetFilterContextType,
 } from '@/components/context/AssetFilterContext'
-import TopPageMainContent from '@/components/layout/TopPageMainContent'
 import {
   AssetContext,
   AssetContextType,
@@ -15,6 +14,7 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { invoke } from '@tauri-apps/api/core'
 import { cn } from '@/lib/utils'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import TopPageMainContent from '@/components/layout/TopPageMainContent'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const [textFilter, setTextFilter] = useState('')
-  const [assetType, setAssetType] = useState<AssetType | ''>('')
+  const [assetType, setAssetType] = useState<AssetType | 'all'>('all')
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [tagFilter, setTagFilter] = useState<string[]>([])
   const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(

@@ -11,7 +11,7 @@ export const isFilterEnforced = (filterRequest: FilterRequest) => {
 }
 
 type Props = {
-  assetType: AssetType | ''
+  assetType: AssetType | 'all'
   query: string
   categories: string[]
   tags: string[]
@@ -35,7 +35,7 @@ export const createFilterRequest = ({
   let requestTags: string[] | undefined
   let requestSupportedAvatars: string[] | undefined
 
-  if (assetType !== '') {
+  if (assetType !== 'all') {
     requestAssetType = assetType
   } else {
     requestAssetType = undefined

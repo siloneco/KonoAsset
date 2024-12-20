@@ -58,7 +58,7 @@ const NavBar = () => {
       <div className="flex flex-row w-full">
         <div className="w-full">
           <Card className="p-3 pl-4 min-h-12 grid grid-cols-2 xl:grid-cols-4">
-            {assetType !== '' && (
+            {assetType !== 'all' && (
               <div className="">
                 <span className="text-foreground/70">タイプ: </span>
                 <span className="bg-primary text-primary-foreground px-2 rounded-lg">

@@ -59,7 +59,7 @@ const MainSidebar = () => {
             </div>
             <Label>アセットタイプ</Label>
             <TypeSelector />
-            {(assetType === '' || assetType === AssetType.AvatarRelated) && (
+            {(assetType === 'all' || assetType === AssetType.AvatarRelated) && (
               <AvatarRelatedAssetFilter />
             )}
             {assetType === AssetType.World && <WorldAssetFilter />}

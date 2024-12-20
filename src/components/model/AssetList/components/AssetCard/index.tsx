@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
 import { AssetDisplay } from '@/lib/entity'
-import { convertFileSrc } from '@tauri-apps/api/core'
 import { Folder } from 'lucide-react'
 import { MoreButton } from '../MoreButton'
-import { AspectRatio } from '@radix-ui/react-aspect-ratio'
-import { title } from 'process'
 import { useAssetCard } from './hook'
 import AssetBadge from '@/components/part/AssetBadge'
+import { Label } from '@/components/ui/label'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 type Props = {
   asset: AssetDisplay
@@ -27,13 +26,13 @@ const AssetCard = ({ asset }: Props) => {
           >
             <img
               src={convertFileSrc(asset.image_src)}
-              alt={title}
+              alt={asset.title}
               className="w-full"
             />
           </AspectRatio>
           <AssetBadge type={asset.asset_type} className="mt-3" />
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
-            {title}
+            {asset.title}
           </CardTitle>
           <Label className="text-sm">{asset.author}</Label>
         </div>
