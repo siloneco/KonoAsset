@@ -68,7 +68,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install --frozen-lockfile
 
-      - uses: tauri-apps/tauri-action@ecd2eff64572601ddde25cc4962c2704435736e9 # v0
+      - uses: tauri-apps/tauri-action@6a45448f17a006facb105cc5257b3edbc353038a # v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
