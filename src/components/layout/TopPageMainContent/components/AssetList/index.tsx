@@ -14,7 +14,6 @@ const AssetList = () => {
     assetType,
     textFilter,
     categoryFilter,
-    categoryFilterMatchType,
     tagFilter,
     tagFilterMatchType,
     supportedAvatarFilter,
@@ -26,7 +25,6 @@ const AssetList = () => {
       assetType: assetType,
       query: textFilter,
       categories: categoryFilter,
-      categoryMatchType: categoryFilterMatchType,
       tags: tagFilter,
       tagMatchType: tagFilterMatchType,
       supported_avatars: supportedAvatarFilter,
@@ -54,7 +52,6 @@ const AssetList = () => {
     categoryFilter,
     tagFilter,
     supportedAvatarFilter,
-    categoryFilterMatchType,
     tagFilterMatchType,
     supportedAvatarFilterMatchType,
   ])

@@ -10,8 +10,6 @@ export type AssetFilterContextType = {
 
   categoryFilter: string[]
   setCategoryFilter: (filter: string[]) => void
-  categoryFilterMatchType: MatchType
-  setCategoryFilterMatchType: (matchType: MatchType) => void
 
   tagFilter: string[]
   setTagFilter: (filter: string[]) => void
@@ -33,8 +31,6 @@ export const AssetFilterContext = createContext<AssetFilterContextType>({
 
   categoryFilter: [],
   setCategoryFilter: () => {},
-  categoryFilterMatchType: MatchType.OR,
-  setCategoryFilterMatchType: () => {},
 
   tagFilter: [],
   setTagFilter: () => {},

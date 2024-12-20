@@ -19,8 +19,6 @@ const AvatarRelatedAssetFilter = () => {
     setCategoryFilter,
     setTagFilter,
     setSupportedAvatarFilter,
-    categoryFilterMatchType,
-    setCategoryFilterMatchType,
     supportedAvatarFilterMatchType,
     setSupportedAvatarFilterMatchType,
     tagFilterMatchType,
@@ -47,17 +45,7 @@ const AvatarRelatedAssetFilter = () => {
   return (
     <div className="mt-4 space-y-4">
       <div>
-        <div className="flex flex-row">
-          <Label className="text-base w-full">カテゴリ</Label>
-          <div
-            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
-            onClick={() =>
-              setCategoryFilterMatchType(toggle(categoryFilterMatchType))
-            }
-          >
-            <span>{categoryFilterMatchType}</span>
-          </div>
-        </div>
+        <Label className="text-base w-full">カテゴリ</Label>
         <MultipleSelector
           className="mt-2"
           options={categories}

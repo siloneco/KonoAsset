@@ -235,7 +235,6 @@ pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
     pub query: Option<String>,
     pub categories: Option<Vec<String>>,
-    pub category_match_type: MatchType,
     pub tags: Option<Vec<String>>,
     pub tag_match_type: MatchType,
     pub supported_avatars: Option<Vec<String>>,

@@ -14,7 +14,6 @@ type Props = {
   assetType: AssetType | ''
   query: string
   categories: string[]
-  categoryMatchType: MatchType
   tags: string[]
   tagMatchType: MatchType
   supported_avatars: string[]
@@ -25,7 +24,6 @@ export const createFilterRequest = ({
   assetType,
   query,
   categories,
-  categoryMatchType,
   tags,
   tagMatchType,
   supported_avatars,
@@ -71,7 +69,6 @@ export const createFilterRequest = ({
     asset_type: requestAssetType,
     query: requestQuery,
     categories: requestCategories,
-    category_match_type: categoryMatchType,
     tags: requestTags,
     tag_match_type: tagMatchType,
     supported_avatars: requestSupportedAvatars,

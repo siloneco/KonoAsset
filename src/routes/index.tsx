@@ -29,9 +29,6 @@ function RouteComponent() {
     [],
   )
 
-  const [categoryFilterMatchType, setCategoryFilterMatchType] = useState(
-    MatchType.OR,
-  )
   const [tagFilterMatchType, setTagFilterMatchType] = useState(MatchType.OR)
   const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
     useState(MatchType.OR)
@@ -80,8 +77,6 @@ function RouteComponent() {
 
     categoryFilter,
     setCategoryFilter,
-    categoryFilterMatchType,
-    setCategoryFilterMatchType,
 
     tagFilter,
     setTagFilter,

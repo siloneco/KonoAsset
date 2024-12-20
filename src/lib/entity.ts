@@ -81,7 +81,6 @@ export type FilterRequest = {
   asset_type?: AssetType
   query?: string
   categories?: string[]
-  category_match_type: MatchType
   tags?: string[]
   tag_match_type: MatchType
   supported_avatars?: string[]
