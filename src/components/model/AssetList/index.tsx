@@ -1,4 +1,4 @@
-import AssetCard from '@/components/page/top/AssetCard'
+import AssetCard from '@/components/model/AssetList/components/AssetCard'
 import { useContext, useEffect, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
@@ -63,15 +63,7 @@ const AssetList = () => {
         assetDisplaySortedList.map(
           (asset) =>
             (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard
-                key={asset.id}
-                id={asset.id}
-                assetType={asset.asset_type}
-                title={asset.title}
-                author={asset.author}
-                image_src={asset.image_src}
-                booth_url={asset.booth_url ?? undefined}
-              />
+              <AssetCard key={asset.id} asset={asset} />
             ),
         )}
       {assetDisplaySortedList &&
@@ -82,15 +74,7 @@ const AssetList = () => {
           .map(
             (asset) =>
               (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-                <AssetCard
-                  key={asset.id}
-                  id={asset.id}
-                  assetType={asset.asset_type}
-                  title={asset.title}
-                  author={asset.author}
-                  image_src={asset.image_src}
-                  booth_url={asset.booth_url ?? undefined}
-                />
+                <AssetCard key={asset.id} asset={asset} />
               ),
           )}
     </div>

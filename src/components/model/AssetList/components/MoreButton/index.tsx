@@ -96,7 +96,7 @@ export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
                 アセットを本当に削除しますか？
               </AlertDialogTitle>
               <AlertDialogDescription>
-                アセット情報は完全に削除されます。この操作を取り消すことは出来ません！
+                データは完全に削除されます。この操作を取り消すことは出来ません！
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

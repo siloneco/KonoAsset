@@ -5,9 +5,6 @@ import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { UseFormReturn } from 'react-hook-form'
-import { open } from '@tauri-apps/plugin-dialog'
-import { downloadDir } from '@tauri-apps/api/path'
-import { invoke } from '@tauri-apps/api/core'
 
 export type Props = {
   setTab: (tab: string) => void
@@ -28,11 +25,11 @@ type ReturnProps = {
     undefined
   >
   backToAssetTypeSelectorTab: () => void
-  openImageSelector: () => void
   submit: () => void
   submitting: boolean
   assetType: AssetType
   imageSrc?: string
+  setImageSrc: (path: string) => void
 }
 
 export const useManualInputTabHooks = ({
@@ -108,32 +105,17 @@ export const useManualInputTabHooks = ({
     }
   }
 
-  const openImageSelector = async () => {
-    const path = await open({
-      multiple: false,
-      directory: false,
-      defaultPath: await downloadDir(),
-      filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg'] }],
-    })
-
-    if (path === null) {
-      return
-    }
-
-    const result: string = await invoke('copy_image_file_to_images', {
-      path,
-      temporary: true,
-    })
-    form?.setValue('image_src', result)
+  const setImageSrc = (path: string) => {
+    form?.setValue('image_src', path)
   }
 
   return {
     form: form!,
     backToAssetTypeSelectorTab,
-    openImageSelector,
     submit,
     submitting,
     assetType: assetType!,
     imageSrc,
+    setImageSrc,
   }
 }

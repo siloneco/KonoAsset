@@ -1,15 +1,20 @@
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
-import { Label } from '@/components/ui/label'
-import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories, fetchAllTags } from './logic'
+import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 
 const WorldAssetFilter = () => {
+  const {
+    setCategoryFilter,
+    setTagFilter,
+    tagFilterMatchType,
+    setTagFilterMatchType,
+  } = useContext(AssetFilterContext)
+
   const [tags, setTags] = useState<Option[]>([])
   const [categories, setCategories] = useState<Option[]>([])
-
-  const { setCategoryFilter, setTagFilter } = useContext(AssetFilterContext)
 
   const updateCategoriesAndTags = async () => {
     setTags(await fetchAllTags())
@@ -22,36 +27,22 @@ const WorldAssetFilter = () => {
 
   return (
     <div className="mt-4 space-y-4">
-      <div>
-        <Label className="text-base">カテゴリ</Label>
-        <MultipleSelector
-          className="mt-2"
-          options={categories}
-          onChange={(values) => setCategoryFilter(values.map((v) => v.value))}
-          placeholder="絞り込むカテゴリを選択..."
-          hidePlaceholderWhenSelected
-          emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              候補がありません
-            </p>
-          }
-        />
-      </div>
-      <div>
-        <Label className="text-base">タグ</Label>
-        <MultipleSelector
-          className="mt-2"
-          options={tags}
-          onChange={(values) => setTagFilter(values.map((v) => v.value))}
-          placeholder="絞り込むタグを選択..."
-          hidePlaceholderWhenSelected
-          emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              候補がありません
-            </p>
-          }
-        />
-      </div>
+      <MultiFilterItemSelector
+        label="カテゴリ"
+        placeholder="絞り込むカテゴリを選択..."
+        candidates={categories}
+        onValueChange={(values) =>
+          setCategoryFilter(values.map((v) => v.value))
+        }
+      />
+      <MultiFilterItemSelector
+        label="タグ"
+        placeholder="絞り込むタグを選択..."
+        candidates={tags}
+        onValueChange={(values) => setTagFilter(values.map((v) => v.value))}
+        matchType={tagFilterMatchType}
+        setMatchType={setTagFilterMatchType}
+      />
     </div>
   )
 }
