@@ -28,7 +28,7 @@ const EditPage = ({ id }: Props) => {
   const assetType: AssetType = form.watch('assetType')
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="h-screen w-full flex justify-center items-center">
       <main className="m-auto w-full max-w-[800px]">
         <Card>
           <CardContent>

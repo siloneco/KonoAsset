@@ -65,6 +65,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="アセットの名前を入力..."
+                          autoComplete="off"
                           disabled={submitting}
                           {...field}
                         />
@@ -85,6 +86,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="ショップの名前を入力..."
+                          autoComplete="off"
                           disabled={submitting}
                           {...field}
                         />
