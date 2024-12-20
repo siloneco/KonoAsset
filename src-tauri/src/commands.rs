@@ -312,7 +312,12 @@ pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> V
         .get_assets()
         .iter()
         .for_each(|asset| {
-            categories.insert(asset.category.clone());
+            let val = asset.category.clone();
+            let val = val.trim();
+            if val.is_empty() {
+                return;
+            }
+            categories.insert(val.to_string());
         });
 
     categories.into_iter().collect()
@@ -327,7 +332,12 @@ pub fn get_world_categories(basic_store: State<'_, StoreProvider>) -> Vec<String
         .get_assets()
         .iter()
         .for_each(|asset| {
-            categories.insert(asset.category.clone());
+            let val = asset.category.clone();
+            let val = val.trim();
+            if val.is_empty() {
+                return;
+            }
+            categories.insert(val.to_string());
         });
 
     categories.into_iter().collect()
