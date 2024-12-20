@@ -5,7 +5,7 @@ import {
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
 
-import TypeSelector from '../TypeSelector'
+import TypeSelector from '../../model/TypeSelector'
 import AvatarRelatedAssetFilter from './layout/AvatarRelatedAssetFilter'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
@@ -59,7 +59,7 @@ const MainSidebar = () => {
             </div>
             <Label>アセットタイプ</Label>
             <TypeSelector />
-            {(assetType === '' || assetType === AssetType.AvatarRelated) && (
+            {(assetType === 'all' || assetType === AssetType.AvatarRelated) && (
               <AvatarRelatedAssetFilter />
             )}
             {assetType === AssetType.World && <WorldAssetFilter />}

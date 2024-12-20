@@ -5,7 +5,6 @@ import {
   AssetFilterContext,
   AssetFilterContextType,
 } from '@/components/context/AssetFilterContext'
-import TopPageMainContent from '@/components/layout/TopPageMainContent'
 import {
   AssetContext,
   AssetContextType,
@@ -15,6 +14,7 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { invoke } from '@tauri-apps/api/core'
 import { cn } from '@/lib/utils'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import TopPageMainContent from '@/components/layout/TopPageMainContent'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -22,16 +22,13 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const [textFilter, setTextFilter] = useState('')
-  const [assetType, setAssetType] = useState<AssetType | ''>('')
+  const [assetType, setAssetType] = useState<AssetType | 'all'>('all')
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [tagFilter, setTagFilter] = useState<string[]>([])
   const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
     [],
   )
 
-  const [categoryFilterMatchType, setCategoryFilterMatchType] = useState(
-    MatchType.OR,
-  )
   const [tagFilterMatchType, setTagFilterMatchType] = useState(MatchType.OR)
   const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
     useState(MatchType.OR)
@@ -80,8 +77,6 @@ function RouteComponent() {
 
     categoryFilter,
     setCategoryFilter,
-    categoryFilterMatchType,
-    setCategoryFilterMatchType,
 
     tagFilter,
     setTagFilter,
@@ -118,7 +113,7 @@ function RouteComponent() {
       </AssetContext.Provider>
       <div
         className={cn(
-          'fixed h-full w-full opacity-0 z-10 pointer-events-none transition-opacity',
+          'fixed h-full w-full opacity-0 z-[60] pointer-events-none transition-opacity',
           isDragAndHover && 'opacity-100',
         )}
       >

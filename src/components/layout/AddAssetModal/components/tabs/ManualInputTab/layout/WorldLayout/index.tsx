@@ -1,6 +1,4 @@
 import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
-import TagList from '@/components/model/TagList'
-import TagPicker from '@/components/model/TagPicker'
 import {
   FormField,
   FormItem,
@@ -11,10 +9,11 @@ import {
 
 import { Separator } from '@/components/ui/separator'
 import { useContext } from 'react'
-import CategorySelector from '../../components/CategorySelector'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
+import TextInputSelect from '@/components/ui/text-input-select'
+import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 type Props = {
   submitting: boolean
@@ -22,15 +21,22 @@ type Props = {
 
 const WorldLayout = ({ submitting }: Props) => {
   const { form } = useContext(AddAssetModalContext)
-  const [categoryCandidates, setCategoryCandidates] = useState<string[]>([])
+  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
+  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchExistingCategories = async () => {
     const result: string[] = await invoke('get_world_categories')
-    setCategoryCandidates(result)
+    setCategoryCandidates(result.map((value) => ({ label: value, value })))
+  }
+
+  const fetchTagCandidates = async () => {
+    const result: string[] = await invoke('get_all_asset_tags')
+    setTagCandidates(result.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {
     fetchExistingCategories()
+    fetchTagCandidates()
   }, [])
 
   if (!form) {
@@ -47,18 +53,22 @@ const WorldLayout = ({ submitting }: Props) => {
             return (
               <FormItem>
                 <FormLabel>カテゴリ</FormLabel>
-                <CategorySelector
-                  onValueChange={(value) => {
-                    form.setValue('category', value)
+                <TextInputSelect
+                  options={categoryCandidates}
+                  placeholder="カテゴリを選択..."
+                  disabled={submitting}
+                  creatable
+                  emptyIndicator={
+                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                      入力して作成
+                    </p>
+                  }
+                  onChange={(value) => {
+                    form.setValue('category', value?.value as string)
                   }}
-                  categoryCandidates={categoryCandidates}
-                  addNewCategory={(value) => {
-                    setCategoryCandidates((prev) => [...prev, value])
-                  }}
-                  submitting={submitting}
                 />
                 <FormDescription>
-                  カテゴリはアセットの絞り込みや分類に利用されます
+                  カテゴリはアセットの絞り込みに利用されます
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -71,25 +81,30 @@ const WorldLayout = ({ submitting }: Props) => {
         <FormField
           control={form.control}
           name="tags"
-          render={({ field }) => {
-            if (field.value === undefined) {
-              form.setValue('tags', [])
-              field.value = []
-            }
-
+          render={() => {
             return (
               <FormItem>
                 <FormLabel>タグ</FormLabel>
-                <TagList tags={field.value || []}>
-                  <TagPicker
-                    tags={field.value || []}
-                    setTags={(tags) => form.setValue('tags', tags)}
-                    disabled={submitting}
-                    className="mb-2 mr-2"
-                  />
-                </TagList>
+                <MultipleSelector
+                  options={tagCandidates}
+                  placeholder="タグを選択..."
+                  disabled={submitting}
+                  hidePlaceholderWhenSelected
+                  creatable
+                  emptyIndicator={
+                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                      入力して作成
+                    </p>
+                  }
+                  onChange={(value) => {
+                    form.setValue(
+                      'tags',
+                      value.map((v) => v.value),
+                    )
+                  }}
+                />
                 <FormDescription>
-                  タグはアセットの絞り込みや分類に利用されます
+                  タグはアセットの絞り込みに利用されます
                 </FormDescription>
                 <FormMessage />
               </FormItem>

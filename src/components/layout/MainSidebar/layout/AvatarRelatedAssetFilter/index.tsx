@@ -1,6 +1,5 @@
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
-import { Label } from '@/components/ui/label'
-import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import {
@@ -8,7 +7,7 @@ import {
   fetchAllSupportedAvatars,
   fetchAllTags,
 } from './logic'
-import { MatchType } from '@/lib/entity'
+import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 
 const AvatarRelatedAssetFilter = () => {
   const [categories, setCategories] = useState<Option[]>([])
@@ -19,8 +18,6 @@ const AvatarRelatedAssetFilter = () => {
     setCategoryFilter,
     setTagFilter,
     setSupportedAvatarFilter,
-    categoryFilterMatchType,
-    setCategoryFilterMatchType,
     supportedAvatarFilterMatchType,
     setSupportedAvatarFilterMatchType,
     tagFilterMatchType,
@@ -37,92 +34,34 @@ const AvatarRelatedAssetFilter = () => {
     updateCategoriesAndTags()
   }, [])
 
-  const toggle = (matchType: MatchType) => {
-    if (matchType === MatchType.AND) {
-      return MatchType.OR
-    }
-    return MatchType.AND
-  }
-
   return (
     <div className="mt-4 space-y-4">
-      <div>
-        <div className="flex flex-row">
-          <Label className="text-base w-full">カテゴリ</Label>
-          <div
-            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
-            onClick={() =>
-              setCategoryFilterMatchType(toggle(categoryFilterMatchType))
-            }
-          >
-            <span>{categoryFilterMatchType}</span>
-          </div>
-        </div>
-        <MultipleSelector
-          className="mt-2"
-          options={categories}
-          onChange={(values) => setCategoryFilter(values.map((v) => v.value))}
-          placeholder="絞り込むカテゴリを選択..."
-          hidePlaceholderWhenSelected
-          emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              候補がありません
-            </p>
-          }
-        />
-      </div>
-      <div>
-        <div className="flex flex-row">
-          <Label className="text-base w-full">対応アバター</Label>
-          <div
-            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
-            onClick={() =>
-              setSupportedAvatarFilterMatchType(
-                toggle(supportedAvatarFilterMatchType),
-              )
-            }
-          >
-            <span>{supportedAvatarFilterMatchType}</span>
-          </div>
-        </div>
-        <MultipleSelector
-          className="mt-2"
-          options={supportedAvatars}
-          onChange={(values) =>
-            setSupportedAvatarFilter(values.map((v) => v.value))
-          }
-          placeholder="対応アバターを選択..."
-          hidePlaceholderWhenSelected
-          emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              候補がありません
-            </p>
-          }
-        />
-      </div>
-      <div className="h-40">
-        <div className="flex flex-row">
-          <Label className="text-base w-full">タグ</Label>
-          <div
-            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
-            onClick={() => setTagFilterMatchType(toggle(tagFilterMatchType))}
-          >
-            <span>{tagFilterMatchType}</span>
-          </div>
-        </div>
-        <MultipleSelector
-          className="mt-2"
-          options={tags}
-          onChange={(values) => setTagFilter(values.map((v) => v.value))}
-          placeholder="絞り込むタグを選択..."
-          hidePlaceholderWhenSelected
-          emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              候補がありません
-            </p>
-          }
-        />
-      </div>
+      <MultiFilterItemSelector
+        label="カテゴリ"
+        placeholder="絞り込むカテゴリを選択..."
+        candidates={categories}
+        onValueChange={(values) =>
+          setCategoryFilter(values.map((v) => v.value))
+        }
+      />
+      <MultiFilterItemSelector
+        label="対応アバター"
+        placeholder="対応アバターを選択..."
+        candidates={supportedAvatars}
+        onValueChange={(values) =>
+          setSupportedAvatarFilter(values.map((v) => v.value))
+        }
+        matchType={supportedAvatarFilterMatchType}
+        setMatchType={setSupportedAvatarFilterMatchType}
+      />
+      <MultiFilterItemSelector
+        label="タグ"
+        placeholder="絞り込むタグを選択..."
+        candidates={tags}
+        onValueChange={(values) => setTagFilter(values.map((v) => v.value))}
+        matchType={tagFilterMatchType}
+        setMatchType={setTagFilterMatchType}
+      />
     </div>
   )
 }

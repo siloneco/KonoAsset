@@ -1,4 +1,4 @@
-import AssetCard from '@/components/page/top/AssetCard'
+import AssetCard from '@/components/model/AssetList/components/AssetCard'
 import { useContext, useEffect, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
@@ -14,7 +14,6 @@ const AssetList = () => {
     assetType,
     textFilter,
     categoryFilter,
-    categoryFilterMatchType,
     tagFilter,
     tagFilterMatchType,
     supportedAvatarFilter,
@@ -26,7 +25,6 @@ const AssetList = () => {
       assetType: assetType,
       query: textFilter,
       categories: categoryFilter,
-      categoryMatchType: categoryFilterMatchType,
       tags: tagFilter,
       tagMatchType: tagFilterMatchType,
       supported_avatars: supportedAvatarFilter,
@@ -54,7 +52,6 @@ const AssetList = () => {
     categoryFilter,
     tagFilter,
     supportedAvatarFilter,
-    categoryFilterMatchType,
     tagFilterMatchType,
     supportedAvatarFilterMatchType,
   ])
@@ -66,15 +63,7 @@ const AssetList = () => {
         assetDisplaySortedList.map(
           (asset) =>
             (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard
-                key={asset.id}
-                id={asset.id}
-                assetType={asset.asset_type}
-                title={asset.title}
-                author={asset.author}
-                image_src={asset.image_src}
-                booth_url={asset.booth_url ?? undefined}
-              />
+              <AssetCard key={asset.id} asset={asset} />
             ),
         )}
       {assetDisplaySortedList &&
@@ -85,15 +74,7 @@ const AssetList = () => {
           .map(
             (asset) =>
               (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-                <AssetCard
-                  key={asset.id}
-                  id={asset.id}
-                  assetType={asset.asset_type}
-                  title={asset.title}
-                  author={asset.author}
-                  image_src={asset.image_src}
-                  booth_url={asset.booth_url ?? undefined}
-                />
+                <AssetCard key={asset.id} asset={asset} />
               ),
           )}
     </div>

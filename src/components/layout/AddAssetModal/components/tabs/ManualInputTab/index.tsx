@@ -16,15 +16,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-
-import { ImagePlus, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { AssetType } from '@/lib/entity'
 import AvatarLayout from './layout/AvatarLayout'
 import AvatarRelatedLayout from './layout/AvatarRelatedLayout'
 import WorldLayout from './layout/WorldLayout'
 import { useManualInputTabHooks } from './hook'
-import { convertFileSrc } from '@tauri-apps/api/core'
+import ImagePicker from '@/components/model/ImagePicker'
 
 type Props = {
   setTab: (tab: string) => void
@@ -35,11 +33,11 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
   const {
     form,
     backToAssetTypeSelectorTab,
-    openImageSelector,
     submit,
     submitting,
     assetType,
     imageSrc,
+    setImageSrc,
   } = useManualInputTabHooks({ setTab, setDialogOpen })
 
   return (
@@ -54,27 +52,8 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="flex flex-row space-x-6">
-              <div className="w-1/3 rounded-lg">
-                <AspectRatio
-                  ratio={1}
-                  className="w-full flex items-center bg-white rounded-lg overflow-hidden"
-                >
-                  {imageSrc && imageSrc.startsWith('https://') && (
-                    <img src={imageSrc} alt="asset_image" />
-                  )}
-                  {imageSrc && !imageSrc.startsWith('https://') && (
-                    <img src={convertFileSrc(imageSrc)} alt="asset_image" />
-                  )}
-                  {!imageSrc && (
-                    <div className="w-full h-full bg-slate-400"></div>
-                  )}
-                  <div
-                    className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-30 dark:hover:opacity-100 dark:hover:bg-opacity-50"
-                    onClick={openImageSelector}
-                  >
-                    <ImagePlus size={50} />
-                  </div>
-                </AspectRatio>
+              <div className="w-1/3">
+                <ImagePicker path={imageSrc} setPath={setImageSrc} />
               </div>
               <div className="w-2/3 space-y-2">
                 <FormField
@@ -86,6 +65,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="アセットの名前を入力..."
+                          autoComplete="off"
                           disabled={submitting}
                           {...field}
                         />
@@ -106,6 +86,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                       <FormControl>
                         <Input
                           placeholder="ショップの名前を入力..."
+                          autoComplete="off"
                           disabled={submitting}
                           {...field}
                         />

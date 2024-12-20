@@ -20,15 +20,13 @@ const EditPage = ({ id }: Props) => {
     submitting,
     supportedAvatarCandidates,
     avatarRelatedCategoryCandidates,
-    addAvatarRelatedCategoryCandidates,
     worldCategoryCandidates,
-    addWorldCategoryCandidates,
   } = useEditPageHook({ id })
 
   const assetType: AssetType = form.watch('assetType')
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="h-screen w-full flex justify-center items-center">
       <main className="m-auto w-full max-w-[800px]">
         <Card>
           <CardContent>
@@ -46,9 +44,6 @@ const EditPage = ({ id }: Props) => {
                     disabled={submitting}
                     supportedAvatarCandidates={supportedAvatarCandidates}
                     categoryCandidates={avatarRelatedCategoryCandidates}
-                    addNewCategoryCandidates={
-                      addAvatarRelatedCategoryCandidates
-                    }
                   />
                 )}
                 {assetType === AssetType.World && (
@@ -56,7 +51,6 @@ const EditPage = ({ id }: Props) => {
                     form={form}
                     disabled={submitting}
                     categoryCandidates={worldCategoryCandidates}
-                    addNewCategoryCandidates={addWorldCategoryCandidates}
                   />
                 )}
                 <div className="mt-8 flex justify-between">

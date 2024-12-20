@@ -1,4 +1,3 @@
-import CategorySelector from '@/components/layout/AddAssetModal/components/tabs/ManualInputTab/components/CategorySelector'
 import {
   FormField,
   FormItem,
@@ -6,6 +5,8 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form'
+import { Option } from '@/components/ui/multi-select'
+import TextInputSelect from '@/components/ui/text-input-select'
 import { AssetType } from '@/lib/entity'
 import { UseFormReturn } from 'react-hook-form'
 
@@ -26,17 +27,16 @@ type Props = {
     undefined
   >
   disabled: boolean
-  categoryCandidates: string[]
-  addNewCategoryCandidates: (value: string) => void
+  categoryCandidates: Option[]
 }
 
-const WorldInputs = ({
-  form,
-  disabled,
-  categoryCandidates,
-  addNewCategoryCandidates,
-}: Props) => {
-  const categoryValue = form.watch('category')
+const WorldInputs = ({ form, disabled, categoryCandidates }: Props) => {
+  const categoryValueAsStr = form.watch('category')
+
+  const categoryValue: Option | undefined =
+    categoryValueAsStr === ''
+      ? undefined
+      : { label: categoryValueAsStr, value: categoryValueAsStr }
 
   return (
     <>
@@ -49,17 +49,28 @@ const WorldInputs = ({
               return (
                 <FormItem>
                   <FormLabel>カテゴリ</FormLabel>
-                  <CategorySelector
+                  <TextInputSelect
+                    options={categoryCandidates}
+                    placeholder="カテゴリを選択..."
+                    className="bg-background"
+                    disabled={disabled}
                     value={categoryValue}
-                    onValueChange={(value) => {
-                      form.setValue('category', value)
+                    creatable
+                    emptyIndicator={
+                      <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                        入力して作成
+                      </p>
+                    }
+                    onChange={(value) => {
+                      if (value === null) {
+                        form.setValue('category', '')
+                      } else {
+                        form.setValue('category', value?.value as string)
+                      }
                     }}
-                    categoryCandidates={categoryCandidates}
-                    addNewCategory={addNewCategoryCandidates}
-                    submitting={disabled}
                   />
                   <FormDescription>
-                    カテゴリはアセットの絞り込みや分類に利用されます
+                    カテゴリはアセットの絞り込みに利用されます
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

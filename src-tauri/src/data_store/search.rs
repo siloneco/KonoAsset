@@ -75,19 +75,14 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
 
                 // カテゴリが指定されている場合
                 if request.categories.is_some() {
-                    let categories = request.categories.clone().unwrap();
-                    let mut iter = categories.iter();
-
-                    if request.category_match_type == MatchType::AND {
-                        // カテゴリ検索がANDの場合
-                        if !iter.all(|category| asset.category.contains(category)) {
-                            return;
-                        }
-                    } else if request.category_match_type == MatchType::OR {
-                        // カテゴリ検索がORの場合
-                        if !iter.any(|category| asset.category.contains(category)) {
-                            return;
-                        }
+                    if !request
+                        .categories
+                        .clone()
+                        .unwrap()
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
                     }
                 }
                 // 対応アバターが指定されている場合
@@ -148,19 +143,14 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
                 }
                 // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
                 if request.categories.is_some() {
-                    let categories = request.categories.clone().unwrap();
-                    let mut iter = categories.iter();
-
-                    if request.category_match_type == MatchType::AND {
-                        // カテゴリ検索がANDの場合
-                        if !iter.all(|category| asset.category.contains(category)) {
-                            return;
-                        }
-                    } else if request.category_match_type == MatchType::OR {
-                        // カテゴリ検索がORの場合
-                        if !iter.any(|category| asset.category.contains(category)) {
-                            return;
-                        }
+                    if !request
+                        .categories
+                        .clone()
+                        .unwrap()
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
                     }
                 }
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
