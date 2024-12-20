@@ -77,7 +77,15 @@ pub struct AvatarAsset {
 }
 
 impl AvatarAsset {
-    pub fn create(description: AssetDescription) -> Self {
+    pub fn create(mut description: AssetDescription) -> Self {
+        description.title = description.title.trim().to_string();
+        description.author = description.author.trim().to_string();
+        description.tags = description
+            .tags
+            .iter()
+            .map(|tag| tag.trim().to_string())
+            .collect();
+
         Self {
             id: Uuid::new_v4(),
             description,
@@ -113,10 +121,24 @@ pub struct AvatarRelatedAsset {
 
 impl AvatarRelatedAsset {
     pub fn create(
-        description: AssetDescription,
-        category: String,
-        supported_avatars: BTreeSet<String>,
+        mut description: AssetDescription,
+        mut category: String,
+        mut supported_avatars: BTreeSet<String>,
     ) -> Self {
+        description.title = description.title.trim().to_string();
+        description.author = description.author.trim().to_string();
+        description.tags = description
+            .tags
+            .iter()
+            .map(|tag| tag.trim().to_string())
+            .collect();
+
+        category = category.trim().to_string();
+        supported_avatars = supported_avatars
+            .iter()
+            .map(|avatar| avatar.trim().to_string())
+            .collect();
+
         Self {
             id: Uuid::new_v4(),
             description,
@@ -152,7 +174,17 @@ pub struct WorldAsset {
 }
 
 impl WorldAsset {
-    pub fn create(description: AssetDescription, category: String) -> Self {
+    pub fn create(mut description: AssetDescription, mut category: String) -> Self {
+        description.title = description.title.trim().to_string();
+        description.author = description.author.trim().to_string();
+        description.tags = description
+            .tags
+            .iter()
+            .map(|tag| tag.trim().to_string())
+            .collect();
+
+        category = category.trim().to_string();
+
         Self {
             id: Uuid::new_v4(),
             description,
