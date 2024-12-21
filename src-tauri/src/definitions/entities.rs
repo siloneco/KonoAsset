@@ -232,6 +232,7 @@ pub enum AssetType {
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum SortBy {
     Title,
+    Author,
     CreatedAt,
     PublishedAt,
 }

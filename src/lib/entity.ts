@@ -47,6 +47,7 @@ export enum AssetType {
 
 export enum SortBy {
   Title = 'Title',
+  Author = 'Author',
   CreatedAt = 'CreatedAt',
   PublishedAt = 'PublishedAt',
 }

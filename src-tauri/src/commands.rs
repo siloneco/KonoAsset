@@ -107,6 +107,7 @@ pub fn get_sorted_assets_for_display(
 
     match sort_by {
         SortBy::Title => result.sort_by(|a, b| a.title.cmp(&b.title)),
+        SortBy::Author => result.sort_by(|a, b| a.author.cmp(&b.author)),
         SortBy::CreatedAt => result.sort_by(|a, b| {
             created_at_map
                 .get(&a.id)
