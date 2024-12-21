@@ -13,15 +13,34 @@ import { useTheme } from 'next-themes'
 import AddAssetModal from '../AddAssetModal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { AssetType } from '@/lib/entity'
 import WorldAssetFilter from './layout/WorldAssetFilter'
+import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
+import { Option } from '@/components/ui/multi-select'
+import { fetchAllTags } from './logic'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
-  const { assetType, textFilter, setTextFilter } =
-    useContext(AssetFilterContext)
+  const {
+    assetType,
+    textFilter,
+    setTextFilter,
+    setTagFilter,
+    tagFilterMatchType,
+    setTagFilterMatchType,
+  } = useContext(AssetFilterContext)
+
+  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+
+  const updateCategoriesAndTags = async () => {
+    setTagCandidates(await fetchAllTags())
+  }
+
+  useEffect(() => {
+    updateCategoriesAndTags()
+  }, [])
 
   const onClick = () => {
     setTheme?.((theme) => (theme === 'dark' ? 'light' : 'dark'))
@@ -63,6 +82,18 @@ const MainSidebar = () => {
               <AvatarRelatedAssetFilter />
             )}
             {assetType === AssetType.World && <WorldAssetFilter />}
+            <div className="mt-4 mb-24">
+              <MultiFilterItemSelector
+                label="タグ"
+                placeholder="絞り込むタグを選択..."
+                candidates={tagCandidates}
+                onValueChange={(values) =>
+                  setTagFilter(values.map((v) => v.value))
+                }
+                matchType={tagFilterMatchType}
+                setMatchType={setTagFilterMatchType}
+              />
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
