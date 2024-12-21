@@ -18,6 +18,8 @@ type Props = {
   tagMatchType: MatchType
   supported_avatars: string[]
   supportedAvatarMatchType: MatchType
+  clearCategories: () => void
+  clearSupportedAvatars: () => void
 }
 
 export const createFilterRequest = ({
@@ -28,12 +30,22 @@ export const createFilterRequest = ({
   tagMatchType,
   supported_avatars,
   supportedAvatarMatchType,
+  clearCategories,
+  clearSupportedAvatars,
 }: Props): FilterRequest => {
   let requestAssetType: AssetType | undefined
   let requestQuery: string | undefined
   let requestCategories: string[] | undefined
   let requestTags: string[] | undefined
   let requestSupportedAvatars: string[] | undefined
+
+  if (supported_avatars.length > 0 && assetType !== AssetType.AvatarRelated) {
+    clearSupportedAvatars()
+  }
+
+  if (categories.length > 0 && assetType === AssetType.Avatar) {
+    clearCategories()
+  }
 
   if (assetType !== 'all') {
     requestAssetType = assetType

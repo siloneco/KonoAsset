@@ -18,8 +18,12 @@ const AssetList = () => {
     tagFilterMatchType,
     supportedAvatarFilter,
     supportedAvatarFilterMatchType,
+    setCategoryFilter,
+    setSupportedAvatarFilter,
   } = useContext(AssetFilterContext)
   const { assetDisplaySortedList, reverseOrder } = useContext(AssetContext)
+  const clearCategories = () => setCategoryFilter([])
+
   const updateMatchedAssetIDs = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
@@ -29,6 +33,8 @@ const AssetList = () => {
       tagMatchType: tagFilterMatchType,
       supported_avatars: supportedAvatarFilter,
       supportedAvatarMatchType: supportedAvatarFilterMatchType,
+      clearCategories,
+      clearSupportedAvatars: () => setSupportedAvatarFilter([]),
     })
 
     const currentFilterEnforced = isFilterEnforced(filterRequest)
@@ -55,6 +61,10 @@ const AssetList = () => {
     tagFilterMatchType,
     supportedAvatarFilterMatchType,
   ])
+
+  useEffect(() => {
+    clearCategories()
+  }, [assetType])
 
   return (
     <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
