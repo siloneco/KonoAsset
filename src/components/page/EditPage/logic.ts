@@ -19,6 +19,7 @@ type UpdateAssetProps = {
       image_src: string
       tags: string[]
       booth_url: string | null
+      published_at: number | null
       category: string
       supportedAvatars: string[]
     },
@@ -53,6 +54,7 @@ const updateAvatarAsset = async ({
   const author = form.getValues('author')
   const image_src = form.getValues('image_src')
   const tags = form.getValues('tags')
+  const publishedAt = form.getValues('published_at')
 
   let booth_url = form.getValues('booth_url')
   if (booth_url !== null && !isBoothURL(booth_url)) {
@@ -68,6 +70,7 @@ const updateAvatarAsset = async ({
       booth_url,
       tags,
       created_at: 0, // unused on updating
+      published_at: publishedAt,
     },
   }
 
@@ -85,6 +88,7 @@ const updateAvatarRelatedAsset = async ({
   const tags = form.getValues('tags')
   const category = form.getValues('category')
   const supportedAvatars = form.getValues('supportedAvatars')
+  const publishedAt = form.getValues('published_at')
 
   let booth_url = form.getValues('booth_url')
   if (booth_url !== null && !isBoothURL(booth_url)) {
@@ -100,6 +104,7 @@ const updateAvatarRelatedAsset = async ({
       booth_url,
       tags,
       created_at: 0, // unused on updating
+      published_at: publishedAt,
     },
     category,
     supported_avatars: supportedAvatars,
@@ -120,6 +125,7 @@ const updateWorldAsset = async ({
   const image_src = form.getValues('image_src')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
+  const publishedAt = form.getValues('published_at')
 
   let booth_url = form.getValues('booth_url')
   if (booth_url !== null && !isBoothURL(booth_url)) {
@@ -135,6 +141,7 @@ const updateWorldAsset = async ({
       booth_url,
       tags,
       created_at: 0, // unused on updating
+      published_at: publishedAt,
     },
     category,
   }

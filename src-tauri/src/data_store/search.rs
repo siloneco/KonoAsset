@@ -224,6 +224,7 @@ mod tests {
             tags: vec!["タグ1".to_string(), "タグ2".to_string()],
             booth_url: None,
             created_at: chrono::Local::now().timestamp_millis(),
+            published_at: Some(chrono::Local::now().timestamp_millis()),
         };
 
         assert_eq!(check_text_contains(&description, &vec!["アセット"]), true);

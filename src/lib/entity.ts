@@ -14,6 +14,7 @@ export type AssetDescription = {
   tags: string[]
   booth_url: string | null
   created_at: number
+  published_at: number | null
 }
 
 export type AvatarAsset = {
@@ -47,6 +48,7 @@ export enum AssetType {
 export enum SortBy {
   Title = 'Title',
   CreatedAt = 'CreatedAt',
+  PublishedAt = 'PublishedAt',
 }
 
 export type AssetImportRequest = {

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use chrono::Local;
+use chrono::{DateTime, Local};
 use regex::Regex;
 use serde::Deserialize;
 use uuid::Uuid;
@@ -15,6 +15,7 @@ struct BoothJson {
     shop: BoothShop,
     images: Vec<BoothPximg>,
     category: BoothCategory,
+    published_at: String,
 }
 
 #[derive(Deserialize)]
@@ -48,6 +49,9 @@ pub fn fetch_asset_details_from_booth(
     let title = response.name;
     let author = response.shop.name;
     let image_src = response.images.first().unwrap().original.clone();
+    let published_at = DateTime::parse_from_rfc3339(&response.published_at)
+        .unwrap()
+        .timestamp_millis();
 
     let mut path = images_dir;
     path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
@@ -84,6 +88,7 @@ pub fn fetch_asset_details_from_booth(
             vec![],
             Some(normalized_url),
             Local::now().timestamp_millis(),
+            Some(published_at),
         ),
         estimated_asset_type,
     ))

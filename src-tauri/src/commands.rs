@@ -53,6 +53,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -73,6 +74,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -93,6 +95,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -107,6 +110,11 @@ pub fn get_sorted_assets_for_display(
                 .get(&a.id)
                 .unwrap()
                 .cmp(&created_at_map.get(&b.id).unwrap())
+        }),
+        SortBy::PublishedAt => result.sort_by(|a, b| {
+            a.published_at
+                .unwrap_or(0)
+                .cmp(&b.published_at.unwrap_or(0))
         }),
     }
 

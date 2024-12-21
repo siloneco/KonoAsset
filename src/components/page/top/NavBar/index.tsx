@@ -50,6 +50,14 @@ const NavBar = () => {
         setSortBy(SortBy.Title)
         setReverseOrder(true)
         break
+      case 'published_at_desc':
+        setSortBy(SortBy.PublishedAt)
+        setReverseOrder(true)
+        break
+      case 'published_at_asc':
+        setSortBy(SortBy.PublishedAt)
+        setReverseOrder(false)
+        break
     }
   }
 
@@ -118,6 +126,12 @@ const NavBar = () => {
                 </SelectItem>
                 <SelectItem value="title_asc">タイトル(A-Z順)</SelectItem>
                 <SelectItem value="title_desc">タイトル(Z-A順)</SelectItem>
+                <SelectItem value="published_at_desc">
+                  商品公開日(新しいものから)
+                </SelectItem>
+                <SelectItem value="published_at_asc">
+                  商品公開日(古いものから)
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

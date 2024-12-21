@@ -22,6 +22,7 @@ export const AddAssetModalContext = createContext<{
       tags: string[]
       category: string
       booth_url?: string
+      published_at?: number
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,

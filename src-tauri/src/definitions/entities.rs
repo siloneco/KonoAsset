@@ -13,6 +13,7 @@ pub struct AssetDisplay {
     pub author: String,
     pub image_src: String,
     pub booth_url: Option<String>,
+    pub published_at: Option<i64>,
 }
 
 impl AssetDisplay {
@@ -23,6 +24,7 @@ impl AssetDisplay {
         author: String,
         image_src: String,
         booth_url: Option<String>,
+        published_at: Option<i64>,
     ) -> Self {
         Self {
             id,
@@ -31,6 +33,7 @@ impl AssetDisplay {
             author,
             image_src,
             booth_url,
+            published_at,
         }
     }
 }
@@ -44,9 +47,15 @@ pub struct AssetDescription {
     #[serde(default = "default_booth_url")]
     pub booth_url: Option<String>,
     pub created_at: i64,
+    #[serde(default = "default_published_at")]
+    pub published_at: Option<i64>,
 }
 
 fn default_booth_url() -> Option<String> {
+    None
+}
+
+fn default_published_at() -> Option<i64> {
     None
 }
 
@@ -58,6 +67,7 @@ impl AssetDescription {
         tags: Vec<String>,
         booth_url: Option<String>,
         created_at: i64,
+        published_at: Option<i64>,
     ) -> Self {
         Self {
             title,
@@ -66,6 +76,7 @@ impl AssetDescription {
             tags,
             booth_url,
             created_at,
+            published_at,
         }
     }
 }
@@ -222,6 +233,7 @@ pub enum AssetType {
 pub enum SortBy {
     Title,
     CreatedAt,
+    PublishedAt,
 }
 
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
