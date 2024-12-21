@@ -1,4 +1,4 @@
-import NavBar from '@/components/page/top/NavBar'
+import NavBar from '@/components/page/Top/components/NavBar'
 import AssetList from '../../model/AssetList'
 
 const TopPageMainContent = () => {

@@ -102,3 +102,10 @@ export type GetAssetResult = {
   avatar_related_asset?: AvatarRelatedAsset
   world_asset?: WorldAsset
 }
+
+export type CheckForUpdateResult = {
+  success: boolean
+  error_message?: string
+  update_available: boolean
+  update_version?: string
+}

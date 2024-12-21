@@ -1,21 +1,23 @@
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use tauri::{App, Manager};
-use tauri_plugin_updater::UpdaterExt;
 
 use commands::{
-    copy_image_file_to_images, get_all_asset_tags, get_all_supported_avatar_values, get_asset,
+    check_for_update, copy_image_file_to_images, do_not_notify_update, execute_update,
+    get_all_asset_tags, get_all_supported_avatar_values, get_asset,
     get_asset_description_from_booth, get_avatar_related_categories,
     get_avatar_related_supported_avatars, get_filtered_asset_ids, get_sorted_assets_for_display,
     get_world_categories, open_in_file_manager, request_asset_deletion,
     request_avatar_asset_import, request_avatar_related_asset_import, request_world_asset_import,
     update_avatar_asset, update_avatar_related_asset, update_world_asset,
 };
+use updater::update_handler::UpdateHandler;
 
 mod commands;
 mod data_store;
 mod definitions;
 mod fetcher;
 mod importer;
+mod updater;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -27,13 +29,23 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(generate_handler())
         .setup(|app| {
-            let handle = app.handle().clone();
-            tauri::async_runtime::spawn(async move {
-                update(handle).await.unwrap();
-            });
-
             let basic_store = init(&app);
             app.manage(basic_store);
+
+            let app_handle = app.handle().clone();
+            let update_handler = tauri::async_runtime::block_on(async move {
+                let mut update_handler = UpdateHandler::new(app_handle);
+                let result = update_handler.check_for_update().await;
+
+                if result.is_err() {
+                    eprintln!("Failed to check for update: {}", result.unwrap_err());
+                }
+
+                update_handler
+            });
+
+            app.manage(update_handler);
+
             Ok(())
         })
         .run(tauri::generate_context!())
@@ -92,30 +104,10 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         // Boothからアセット情報を取得する
         get_asset_description_from_booth,
         // 検索関数
-        get_filtered_asset_ids
+        get_filtered_asset_ids,
+        // アップデート関連
+        check_for_update,
+        execute_update,
+        do_not_notify_update,
     ]
-}
-
-async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
-    if let Some(update) = app.updater()?.check().await? {
-        let mut downloaded = 0;
-
-        // alternatively we could also call update.download() and update.install() separately
-        update
-            .download_and_install(
-                |chunk_length, content_length| {
-                    downloaded += chunk_length;
-                    println!("downloaded {downloaded} from {content_length:?}");
-                },
-                || {
-                    println!("download finished");
-                },
-            )
-            .await?;
-
-        println!("update installed");
-        app.restart();
-    }
-
-    Ok(())
 }
