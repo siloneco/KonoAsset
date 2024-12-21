@@ -112,29 +112,37 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         let old_asset = old_asset.unwrap();
 
         if old_asset.get_description().image_src != asset.get_description().image_src {
-            let delete_result =
-                delete_asset_image(&self.app_data_dir, &old_asset.get_description().image_src);
+            let old_image = &old_asset.get_description().image_src;
+            let new_image = &asset.get_description().image_src;
 
-            if delete_result.is_err() {
-                return Err(delete_result.err().unwrap());
+            if old_image.is_some() {
+                let delete_result =
+                    delete_asset_image(&self.app_data_dir, old_image.as_ref().unwrap());
+
+                if delete_result.is_err() {
+                    return Err(delete_result.err().unwrap());
+                }
+
+                if !delete_result.unwrap() {
+                    return Err("Failed to delete old image".into());
+                }
             }
 
-            if !delete_result.unwrap() {
-                return Err("Failed to delete old image".into());
-            }
+            if new_image.is_some() {
+                let mut path = self.app_data_dir.clone();
+                path.push("images");
+                path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-            let mut path = self.app_data_dir.clone();
-            path.push("images");
-            path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+                let result = execute_image_fixation(new_image.as_ref().unwrap(), &path);
 
-            let result = execute_image_fixation(&asset.get_description().image_src, &path);
+                if result.is_err() {
+                    return Err(result.err().unwrap());
+                }
 
-            if result.is_err() {
-                return Err(result.err().unwrap());
-            }
-
-            if result.unwrap() {
-                asset.get_description_as_mut().image_src = path.to_str().unwrap().to_string();
+                if result.unwrap() {
+                    asset.get_description_as_mut().image_src =
+                        Some(path.to_str().unwrap().to_string());
+                }
             }
         }
 

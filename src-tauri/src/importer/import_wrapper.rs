@@ -19,30 +19,30 @@ pub fn import_avatar_asset(
     basic_store: &StoreProvider,
     request: AvatarAssetImportRequest,
 ) -> AvatarAssetImportResult {
-    let mut image_cache_dest = basic_store.app_data_dir();
-    image_cache_dest.push("images");
-    image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    let image = &request.pre_asset.description.image_src;
 
-    let image_fixation_result =
-        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
+    let mut request = request.clone();
+    if image.is_some() {
+        let mut new_image_path = basic_store.app_data_dir();
+        new_image_path.push("images");
+        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    if image_fixation_result.is_err() {
-        return AvatarAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(image_fixation_result.err().unwrap()),
-        };
+        let image_fixation_result =
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+
+        if let Err(error) = image_fixation_result {
+            return AvatarAssetImportResult {
+                success: false,
+                asset: None,
+                error_message: Some(error),
+            };
+        }
+
+        if image_fixation_result.unwrap() {
+            request.pre_asset.description.image_src =
+                Some(new_image_path.to_str().unwrap().to_string());
+        }
     }
-
-    let request = if image_fixation_result.unwrap() {
-        let mut new_request = request.clone();
-        new_request.pre_asset.description.image_src =
-            image_cache_dest.to_str().unwrap().to_string();
-
-        new_request
-    } else {
-        request
-    };
 
     let asset = AvatarAsset::create(request.pre_asset.description);
     let result = basic_store
@@ -95,30 +95,30 @@ pub fn import_avatar_related_asset(
     basic_store: &StoreProvider,
     request: AvatarRelatedAssetImportRequest,
 ) -> AvatarRelatedAssetImportResult {
-    let mut image_cache_dest = basic_store.app_data_dir();
-    image_cache_dest.push("images");
-    image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    let image = &request.pre_asset.description.image_src;
 
-    let image_save_result =
-        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
+    let mut request = request.clone();
+    if image.is_some() {
+        let mut new_image_path = basic_store.app_data_dir();
+        new_image_path.push("images");
+        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    if image_save_result.is_err() {
-        return AvatarRelatedAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(image_save_result.err().unwrap()),
-        };
+        let image_fixation_result =
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+
+        if let Err(error) = image_fixation_result {
+            return AvatarRelatedAssetImportResult {
+                success: false,
+                asset: None,
+                error_message: Some(error),
+            };
+        }
+
+        if image_fixation_result.unwrap() {
+            request.pre_asset.description.image_src =
+                Some(new_image_path.to_str().unwrap().to_string());
+        }
     }
-
-    let request = if image_save_result.unwrap() {
-        let mut new_request = request.clone();
-        new_request.pre_asset.description.image_src =
-            image_cache_dest.to_str().unwrap().to_string();
-
-        new_request
-    } else {
-        request
-    };
 
     let asset = AvatarRelatedAsset::create(
         request.pre_asset.description,
@@ -175,30 +175,30 @@ pub fn import_world_asset(
     basic_store: &StoreProvider,
     request: WorldAssetImportRequest,
 ) -> WorldAssetImportResult {
-    let mut image_cache_dest = basic_store.app_data_dir();
-    image_cache_dest.push("images");
-    image_cache_dest.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    let image = &request.pre_asset.description.image_src;
 
-    let image_save_result =
-        execute_image_fixation(&request.pre_asset.description.image_src, &image_cache_dest);
+    let mut request = request.clone();
+    if image.is_some() {
+        let mut new_image_path = basic_store.app_data_dir();
+        new_image_path.push("images");
+        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-    if image_save_result.is_err() {
-        return WorldAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(image_save_result.err().unwrap()),
-        };
+        let image_fixation_result =
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+
+        if let Err(error) = image_fixation_result {
+            return WorldAssetImportResult {
+                success: false,
+                asset: None,
+                error_message: Some(error),
+            };
+        }
+
+        if image_fixation_result.unwrap() {
+            request.pre_asset.description.image_src =
+                Some(new_image_path.to_str().unwrap().to_string());
+        }
     }
-
-    let request = if image_save_result.unwrap() {
-        let mut new_request = request.clone();
-        new_request.pre_asset.description.image_src =
-            image_cache_dest.to_str().unwrap().to_string();
-
-        new_request
-    } else {
-        request
-    };
 
     let asset = WorldAsset::create(request.pre_asset.description, request.pre_asset.category);
     let result = basic_store

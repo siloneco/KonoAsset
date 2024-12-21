@@ -77,6 +77,8 @@ export const sendAssetImportRequest = async (
     return new Failure(new Error(`Unsupported asset type: ${assetType}`))
   }
 
+  console.log(request)
+
   const result: AssetImportResult = await invoke(callTarget, { request })
 
   if (result.success) {

@@ -6,8 +6,7 @@ import { MoreButton } from '../MoreButton'
 import { useAssetCard } from './hook'
 import AssetBadge from '@/components/part/AssetBadge'
 import { Label } from '@/components/ui/label'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { convertFileSrc } from '@tauri-apps/api/core'
+import SquareImage from '@/components/model/SquareImage'
 
 type Props = {
   asset: AssetDisplay
@@ -20,16 +19,10 @@ const AssetCard = ({ asset }: Props) => {
     <Card className="w-full bg-card m-1">
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
-          <AspectRatio
-            ratio={1}
-            className="w-full flex items-center bg-white rounded-lg overflow-hidden"
-          >
-            <img
-              src={convertFileSrc(asset.image_src)}
-              alt={asset.title}
-              className="w-full"
-            />
-          </AspectRatio>
+          <SquareImage
+            assetType={asset.asset_type}
+            path={asset.image_src ?? undefined}
+          />
           <AssetBadge type={asset.asset_type} className="mt-3" />
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
             {asset.title}

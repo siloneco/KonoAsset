@@ -1,7 +1,7 @@
 import { Option } from '@/components/ui/multi-select'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
   fetchAssetInformation,
@@ -12,28 +12,14 @@ import {
 } from './logic'
 import { AssetType, SimpleResult } from '@/lib/entity'
 import { useToast } from '@/hooks/use-toast'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
   id: string
 }
 
 type ReturnProps = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   submit: () => Promise<void>
   submitting: boolean
   supportedAvatarCandidates: Option[]
@@ -59,7 +45,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     assetType: z.nativeEnum(AssetType),
     title: z.string().min(1),
     author: z.string().min(1),
-    image_src: z.string().min(1),
+    image_src: z.string().nullable(),
     booth_url: z.string().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
