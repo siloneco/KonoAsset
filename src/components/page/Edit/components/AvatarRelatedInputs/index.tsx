@@ -82,7 +82,7 @@ const AvatarRelatedInputs = ({
                   }))}
                 />
                 <FormDescription>
-                  対応アバターはアセットの絞り込みに利用されます
+                  対応アバターは一覧で絞り込みに利用できます
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -120,7 +120,7 @@ const AvatarRelatedInputs = ({
                   }}
                 />
                 <FormDescription>
-                  カテゴリはアセットの絞り込みに利用されます
+                  カテゴリは1つまで選択できます (例: 衣装、髪など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

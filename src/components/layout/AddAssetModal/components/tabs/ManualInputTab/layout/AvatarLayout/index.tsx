@@ -46,7 +46,7 @@ const AvatarLayout = ({ submitting }: Props) => {
                   />
                 </TagList>
                 <FormDescription>
-                  タグはアセットの絞り込みや分類に利用されます
+                  タグは複数選択できます (例: Vket、無料、自作など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

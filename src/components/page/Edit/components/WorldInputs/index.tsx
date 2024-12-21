@@ -71,7 +71,7 @@ const WorldInputs = ({ form, disabled, categoryCandidates }: Props) => {
                     }}
                   />
                   <FormDescription>
-                    カテゴリはアセットの絞り込みに利用されます
+                    カテゴリは1つまで選択できます (例: 衣装、髪など)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
