@@ -25,6 +25,7 @@ type Props = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -70,9 +71,6 @@ const CommonInputs = ({ form, disabled }: Props) => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                アセット名は一覧表示の際に表示されます
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -90,9 +88,6 @@ const CommonInputs = ({ form, disabled }: Props) => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                ショップ名は一覧表示の際に表示されます
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -125,7 +120,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
                   }}
                 />
                 <FormDescription>
-                  タグはアセットの絞り込みに利用されます
+                  タグは複数選択できます (例: Vket、無料、自作など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

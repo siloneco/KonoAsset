@@ -4,7 +4,7 @@ use std::{
     path::PathBuf,
 };
 
-use tauri::State;
+use tauri::{Result, State};
 use uuid::Uuid;
 
 use crate::{
@@ -23,13 +23,15 @@ use crate::{
             AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
         },
         results::{
-            DirectoryOpenResult, FetchAssetDescriptionFromBoothResult, GetAssetResult, SimpleResult,
+            CheckForUpdateResult, DirectoryOpenResult, FetchAssetDescriptionFromBoothResult,
+            GetAssetResult, SimpleResult,
         },
     },
     fetcher::booth_fetcher::fetch_asset_details_from_booth,
     importer::import_wrapper::{
         import_avatar_asset, import_avatar_related_asset, import_world_asset,
     },
+    updater::update_handler::UpdateHandler,
 };
 
 #[tauri::command]
@@ -53,6 +55,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -73,6 +76,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -93,6 +97,7 @@ pub fn get_sorted_assets_for_display(
                 description.author.clone(),
                 description.image_src.clone(),
                 description.booth_url.clone(),
+                description.published_at,
             ));
 
             if sort_by == SortBy::CreatedAt {
@@ -102,11 +107,17 @@ pub fn get_sorted_assets_for_display(
 
     match sort_by {
         SortBy::Title => result.sort_by(|a, b| a.title.cmp(&b.title)),
+        SortBy::Author => result.sort_by(|a, b| a.author.cmp(&b.author)),
         SortBy::CreatedAt => result.sort_by(|a, b| {
             created_at_map
                 .get(&a.id)
                 .unwrap()
                 .cmp(&created_at_map.get(&b.id).unwrap())
+        }),
+        SortBy::PublishedAt => result.sort_by(|a, b| {
+            a.published_at
+                .unwrap_or(0)
+                .cmp(&b.published_at.unwrap_or(0))
         }),
     }
 
@@ -408,4 +419,71 @@ pub fn copy_image_file_to_images(
     fs::copy(&path, &new_path).unwrap();
 
     new_path.to_str().unwrap().to_string()
+}
+
+#[tauri::command]
+pub async fn check_for_update(
+    update_handler: State<'_, UpdateHandler>,
+) -> Result<CheckForUpdateResult> {
+    if !update_handler.is_initialized() {
+        return Ok(CheckForUpdateResult::create(
+            false,
+            Some(format!("Update handler is not initialized yet.")),
+            false,
+            None,
+        ));
+    }
+
+    if !update_handler.show_notification().await {
+        return Ok(CheckForUpdateResult::create(true, None, false, None));
+    }
+
+    let available = update_handler.update_available();
+
+    if !available {
+        return Ok(CheckForUpdateResult::create(true, None, false, None));
+    }
+
+    let version = update_handler.update_version().unwrap();
+
+    Ok(CheckForUpdateResult::create(
+        true,
+        None,
+        available,
+        Some(version.to_string()),
+    ))
+}
+
+#[tauri::command]
+pub async fn execute_update(update_handler: State<'_, UpdateHandler>) -> Result<SimpleResult> {
+    if !update_handler.is_initialized() {
+        return Ok(SimpleResult::error(
+            "Update handler is not initialized yet.".into(),
+        ));
+    }
+
+    if !update_handler.update_available() {
+        return Ok(SimpleResult::error("No update available.".into()));
+    }
+
+    let result = update_handler.execute_update().await;
+
+    match result {
+        Ok(_) => Ok(SimpleResult::success()),
+        Err(e) => Ok(SimpleResult::error(e.to_string())),
+    }
+}
+
+#[tauri::command]
+pub async fn do_not_notify_update(
+    update_handler: State<'_, UpdateHandler>,
+) -> Result<SimpleResult> {
+    if !update_handler.is_initialized() {
+        return Ok(SimpleResult::error(
+            "Update handler is not initialized yet.".into(),
+        ));
+    }
+
+    update_handler.set_show_notification(false).await;
+    Ok(SimpleResult::success())
 }

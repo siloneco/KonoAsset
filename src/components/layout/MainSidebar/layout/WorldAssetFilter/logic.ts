@@ -8,11 +8,3 @@ export const fetchAllCategories = async (): Promise<Option[]> => {
     return { label: category, value: category }
   })
 }
-
-export const fetchAllTags = async (): Promise<Option[]> => {
-  const tags: string[] = await invoke('get_all_asset_tags')
-
-  return tags.map((tag) => {
-    return { label: tag, value: tag }
-  })
-}

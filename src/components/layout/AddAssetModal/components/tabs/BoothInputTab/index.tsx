@@ -56,6 +56,10 @@ const BoothInputTab = ({ setTab }: Props) => {
         form?.setValue('title', result.asset_description!.title)
         form?.setValue('author', result.asset_description!.author)
         form?.setValue('image_src', result.asset_description!.image_src)
+        form?.setValue(
+          'published_at',
+          result.asset_description!.published_at ?? undefined,
+        )
 
         setAssetType(result.estimated_asset_type ?? AssetType.Avatar)
 

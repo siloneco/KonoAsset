@@ -23,6 +23,7 @@ type Props = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -81,7 +82,7 @@ const AvatarRelatedInputs = ({
                   }))}
                 />
                 <FormDescription>
-                  対応アバターはアセットの絞り込みに利用されます
+                  対応アバターは一覧で絞り込みに利用できます
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -119,7 +120,7 @@ const AvatarRelatedInputs = ({
                   }}
                 />
                 <FormDescription>
-                  カテゴリはアセットの絞り込みに利用されます
+                  カテゴリは1つまで選択できます (例: 衣装、髪など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -21,6 +21,7 @@ type Props = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -70,7 +71,7 @@ const WorldInputs = ({ form, disabled, categoryCandidates }: Props) => {
                     }}
                   />
                   <FormDescription>
-                    カテゴリはアセットの絞り込みに利用されます
+                    カテゴリは1つまで選択できます (例: 衣装、髪など)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

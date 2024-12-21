@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -55,7 +54,7 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
               <div className="w-1/3">
                 <ImagePicker path={imageSrc} setPath={setImageSrc} />
               </div>
-              <div className="w-2/3 space-y-2">
+              <div className="w-2/3 space-y-6">
                 <FormField
                   control={form.control}
                   name="title"
@@ -70,9 +69,6 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>
-                        アセット名は一覧表示の際に表示されます
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -91,9 +87,6 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>
-                        ショップ名は一覧表示の際に表示されます
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

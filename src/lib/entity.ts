@@ -14,6 +14,7 @@ export type AssetDescription = {
   tags: string[]
   booth_url: string | null
   created_at: number
+  published_at: number | null
 }
 
 export type AvatarAsset = {
@@ -46,7 +47,9 @@ export enum AssetType {
 
 export enum SortBy {
   Title = 'Title',
+  Author = 'Author',
   CreatedAt = 'CreatedAt',
+  PublishedAt = 'PublishedAt',
 }
 
 export type AssetImportRequest = {
@@ -99,4 +102,11 @@ export type GetAssetResult = {
   avatar_asset?: AvatarAsset
   avatar_related_asset?: AvatarRelatedAsset
   world_asset?: WorldAsset
+}
+
+export type CheckForUpdateResult = {
+  success: boolean
+  error_message?: string
+  update_available: boolean
+  update_version?: string
 }

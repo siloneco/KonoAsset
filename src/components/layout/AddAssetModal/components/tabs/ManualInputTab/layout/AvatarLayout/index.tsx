@@ -1,6 +1,4 @@
 import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
-import TagList from '@/components/model/TagList'
-import TagPicker from '@/components/model/TagPicker'
 import {
   FormField,
   FormItem,
@@ -8,8 +6,10 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form'
+import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { invoke } from '@tauri-apps/api/core'
 
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 type Props = {
   submitting: boolean
@@ -17,6 +17,16 @@ type Props = {
 
 const AvatarLayout = ({ submitting }: Props) => {
   const { form } = useContext(AddAssetModalContext)
+  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+
+  const fetchTagCandidates = async () => {
+    const result: string[] = await invoke('get_all_asset_tags')
+    setTagCandidates(result.map((value) => ({ label: value, value })))
+  }
+
+  useEffect(() => {
+    fetchTagCandidates()
+  }, [])
 
   if (!form) {
     return <div>Loading...</div>
@@ -28,25 +38,30 @@ const AvatarLayout = ({ submitting }: Props) => {
         <FormField
           control={form.control}
           name="tags"
-          render={({ field }) => {
-            if (field.value === undefined) {
-              form.setValue('tags', [])
-              field.value = []
-            }
-
+          render={() => {
             return (
               <FormItem>
                 <FormLabel>タグ</FormLabel>
-                <TagList tags={field.value || []}>
-                  <TagPicker
-                    tags={field.value || []}
-                    setTags={(tags) => form.setValue('tags', tags)}
-                    disabled={submitting}
-                    className="mb-2 mr-2"
-                  />
-                </TagList>
+                <MultipleSelector
+                  options={tagCandidates}
+                  placeholder="タグを選択..."
+                  disabled={submitting}
+                  hidePlaceholderWhenSelected
+                  creatable
+                  emptyIndicator={
+                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                      入力して作成
+                    </p>
+                  }
+                  onChange={(value) => {
+                    form.setValue(
+                      'tags',
+                      value.map((v) => v.value),
+                    )
+                  }}
+                />
                 <FormDescription>
-                  タグはアセットの絞り込みや分類に利用されます
+                  タグは複数選択できます (例: Vket、無料、自作など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

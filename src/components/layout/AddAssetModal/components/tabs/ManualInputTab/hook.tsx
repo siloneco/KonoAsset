@@ -19,6 +19,8 @@ type ReturnProps = {
       image_src: string
       tags: string[]
       category: string
+      booth_url?: string
+      published_at?: number
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -65,6 +67,7 @@ export const useManualInputTabHooks = ({
           tags: form!.getValues('tags'),
           booth_url: form!.getValues('booth_url') ?? null,
           created_at: new Date().getTime(),
+          published_at: form!.getValues('published_at') ?? null,
         },
         category: form!.getValues('category'),
         supportedAvatars: supportedAvatars,

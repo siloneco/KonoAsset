@@ -24,6 +24,7 @@ type Props = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -85,7 +86,7 @@ const BoothInputs = ({ form, disabled }: Props) => {
                 </Button>
               </div>
               <FormDescription>
-                Boothから情報を取得したり、アセット一覧からBoothに飛ぶことができます
+                商品URLを指定すると、以下の情報を自動で埋めたり、アセット一覧からBoothに飛ぶことができます
               </FormDescription>
               <FormMessage />
             </FormItem>

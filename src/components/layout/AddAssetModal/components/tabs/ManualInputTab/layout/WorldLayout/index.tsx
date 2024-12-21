@@ -68,7 +68,7 @@ const WorldLayout = ({ submitting }: Props) => {
                   }}
                 />
                 <FormDescription>
-                  カテゴリはアセットの絞り込みに利用されます
+                  カテゴリは1つまで選択できます (例: 衣装、髪など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -104,7 +104,7 @@ const WorldLayout = ({ submitting }: Props) => {
                   }}
                 />
                 <FormDescription>
-                  タグはアセットの絞り込みに利用されます
+                  タグは複数選択できます (例: Vket、無料、自作など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

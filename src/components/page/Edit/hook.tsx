@@ -28,6 +28,7 @@ type ReturnProps = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -63,6 +64,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     tags: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
+    published_at: z.number().nullable(),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -133,6 +135,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('image_src', asset.description.image_src)
         form.setValue('booth_url', asset.description.booth_url)
         form.setValue('tags', asset.description.tags)
+        form.setValue('published_at', asset.description.published_at)
       } else if (
         result.avatar_related_asset !== undefined &&
         result.avatar_related_asset !== null
@@ -146,6 +149,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('tags', asset.description.tags)
         form.setValue('category', asset.category)
         form.setValue('supportedAvatars', asset.supported_avatars)
+        form.setValue('published_at', asset.description.published_at)
       } else if (
         result.world_asset !== undefined &&
         result.world_asset !== null
@@ -158,6 +162,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         form.setValue('booth_url', asset.description.booth_url)
         form.setValue('tags', asset.description.tags)
         form.setValue('category', asset.category)
+        form.setValue('published_at', asset.description.published_at)
       }
     } finally {
       setInitializing(false)

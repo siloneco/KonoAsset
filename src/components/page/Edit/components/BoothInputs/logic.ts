@@ -15,6 +15,7 @@ type Props = {
       tags: string[]
       category: string
       supportedAvatars: string[]
+      published_at: number | null
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
@@ -31,6 +32,7 @@ export const getAssetDescriptionFromBooth = async ({ url, form }: Props) => {
     form?.setValue('title', result.asset_description!.title)
     form?.setValue('author', result.asset_description!.author)
     form?.setValue('image_src', result.asset_description!.image_src)
+    form?.setValue('published_at', result.asset_description!.published_at)
   } else {
     console.error(result.error_message)
   }

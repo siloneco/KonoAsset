@@ -98,3 +98,27 @@ impl GetAssetResult {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct CheckForUpdateResult {
+    pub success: bool,
+    pub error_message: Option<String>,
+    pub update_available: bool,
+    pub update_version: Option<String>,
+}
+
+impl CheckForUpdateResult {
+    pub fn create(
+        success: bool,
+        error_message: Option<String>,
+        update_available: bool,
+        update_version: Option<String>,
+    ) -> Self {
+        Self {
+            success,
+            error_message,
+            update_available,
+            update_version,
+        }
+    }
+}

@@ -82,7 +82,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                     }}
                   />
                   <FormDescription>
-                    対応アバターはアセットの絞り込みに利用されます
+                    対応アバターは一覧で絞り込みに利用できます
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -114,7 +114,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                     }}
                   />
                   <FormDescription>
-                    カテゴリはアセットの絞り込みに利用されます
+                    カテゴリは1つまで選択できます (例: 衣装、髪など)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -150,7 +150,7 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                   }}
                 />
                 <FormDescription>
-                  タグはアセットの絞り込みに利用されます
+                  タグは複数選択できます (例: Vket、無料、自作など)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

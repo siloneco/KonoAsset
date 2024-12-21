@@ -50,6 +50,22 @@ const NavBar = () => {
         setSortBy(SortBy.Title)
         setReverseOrder(true)
         break
+      case 'author_asc':
+        setSortBy(SortBy.Author)
+        setReverseOrder(false)
+        break
+      case 'author_desc':
+        setSortBy(SortBy.Author)
+        setReverseOrder(true)
+        break
+      case 'published_at_desc':
+        setSortBy(SortBy.PublishedAt)
+        setReverseOrder(true)
+        break
+      case 'published_at_asc':
+        setSortBy(SortBy.PublishedAt)
+        setReverseOrder(false)
+        break
     }
   }
 
@@ -111,13 +127,21 @@ const NavBar = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="created_at_desc">
-                  追加順(新しいものから)
+                  追加順 (新しいものから)
                 </SelectItem>
                 <SelectItem value="created_at_asc">
-                  追加順(古いものから)
+                  追加順 (古いものから)
                 </SelectItem>
-                <SelectItem value="title_asc">タイトル(A-Z順)</SelectItem>
-                <SelectItem value="title_desc">タイトル(Z-A順)</SelectItem>
+                <SelectItem value="title_asc">アセット名 (A-Z順)</SelectItem>
+                <SelectItem value="title_desc">アセット名 (Z-A順)</SelectItem>
+                <SelectItem value="author_asc">ショップ名 (A-Z順)</SelectItem>
+                <SelectItem value="author_desc">ショップ名 (Z-A順)</SelectItem>
+                <SelectItem value="published_at_desc">
+                  商品公開日 (新しいものから)
+                </SelectItem>
+                <SelectItem value="published_at_asc">
+                  商品公開日 (古いものから)
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
