@@ -20,6 +20,7 @@ import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 import { Option } from '@/components/ui/multi-select'
 import { fetchAllTags } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
@@ -57,54 +58,57 @@ const MainSidebar = () => {
   return (
     <Sidebar>
       <SidebarContent>
-        <div className="flex flex-row items-center">
-          <div className="m-2 border-2 text-lg p-1 px-4 rounded-lg">
-            KonoAsset
+        <ScrollArea className="h-screen">
+          <div className="flex flex-row items-center">
+            <div className="m-2 border-2 text-lg p-1 px-4 rounded-lg">
+              KonoAsset
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="ml-auto mr-2 flex relative"
+              onClick={onClick}
+            >
+              <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="ml-auto mr-2 flex relative"
-            onClick={onClick}
-          >
-            <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </div>
-        <SidebarGroup>
-          <SidebarGroupContent className="p-2">
-            <AddAssetModal />
-            <div className="my-4">
-              <Label>テキストで検索</Label>
-              <Input
-                placeholder="キーワードを入力..."
-                className="mt-1"
-                value={textFilter}
-                onChange={(e) => setTextFilter(e.target.value)}
-              />
-            </div>
-            <Label>アセットタイプ</Label>
-            <TypeSelector />
-            {(assetType === 'all' || assetType === AssetType.AvatarRelated) && (
-              <AvatarRelatedAssetFilter />
-            )}
-            {assetType === AssetType.World && <WorldAssetFilter />}
-            <div className="mt-4 mb-24">
-              <MultiFilterItemSelector
-                label="タグ"
-                placeholder="絞り込むタグを選択..."
-                candidates={tagCandidates}
-                value={tagValues}
-                onValueChange={(values) =>
-                  setTagFilter(values.map((v) => v.value))
-                }
-                matchType={tagFilterMatchType}
-                setMatchType={setTagFilterMatchType}
-              />
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent className="p-2">
+              <AddAssetModal />
+              <div className="my-4">
+                <Label>テキストで検索</Label>
+                <Input
+                  placeholder="キーワードを入力..."
+                  className="mt-1"
+                  value={textFilter}
+                  onChange={(e) => setTextFilter(e.target.value)}
+                />
+              </div>
+              <Label>アセットタイプ</Label>
+              <TypeSelector />
+              {(assetType === 'all' ||
+                assetType === AssetType.AvatarRelated) && (
+                <AvatarRelatedAssetFilter />
+              )}
+              {assetType === AssetType.World && <WorldAssetFilter />}
+              <div className="mt-4 mb-24">
+                <MultiFilterItemSelector
+                  label="タグ"
+                  placeholder="絞り込むタグを選択..."
+                  candidates={tagCandidates}
+                  value={tagValues}
+                  onValueChange={(values) =>
+                    setTagFilter(values.map((v) => v.value))
+                  }
+                  matchType={tagFilterMatchType}
+                  setMatchType={setTagFilterMatchType}
+                />
+              </div>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </ScrollArea>
       </SidebarContent>
     </Sidebar>
   )
