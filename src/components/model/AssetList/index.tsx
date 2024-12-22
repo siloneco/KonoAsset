@@ -25,7 +25,6 @@ const AssetList = ({ className }: Props) => {
     tagFilterMatchType,
     supportedAvatarFilter,
     supportedAvatarFilterMatchType,
-    setCategoryFilter,
   } = useContext(PersistentContext)
   const { assetDisplaySortedList } = useContext(AssetContext)
 
@@ -64,10 +63,6 @@ const AssetList = ({ className }: Props) => {
     tagFilterMatchType,
     supportedAvatarFilterMatchType,
   ])
-
-  useEffect(() => {
-    setCategoryFilter([])
-  }, [assetType])
 
   const scrollRef = useRef<HTMLDivElement>(null)
 
