@@ -70,6 +70,7 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
                     options={supportedAvatarCandidates}
                     placeholder="対応アバターを選択..."
                     disabled={submitting}
+                    className="max-w-72"
                     hidePlaceholderWhenSelected
                     creatable
                     emptyIndicator={
@@ -106,6 +107,7 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
                     options={categoryCandidates}
                     placeholder="カテゴリを選択..."
                     disabled={submitting}
+                    className="max-w-72"
                     creatable
                     emptyIndicator={
                       <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
@@ -138,6 +140,7 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
                   options={tagCandidates}
                   placeholder="タグを選択..."
                   disabled={submitting}
+                  className="max-w-72"
                   hidePlaceholderWhenSelected
                   creatable
                   emptyIndicator={
