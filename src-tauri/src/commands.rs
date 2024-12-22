@@ -8,6 +8,7 @@ use tauri::{Result, State};
 use uuid::Uuid;
 
 use crate::{
+    booth::booth_fetcher::fetch_asset_details_from_booth,
     data_store::{
         delete::delete_asset,
         provider::StoreProvider,
@@ -27,7 +28,6 @@ use crate::{
             GetAssetResult, SimpleResult,
         },
     },
-    fetcher::booth_fetcher::fetch_asset_details_from_booth,
     importer::import_wrapper::{
         import_avatar_asset, import_avatar_related_asset, import_world_asset,
     },
@@ -54,7 +54,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
-                description.booth_url.clone(),
+                description.booth_item_id,
                 description.published_at,
             ));
 
@@ -75,7 +75,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
-                description.booth_url.clone(),
+                description.booth_item_id,
                 description.published_at,
             ));
 
@@ -96,7 +96,7 @@ pub fn get_sorted_assets_for_display(
                 description.title.clone(),
                 description.author.clone(),
                 description.image_src.clone(),
-                description.booth_url.clone(),
+                description.booth_item_id,
                 description.published_at,
             ));
 
@@ -237,12 +237,12 @@ pub fn open_in_file_manager(
 #[tauri::command]
 pub fn get_asset_description_from_booth(
     basic_store: State<'_, StoreProvider>,
-    url: String,
+    booth_item_id: u64,
 ) -> FetchAssetDescriptionFromBoothResult {
     let mut images_dir = basic_store.app_data_dir();
     images_dir.push("images");
 
-    let result = fetch_asset_details_from_booth(&url, images_dir);
+    let result = fetch_asset_details_from_booth(booth_item_id, images_dir);
 
     match result {
         Ok((asset_description, estimated_asset_type)) => FetchAssetDescriptionFromBoothResult {

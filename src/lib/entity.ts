@@ -4,7 +4,7 @@ export type AssetDisplay = {
   title: string
   author: string
   image_src: string | null
-  booth_url: string | null
+  booth_item_id: number | null
 }
 
 export type AssetDescription = {
@@ -12,7 +12,7 @@ export type AssetDescription = {
   author: string
   image_src: string | null
   tags: string[]
-  booth_url: string | null
+  booth_item_id: number | null
   created_at: number
   published_at: number | null
 }

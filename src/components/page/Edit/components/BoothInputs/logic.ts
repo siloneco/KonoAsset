@@ -4,13 +4,13 @@ import { invoke } from '@tauri-apps/api/core'
 import console from 'console'
 
 type Props = {
-  url: string
+  id: number
   form: AssetFormType
 }
-export const getAssetDescriptionFromBooth = async ({ url, form }: Props) => {
+export const getAssetDescriptionFromBooth = async ({ id, form }: Props) => {
   const result: FetchAssetDescriptionFromBoothResult = await invoke(
     'get_asset_description_from_booth',
-    { url },
+    { boothItemId: id },
   )
 
   if (result.success) {

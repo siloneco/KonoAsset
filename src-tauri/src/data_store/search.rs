@@ -223,6 +223,7 @@ mod tests {
             image_src: None,
             tags: vec!["タグ1".to_string(), "タグ2".to_string()],
             booth_url: None,
+            booth_item_id: None,
             created_at: chrono::Local::now().timestamp_millis(),
             published_at: Some(chrono::Local::now().timestamp_millis()),
         };

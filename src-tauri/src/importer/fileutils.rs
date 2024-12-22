@@ -1,6 +1,6 @@
 use std::{error::Error, fs, path::PathBuf};
 
-use crate::fetcher::image_saver;
+use crate::booth::image_saver;
 
 pub fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
     let path = PathBuf::from(url_or_path);

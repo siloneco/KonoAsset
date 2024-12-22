@@ -6,7 +6,6 @@ import {
   SimpleResult,
 } from '@/lib/entity'
 import { AssetFormType } from '@/lib/form'
-import { isBoothURL } from '@/lib/utils'
 import { invoke } from '@tauri-apps/api/core'
 
 type UpdateAssetProps = {
@@ -38,13 +37,9 @@ const updateAvatarAsset = async ({
   const title = form.getValues('title')
   const author = form.getValues('author')
   const image_src = form.getValues('image_src')
+  const booth_item_id = form.getValues('booth_item_id')
   const tags = form.getValues('tags')
   const publishedAt = form.getValues('published_at')
-
-  let booth_url = form.getValues('booth_url')
-  if (booth_url !== null && !isBoothURL(booth_url)) {
-    booth_url = null
-  }
 
   const asset: AvatarAsset = {
     id,
@@ -52,7 +47,7 @@ const updateAvatarAsset = async ({
       title,
       author,
       image_src,
-      booth_url,
+      booth_item_id,
       tags,
       created_at: 0, // unused on updating
       published_at: publishedAt,
@@ -70,15 +65,11 @@ const updateAvatarRelatedAsset = async ({
   const title = form.getValues('title')
   const author = form.getValues('author')
   const image_src = form.getValues('image_src')
+  const booth_item_id = form.getValues('booth_item_id')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
   const supportedAvatars = form.getValues('supportedAvatars')
   const publishedAt = form.getValues('published_at')
-
-  let booth_url = form.getValues('booth_url')
-  if (booth_url !== null && !isBoothURL(booth_url)) {
-    booth_url = null
-  }
 
   const asset = {
     id,
@@ -86,7 +77,7 @@ const updateAvatarRelatedAsset = async ({
       title,
       author,
       image_src,
-      booth_url,
+      booth_item_id,
       tags,
       created_at: 0, // unused on updating
       published_at: publishedAt,
@@ -108,14 +99,10 @@ const updateWorldAsset = async ({
   const title = form.getValues('title')
   const author = form.getValues('author')
   const image_src = form.getValues('image_src')
+  const booth_item_id = form.getValues('booth_item_id')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
   const publishedAt = form.getValues('published_at')
-
-  let booth_url = form.getValues('booth_url')
-  if (booth_url !== null && !isBoothURL(booth_url)) {
-    booth_url = null
-  }
 
   const asset = {
     id,
@@ -123,7 +110,7 @@ const updateWorldAsset = async ({
       title,
       author,
       image_src,
-      booth_url,
+      booth_item_id,
       tags,
       created_at: 0, // unused on updating
       published_at: publishedAt,

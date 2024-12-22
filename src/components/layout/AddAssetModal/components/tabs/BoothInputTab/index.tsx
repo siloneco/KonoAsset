@@ -9,12 +9,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
-import { useContext, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { AssetType, FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
+import { extractBoothItemId } from '@/lib/utils'
 
 const shopBoothUrlRegex = /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+$/
 const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
@@ -30,6 +31,7 @@ type Props = {
 
 const BoothInputTab = ({ form, setTab }: Props) => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
+  const [boothItemId, setBoothItemId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
 
   const { assetPath } = useContext(AddAssetModalContext)
@@ -42,8 +44,8 @@ const BoothInputTab = ({ form, setTab }: Props) => {
     setTab('asset-type-selector')
   }
 
-  const getAssetDescriptionFromBooth = async (url: string) => {
-    if (fetching) {
+  const getAssetDescriptionFromBooth = async () => {
+    if (fetching || boothItemId === null) {
       return
     }
 
@@ -51,7 +53,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
       setFetching(true)
       const result: FetchAssetDescriptionFromBoothResult = await invoke(
         'get_asset_description_from_booth',
-        { url },
+        { boothItemId },
       )
 
       if (result.success) {
@@ -59,7 +61,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
         form.setValue('author', result.asset_description!.author)
         form.setValue('image_src', result.asset_description!.image_src)
         form.setValue('published_at', result.asset_description!.published_at)
-        form.setValue('booth_url', boothUrlInput)
+        form.setValue('booth_item_id', boothItemId)
         form.setValue(
           'assetType',
           result.estimated_asset_type ?? AssetType.Avatar,
@@ -71,6 +73,18 @@ const BoothInputTab = ({ form, setTab }: Props) => {
       }
     } finally {
       setFetching(false)
+    }
+  }
+
+  const onInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value
+    setBoothUrlInput(url)
+
+    const extractIdResult = extractBoothItemId(url)
+    if (extractIdResult.isSuccess()) {
+      setBoothItemId(extractIdResult.value)
+    } else {
+      setBoothItemId(null)
     }
   }
 
@@ -98,12 +112,12 @@ const BoothInputTab = ({ form, setTab }: Props) => {
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
               placeholder="https://booth.pm/ja/items/123456"
-              onChange={(e) => setBoothUrlInput(e.target.value)}
+              onChange={onInputValueChange}
               disabled={fetching}
             />
             <Button
               disabled={fetching || !isBoothUrl(boothUrlInput)}
-              onClick={() => getAssetDescriptionFromBooth(boothUrlInput)}
+              onClick={() => getAssetDescriptionFromBooth()}
             >
               {!fetching && <ChevronRight size={16} />}
               {fetching && <Loader2 size={16} />}

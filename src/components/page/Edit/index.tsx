@@ -4,7 +4,7 @@ import { Form } from '@/components/ui/form'
 import CommonInputs from './components/CommonInputs'
 import { Card, CardContent } from '@/components/ui/card'
 import AvatarRelatedInputs from './components/AvatarRelatedInputs'
-import { AssetType } from '@/lib/entity'
+import { AssetType, GetAssetResult } from '@/lib/entity'
 import WorldInputs from './components/WorldInputs'
 import { Loader2 } from 'lucide-react'
 import BoothInputs from './components/BoothInputs'
@@ -12,9 +12,10 @@ import { useNavigate } from '@tanstack/react-router'
 
 type Props = {
   id: string
+  getAssetResult: GetAssetResult
 }
 
-const EditPage = ({ id }: Props) => {
+const EditPage = ({ id, getAssetResult }: Props) => {
   const navigation = useNavigate()
   const {
     form,
@@ -23,7 +24,7 @@ const EditPage = ({ id }: Props) => {
     supportedAvatarCandidates,
     avatarRelatedCategoryCandidates,
     worldCategoryCandidates,
-  } = useEditPageHook({ id })
+  } = useEditPageHook({ id, getAssetResult })
 
   const assetType: AssetType = form.watch('assetType')
 

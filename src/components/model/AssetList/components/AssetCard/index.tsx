@@ -39,7 +39,7 @@ const AssetCard = ({ asset, ref }: Props) => {
           <MoreButton
             id={asset.id}
             executeAssetDeletion={deleteAsset}
-            booth_url={asset.booth_url ?? undefined}
+            boothItemID={asset.booth_item_id ?? undefined}
           />
         </div>
       </CardContent>

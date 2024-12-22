@@ -24,18 +24,22 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, convertToBoothURL } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
 import { Route } from '@/routes/edit.$id'
 import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
   id: string
-  booth_url?: string
+  boothItemID?: number
   executeAssetDeletion: () => Promise<void>
 }
 
-export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
+export const MoreButton = ({
+  id,
+  boothItemID,
+  executeAssetDeletion,
+}: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
   const { setEditingAssetID } = useContext(PersistentContext)
@@ -51,6 +55,9 @@ export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
     setDialogOpened(false)
   }
 
+  const boothUrl =
+    boothItemID !== undefined ? convertToBoothURL(boothItemID) : undefined
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -62,9 +69,9 @@ export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="cursor-default">
-              <DropdownMenuItem asChild disabled={booth_url === undefined}>
+              <DropdownMenuItem asChild disabled={boothUrl === undefined}>
                 <a
-                  href={booth_url}
+                  href={boothUrl}
                   className="decoration-inherit text-inherit"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -74,7 +81,7 @@ export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
                 </a>
               </DropdownMenuItem>
             </TooltipTrigger>
-            <TooltipContent className={cn(booth_url !== undefined && 'hidden')}>
+            <TooltipContent className={cn(boothUrl !== undefined && 'hidden')}>
               <p>Booth URLが設定されていません！</p>
             </TooltipContent>
           </Tooltip>

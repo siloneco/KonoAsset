@@ -4,8 +4,7 @@ use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
 use crate::{
-    definitions::traits::AssetTrait,
-    fetcher::booth_fetcher::normalize_shop_booth_url_into_basic_url,
+    booth::extractor::extract_booth_item_id_from_booth_url, definitions::traits::AssetTrait,
     importer::execute_image_fixation,
 };
 
@@ -63,13 +62,29 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         let result: Result<HashSet<T>, serde_json::Error> =
             serde_json::from_reader(file_open_result.unwrap());
 
-        match result {
-            Ok(deserialized) => {
-                *assets = deserialized;
-                Ok(())
-            }
-            Err(e) => Err(format!("Failed to deserialize file: {}", e)),
+        if result.is_err() {
+            return Err("Failed to deserialize file".into());
         }
+
+        let deserialized = result.unwrap();
+        let mut result = HashSet::new();
+        deserialized.into_iter().for_each(|mut item| {
+            let url = item.get_description().booth_url.as_ref();
+
+            if url.is_some() {
+                let item_id = extract_booth_item_id_from_booth_url(url.unwrap());
+
+                if item_id.is_ok() {
+                    item.get_description_as_mut().booth_item_id = Some(item_id.unwrap());
+                }
+            }
+
+            result.insert(item);
+        });
+
+        *assets = result;
+
+        Ok(())
     }
 
     pub fn add_asset_and_save(&self, asset: T) -> Result<(), String> {
@@ -144,12 +159,6 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
                         Some(path.to_str().unwrap().to_string());
                 }
             }
-        }
-
-        if asset.get_description().booth_url.is_some() {
-            let url = asset.get_description().booth_url.as_ref().unwrap();
-            asset.get_description_as_mut().booth_url =
-                Some(normalize_shop_booth_url_into_basic_url(url));
         }
 
         assets.remove(&old_asset);
