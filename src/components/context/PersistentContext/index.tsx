@@ -1,7 +1,13 @@
-import { AssetType, MatchType } from '@/lib/entity'
-import { createContext } from 'react'
+import { AssetType, MatchType, SortBy } from '@/lib/entity'
+import { createContext, FC } from 'react'
+import { usePersistentContext } from './hook'
 
-export type AssetFilterContextType = {
+export type PersistentContextType = {
+  sortBy: SortBy
+  setSortBy: (sortBy: SortBy) => void
+  reverseOrder: boolean
+  setReverseOrder: (reverseOrder: boolean) => void
+
   textFilter: string
   setTextFilter: (filter: string) => void
 
@@ -20,9 +26,17 @@ export type AssetFilterContextType = {
   setSupportedAvatarFilter: (filter: string[]) => void
   supportedAvatarFilterMatchType: MatchType
   setSupportedAvatarFilterMatchType: (matchType: MatchType) => void
+
+  editingAssetID: string | null
+  setEditingAssetID: (assetID: string | null) => void
 }
 
-export const AssetFilterContext = createContext<AssetFilterContextType>({
+export const PersistentContext = createContext<PersistentContextType>({
+  sortBy: SortBy.Title,
+  setSortBy: () => {},
+  reverseOrder: false,
+  setReverseOrder: () => {},
+
   textFilter: '',
   setTextFilter: () => {},
 
@@ -41,4 +55,23 @@ export const AssetFilterContext = createContext<AssetFilterContextType>({
   setSupportedAvatarFilter: () => {},
   supportedAvatarFilterMatchType: MatchType.OR,
   setSupportedAvatarFilterMatchType: () => {},
+
+  editingAssetID: null,
+  setEditingAssetID: () => {},
 })
+
+type Props = {
+  children: React.ReactNode
+}
+
+const PersistentContextProvider: FC<Props> = ({ children }) => {
+  const { persistentContextValue } = usePersistentContext()
+
+  return (
+    <PersistentContext.Provider value={persistentContextValue}>
+      {children}
+    </PersistentContext.Provider>
+  )
+}
+
+export default PersistentContextProvider

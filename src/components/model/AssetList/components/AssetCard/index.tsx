@@ -8,16 +8,18 @@ import AssetBadge from '@/components/part/AssetBadge'
 import { Label } from '@/components/ui/label'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { convertFileSrc } from '@tauri-apps/api/core'
+import { RefObject } from 'react'
 
 type Props = {
   asset: AssetDisplay
+  ref?: RefObject<HTMLDivElement | null>
 }
 
-const AssetCard = ({ asset }: Props) => {
+const AssetCard = ({ asset, ref }: Props) => {
   const { openInFileManager, deleteAsset } = useAssetCard({ asset })
 
   return (
-    <Card className="w-full bg-card m-1">
+    <Card className="w-full bg-card m-1" ref={ref}>
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
           <AspectRatio

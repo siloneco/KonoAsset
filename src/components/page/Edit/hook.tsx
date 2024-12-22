@@ -12,6 +12,7 @@ import {
 } from './logic'
 import { AssetType, SimpleResult } from '@/lib/entity'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from '@tanstack/react-router'
 
 type Props = {
   id: string
@@ -55,6 +56,8 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     Option[]
   >([])
 
+  const navigate = useNavigate()
+
   const formSchema = z.object({
     assetType: z.nativeEnum(AssetType),
     title: z.string().min(1),
@@ -93,7 +96,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         return
       }
 
-      document.location.href = '/'
+      navigate({ to: '/' })
     } finally {
       setSubmitting(false)
     }

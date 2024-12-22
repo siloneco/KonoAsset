@@ -66,7 +66,6 @@ pub fn fetch_asset_details_from_booth(
     let estimated_asset_type = match response.category.id {
         208 // 3Dキャラクター
         => Some(AssetType::Avatar),
-
         209 | // 3D衣装
         217 | // 3D装飾品
         210 | // 3D小道具

@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { MoreHorizontal, ExternalLink, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import {
   TooltipProvider,
   Tooltip,
@@ -25,6 +25,9 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { Link } from '@tanstack/react-router'
+import { Route } from '@/routes/edit.$id'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
   id: string
@@ -35,6 +38,7 @@ type Props = {
 export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
+  const { setEditingAssetID } = useContext(PersistentContext)
 
   const onClick = async () => {
     setDeleting(true)
@@ -76,9 +80,14 @@ export const MoreButton = ({ id, booth_url, executeAssetDeletion }: Props) => {
           </Tooltip>
         </TooltipProvider>
         <DropdownMenuItem asChild>
-          <a href={`/edit/${id}`} className="decoration-inherit text-inherit">
+          <Link
+            to={Route.to}
+            params={{ id }}
+            className="decoration-inherit text-inherit"
+            onClick={() => setEditingAssetID(id)}
+          >
             編集
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <AlertDialog open={dialogOpened} onOpenChange={setDialogOpened}>

@@ -8,12 +8,14 @@ import { AssetType } from '@/lib/entity'
 import WorldInputs from './components/WorldInputs'
 import { Loader2 } from 'lucide-react'
 import BoothInputs from './components/BoothInputs'
+import { useNavigate } from '@tanstack/react-router'
 
 type Props = {
   id: string
 }
 
 const EditPage = ({ id }: Props) => {
+  const navigation = useNavigate()
   const {
     form,
     submit,
@@ -57,7 +59,7 @@ const EditPage = ({ id }: Props) => {
                   <Button
                     type="button"
                     variant={'secondary'}
-                    onClick={() => (document.location.href = `/`)}
+                    onClick={() => navigation({ to: '/' })}
                   >
                     キャンセル
                   </Button>

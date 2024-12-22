@@ -1,12 +1,7 @@
 import { createContext } from 'react'
-import { AssetDisplay, AssetType, SortBy } from '@/lib/entity'
+import { AssetDisplay, AssetType } from '@/lib/entity'
 
 export type AssetContextType = {
-  sortBy: SortBy
-  setSortBy: (sortBy: SortBy) => void
-  reverseOrder: boolean
-  setReverseOrder: (reverseOrder: boolean) => void
-
   assetDisplaySortedList: AssetDisplay[]
   setAssetDisplaySortedList: (assetDisplaySortedList: AssetDisplay[]) => void
 
@@ -16,11 +11,6 @@ export type AssetContextType = {
 }
 
 export const AssetContext = createContext<AssetContextType>({
-  sortBy: SortBy.Title,
-  setSortBy: () => {},
-  reverseOrder: false,
-  setReverseOrder: () => {},
-
   assetDisplaySortedList: [],
   setAssetDisplaySortedList: () => {},
 
