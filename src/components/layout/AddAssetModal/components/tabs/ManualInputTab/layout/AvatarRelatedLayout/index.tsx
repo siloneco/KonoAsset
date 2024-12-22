@@ -1,4 +1,3 @@
-import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
 import {
   FormField,
   FormItem,
@@ -10,15 +9,16 @@ import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 import { Separator } from '@/components/ui/separator'
 import TextInputSelect from '@/components/ui/text-input-select'
+import { AssetFormType } from '@/lib/form'
 import { invoke } from '@tauri-apps/api/core'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
+  form: AssetFormType
   submitting: boolean
 }
 
-const AvatarRelatedLayout = ({ submitting }: Props) => {
-  const { form, setSupportedAvatars } = useContext(AddAssetModalContext)
+const AvatarRelatedLayout = ({ form, submitting }: Props) => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -78,7 +78,10 @@ const AvatarRelatedLayout = ({ submitting }: Props) => {
                       </p>
                     }
                     onChange={(value) => {
-                      setSupportedAvatars(value.map((v) => v.value))
+                      form.setValue(
+                        'supportedAvatars',
+                        value.map((v) => v.value),
+                      )
                     }}
                   />
                   <FormDescription>

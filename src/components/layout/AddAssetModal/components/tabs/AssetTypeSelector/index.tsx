@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-import { AddAssetModalContext } from '../../..'
 import { Button } from '@/components/ui/button'
 import {
   DialogHeader,
@@ -10,14 +8,14 @@ import {
 import { TabsContent } from '@/components/ui/tabs'
 import SelectTypeButton from './selector/SelectTypeButton'
 import { AssetType } from '@/lib/entity'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
+  form: AssetFormType
   setTab: (tab: string) => void
 }
 
-const AssetTypeSelectorTab = ({ setTab }: Props) => {
-  const { assetType, setAssetType } = useContext(AddAssetModalContext)
-
+const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
   const backToBoothInput = () => {
     setTab('booth-input')
   }
@@ -25,6 +23,8 @@ const AssetTypeSelectorTab = ({ setTab }: Props) => {
   const moveToManualInputTab = () => {
     setTab('manual-input')
   }
+
+  const assetType = form.watch('assetType')
 
   return (
     <TabsContent value="asset-type-selector">
@@ -38,21 +38,21 @@ const AssetTypeSelectorTab = ({ setTab }: Props) => {
         <SelectTypeButton
           text="アバター素体"
           onClick={() => {
-            setAssetType(AssetType.Avatar)
+            form.setValue('assetType', AssetType.Avatar)
           }}
           selected={assetType === AssetType.Avatar}
         />
         <SelectTypeButton
           text="アバター関連 (服 / 髪 / アクセサリ / ギミック等)"
           onClick={() => {
-            setAssetType(AssetType.AvatarRelated)
+            form.setValue('assetType', AssetType.AvatarRelated)
           }}
           selected={assetType === AssetType.AvatarRelated}
         />
         <SelectTypeButton
           text="ワールドアセット"
           onClick={() => {
-            setAssetType(AssetType.World)
+            form.setValue('assetType', AssetType.World)
           }}
           selected={assetType === AssetType.World}
         />

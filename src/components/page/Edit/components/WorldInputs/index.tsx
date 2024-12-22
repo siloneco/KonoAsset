@@ -7,26 +7,10 @@ import {
 } from '@/components/ui/form'
 import { Option } from '@/components/ui/multi-select'
 import TextInputSelect from '@/components/ui/text-input-select'
-import { AssetType } from '@/lib/entity'
-import { UseFormReturn } from 'react-hook-form'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   disabled: boolean
   categoryCandidates: Option[]
 }

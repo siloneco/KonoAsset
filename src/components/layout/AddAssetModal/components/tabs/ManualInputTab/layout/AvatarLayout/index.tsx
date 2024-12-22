@@ -1,4 +1,3 @@
-import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
 import {
   FormField,
   FormItem,
@@ -7,16 +6,17 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { AssetFormType } from '@/lib/form'
 import { invoke } from '@tauri-apps/api/core'
 
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
+  form: AssetFormType
   submitting: boolean
 }
 
-const AvatarLayout = ({ submitting }: Props) => {
-  const { form } = useContext(AddAssetModalContext)
+const AvatarLayout = ({ form, submitting }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {

@@ -7,29 +7,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { AssetType } from '@/lib/entity'
 import { useState } from 'react'
-import { UseFormReturn } from 'react-hook-form'
 import { getAssetDescriptionFromBooth } from './logic'
 import { isBoothURL } from '@/lib/utils'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   disabled: boolean
 }
 

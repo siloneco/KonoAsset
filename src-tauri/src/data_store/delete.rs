@@ -71,8 +71,14 @@ fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned 
         return Err("Failed to delete asset directory".into());
     }
 
+    let image = &asset.get_description().image_src;
+
+    if image.is_none() {
+        return Ok(true);
+    }
+
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, &asset.get_description().image_src)
+    delete_asset_image(app_dir, image.as_ref().unwrap())
 }
 
 pub fn delete_asset_image(app_dir: &PathBuf, image_src: &str) -> Result<bool, String> {

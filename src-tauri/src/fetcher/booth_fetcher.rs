@@ -61,7 +61,7 @@ pub fn fetch_asset_details_from_booth(
         return Err(result.err().unwrap());
     }
 
-    let image_src = path.to_str().unwrap().to_string();
+    let image_src = Some(path.to_str().unwrap().to_string());
 
     let estimated_asset_type = match response.category.id {
         208 // 3Dキャラクター

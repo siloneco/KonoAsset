@@ -7,30 +7,14 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { UseFormReturn } from 'react-hook-form'
-import { AssetType } from '@/lib/entity'
-import ImagePicker from '@/components/model/ImagePicker'
+import SquareImage from '@/components/model/SquareImage'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { invoke } from '@tauri-apps/api/core'
 import { useState, useEffect } from 'react'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   disabled: boolean
 }
 
@@ -46,14 +30,17 @@ const CommonInputs = ({ form, disabled }: Props) => {
     fetchTagCandidates()
   }, [])
 
+  const assetType = form.watch('assetType')
   const imageSrc = form.watch('image_src')
   const tags = form.watch('tags')
 
   return (
     <div className="w-full flex flex-row space-x-6 mt-8">
       <div className="w-2/5">
-        <ImagePicker
-          path={imageSrc}
+        <SquareImage
+          assetType={assetType}
+          path={imageSrc ?? undefined}
+          selectable
           setPath={(path) => form.setValue('image_src', path)}
         />
       </div>

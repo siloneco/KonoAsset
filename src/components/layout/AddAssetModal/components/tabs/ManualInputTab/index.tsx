@@ -21,23 +21,24 @@ import AvatarLayout from './layout/AvatarLayout'
 import AvatarRelatedLayout from './layout/AvatarRelatedLayout'
 import WorldLayout from './layout/WorldLayout'
 import { useManualInputTabHooks } from './hook'
-import ImagePicker from '@/components/model/ImagePicker'
+import SquareImage from '@/components/model/SquareImage'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
+  form: AssetFormType
   setTab: (tab: string) => void
   setDialogOpen: (open: boolean) => void
 }
 
-const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
+const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
   const {
-    form,
     backToAssetTypeSelectorTab,
     submit,
     submitting,
     assetType,
     imageSrc,
     setImageSrc,
-  } = useManualInputTabHooks({ setTab, setDialogOpen })
+  } = useManualInputTabHooks({ form, setTab, setDialogOpen })
 
   return (
     <TabsContent value="manual-input">
@@ -52,7 +53,12 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
           <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="flex flex-row space-x-6">
               <div className="w-1/3">
-                <ImagePicker path={imageSrc} setPath={setImageSrc} />
+                <SquareImage
+                  assetType={assetType}
+                  path={imageSrc ?? undefined}
+                  setPath={setImageSrc}
+                  selectable
+                />
               </div>
               <div className="w-2/3 space-y-6">
                 <FormField
@@ -95,13 +101,13 @@ const ManualInputTab = ({ setTab, setDialogOpen }: Props) => {
             </div>
 
             {assetType === AssetType.Avatar && (
-              <AvatarLayout submitting={submitting} />
+              <AvatarLayout form={form} submitting={submitting} />
             )}
             {assetType === AssetType.AvatarRelated && (
-              <AvatarRelatedLayout submitting={submitting} />
+              <AvatarRelatedLayout form={form} submitting={submitting} />
             )}
             {assetType === AssetType.World && (
-              <WorldLayout submitting={submitting} />
+              <WorldLayout form={form} submitting={submitting} />
             )}
 
             <div className="w-full flex justify-between">

@@ -14,10 +14,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { AssetType, FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
 import { sep } from '@tauri-apps/api/path'
-
-type Props = {
-  setTab: (tab: string) => void
-}
+import { AssetFormType } from '@/lib/form'
 
 const shopBoothUrlRegex = /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+$/
 const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
@@ -26,11 +23,16 @@ const isBoothUrl = (url: string) => {
   return defaultBoothUrlRegex.test(url) || shopBoothUrlRegex.test(url)
 }
 
-const BoothInputTab = ({ setTab }: Props) => {
+type Props = {
+  form: AssetFormType
+  setTab: (tab: string) => void
+}
+
+const BoothInputTab = ({ form, setTab }: Props) => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
   const [fetching, setFetching] = useState(false)
 
-  const { form, assetPath, setAssetType } = useContext(AddAssetModalContext)
+  const { assetPath } = useContext(AddAssetModalContext)
 
   const backToSelect = () => {
     setTab('selector')
@@ -53,17 +55,15 @@ const BoothInputTab = ({ setTab }: Props) => {
       )
 
       if (result.success) {
-        form?.setValue('title', result.asset_description!.title)
-        form?.setValue('author', result.asset_description!.author)
-        form?.setValue('image_src', result.asset_description!.image_src)
-        form?.setValue(
-          'published_at',
-          result.asset_description!.published_at ?? undefined,
+        form.setValue('title', result.asset_description!.title)
+        form.setValue('author', result.asset_description!.author)
+        form.setValue('image_src', result.asset_description!.image_src)
+        form.setValue('published_at', result.asset_description!.published_at)
+        form.setValue('booth_url', boothUrlInput)
+        form.setValue(
+          'assetType',
+          result.estimated_asset_type ?? AssetType.Avatar,
         )
-
-        setAssetType(result.estimated_asset_type ?? AssetType.Avatar)
-
-        form?.setValue('booth_url', boothUrlInput)
 
         moveToNextTab()
       } else {

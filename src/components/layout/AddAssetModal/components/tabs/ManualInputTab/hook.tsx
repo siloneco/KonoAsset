@@ -1,50 +1,35 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
-import { AssetType } from '@/lib/entity'
 import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
-import { UseFormReturn } from 'react-hook-form'
+import { AssetFormType } from '@/lib/form'
+import { AssetType } from '@/lib/entity'
 
 export type Props = {
+  form: AssetFormType
   setTab: (tab: string) => void
   setDialogOpen: (open: boolean) => void
 }
 
 type ReturnProps = {
-  form: UseFormReturn<
-    {
-      title: string
-      author: string
-      image_src: string
-      tags: string[]
-      category: string
-      booth_url?: string
-      published_at?: number
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
   backToAssetTypeSelectorTab: () => void
   submit: () => void
   submitting: boolean
   assetType: AssetType
-  imageSrc?: string
-  setImageSrc: (path: string) => void
+  imageSrc: string | null
+  setImageSrc: (path: string | null) => void
 }
 
 export const useManualInputTabHooks = ({
+  form,
   setTab,
   setDialogOpen,
 }: Props): ReturnProps => {
   const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
-  const { form, assetPath, assetType, supportedAvatars } =
-    useContext(AddAssetModalContext)
+  const { assetPath } = useContext(AddAssetModalContext)
   const { refreshAssets } = useContext(AssetContext)
-
-  const imageSrc = form?.watch('image_src')
 
   const backToAssetTypeSelectorTab = () => {
     setTab('asset-type-selector')
@@ -59,18 +44,18 @@ export const useManualInputTabHooks = ({
 
     try {
       const preAsset = createPreAsset({
-        assetType: assetType!,
+        assetType: form.getValues('assetType'),
         description: {
-          title: form!.getValues('title'),
-          author: form!.getValues('author'),
-          image_src: form!.getValues('image_src'),
-          tags: form!.getValues('tags'),
-          booth_url: form!.getValues('booth_url') ?? null,
+          title: form.getValues('title'),
+          author: form.getValues('author'),
+          image_src: form.getValues('image_src'),
+          tags: form.getValues('tags'),
+          booth_url: form.getValues('booth_url') ?? null,
           created_at: new Date().getTime(),
-          published_at: form!.getValues('published_at') ?? null,
+          published_at: form.getValues('published_at') ?? null,
         },
-        category: form!.getValues('category'),
-        supportedAvatars: supportedAvatars,
+        category: form.getValues('category'),
+        supportedAvatars: form.getValues('supportedAvatars'),
       })
 
       if (preAsset.isFailure()) {
@@ -83,7 +68,7 @@ export const useManualInputTabHooks = ({
       }
 
       const result = await sendAssetImportRequest(
-        assetType!,
+        form.getValues('assetType'),
         assetPath!,
         preAsset.value,
       )
@@ -108,17 +93,12 @@ export const useManualInputTabHooks = ({
     }
   }
 
-  const setImageSrc = (path: string) => {
-    form?.setValue('image_src', path)
-  }
-
   return {
-    form: form!,
     backToAssetTypeSelectorTab,
     submit,
     submitting,
-    assetType: assetType!,
-    imageSrc,
-    setImageSrc,
+    assetType: form.watch('assetType'),
+    imageSrc: form.watch('image_src'),
+    setImageSrc: (path: string | null) => form.setValue('image_src', path),
   }
 }

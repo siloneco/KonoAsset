@@ -3,7 +3,7 @@ import { downloadDir } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
 
 type Props = {
-  setPath: (path: string) => void
+  setPath?: (path: string) => void
 }
 
 type ReturnProps = {
@@ -12,6 +12,10 @@ type ReturnProps = {
 
 export const useImagePicker = ({ setPath }: Props): ReturnProps => {
   const openImageSelector = async () => {
+    if (setPath === undefined) {
+      return
+    }
+
     const path = await open({
       multiple: false,
       directory: false,

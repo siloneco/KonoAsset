@@ -5,28 +5,13 @@ import {
   GetAssetResult,
   SimpleResult,
 } from '@/lib/entity'
+import { AssetFormType } from '@/lib/form'
 import { isBoothURL } from '@/lib/utils'
 import { invoke } from '@tauri-apps/api/core'
-import { UseFormReturn } from 'react-hook-form'
 
 type UpdateAssetProps = {
   id: string
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      tags: string[]
-      booth_url: string | null
-      published_at: number | null
-      category: string
-      supportedAvatars: string[]
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
 }
 
 export const updateAsset = async ({

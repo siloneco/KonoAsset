@@ -11,7 +11,7 @@ pub struct AssetDisplay {
     pub asset_type: AssetType,
     pub title: String,
     pub author: String,
-    pub image_src: String,
+    pub image_src: Option<String>,
     pub booth_url: Option<String>,
     pub published_at: Option<i64>,
 }
@@ -22,7 +22,7 @@ impl AssetDisplay {
         asset_type: AssetType,
         title: String,
         author: String,
-        image_src: String,
+        image_src: Option<String>,
         booth_url: Option<String>,
         published_at: Option<i64>,
     ) -> Self {
@@ -42,7 +42,7 @@ impl AssetDisplay {
 pub struct AssetDescription {
     pub title: String,
     pub author: String,
-    pub image_src: String,
+    pub image_src: Option<String>,
     pub tags: Vec<String>,
     #[serde(default = "default_booth_url")]
     pub booth_url: Option<String>,
@@ -63,7 +63,7 @@ impl AssetDescription {
     pub fn create(
         title: String,
         author: String,
-        image_src: String,
+        image_src: Option<String>,
         tags: Vec<String>,
         booth_url: Option<String>,
         created_at: i64,
