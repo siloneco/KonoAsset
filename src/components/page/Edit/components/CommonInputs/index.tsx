@@ -89,7 +89,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
                 <MultipleSelector
                   options={tagCandidates}
                   placeholder="タグを選択..."
-                  className="bg-background"
+                  className="bg-background max-w-[435px]"
                   disabled={disabled}
                   value={tags.map((tag) => ({ label: tag, value: tag }))}
                   hidePlaceholderWhenSelected

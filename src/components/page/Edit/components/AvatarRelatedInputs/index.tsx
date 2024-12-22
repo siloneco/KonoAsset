@@ -45,7 +45,10 @@ const AvatarRelatedInputs = ({
                 <MultipleSelector
                   options={supportedAvatarCandidates}
                   placeholder="対応アバターを選択..."
-                  className={cn('bg-background', disabled && 'opacity-50')}
+                  className={cn(
+                    'bg-background max-w-[366px]',
+                    disabled && 'opacity-50',
+                  )}
                   hidePlaceholderWhenSelected
                   creatable
                   disabled={disabled}
@@ -86,7 +89,7 @@ const AvatarRelatedInputs = ({
                 <TextInputSelect
                   options={categoryCandidates}
                   placeholder="カテゴリを選択..."
-                  className="bg-background"
+                  className="bg-background max-w-[366px]"
                   disabled={disabled}
                   value={categoryValue}
                   creatable

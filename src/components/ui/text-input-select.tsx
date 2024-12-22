@@ -374,8 +374,8 @@ const TextInputSelect = React.forwardRef<
           >
             <div className="relative flex flex-wrap gap-1">
               {selected && (
-                <div className="flex items-center justify-between w-full">
-                  <span>{selected.label}</span>
+                <div className="flex items-center justify-between overflow-hidden w-full">
+                  <span className="truncate">{selected.label}</span>
                   <button
                     className={cn(
                       'ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',

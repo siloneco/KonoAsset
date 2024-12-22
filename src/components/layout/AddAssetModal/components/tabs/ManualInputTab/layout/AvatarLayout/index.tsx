@@ -46,6 +46,7 @@ const AvatarLayout = ({ form, submitting }: Props) => {
                   options={tagCandidates}
                   placeholder="タグを選択..."
                   disabled={submitting}
+                  className="max-w-[600px]"
                   hidePlaceholderWhenSelected
                   creatable
                   emptyIndicator={
