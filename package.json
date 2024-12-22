@@ -1,7 +1,7 @@
 {
   "name": "konoasset",
   "private": true,
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.17.0",
-    "@tanstack/router-devtools": "1.91.3",
+    "@tanstack/router-devtools": "1.92.1",
     "@tanstack/router-plugin": "1.91.1",
     "@tauri-apps/cli": "2.1.0",
     "@types/node": "22.10.2",

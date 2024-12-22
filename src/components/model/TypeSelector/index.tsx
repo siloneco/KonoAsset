@@ -1,12 +1,12 @@
 import { RadioGroup } from '@/components/ui/radio-group'
 import { useContext } from 'react'
-import { AssetFilterContext } from '../../context/AssetFilterContext'
 import { AssetType } from '@/lib/entity'
 import { Separator } from '@/components/ui/separator'
 import TypeSelectorRadioItem from './components/RadioItem'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 const TypeSelector = () => {
-  const { assetType, setAssetType } = useContext(AssetFilterContext)
+  const { assetType, setAssetType } = useContext(PersistentContext)
 
   return (
     <RadioGroup

@@ -1,16 +1,23 @@
-import AssetCard from '@/components/model/AssetList/components/AssetCard'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
-import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { FilterRequest } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
 import { createFilterRequest, isFilterEnforced } from './logic'
+import { PersistentContext } from '@/components/context/PersistentContext'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import AssetCard from './components/AssetCard'
 
-const AssetList = () => {
+type Props = {
+  className?: string
+}
+
+const AssetList = ({ className }: Props) => {
   const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
   const [filterEnforced, setFilterEnforced] = useState(false)
+  const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
   const {
+    reverseOrder,
     assetType,
     textFilter,
     categoryFilter,
@@ -18,11 +25,8 @@ const AssetList = () => {
     tagFilterMatchType,
     supportedAvatarFilter,
     supportedAvatarFilterMatchType,
-    setCategoryFilter,
-    setSupportedAvatarFilter,
-  } = useContext(AssetFilterContext)
-  const { assetDisplaySortedList, reverseOrder } = useContext(AssetContext)
-  const clearCategories = () => setCategoryFilter([])
+  } = useContext(PersistentContext)
+  const { assetDisplaySortedList } = useContext(AssetContext)
 
   const updateMatchedAssetIDs = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
@@ -33,8 +37,6 @@ const AssetList = () => {
       tagMatchType: tagFilterMatchType,
       supported_avatars: supportedAvatarFilter,
       supportedAvatarMatchType: supportedAvatarFilterMatchType,
-      clearCategories,
-      clearSupportedAvatars: () => setSupportedAvatarFilter([]),
     })
 
     const currentFilterEnforced = isFilterEnforced(filterRequest)
@@ -62,32 +64,51 @@ const AssetList = () => {
     supportedAvatarFilterMatchType,
   ])
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    clearCategories()
-  }, [assetType])
+    if (scrollRef.current !== null) {
+      scrollRef.current!.scrollIntoView({
+        behavior: 'instant',
+        block: 'center',
+      })
+
+      setEditingAssetID(null)
+    }
+  }, [assetDisplaySortedList])
 
   return (
-    <div className="grid grid-cols-2 gap-4 m-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-      {assetDisplaySortedList &&
-        !reverseOrder &&
-        assetDisplaySortedList.map(
-          (asset) =>
-            (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-              <AssetCard key={asset.id} asset={asset} />
-            ),
-        )}
-      {assetDisplaySortedList &&
-        reverseOrder &&
-        assetDisplaySortedList
-          .slice(0)
-          .reverse()
-          .map(
+    <ScrollArea className={className}>
+      <div className="grid grid-cols-2 gap-4 m-6 mt-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        {assetDisplaySortedList &&
+          !reverseOrder &&
+          assetDisplaySortedList.map(
             (asset) =>
               (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-                <AssetCard key={asset.id} asset={asset} />
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  ref={asset.id === editingAssetID ? scrollRef : undefined}
+                />
               ),
           )}
-    </div>
+        {assetDisplaySortedList &&
+          reverseOrder &&
+          assetDisplaySortedList
+            .slice(0)
+            .reverse()
+            .map(
+              (asset) =>
+                (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
+                  <AssetCard
+                    key={asset.id}
+                    asset={asset}
+                    ref={asset.id === editingAssetID ? scrollRef : undefined}
+                  />
+                ),
+            )}
+      </div>
+    </ScrollArea>
   )
 }
 

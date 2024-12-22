@@ -12,10 +12,10 @@ use commands::{
 };
 use updater::update_handler::UpdateHandler;
 
+mod booth;
 mod commands;
 mod data_store;
 mod definitions;
-mod fetcher;
 mod importer;
 mod updater;
 

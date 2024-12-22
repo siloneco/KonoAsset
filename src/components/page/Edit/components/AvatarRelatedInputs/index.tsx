@@ -8,27 +8,11 @@ import {
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { Separator } from '@/components/ui/separator'
 import TextInputSelect from '@/components/ui/text-input-select'
-import { AssetType } from '@/lib/entity'
+import { AssetFormType } from '@/lib/form'
 import { cn } from '@/lib/utils'
-import { UseFormReturn } from 'react-hook-form'
 
 type Props = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   disabled: boolean
   supportedAvatarCandidates: Option[]
   categoryCandidates: Option[]

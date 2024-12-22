@@ -1,50 +1,35 @@
 import { Option } from '@/components/ui/multi-select'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
-  fetchAssetInformation,
   fetchAvatarRelatedCategoryCandidates,
   fetchSupportedAvatars,
   fetchWorldCategoryCandidates,
   updateAsset,
 } from './logic'
-import { AssetType, SimpleResult } from '@/lib/entity'
+import { AssetType, GetAssetResult, SimpleResult } from '@/lib/entity'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from '@tanstack/react-router'
+import { AssetFormFields, AssetFormType } from '@/lib/form'
 
 type Props = {
   id: string
+  getAssetResult: GetAssetResult
 }
 
 type ReturnProps = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   submit: () => Promise<void>
   submitting: boolean
   supportedAvatarCandidates: Option[]
   avatarRelatedCategoryCandidates: Option[]
   worldCategoryCandidates: Option[]
-  initializing: boolean
 }
 
-export const useEditPageHook = ({ id }: Props): ReturnProps => {
+export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
   const { toast } = useToast()
-  const [initializing, setInitializing] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -55,12 +40,14 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     Option[]
   >([])
 
+  const navigate = useNavigate()
+
   const formSchema = z.object({
     assetType: z.nativeEnum(AssetType),
     title: z.string().min(1),
     author: z.string().min(1),
-    image_src: z.string().min(1),
-    booth_url: z.string().nullable(),
+    image_src: z.string().nullable(),
+    booth_item_id: z.number().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
@@ -69,15 +56,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      assetType: AssetType.Avatar,
-      title: '',
-      author: '',
-      image_src: '',
-      tags: [],
-      category: '',
-      supportedAvatars: [],
-    },
+    defaultValues: createDefaultValues(getAssetResult),
   })
 
   const submit = async () => {
@@ -93,7 +72,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
         return
       }
 
-      document.location.href = '/'
+      navigate({ to: '/' })
     } finally {
       setSubmitting(false)
     }
@@ -117,60 +96,7 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     )
   }
 
-  const initializeFields = async () => {
-    try {
-      const result = await fetchAssetInformation(id)
-
-      if (!result.success) {
-        // TODO: Error handling
-        console.error(result.error_message!)
-        return
-      }
-
-      if (result.avatar_asset !== undefined && result.avatar_asset !== null) {
-        const asset = result.avatar_asset
-        form.setValue('assetType', AssetType.Avatar)
-        form.setValue('title', asset.description.title)
-        form.setValue('author', asset.description.author)
-        form.setValue('image_src', asset.description.image_src)
-        form.setValue('booth_url', asset.description.booth_url)
-        form.setValue('tags', asset.description.tags)
-        form.setValue('published_at', asset.description.published_at)
-      } else if (
-        result.avatar_related_asset !== undefined &&
-        result.avatar_related_asset !== null
-      ) {
-        const asset = result.avatar_related_asset
-        form.setValue('assetType', AssetType.AvatarRelated)
-        form.setValue('title', asset.description.title)
-        form.setValue('author', asset.description.author)
-        form.setValue('image_src', asset.description.image_src)
-        form.setValue('booth_url', asset.description.booth_url)
-        form.setValue('tags', asset.description.tags)
-        form.setValue('category', asset.category)
-        form.setValue('supportedAvatars', asset.supported_avatars)
-        form.setValue('published_at', asset.description.published_at)
-      } else if (
-        result.world_asset !== undefined &&
-        result.world_asset !== null
-      ) {
-        const asset = result.world_asset
-        form.setValue('assetType', AssetType.World)
-        form.setValue('title', asset.description.title)
-        form.setValue('author', asset.description.author)
-        form.setValue('image_src', asset.description.image_src)
-        form.setValue('booth_url', asset.description.booth_url)
-        form.setValue('tags', asset.description.tags)
-        form.setValue('category', asset.category)
-        form.setValue('published_at', asset.description.published_at)
-      }
-    } finally {
-      setInitializing(false)
-    }
-  }
-
   useEffect(() => {
-    initializeFields()
     updateSupportedAvatars()
     updateCategoryCandidates()
   }, [])
@@ -182,6 +108,66 @@ export const useEditPageHook = ({ id }: Props): ReturnProps => {
     supportedAvatarCandidates,
     avatarRelatedCategoryCandidates,
     worldCategoryCandidates,
-    initializing,
+  }
+}
+
+const createDefaultValues = (result: GetAssetResult): AssetFormFields => {
+  if (result.avatar_asset !== undefined && result.avatar_asset !== null) {
+    const asset = result.avatar_asset
+
+    return {
+      assetType: AssetType.Avatar,
+      title: asset.description.title,
+      author: asset.description.author,
+      image_src: asset.description.image_src,
+      booth_item_id: asset.description.booth_item_id,
+      tags: asset.description.tags,
+      category: '',
+      supportedAvatars: [],
+      published_at: asset.description.published_at,
+    }
+  } else if (
+    result.avatar_related_asset !== undefined &&
+    result.avatar_related_asset !== null
+  ) {
+    const asset = result.avatar_related_asset
+
+    return {
+      assetType: AssetType.AvatarRelated,
+      title: asset.description.title,
+      author: asset.description.author,
+      image_src: asset.description.image_src,
+      booth_item_id: asset.description.booth_item_id,
+      tags: asset.description.tags,
+      category: asset.category,
+      supportedAvatars: asset.supported_avatars,
+      published_at: asset.description.published_at,
+    }
+  } else if (result.world_asset !== undefined && result.world_asset !== null) {
+    const asset = result.world_asset
+
+    return {
+      assetType: AssetType.World,
+      title: asset.description.title,
+      author: asset.description.author,
+      image_src: asset.description.image_src,
+      booth_item_id: asset.description.booth_item_id,
+      tags: asset.description.tags,
+      category: asset.category,
+      supportedAvatars: [],
+      published_at: asset.description.published_at,
+    }
+  }
+
+  return {
+    assetType: AssetType.Avatar,
+    title: '',
+    author: '',
+    image_src: '',
+    booth_item_id: null,
+    tags: [],
+    category: '',
+    supportedAvatars: [],
+    published_at: null,
   }
 }

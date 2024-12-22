@@ -8,88 +8,65 @@ import BoothInputTab from './components/tabs/BoothInputTab'
 import ManualInputTab from './components/tabs/ManualInputTab'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
 import { AssetType } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
 export const AddAssetModalContext = createContext<{
-  form?: UseFormReturn<
-    {
-      title: string
-      author: string
-      image_src: string
-      tags: string[]
-      category: string
-      booth_url?: string
-      published_at?: number
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
   assetPath?: string
   setAssetPath: (path: string) => void
-  assetType?: AssetType
-  setAssetType: (type: AssetType) => void
-
-  supportedAvatars?: string[]
-  setSupportedAvatars: (avatars: string[]) => void
 }>({
   setAssetPath: () => {},
-  setAssetType: () => {},
-  setSupportedAvatars: () => {},
 })
 
 const AddAssetModal = () => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
-  const [assetType, setAssetType] = useState<AssetType>(AssetType.Avatar)
-  const [supportedAvatars, setSupportedAvatars] = useState<string[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const formSchema = z.object({
+    assetType: z.nativeEnum(AssetType),
     title: z.string().min(1),
     author: z.string().min(1),
-    image_src: z.string().min(1),
+    image_src: z.string().nullable(),
+    booth_item_id: z.number().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
+    supportedAvatars: z.array(z.string()),
+    published_at: z.number().nullable(),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      assetType: AssetType.Avatar,
       title: '',
       author: '',
-      image_src: '',
       tags: [],
       category: '',
     },
   })
 
   const contextValue = {
-    form,
     assetPath,
     setAssetPath,
-    assetType,
-    setAssetType,
-
-    supportedAvatars,
-    setSupportedAvatars,
   }
 
   const clearForm = () => {
     form.reset({
+      assetType: AssetType.Avatar,
       title: '',
       author: '',
-      image_src: '',
+      image_src: null,
+      booth_item_id: null,
       tags: [],
       category: '',
+      supportedAvatars: [],
+      published_at: null,
     })
 
     setAssetPath('')
-    setAssetType(AssetType.Avatar)
-    setSupportedAvatars([])
   }
 
   getCurrentWindow().onDragDropEvent((event) => {
@@ -125,9 +102,13 @@ const AddAssetModal = () => {
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <AddAssetModalContext.Provider value={contextValue}>
             <SelectorTab setTab={setTab} />
-            <BoothInputTab setTab={setTab} />
-            <AssetTypeSelectorTab setTab={setTab} />
-            <ManualInputTab setTab={setTab} setDialogOpen={setDialogOpen} />
+            <BoothInputTab form={form} setTab={setTab} />
+            <AssetTypeSelectorTab form={form} setTab={setTab} />
+            <ManualInputTab
+              form={form}
+              setTab={setTab}
+              setDialogOpen={setDialogOpen}
+            />
           </AddAssetModalContext.Provider>
         </Tabs>
       </DialogContent>

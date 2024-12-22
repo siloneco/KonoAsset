@@ -14,12 +14,12 @@ import AddAssetModal from '../AddAssetModal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext, useEffect, useState } from 'react'
-import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { AssetType } from '@/lib/entity'
 import WorldAssetFilter from './layout/WorldAssetFilter'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 import { Option } from '@/components/ui/multi-select'
 import { fetchAllTags } from './logic'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 const MainSidebar = () => {
   const { setTheme } = useTheme()
@@ -27,12 +27,20 @@ const MainSidebar = () => {
     assetType,
     textFilter,
     setTextFilter,
+    tagFilter,
     setTagFilter,
     tagFilterMatchType,
     setTagFilterMatchType,
-  } = useContext(AssetFilterContext)
+  } = useContext(PersistentContext)
 
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+  const tagValues: Option[] | undefined =
+    tagFilter.length === 0
+      ? undefined
+      : tagFilter.map((tag) => ({
+          value: tag,
+          label: tag,
+        }))
 
   const updateCategoriesAndTags = async () => {
     setTagCandidates(await fetchAllTags())
@@ -87,6 +95,7 @@ const MainSidebar = () => {
                 label="タグ"
                 placeholder="絞り込むタグを選択..."
                 candidates={tagCandidates}
+                value={tagValues}
                 onValueChange={(values) =>
                   setTagFilter(values.map((v) => v.value))
                 }

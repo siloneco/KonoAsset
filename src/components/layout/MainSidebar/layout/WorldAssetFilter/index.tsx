@@ -1,17 +1,24 @@
-import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories } from './logic'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 const WorldAssetFilter = () => {
-  const { setCategoryFilter } = useContext(AssetFilterContext)
+  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
+  const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
-  const [categories, setCategories] = useState<Option[]>([])
+  const categoryValues: Option[] | undefined =
+    categoryFilter.length === 0
+      ? undefined
+      : categoryFilter.map((category) => ({
+          value: category,
+          label: category,
+        }))
 
   const updateCategoriesAndTags = async () => {
-    setCategories(await fetchAllCategories())
+    setCategoryCandidates(await fetchAllCategories())
   }
 
   useEffect(() => {
@@ -23,7 +30,8 @@ const WorldAssetFilter = () => {
       <MultiFilterItemSelector
         label="カテゴリ"
         placeholder="絞り込むカテゴリを選択..."
-        candidates={categories}
+        candidates={categoryCandidates}
+        value={categoryValues}
         onValueChange={(values) =>
           setCategoryFilter(values.map((v) => v.value))
         }

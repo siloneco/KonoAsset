@@ -11,8 +11,8 @@ pub struct AssetDisplay {
     pub asset_type: AssetType,
     pub title: String,
     pub author: String,
-    pub image_src: String,
-    pub booth_url: Option<String>,
+    pub image_src: Option<String>,
+    pub booth_item_id: Option<u64>,
     pub published_at: Option<i64>,
 }
 
@@ -22,8 +22,8 @@ impl AssetDisplay {
         asset_type: AssetType,
         title: String,
         author: String,
-        image_src: String,
-        booth_url: Option<String>,
+        image_src: Option<String>,
+        booth_item_id: Option<u64>,
         published_at: Option<i64>,
     ) -> Self {
         Self {
@@ -32,7 +32,7 @@ impl AssetDisplay {
             title,
             author,
             image_src,
-            booth_url,
+            booth_item_id,
             published_at,
         }
     }
@@ -42,10 +42,12 @@ impl AssetDisplay {
 pub struct AssetDescription {
     pub title: String,
     pub author: String,
-    pub image_src: String,
+    pub image_src: Option<String>,
     pub tags: Vec<String>,
-    #[serde(default = "default_booth_url")]
+    #[serde(default = "default_booth_url", skip_serializing)]
     pub booth_url: Option<String>,
+    #[serde(default = "default_booth_item_id")]
+    pub booth_item_id: Option<u64>,
     pub created_at: i64,
     #[serde(default = "default_published_at")]
     pub published_at: Option<i64>,
@@ -59,13 +61,17 @@ fn default_published_at() -> Option<i64> {
     None
 }
 
+fn default_booth_item_id() -> Option<u64> {
+    None
+}
+
 impl AssetDescription {
     pub fn create(
         title: String,
         author: String,
-        image_src: String,
+        image_src: Option<String>,
         tags: Vec<String>,
-        booth_url: Option<String>,
+        booth_item_id: Option<u64>,
         created_at: i64,
         published_at: Option<i64>,
     ) -> Self {
@@ -74,7 +80,8 @@ impl AssetDescription {
             author,
             image_src,
             tags,
-            booth_url,
+            booth_url: None,
+            booth_item_id,
             created_at,
             published_at,
         }

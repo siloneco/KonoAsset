@@ -1,4 +1,3 @@
-import { AddAssetModalContext } from '@/components/layout/AddAssetModal'
 import {
   FormField,
   FormItem,
@@ -8,19 +7,19 @@ import {
 } from '@/components/ui/form'
 
 import { Separator } from '@/components/ui/separator'
-import { useContext } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import TextInputSelect from '@/components/ui/text-input-select'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
+  form: AssetFormType
   submitting: boolean
 }
 
-const WorldLayout = ({ submitting }: Props) => {
-  const { form } = useContext(AddAssetModalContext)
+const WorldLayout = ({ form, submitting }: Props) => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 

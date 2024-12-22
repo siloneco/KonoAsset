@@ -7,46 +7,34 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { AssetType } from '@/lib/entity'
 import { useState } from 'react'
-import { UseFormReturn } from 'react-hook-form'
 import { getAssetDescriptionFromBooth } from './logic'
-import { isBoothURL } from '@/lib/utils'
+import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
+import { AssetFormType } from '@/lib/form'
 
 type Props = {
-  form: UseFormReturn<
-    {
-      assetType: AssetType
-      title: string
-      author: string
-      image_src: string
-      booth_url: string | null
-      tags: string[]
-      category: string
-      supportedAvatars: string[]
-      published_at: number | null
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    undefined
-  >
+  form: AssetFormType
   disabled: boolean
 }
 
 const BoothInputs = ({ form, disabled }: Props) => {
+  const boothIdValue = form.watch('booth_item_id')
+
+  const defaultBoothUrlInputValue =
+    boothIdValue === null ? '' : convertToBoothURL(boothIdValue)
+
+  const [boothUrlInput, setBoothUrlInput] = useState(defaultBoothUrlInputValue)
   const [fetching, setFetching] = useState(false)
 
   const fetchFromBooth = async () => {
     try {
       setFetching(true)
-      const url = form.getValues('booth_url')!
-
-      if (!isBoothURL(url)) {
+      if (boothIdValue === null) {
         return
       }
 
       await getAssetDescriptionFromBooth({
-        url: form.getValues('booth_url')!,
+        id: boothIdValue,
         form,
       })
     } finally {
@@ -54,11 +42,23 @@ const BoothInputs = ({ form, disabled }: Props) => {
     }
   }
 
+  const onInputValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value
+    setBoothUrlInput(url)
+
+    const extractIdResult = extractBoothItemId(url)
+    if (extractIdResult.isSuccess()) {
+      form.setValue('booth_item_id', extractIdResult.value)
+    } else {
+      form.setValue('booth_item_id', null)
+    }
+  }
+
   return (
     <div className="w-full my-8 mx-auto max-w-[600px]">
       <FormField
         control={form.control}
-        name="booth_url"
+        name="booth_item_id"
         render={() => {
           return (
             <FormItem>
@@ -68,18 +68,12 @@ const BoothInputs = ({ form, disabled }: Props) => {
                   type="text"
                   placeholder="Boothの商品URLを入力..."
                   disabled={disabled || fetching}
-                  {...form.register('booth_url')}
-                  onChange={(e) => {
-                    form.setValue('booth_url', e.target.value)
-                  }}
+                  value={boothUrlInput}
+                  onChange={onInputValueChanged}
                 />
                 <Button
                   type="button"
-                  disabled={
-                    disabled ||
-                    fetching ||
-                    !isBoothURL(form.getValues('booth_url')!)
-                  }
+                  disabled={disabled || fetching || boothIdValue === null}
                   onClick={fetchFromBooth}
                 >
                   取得

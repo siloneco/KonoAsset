@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/misc/ThemeProvider'
 
 import '../index.css'
 import { Toaster } from '@/components/ui/toaster'
+import PersistentContextProvider from '@/components/context/PersistentContext'
 
 export const Route = createRootRoute({
   component: () => (
@@ -12,8 +13,10 @@ export const Route = createRootRoute({
       enableSystem
       disableTransitionOnChange
     >
-      <Outlet />
-      <Toaster />
+      <PersistentContextProvider>
+        <Outlet />
+        <Toaster />
+      </PersistentContextProvider>
     </ThemeProvider>
   ),
 })

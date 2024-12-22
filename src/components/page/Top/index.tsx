@@ -1,4 +1,3 @@
-import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { AssetContext } from '@/components/context/AssetContext'
 import MainSidebar from '@/components/layout/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
@@ -7,17 +6,15 @@ import TopPageMainContent from '@/components/layout/TopPageMainContent'
 import { useTopPage } from './hook'
 
 const TopPage = () => {
-  const { assetContextValue, filterContextValue, isDragAndHover } = useTopPage()
+  const { assetContextValue, isDragAndHover } = useTopPage()
 
   return (
     <div className="flex">
       <AssetContext.Provider value={assetContextValue}>
-        <AssetFilterContext.Provider value={filterContextValue}>
-          <SidebarProvider>
-            <MainSidebar />
-            <TopPageMainContent />
-          </SidebarProvider>
-        </AssetFilterContext.Provider>
+        <SidebarProvider>
+          <MainSidebar />
+          <TopPageMainContent />
+        </SidebarProvider>
       </AssetContext.Provider>
       <div
         className={cn(

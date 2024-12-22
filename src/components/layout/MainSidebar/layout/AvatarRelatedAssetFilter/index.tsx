@@ -1,28 +1,47 @@
-import { AssetFilterContext } from '@/components/context/AssetFilterContext'
 import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 const AvatarRelatedAssetFilter = () => {
-  const [categories, setCategories] = useState<Option[]>([])
-  const [supportedAvatars, setSupportedAvatars] = useState<Option[]>([])
+  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
+  const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
+    Option[]
+  >([])
 
   const {
+    categoryFilter,
     setCategoryFilter,
+    supportedAvatarFilter,
     setSupportedAvatarFilter,
     supportedAvatarFilterMatchType,
     setSupportedAvatarFilterMatchType,
-  } = useContext(AssetFilterContext)
+  } = useContext(PersistentContext)
 
-  const updateCategoriesAndTags = async () => {
-    setSupportedAvatars(await fetchAllSupportedAvatars())
-    setCategories(await fetchAllCategories())
+  const categoryValues: Option[] | undefined =
+    categoryFilter.length === 0
+      ? undefined
+      : categoryFilter.map((category) => ({
+          value: category,
+          label: category,
+        }))
+  const supportedAvatarValues: Option[] | undefined =
+    supportedAvatarFilter.length === 0
+      ? undefined
+      : supportedAvatarFilter.map((avatar) => ({
+          value: avatar,
+          label: avatar,
+        }))
+
+  const updateCandidates = async () => {
+    setSupportedAvatarCandidates(await fetchAllSupportedAvatars())
+    setCategoryCandidates(await fetchAllCategories())
   }
 
   useEffect(() => {
-    updateCategoriesAndTags()
+    updateCandidates()
   }, [])
 
   return (
@@ -30,7 +49,8 @@ const AvatarRelatedAssetFilter = () => {
       <MultiFilterItemSelector
         label="カテゴリ"
         placeholder="絞り込むカテゴリを選択..."
-        candidates={categories}
+        candidates={categoryCandidates}
+        value={categoryValues}
         onValueChange={(values) =>
           setCategoryFilter(values.map((v) => v.value))
         }
@@ -38,7 +58,8 @@ const AvatarRelatedAssetFilter = () => {
       <MultiFilterItemSelector
         label="対応アバター"
         placeholder="対応アバターを選択..."
-        candidates={supportedAvatars}
+        candidates={supportedAvatarCandidates}
+        value={supportedAvatarValues}
         onValueChange={(values) =>
           setSupportedAvatarFilter(values.map((v) => v.value))
         }

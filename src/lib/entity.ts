@@ -3,16 +3,16 @@ export type AssetDisplay = {
   asset_type: AssetType
   title: string
   author: string
-  image_src: string
-  booth_url: string | null
+  image_src: string | null
+  booth_item_id: number | null
 }
 
 export type AssetDescription = {
   title: string
   author: string
-  image_src: string
+  image_src: string | null
   tags: string[]
-  booth_url: string | null
+  booth_item_id: number | null
   created_at: number
   published_at: number | null
 }

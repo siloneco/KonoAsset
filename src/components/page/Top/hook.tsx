@@ -1,8 +1,7 @@
 import { AssetContextType } from '@/components/context/AssetContext'
-import { AssetFilterContextType } from '@/components/context/AssetFilterContext'
-import { AssetType, MatchType, SortBy, AssetDisplay } from '@/lib/entity'
+import { AssetDisplay } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import {
   checkForUpdate,
   dismissUpdate,
@@ -13,28 +12,15 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { buttonVariants } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 type ReturnProps = {
   assetContextValue: AssetContextType
-  filterContextValue: AssetFilterContextType
   isDragAndHover: boolean
 }
 
 export const useTopPage = (): ReturnProps => {
-  const [textFilter, setTextFilter] = useState('')
-  const [assetType, setAssetType] = useState<AssetType | 'all'>('all')
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([])
-  const [tagFilter, setTagFilter] = useState<string[]>([])
-  const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
-    [],
-  )
-
-  const [tagFilterMatchType, setTagFilterMatchType] = useState(MatchType.OR)
-  const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
-    useState(MatchType.OR)
-
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.CreatedAt)
-  const [reverseOrder, setReverseOrder] = useState(true)
+  const { sortBy } = useContext(PersistentContext)
   const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
     AssetDisplay[]
   >([])
@@ -44,11 +30,6 @@ export const useTopPage = (): ReturnProps => {
   const { toast } = useToast()
 
   const assetContextValue: AssetContextType = {
-    sortBy: sortBy,
-    setSortBy: setSortBy,
-    reverseOrder: reverseOrder,
-    setReverseOrder: setReverseOrder,
-
     assetDisplaySortedList: assetDisplaySortedList,
     setAssetDisplaySortedList: setAssetDisplaySortedList,
 
@@ -61,27 +42,6 @@ export const useTopPage = (): ReturnProps => {
     refreshAssets: async () => {
       refreshAssets(sortBy, setAssetDisplaySortedList)
     },
-  }
-
-  const filterContextValue: AssetFilterContextType = {
-    textFilter: textFilter,
-    setTextFilter: setTextFilter,
-
-    assetType: assetType,
-    setAssetType: setAssetType,
-
-    categoryFilter,
-    setCategoryFilter,
-
-    tagFilter,
-    setTagFilter,
-    tagFilterMatchType,
-    setTagFilterMatchType,
-
-    supportedAvatarFilter,
-    setSupportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-    setSupportedAvatarFilterMatchType,
   }
 
   useEffect(() => {
@@ -129,5 +89,5 @@ export const useTopPage = (): ReturnProps => {
     executeUpdateCheck()
   }, [])
 
-  return { assetContextValue, filterContextValue, isDragAndHover }
+  return { assetContextValue, isDragAndHover }
 }
