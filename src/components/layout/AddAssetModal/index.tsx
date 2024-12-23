@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
 import { AssetType } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { cn } from '@/lib/utils'
 
 export const AddAssetModalContext = createContext<{
   assetPath?: string
@@ -20,7 +21,11 @@ export const AddAssetModalContext = createContext<{
   setAssetPath: () => {},
 })
 
-const AddAssetModal = () => {
+type Props = {
+  className?: string
+}
+
+const AddAssetModal = ({ className }: Props) => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -82,16 +87,18 @@ const AddAssetModal = () => {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="w-full h-12"
-          onClick={() => {
-            clearForm()
-            setTab('selector')
-          }}
-        >
-          <Plus size={24} />
-          アセットを追加する
-        </Button>
+        <div className={cn('fixed right-24 bottom-[92px]', className)}>
+          <div className="fixed w-16 h-16 rounded-full bg-background" />
+          <Button
+            className="fixed w-16 h-16 rounded-full [&_svg]:size-8"
+            onClick={() => {
+              clearForm()
+              setTab('selector')
+            }}
+          >
+            <Plus size={32} />
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent
         className="max-w-[650px]"

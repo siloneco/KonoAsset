@@ -10,7 +10,6 @@ import AvatarRelatedAssetFilter from './layout/AvatarRelatedAssetFilter'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import AddAssetModal from '../AddAssetModal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext, useEffect, useState } from 'react'
@@ -76,8 +75,7 @@ const MainSidebar = () => {
           </div>
           <SidebarGroup>
             <SidebarGroupContent className="p-2">
-              <AddAssetModal />
-              <div className="my-4">
+              <div className="mb-4">
                 <Label>テキストで検索</Label>
                 <Input
                   placeholder="キーワードを入力..."
@@ -93,7 +91,7 @@ const MainSidebar = () => {
                 <AvatarRelatedAssetFilter />
               )}
               {assetType === AssetType.World && <WorldAssetFilter />}
-              <div className="mt-4 mb-24">
+              <div className="mt-4">
                 <MultiFilterItemSelector
                   label="タグ"
                   placeholder="絞り込むタグを選択..."
