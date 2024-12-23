@@ -140,7 +140,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
               onClick={() => getAssetDescriptionFromBooth()}
             >
               {!fetching && <ChevronRight size={16} />}
-              {fetching && <Loader2 size={16} />}
+              {fetching && <Loader2 size={16} className="animate-spin" />}
               取得
             </Button>
           </div>
