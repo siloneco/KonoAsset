@@ -7,10 +7,10 @@ use crate::definitions::{results::SimpleResult, traits::AssetTrait};
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
-pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
+pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
     let app_dir = provider.app_data_dir();
 
-    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id);
+    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await;
     if result.is_err() {
         return SimpleResult::error(result.err().unwrap());
     }
@@ -18,7 +18,7 @@ pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
         return SimpleResult::success();
     }
 
-    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_related_store(), id);
+    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_related_store(), id).await;
     if result.is_err() {
         return SimpleResult::error(result.err().unwrap());
     }
@@ -26,7 +26,7 @@ pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
         return SimpleResult::success();
     }
 
-    let result = delete_asset_from_store(&app_dir, &provider.get_world_store(), id);
+    let result = delete_asset_from_store(&app_dir, &provider.get_world_store(), id).await;
     if result.is_err() {
         return SimpleResult::error(result.err().unwrap());
     }
@@ -37,18 +37,20 @@ pub fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
     SimpleResult::error("Asset not found".into())
 }
 
-fn delete_asset_from_store<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash>(
+async fn delete_asset_from_store<
+    T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash,
+>(
     app_dir: &PathBuf,
     store: &JsonStore<T>,
     id: Uuid,
 ) -> Result<bool, String> {
-    let asset = store.get_asset(id);
+    let asset = store.get_asset(id).await;
     if asset.is_none() {
         return Ok(false);
     }
     let asset = asset.unwrap();
 
-    let result = store.delete_asset_and_save(id);
+    let result = store.delete_asset_and_save(id).await;
 
     if result.is_err() {
         return Err(result.err().unwrap());

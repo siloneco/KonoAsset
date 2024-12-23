@@ -7,6 +7,8 @@ export const Route = createFileRoute('/edit/$id')({
   loader: async ({ params }) => {
     return (await invoke('get_asset', { id: params.id })) as GetAssetResult
   },
+  // disable cache
+  gcTime: 0,
   component: RouteComponent,
 })
 

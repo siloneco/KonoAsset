@@ -1,9 +1,13 @@
 use std::fs::{self, File};
+use std::io::Write;
 use std::path::PathBuf;
 
 use super::common::get_reqwest_client;
 
-pub fn save_image_from_url(url: &str, output: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn save_image_from_url(
+    url: &str,
+    output: &PathBuf,
+) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
 
     let mut parent = output.clone();
@@ -11,7 +15,13 @@ pub fn save_image_from_url(url: &str, output: &PathBuf) -> Result<(), Box<dyn st
     fs::create_dir_all(parent)?;
 
     let mut file = File::create(output).unwrap();
-    get_reqwest_client().get(url).send()?.copy_to(&mut file)?;
+    let bytes = get_reqwest_client().get(url).send().await?.bytes().await?;
+
+    let result = file.write_all(bytes.as_ref());
+
+    if result.is_err() {
+        return Err(result.err().unwrap().into());
+    }
 
     Ok(())
 }

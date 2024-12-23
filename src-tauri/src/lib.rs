@@ -1,14 +1,16 @@
+use booth::fetcher::BoothFetcher;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
-use tauri::{App, Manager};
+use tauri::{async_runtime::Mutex, App, Manager};
 
 use commands::{
     check_for_update, copy_image_file_to_images, do_not_notify_update, execute_update,
     get_all_asset_tags, get_all_supported_avatar_values, get_asset,
-    get_asset_description_from_booth, get_avatar_related_categories,
-    get_avatar_related_supported_avatars, get_filtered_asset_ids, get_sorted_assets_for_display,
-    get_world_categories, open_in_file_manager, request_asset_deletion,
-    request_avatar_asset_import, request_avatar_related_asset_import, request_world_asset_import,
-    update_avatar_asset, update_avatar_related_asset, update_world_asset,
+    get_asset_description_from_booth, get_asset_displays_by_booth_id,
+    get_avatar_related_categories, get_avatar_related_supported_avatars, get_filtered_asset_ids,
+    get_sorted_assets_for_display, get_world_categories, open_in_file_manager,
+    request_asset_deletion, request_avatar_asset_import, request_avatar_related_asset_import,
+    request_world_asset_import, update_avatar_asset, update_avatar_related_asset,
+    update_world_asset,
 };
 use updater::update_handler::UpdateHandler;
 
@@ -29,8 +31,19 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(generate_handler())
         .setup(|app| {
-            let basic_store = init(&app);
-            app.manage(basic_store);
+            let basic_store = generate_store_provider(&app);
+
+            let basic_store = tauri::async_runtime::block_on(async move {
+                let result = basic_store.load_all_assets_from_files().await;
+
+                if result.is_err() {
+                    eprintln!("Failed to load assets from files: {}", result.unwrap_err());
+                }
+
+                basic_store
+            });
+
+            app.manage(Mutex::new(basic_store));
 
             let app_handle = app.handle().clone();
             let update_handler = tauri::async_runtime::block_on(async move {
@@ -46,13 +59,15 @@ pub fn run() {
 
             app.manage(update_handler);
 
+            init(&app);
+
             Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-fn init(handler: &App) -> StoreProvider {
+fn init(handler: &App) {
     handler
         .get_webview_window("main")
         .unwrap()
@@ -64,16 +79,11 @@ fn init(handler: &App) -> StoreProvider {
         eprintln!("Failed to delete temporary images: {}", result.unwrap_err());
     }
 
-    let dir = handler.path().app_local_data_dir().unwrap();
-    let store = StoreProvider::create(dir);
+    handler.manage(Mutex::new(BoothFetcher::new()));
+}
 
-    let result = store.load_all_assets_from_files();
-
-    if result.is_err() {
-        eprintln!("Failed to load assets from files: {}", result.unwrap_err());
-    }
-
-    store
+fn generate_store_provider(handler: &App) -> StoreProvider {
+    StoreProvider::create(handler.path().app_local_data_dir().unwrap())
 }
 
 fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
@@ -81,6 +91,7 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         // アセット取得
         get_asset,
         get_sorted_assets_for_display,
+        get_asset_displays_by_booth_id,
         // アセット作成リクエスト
         request_avatar_asset_import,
         request_avatar_related_asset_import,

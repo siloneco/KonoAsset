@@ -15,7 +15,7 @@ use crate::{
 
 use super::fileutils::{self, execute_image_fixation};
 
-pub fn import_avatar_asset(
+pub async fn import_avatar_asset(
     basic_store: &StoreProvider,
     request: AvatarAssetImportRequest,
 ) -> AvatarAssetImportResult {
@@ -28,7 +28,7 @@ pub fn import_avatar_asset(
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
         let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
         if let Err(error) = image_fixation_result {
             return AvatarAssetImportResult {
@@ -47,7 +47,8 @@ pub fn import_avatar_asset(
     let asset = AvatarAsset::create(request.pre_asset.description);
     let result = basic_store
         .get_avatar_store()
-        .add_asset_and_save(asset.clone());
+        .add_asset_and_save(asset.clone())
+        .await;
 
     if result.is_err() {
         return AvatarAssetImportResult {
@@ -68,7 +69,8 @@ pub fn import_avatar_asset(
     if result.is_err() {
         let delete_asset_result = basic_store
             .get_avatar_store()
-            .delete_asset_and_save(asset.id);
+            .delete_asset_and_save(asset.id)
+            .await;
 
         return AvatarAssetImportResult {
             success: false,
@@ -91,7 +93,7 @@ pub fn import_avatar_asset(
     }
 }
 
-pub fn import_avatar_related_asset(
+pub async fn import_avatar_related_asset(
     basic_store: &StoreProvider,
     request: AvatarRelatedAssetImportRequest,
 ) -> AvatarRelatedAssetImportResult {
@@ -104,7 +106,7 @@ pub fn import_avatar_related_asset(
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
         let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
         if let Err(error) = image_fixation_result {
             return AvatarRelatedAssetImportResult {
@@ -127,7 +129,8 @@ pub fn import_avatar_related_asset(
     );
     let result = basic_store
         .get_avatar_related_store()
-        .add_asset_and_save(asset.clone());
+        .add_asset_and_save(asset.clone())
+        .await;
 
     if result.is_err() {
         return AvatarRelatedAssetImportResult {
@@ -148,7 +151,8 @@ pub fn import_avatar_related_asset(
     if result.is_err() {
         let delete_asset_result = basic_store
             .get_avatar_related_store()
-            .delete_asset_and_save(asset.id);
+            .delete_asset_and_save(asset.id)
+            .await;
 
         return AvatarRelatedAssetImportResult {
             success: false,
@@ -171,7 +175,7 @@ pub fn import_avatar_related_asset(
     }
 }
 
-pub fn import_world_asset(
+pub async fn import_world_asset(
     basic_store: &StoreProvider,
     request: WorldAssetImportRequest,
 ) -> WorldAssetImportResult {
@@ -184,7 +188,7 @@ pub fn import_world_asset(
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
         let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path);
+            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
         if let Err(error) = image_fixation_result {
             return WorldAssetImportResult {
@@ -203,7 +207,8 @@ pub fn import_world_asset(
     let asset = WorldAsset::create(request.pre_asset.description, request.pre_asset.category);
     let result = basic_store
         .get_world_store()
-        .add_asset_and_save(asset.clone());
+        .add_asset_and_save(asset.clone())
+        .await;
 
     if result.is_err() {
         return WorldAssetImportResult {
@@ -224,7 +229,8 @@ pub fn import_world_asset(
     if result.is_err() {
         let delete_asset_result = basic_store
             .get_world_store()
-            .delete_asset_and_save(asset.id);
+            .delete_asset_and_save(asset.id)
+            .await;
 
         return WorldAssetImportResult {
             success: false,

@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { getAssetDescriptionFromBooth } from './logic'
 import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
 import { AssetFormType } from '@/lib/form'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
   form: AssetFormType
@@ -76,6 +77,7 @@ const BoothInputs = ({ form, disabled }: Props) => {
                   disabled={disabled || fetching || boothIdValue === null}
                   onClick={fetchFromBooth}
                 >
+                  {fetching && <Loader2 className="animate-spin" />}
                   取得
                 </Button>
               </div>

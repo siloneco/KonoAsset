@@ -108,6 +108,7 @@ const AssetList = ({ className }: Props) => {
                 ),
             )}
       </div>
+      <div className="w-full h-12" />
     </ScrollArea>
   )
 }

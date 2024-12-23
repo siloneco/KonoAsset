@@ -4,7 +4,10 @@ import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { AssetFormType } from '@/lib/form'
-import { AssetType } from '@/lib/entity'
+import { AssetType, DirectoryOpenResult } from '@/lib/entity'
+import { ToastAction } from '@/components/ui/toast'
+import { buttonVariants } from '@/components/ui/button'
+import { invoke } from '@tauri-apps/api/core'
 
 export type Props = {
   form: AssetFormType
@@ -76,8 +79,34 @@ export const useManualInputTabHooks = ({
       if (result.isSuccess()) {
         await refreshAssets()
 
+        const openInFileManager = async () => {
+          const openResult: DirectoryOpenResult = await invoke(
+            'open_in_file_manager',
+            {
+              id: result.value.id,
+            },
+          )
+
+          if (!openResult.success) {
+            toast({
+              title: 'エラー',
+              description: openResult.error_message,
+            })
+          }
+        }
+
         toast({
-          title: 'データのインポートが完了しました！',
+          title: 'アセットが追加されました！',
+          description: form.getValues('title'),
+          action: (
+            <ToastAction
+              altText="open"
+              className={buttonVariants({ variant: 'default' })}
+              onClick={openInFileManager}
+            >
+              開く
+            </ToastAction>
+          ),
         })
 
         setDialogOpen(false)
