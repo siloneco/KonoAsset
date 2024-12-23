@@ -23,18 +23,18 @@ impl StoreProvider {
         }
     }
 
-    pub fn load_all_assets_from_files(&self) -> Result<(), String> {
-        match self.avatar_store.load_assets_from_file() {
+    pub async fn load_all_assets_from_files(&self) -> Result<(), String> {
+        match self.avatar_store.load_assets_from_file().await {
             Ok(_) => {}
             Err(e) => return Err(e),
         }
 
-        match self.avatar_related_store.load_assets_from_file() {
+        match self.avatar_related_store.load_assets_from_file().await {
             Ok(_) => {}
             Err(e) => return Err(e),
         }
 
-        match self.world_store.load_assets_from_file() {
+        match self.world_store.load_assets_from_file().await {
             Ok(_) => {}
             Err(e) => return Err(e),
         }

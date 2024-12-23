@@ -8,7 +8,7 @@ use crate::definitions::{
 
 use super::provider::StoreProvider;
 
-pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
+pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
     let mut results = Vec::new();
 
     let query_texts: Option<Vec<&str>> = match &request.query {
@@ -20,6 +20,7 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
         store
             .get_avatar_store()
             .get_assets()
+            .await
             .iter()
             .for_each(|asset| {
                 // カテゴリが指定されている場合はアバターにカテゴリの概念がないので全部スキップ
@@ -65,6 +66,7 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
         store
             .get_avatar_related_store()
             .get_assets()
+            .await
             .iter()
             .for_each(|asset| {
                 // クエリが指定されている場合は、テキストに含まれているかを確認
@@ -130,6 +132,7 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
         store
             .get_world_store()
             .get_assets()
+            .await
             .iter()
             .for_each(|asset| {
                 // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ

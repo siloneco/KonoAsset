@@ -2,7 +2,7 @@ use std::{error::Error, fs, path::PathBuf};
 
 use crate::booth::image_saver;
 
-pub fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
+pub async fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
     let path = PathBuf::from(url_or_path);
     if PathBuf::from(url_or_path).exists() {
         // ファイル名が temp_ で始まっている場合、次回再起動時に削除されないようにdestに移動する
@@ -27,7 +27,7 @@ pub fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool,
         return Ok(false);
     }
 
-    let result = image_saver::save_image_from_url(url_or_path, dest);
+    let result = image_saver::save_image_from_url(url_or_path, dest).await;
 
     if result.is_err() {
         return Err(result.err().unwrap().to_string());

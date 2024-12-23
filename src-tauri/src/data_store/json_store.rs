@@ -1,6 +1,7 @@
-use std::{collections::HashSet, fs::File, hash::Hash, path::PathBuf, sync::Mutex};
+use std::{collections::HashSet, fs::File, hash::Hash, path::PathBuf};
 
 use serde::{de::DeserializeOwned, Serialize};
+use tauri::async_runtime::Mutex;
 use uuid::Uuid;
 
 use crate::{
@@ -30,20 +31,20 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
     }
 
-    pub fn get_assets(&self) -> HashSet<T> {
-        self.assets.lock().unwrap().clone()
+    pub async fn get_assets(&self) -> HashSet<T> {
+        self.assets.lock().await.clone()
     }
 
-    pub fn get_asset(&self, id: Uuid) -> Option<T> {
+    pub async fn get_asset(&self, id: Uuid) -> Option<T> {
         self.assets
             .lock()
-            .unwrap()
+            .await
             .iter()
             .find(|asset| asset.get_id() == id)
             .cloned()
     }
 
-    pub fn load_assets_from_file(&self) -> Result<(), String> {
+    pub async fn load_assets_from_file(&self) -> Result<(), String> {
         let mut path = self.app_data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
@@ -61,7 +62,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         let mut require_save_flag = false;
 
         {
-            let mut assets = self.assets.lock().unwrap();
+            let mut assets = self.assets.lock().await;
             let result: Result<HashSet<T>, serde_json::Error> =
                 serde_json::from_reader(file_open_result.unwrap());
 
@@ -90,7 +91,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
 
         if require_save_flag {
-            let save_result = self.save();
+            let save_result = self.save().await;
 
             if save_result.is_err() {
                 return Err(save_result.err().unwrap());
@@ -100,18 +101,18 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         Ok(())
     }
 
-    pub fn add_asset_and_save(&self, asset: T) -> Result<(), String> {
+    pub async fn add_asset_and_save(&self, asset: T) -> Result<(), String> {
         {
-            let mut assets = self.assets.lock().unwrap();
+            let mut assets = self.assets.lock().await;
             assets.insert(asset.clone());
         }
 
-        self.save()
+        self.save().await
     }
 
-    pub fn update_asset_and_save(&self, mut asset: T) -> Result<(), String> {
+    pub async fn update_asset_and_save(&self, mut asset: T) -> Result<(), String> {
         {
-            let mut assets = self.assets.lock().unwrap();
+            let mut assets = self.assets.lock().await;
             let old_asset = assets
                 .iter()
                 .find(|a| a.get_id() == asset.get_id())
@@ -149,7 +150,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
                     path.push("images");
                     path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
-                    let result = execute_image_fixation(new_image.as_ref().unwrap(), &path);
+                    let result = execute_image_fixation(new_image.as_ref().unwrap(), &path).await;
 
                     if result.is_err() {
                         return Err(result.err().unwrap());
@@ -166,7 +167,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             assets.insert(asset.clone());
         }
 
-        let save_result = self.save();
+        let save_result = self.save().await;
 
         if save_result.is_err() {
             return Err(save_result.err().unwrap());
@@ -175,9 +176,9 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         Ok(())
     }
 
-    pub fn delete_asset_and_save(&self, id: Uuid) -> Result<bool, String> {
+    pub async fn delete_asset_and_save(&self, id: Uuid) -> Result<bool, String> {
         {
-            let mut assets = self.assets.lock().unwrap();
+            let mut assets = self.assets.lock().await;
             let asset = assets.iter().find(|asset| asset.get_id() == id).cloned();
 
             if asset.is_none() {
@@ -187,7 +188,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             assets.remove(&asset.unwrap());
         }
 
-        let save_result = self.save();
+        let save_result = self.save().await;
 
         if save_result.is_err() {
             return Err(save_result.err().unwrap());
@@ -196,7 +197,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         Ok(true)
     }
 
-    fn save(&self) -> Result<(), String> {
+    async fn save(&self) -> Result<(), String> {
         let mut path = self.app_data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
@@ -207,7 +208,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             return Err("Failed to open file".into());
         }
 
-        let assets = self.assets.lock().unwrap();
+        let assets = self.assets.lock().await;
         let result = serde_json::to_writer(file_open_result.unwrap(), &*assets);
 
         match result {

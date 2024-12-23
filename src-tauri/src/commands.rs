@@ -4,11 +4,11 @@ use std::{
     path::PathBuf,
 };
 
-use tauri::{Result, State};
+use tauri::{async_runtime::Mutex, Result, State};
 use uuid::Uuid;
 
 use crate::{
-    booth::booth_fetcher::fetch_asset_details_from_booth,
+    booth::fetcher::BoothFetcher,
     data_store::{
         delete::delete_asset,
         provider::StoreProvider,
@@ -35,75 +35,82 @@ use crate::{
 };
 
 #[tauri::command]
-pub fn get_sorted_assets_for_display(
-    basic_store: State<'_, StoreProvider>,
+pub async fn get_sorted_assets_for_display(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     sort_by: SortBy,
-) -> Vec<AssetDisplay> {
+) -> Result<Vec<AssetDisplay>> {
     let mut created_at_map: HashMap<Uuid, i64> = HashMap::new();
     let mut result: Vec<AssetDisplay> = Vec::new();
 
-    basic_store
-        .get_avatar_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            let description = &asset.description;
-            result.push(AssetDisplay::create(
-                asset.id,
-                AssetType::Avatar,
-                description.title.clone(),
-                description.author.clone(),
-                description.image_src.clone(),
-                description.booth_item_id,
-                description.published_at,
-            ));
+    {
+        let basic_store = basic_store.lock().await;
 
-            if sort_by == SortBy::CreatedAt {
-                created_at_map.insert(asset.id, description.created_at);
-            }
-        });
+        basic_store
+            .get_avatar_store()
+            .get_assets()
+            .await
+            .iter()
+            .for_each(|asset| {
+                let description = &asset.description;
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::Avatar,
+                    description.title.clone(),
+                    description.author.clone(),
+                    description.image_src.clone(),
+                    description.booth_item_id,
+                    description.published_at,
+                ));
 
-    basic_store
-        .get_avatar_related_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            let description = &asset.description;
-            result.push(AssetDisplay::create(
-                asset.id,
-                AssetType::AvatarRelated,
-                description.title.clone(),
-                description.author.clone(),
-                description.image_src.clone(),
-                description.booth_item_id,
-                description.published_at,
-            ));
+                if sort_by == SortBy::CreatedAt {
+                    created_at_map.insert(asset.id, description.created_at);
+                }
+            });
 
-            if sort_by == SortBy::CreatedAt {
-                created_at_map.insert(asset.id, description.created_at);
-            }
-        });
+        basic_store
+            .get_avatar_related_store()
+            .get_assets()
+            .await
+            .iter()
+            .for_each(|asset| {
+                let description = &asset.description;
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::AvatarRelated,
+                    description.title.clone(),
+                    description.author.clone(),
+                    description.image_src.clone(),
+                    description.booth_item_id,
+                    description.published_at,
+                ));
 
-    basic_store
-        .get_world_store()
-        .get_assets()
-        .iter()
-        .for_each(|asset| {
-            let description = &asset.description;
-            result.push(AssetDisplay::create(
-                asset.id,
-                AssetType::World,
-                description.title.clone(),
-                description.author.clone(),
-                description.image_src.clone(),
-                description.booth_item_id,
-                description.published_at,
-            ));
+                if sort_by == SortBy::CreatedAt {
+                    created_at_map.insert(asset.id, description.created_at);
+                }
+            });
 
-            if sort_by == SortBy::CreatedAt {
-                created_at_map.insert(asset.id, description.created_at);
-            }
-        });
+        basic_store
+            .get_world_store()
+            .get_assets()
+            .await
+            .iter()
+            .for_each(|asset| {
+                let description = &asset.description;
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::World,
+                    description.title.clone(),
+                    description.author.clone(),
+                    description.image_src.clone(),
+                    description.booth_item_id,
+                    description.published_at,
+                ));
+
+                if sort_by == SortBy::CreatedAt {
+                    created_at_map.insert(asset.id, description.created_at);
+                }
+            });
+    }
 
     match sort_by {
         SortBy::Title => result.sort_by(|a, b| a.title.cmp(&b.title)),
@@ -121,152 +128,193 @@ pub fn get_sorted_assets_for_display(
         }),
     }
 
-    result
+    Ok(result)
 }
 
 #[tauri::command]
-pub fn get_asset(basic_store: State<'_, StoreProvider>, id: Uuid) -> GetAssetResult {
-    let avatar_asset = basic_store.get_avatar_store().get_asset(id);
+pub async fn get_asset(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    id: Uuid,
+) -> Result<GetAssetResult> {
+    let basic_store = basic_store.lock().await;
+
+    let avatar_asset = basic_store.get_avatar_store().get_asset(id).await;
     if let Some(avatar_asset) = avatar_asset {
-        return GetAssetResult::avatar(avatar_asset);
+        return Ok(GetAssetResult::avatar(avatar_asset));
     }
 
-    let avatar_related_asset = basic_store.get_avatar_related_store().get_asset(id);
+    let avatar_related_asset = basic_store.get_avatar_related_store().get_asset(id).await;
     if let Some(avatar_related_asset) = avatar_related_asset {
-        return GetAssetResult::avatar_related(avatar_related_asset);
+        return Ok(GetAssetResult::avatar_related(avatar_related_asset));
     }
 
-    let world_asset = basic_store.get_world_store().get_asset(id);
+    let world_asset = basic_store.get_world_store().get_asset(id).await;
     if let Some(world_asset) = world_asset {
-        return GetAssetResult::world(world_asset);
+        return Ok(GetAssetResult::world(world_asset));
     }
 
-    GetAssetResult::error("Asset not found".into())
+    Ok(GetAssetResult::error("Asset not found".into()))
 }
 
 #[tauri::command]
-pub fn request_avatar_asset_import(
-    basic_store: State<'_, StoreProvider>,
+pub async fn request_avatar_asset_import(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     request: AvatarAssetImportRequest,
-) -> AvatarAssetImportResult {
-    import_avatar_asset(&basic_store, request)
+) -> Result<AvatarAssetImportResult> {
+    let basic_store = basic_store.lock().await;
+    Ok(import_avatar_asset(&basic_store, request).await)
 }
 
 #[tauri::command]
-pub fn request_avatar_related_asset_import(
-    basic_store: State<'_, StoreProvider>,
+pub async fn request_avatar_related_asset_import(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     request: AvatarRelatedAssetImportRequest,
-) -> AvatarRelatedAssetImportResult {
-    import_avatar_related_asset(&basic_store, request)
+) -> Result<AvatarRelatedAssetImportResult> {
+    let basic_store = basic_store.lock().await;
+    Ok(import_avatar_related_asset(&basic_store, request).await)
 }
 
 #[tauri::command]
-pub fn request_world_asset_import(
-    basic_store: State<'_, StoreProvider>,
+pub async fn request_world_asset_import(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     request: WorldAssetImportRequest,
-) -> WorldAssetImportResult {
-    import_world_asset(&basic_store, request)
+) -> Result<WorldAssetImportResult> {
+    let basic_store = basic_store.lock().await;
+    Ok(import_world_asset(&basic_store, request).await)
 }
 
 #[tauri::command]
-pub fn update_avatar_asset(
-    basic_store: State<'_, StoreProvider>,
+pub async fn update_avatar_asset(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     asset: AvatarAsset,
-) -> SimpleResult {
-    let result = basic_store.get_avatar_store().update_asset_and_save(asset);
+) -> Result<SimpleResult> {
+    let result = {
+        let basic_store = basic_store.lock().await;
+
+        basic_store
+            .get_avatar_store()
+            .update_asset_and_save(asset)
+            .await
+    };
 
     match result {
-        Ok(_) => SimpleResult::success(),
-        Err(e) => SimpleResult::error(e),
+        Ok(_) => Ok(SimpleResult::success()),
+        Err(e) => Ok(SimpleResult::error(e)),
     }
 }
 
 #[tauri::command]
-pub fn update_avatar_related_asset(
-    basic_store: State<'_, StoreProvider>,
+pub async fn update_avatar_related_asset(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     asset: AvatarRelatedAsset,
-) -> SimpleResult {
-    let result = basic_store
-        .get_avatar_related_store()
-        .update_asset_and_save(asset);
+) -> Result<SimpleResult> {
+    let result = {
+        let basic_store = basic_store.lock().await;
+
+        basic_store
+            .get_avatar_related_store()
+            .update_asset_and_save(asset)
+            .await
+    };
 
     match result {
-        Ok(_) => SimpleResult::success(),
-        Err(e) => SimpleResult::error(e),
+        Ok(_) => Ok(SimpleResult::success()),
+        Err(e) => Ok(SimpleResult::error(e)),
     }
 }
 
 #[tauri::command]
-pub fn update_world_asset(
-    basic_store: State<'_, StoreProvider>,
+pub async fn update_world_asset(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     asset: WorldAsset,
-) -> SimpleResult {
-    let result = basic_store.get_world_store().update_asset_and_save(asset);
+) -> Result<SimpleResult> {
+    let result = {
+        let basic_store = basic_store.lock().await;
+
+        basic_store
+            .get_world_store()
+            .update_asset_and_save(asset)
+            .await
+    };
 
     match result {
-        Ok(_) => SimpleResult::success(),
-        Err(e) => SimpleResult::error(e),
+        Ok(_) => Ok(SimpleResult::success()),
+        Err(e) => Ok(SimpleResult::error(e)),
     }
 }
 
 #[tauri::command]
-pub fn open_in_file_manager(
-    basic_store: State<'_, StoreProvider>,
+pub async fn open_in_file_manager(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     id: String,
-) -> DirectoryOpenResult {
-    let mut path = basic_store.app_data_dir();
+) -> Result<DirectoryOpenResult> {
+    let mut path = basic_store.lock().await.app_data_dir();
     path.push("data");
     path.push(id);
 
     if !path.exists() {
-        return DirectoryOpenResult::create(false, Some("Directory does not exist".into()));
+        return Ok(DirectoryOpenResult::create(
+            false,
+            Some("Directory does not exist".into()),
+        ));
     }
 
     if !path.is_dir() {
-        return DirectoryOpenResult::create(false, Some("Path is not a directory".into()));
+        return Ok(DirectoryOpenResult::create(
+            false,
+            Some("Path is not a directory".into()),
+        ));
     }
 
     let result = opener::open(path);
 
     match result {
-        Ok(_) => DirectoryOpenResult::create(true, None),
-        Err(e) => DirectoryOpenResult::create(false, Some(e.to_string())),
+        Ok(_) => Ok(DirectoryOpenResult::create(true, None)),
+        Err(e) => Ok(DirectoryOpenResult::create(false, Some(e.to_string()))),
     }
 }
 
 #[tauri::command]
-pub fn get_asset_description_from_booth(
-    basic_store: State<'_, StoreProvider>,
+pub async fn get_asset_description_from_booth(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
-) -> FetchAssetDescriptionFromBoothResult {
-    let mut images_dir = basic_store.app_data_dir();
+) -> Result<FetchAssetDescriptionFromBoothResult> {
+    let mut images_dir = basic_store.lock().await.app_data_dir();
     images_dir.push("images");
 
-    let result = fetch_asset_details_from_booth(booth_item_id, images_dir);
+    let result = {
+        let mut fetcher = booth_fetcher.lock().await;
+        fetcher.fetch(booth_item_id, images_dir).await
+    };
 
     match result {
-        Ok((asset_description, estimated_asset_type)) => FetchAssetDescriptionFromBoothResult {
+        Ok((asset_description, estimated_asset_type)) => Ok(FetchAssetDescriptionFromBoothResult {
             success: true,
             asset_description: Some(asset_description),
             estimated_asset_type,
             error_message: None,
-        },
-        Err(e) => FetchAssetDescriptionFromBoothResult {
+        }),
+        Err(e) => Ok(FetchAssetDescriptionFromBoothResult {
             success: false,
             asset_description: None,
             estimated_asset_type: None,
             error_message: Some(e.to_string()),
-        },
+        }),
     }
 }
 
 #[tauri::command]
-pub fn get_all_asset_tags(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+pub async fn get_all_asset_tags(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+) -> Result<Vec<String>> {
+    let basic_store = basic_store.lock().await;
     let mut tags: HashSet<String> = HashSet::new();
 
     basic_store
         .get_avatar_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
@@ -277,6 +325,7 @@ pub fn get_all_asset_tags(basic_store: State<'_, StoreProvider>) -> Vec<String> 
     basic_store
         .get_avatar_related_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
@@ -287,6 +336,7 @@ pub fn get_all_asset_tags(basic_store: State<'_, StoreProvider>) -> Vec<String> 
     basic_store
         .get_world_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
@@ -294,16 +344,21 @@ pub fn get_all_asset_tags(basic_store: State<'_, StoreProvider>) -> Vec<String> 
             });
         });
 
-    tags.into_iter().collect()
+    Ok(tags.into_iter().collect())
 }
 
 #[tauri::command]
-pub fn get_all_supported_avatar_values(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+pub async fn get_all_supported_avatar_values(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+) -> Result<Vec<String>> {
     let mut values: HashSet<String> = HashSet::new();
 
     basic_store
+        .lock()
+        .await
         .get_avatar_related_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             asset.supported_avatars.iter().for_each(|val| {
@@ -311,16 +366,21 @@ pub fn get_all_supported_avatar_values(basic_store: State<'_, StoreProvider>) ->
             });
         });
 
-    values.into_iter().collect()
+    Ok(values.into_iter().collect())
 }
 
 #[tauri::command]
-pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+pub async fn get_avatar_related_categories(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+) -> Result<Vec<String>> {
     let mut categories: HashSet<String> = HashSet::new();
 
     basic_store
+        .lock()
+        .await
         .get_avatar_related_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             let val = asset.category.clone();
@@ -331,16 +391,21 @@ pub fn get_avatar_related_categories(basic_store: State<'_, StoreProvider>) -> V
             categories.insert(val.to_string());
         });
 
-    categories.into_iter().collect()
+    Ok(categories.into_iter().collect())
 }
 
 #[tauri::command]
-pub fn get_world_categories(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+pub async fn get_world_categories(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+) -> Result<Vec<String>> {
     let mut categories: HashSet<String> = HashSet::new();
 
     basic_store
+        .lock()
+        .await
         .get_world_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             let val = asset.category.clone();
@@ -351,16 +416,21 @@ pub fn get_world_categories(basic_store: State<'_, StoreProvider>) -> Vec<String
             categories.insert(val.to_string());
         });
 
-    categories.into_iter().collect()
+    Ok(categories.into_iter().collect())
 }
 
 #[tauri::command]
-pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider>) -> Vec<String> {
+pub async fn get_avatar_related_supported_avatars(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+) -> Result<Vec<String>> {
     let mut supported_avatars: HashSet<String> = HashSet::new();
 
     basic_store
+        .lock()
+        .await
         .get_avatar_related_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             asset.supported_avatars.iter().for_each(|val| {
@@ -368,32 +438,39 @@ pub fn get_avatar_related_supported_avatars(basic_store: State<'_, StoreProvider
             });
         });
 
-    supported_avatars.into_iter().collect()
+    Ok(supported_avatars.into_iter().collect())
 }
 
 #[tauri::command]
-pub fn request_asset_deletion(basic_store: State<'_, StoreProvider>, id: Uuid) -> SimpleResult {
-    delete_asset(&basic_store, id)
+pub async fn request_asset_deletion(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    id: Uuid,
+) -> Result<SimpleResult> {
+    let basic_store = basic_store.lock().await;
+    Ok(delete_asset(&basic_store, id).await)
 }
 
 #[tauri::command]
-pub fn get_filtered_asset_ids(
-    basic_store: State<'_, StoreProvider>,
+pub async fn get_filtered_asset_ids(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     request: FilterRequest,
-) -> Vec<Uuid> {
-    search::filter(&basic_store, &request)
+) -> Result<Vec<Uuid>> {
+    let basic_store = basic_store.lock().await;
+    Ok(search::filter(&basic_store, &request).await)
 }
 
 #[tauri::command]
-pub fn get_asset_displays_by_booth_id(
-    basic_store: State<'_, StoreProvider>,
+pub async fn get_asset_displays_by_booth_id(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     booth_item_id: u64,
-) -> Vec<AssetDisplay> {
+) -> Result<Vec<AssetDisplay>> {
+    let basic_store = basic_store.lock().await;
     let mut result = Vec::new();
 
     basic_store
         .get_avatar_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             if asset.description.booth_item_id == Some(booth_item_id) {
@@ -412,6 +489,7 @@ pub fn get_asset_displays_by_booth_id(
     basic_store
         .get_avatar_related_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             if asset.description.booth_item_id == Some(booth_item_id) {
@@ -430,6 +508,7 @@ pub fn get_asset_displays_by_booth_id(
     basic_store
         .get_world_store()
         .get_assets()
+        .await
         .iter()
         .for_each(|asset| {
             if asset.description.booth_item_id == Some(booth_item_id) {
@@ -445,17 +524,17 @@ pub fn get_asset_displays_by_booth_id(
             }
         });
 
-    result
+    Ok(result)
 }
 
 #[tauri::command]
-pub fn copy_image_file_to_images(
-    basic_store: State<'_, StoreProvider>,
+pub async fn copy_image_file_to_images(
+    basic_store: State<'_, Mutex<StoreProvider>>,
     path: String,
     temporary: bool,
-) -> String {
+) -> Result<String> {
     let path = PathBuf::from(path);
-    let mut new_path = basic_store.app_data_dir();
+    let mut new_path = basic_store.lock().await.app_data_dir();
     new_path.push("images");
 
     let filename = if temporary {
@@ -482,7 +561,7 @@ pub fn copy_image_file_to_images(
 
     fs::copy(&path, &new_path).unwrap();
 
-    new_path.to_str().unwrap().to_string()
+    Ok(new_path.to_str().unwrap().to_string())
 }
 
 #[tauri::command]
