@@ -4,11 +4,12 @@ use tauri::{App, Manager};
 use commands::{
     check_for_update, copy_image_file_to_images, do_not_notify_update, execute_update,
     get_all_asset_tags, get_all_supported_avatar_values, get_asset,
-    get_asset_description_from_booth, get_avatar_related_categories,
-    get_avatar_related_supported_avatars, get_filtered_asset_ids, get_sorted_assets_for_display,
-    get_world_categories, open_in_file_manager, request_asset_deletion,
-    request_avatar_asset_import, request_avatar_related_asset_import, request_world_asset_import,
-    update_avatar_asset, update_avatar_related_asset, update_world_asset,
+    get_asset_description_from_booth, get_asset_displays_by_booth_id,
+    get_avatar_related_categories, get_avatar_related_supported_avatars, get_filtered_asset_ids,
+    get_sorted_assets_for_display, get_world_categories, open_in_file_manager,
+    request_asset_deletion, request_avatar_asset_import, request_avatar_related_asset_import,
+    request_world_asset_import, update_avatar_asset, update_avatar_related_asset,
+    update_world_asset,
 };
 use updater::update_handler::UpdateHandler;
 
@@ -81,6 +82,7 @@ fn generate_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         // アセット取得
         get_asset,
         get_sorted_assets_for_display,
+        get_asset_displays_by_booth_id,
         // アセット作成リクエスト
         request_avatar_asset_import,
         request_avatar_related_asset_import,

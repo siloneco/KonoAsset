@@ -10,15 +10,22 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
-import { AssetType } from '@/lib/entity'
+import { AssetDisplay, AssetType } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { cn } from '@/lib/utils'
+import DuplicateWarningTab from './components/tabs/DuplicateWarningTab'
 
 export const AddAssetModalContext = createContext<{
   assetPath?: string
   setAssetPath: (path: string) => void
+
+  duplicateWarningItems: AssetDisplay[]
+  setDuplicateWarningItems: (items: AssetDisplay[]) => void
 }>({
   setAssetPath: () => {},
+
+  duplicateWarningItems: [],
+  setDuplicateWarningItems: () => {},
 })
 
 type Props = {
@@ -28,6 +35,9 @@ type Props = {
 const AddAssetModal = ({ className }: Props) => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
+  const [duplicateWarningItems, setDuplicateWarningItems] = useState<
+    AssetDisplay[]
+  >([])
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const formSchema = z.object({
@@ -56,6 +66,8 @@ const AddAssetModal = ({ className }: Props) => {
   const contextValue = {
     assetPath,
     setAssetPath,
+    duplicateWarningItems,
+    setDuplicateWarningItems,
   }
 
   const clearForm = () => {
@@ -110,6 +122,7 @@ const AddAssetModal = ({ className }: Props) => {
           <AddAssetModalContext.Provider value={contextValue}>
             <SelectorTab setTab={setTab} />
             <BoothInputTab form={form} setTab={setTab} />
+            <DuplicateWarningTab setTab={setTab} />
             <AssetTypeSelectorTab form={form} setTab={setTab} />
             <ManualInputTab
               form={form}

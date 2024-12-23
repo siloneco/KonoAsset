@@ -11,7 +11,11 @@ import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
 import { ChangeEvent, useContext, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { AssetType, FetchAssetDescriptionFromBoothResult } from '@/lib/entity'
+import {
+  AssetDisplay,
+  AssetType,
+  FetchAssetDescriptionFromBoothResult,
+} from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
@@ -34,7 +38,8 @@ const BoothInputTab = ({ form, setTab }: Props) => {
   const [boothItemId, setBoothItemId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
 
-  const { assetPath } = useContext(AddAssetModalContext)
+  const { assetPath, setDuplicateWarningItems } =
+    useContext(AddAssetModalContext)
 
   const backToSelect = () => {
     setTab('selector')
@@ -42,6 +47,10 @@ const BoothInputTab = ({ form, setTab }: Props) => {
 
   const moveToNextTab = () => {
     setTab('asset-type-selector')
+  }
+
+  const moveToDuplicationWarning = () => {
+    setTab('duplicate-warning')
   }
 
   const getAssetDescriptionFromBooth = async () => {
@@ -67,7 +76,18 @@ const BoothInputTab = ({ form, setTab }: Props) => {
           result.estimated_asset_type ?? AssetType.Avatar,
         )
 
-        moveToNextTab()
+        const duplicationCheck: AssetDisplay[] = await invoke(
+          'get_asset_displays_by_booth_id',
+          { boothItemId },
+        )
+
+        if (duplicationCheck.length <= 0) {
+          moveToNextTab()
+          return
+        }
+
+        setDuplicateWarningItems(duplicationCheck)
+        moveToDuplicationWarning()
       } else {
         console.error(result.error_message)
       }

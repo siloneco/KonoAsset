@@ -385,6 +385,70 @@ pub fn get_filtered_asset_ids(
 }
 
 #[tauri::command]
+pub fn get_asset_displays_by_booth_id(
+    basic_store: State<'_, StoreProvider>,
+    booth_item_id: u64,
+) -> Vec<AssetDisplay> {
+    let mut result = Vec::new();
+
+    basic_store
+        .get_avatar_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            if asset.description.booth_item_id == Some(booth_item_id) {
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::Avatar,
+                    asset.description.title.clone(),
+                    asset.description.author.clone(),
+                    asset.description.image_src.clone(),
+                    asset.description.booth_item_id,
+                    asset.description.published_at,
+                ));
+            }
+        });
+
+    basic_store
+        .get_avatar_related_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            if asset.description.booth_item_id == Some(booth_item_id) {
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::AvatarRelated,
+                    asset.description.title.clone(),
+                    asset.description.author.clone(),
+                    asset.description.image_src.clone(),
+                    asset.description.booth_item_id,
+                    asset.description.published_at,
+                ));
+            }
+        });
+
+    basic_store
+        .get_world_store()
+        .get_assets()
+        .iter()
+        .for_each(|asset| {
+            if asset.description.booth_item_id == Some(booth_item_id) {
+                result.push(AssetDisplay::create(
+                    asset.id,
+                    AssetType::World,
+                    asset.description.title.clone(),
+                    asset.description.author.clone(),
+                    asset.description.image_src.clone(),
+                    asset.description.booth_item_id,
+                    asset.description.published_at,
+                ));
+            }
+        });
+
+    result
+}
+
+#[tauri::command]
 pub fn copy_image_file_to_images(
     basic_store: State<'_, StoreProvider>,
     path: String,
