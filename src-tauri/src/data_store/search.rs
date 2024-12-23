@@ -1,3 +1,4 @@
+use kanaria::{string::UCSStr, utils::ConvertTarget};
 use uuid::Uuid;
 
 use crate::definitions::{
@@ -179,30 +180,35 @@ pub fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
 }
 
 fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> bool {
-    texts
-        .iter()
-        .map(|text| text.to_ascii_lowercase())
-        .all(|text| {
-            return // タイトルに含まれているか
-        description
-            .title
-            .to_ascii_lowercase()
-            .contains(&text) ||
-        // 作者名に含まれているか
-        description
-            .author
-            .to_ascii_lowercase()
-            .contains(&text) ||
-        // タグに含まれているか
-        description
-            .tags
-            .iter()
-            .any(|tag| tag.to_ascii_lowercase().contains(&text));
-        })
+    texts.iter().map(|text| unify_text(text)).all(|text| {
+        return
+            // タイトルに含まれているか
+            contains_text(&description.title.to_ascii_lowercase(), &text) ||
+            // 作者名に含まれているか
+            contains_text(&description.author.to_ascii_lowercase(), &text) ||
+            // タグに含まれているか
+            description
+                .tags
+                .iter()
+                .any(|tag| contains_text(tag, &text));
+    })
 }
 
 fn split_by_space(text: &str) -> Vec<&str> {
     text.split_whitespace().collect()
+}
+
+fn contains_text(t1: &str, hiragana_text: &str) -> bool {
+    unify_text(t1).contains(hiragana_text)
+}
+
+fn unify_text(text: &str) -> String {
+    UCSStr::from_str(text)
+        .hiragana()
+        .narrow(ConvertTarget::NUMBER)
+        .narrow(ConvertTarget::ALPHABET)
+        .to_string()
+        .to_ascii_lowercase()
 }
 
 #[cfg(test)]
@@ -221,7 +227,7 @@ mod tests {
             title: "これはアセットのタイトルです".to_string(),
             author: "これは制作者の名前です".to_string(),
             image_src: None,
-            tags: vec!["タグ1".to_string(), "タグ2".to_string()],
+            tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
             booth_url: None,
             booth_item_id: None,
             created_at: chrono::Local::now().timestamp_millis(),
@@ -232,6 +238,12 @@ mod tests {
         assert_eq!(check_text_contains(&description, &vec!["制作者"]), true);
         assert_eq!(check_text_contains(&description, &vec!["タグ1"]), true);
         assert_eq!(check_text_contains(&description, &vec!["タグ2"]), true);
+
+        // ひらがなとカタカナを区別しない
+        assert_eq!(check_text_contains(&description, &vec!["あせっと"]), true);
+        // 全角数字と半角数字、全角アルファベットと半角アルファベットを区別しない
+        assert_eq!(check_text_contains(&description, &vec!["たぐ１"]), true);
+        assert_eq!(check_text_contains(&description, &vec!["Ｔａｇ"]), true);
 
         assert_eq!(check_text_contains(&description, &vec!["タグ3"]), false);
         assert_eq!(
