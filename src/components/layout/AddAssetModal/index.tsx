@@ -94,6 +94,11 @@ const AddAssetModal = ({ className }: Props) => {
     if (event.payload.type == 'drop') {
       const filepath = event.payload.paths[0]
 
+      // 文字をドラッグアンドドロップしようとするとundefinedになる
+      if (filepath === undefined) {
+        return
+      }
+
       setAssetPath(filepath)
       setDialogOpen(true)
       setTab('booth-input')
