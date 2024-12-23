@@ -6,8 +6,9 @@ import { MoreButton } from '../MoreButton'
 import { useAssetCard } from './hook'
 import AssetBadge from '@/components/part/AssetBadge'
 import { Label } from '@/components/ui/label'
-import { RefObject } from 'react'
+import { RefObject, useContext } from 'react'
 import SquareImage from '@/components/model/SquareImage'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
   asset: AssetDisplay
@@ -16,6 +17,7 @@ type Props = {
 
 const AssetCard = ({ asset, ref }: Props) => {
   const { openInFileManager, deleteAsset } = useAssetCard({ asset })
+  const { setAssetType } = useContext(PersistentContext)
 
   return (
     <Card className="w-full bg-card m-1" ref={ref}>
@@ -25,7 +27,11 @@ const AssetCard = ({ asset, ref }: Props) => {
             assetType={asset.asset_type}
             path={asset.image_src ?? undefined}
           />
-          <AssetBadge type={asset.asset_type} className="mt-3" />
+          <AssetBadge
+            type={asset.asset_type}
+            className="mt-3 select-none cursor-pointer"
+            onClick={() => setAssetType(asset.asset_type)}
+          />
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
             {asset.title}
           </CardTitle>

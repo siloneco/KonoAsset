@@ -58,8 +58,12 @@ const AddAssetModal = ({ className }: Props) => {
       assetType: AssetType.Avatar,
       title: '',
       author: '',
+      image_src: null,
+      booth_item_id: null,
       tags: [],
       category: '',
+      supportedAvatars: [],
+      published_at: null,
     },
   })
 

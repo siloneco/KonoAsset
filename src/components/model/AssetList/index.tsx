@@ -68,7 +68,7 @@ const AssetList = ({ className }: Props) => {
 
   useEffect(() => {
     if (scrollRef.current !== null) {
-      scrollRef.current!.scrollIntoView({
+      scrollRef.current.scrollIntoView({
         behavior: 'instant',
         block: 'center',
       })
