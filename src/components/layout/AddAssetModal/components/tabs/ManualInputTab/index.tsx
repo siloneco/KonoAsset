@@ -50,7 +50,10 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
       </DialogHeader>
       <div className="my-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(submit, (e) => console.error(e))}
+            className="space-y-4"
+          >
             <div className="flex flex-row space-x-6">
               <div className="w-1/3">
                 <SquareImage
