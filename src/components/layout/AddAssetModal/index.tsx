@@ -60,6 +60,7 @@ const AddAssetModal = ({ className }: Props) => {
       author: '',
       tags: [],
       category: '',
+      supportedAvatars: [],
     },
   })
 
