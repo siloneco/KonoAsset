@@ -12,7 +12,7 @@ import { Moon, Sun, X } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AssetType } from '@/lib/entity'
 import WorldAssetFilter from './layout/WorldAssetFilter'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
@@ -51,6 +51,21 @@ const MainSidebar = () => {
     setTheme?.((theme) => (theme === 'dark' ? 'light' : 'dark'))
   }
 
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'f' && inputRef.current) {
+        inputRef.current.focus()
+        event.preventDefault()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -80,6 +95,7 @@ const MainSidebar = () => {
                     className="mt-1"
                     value={textFilter}
                     onChange={(e) => setTextFilter(e.target.value)}
+                    ref={inputRef}
                   />
                   {textFilter && (
                     <X
