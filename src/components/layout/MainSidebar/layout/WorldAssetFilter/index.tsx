@@ -9,13 +9,10 @@ const WorldAssetFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
-  const categoryValues: Option[] | undefined =
-    categoryFilter.length === 0
-      ? undefined
-      : categoryFilter.map((category) => ({
-          value: category,
-          label: category,
-        }))
+  const categoryValues: Option[] = categoryFilter.map((category) => ({
+    value: category,
+    label: category,
+  }))
 
   const updateCategoriesAndTags = async () => {
     setCategoryCandidates(await fetchAllCategories())

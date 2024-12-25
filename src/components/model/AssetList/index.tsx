@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { FilterRequest } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
@@ -9,11 +9,20 @@ import AssetCard from './components/AssetCard'
 
 type Props = {
   className?: string
+
+  matchedAssetIDs: string[]
+  setMatchedAssetIDs: (uuidList: string[]) => void
+  filterEnforced: boolean
+  setFilterEnforced: (filterEnforced: boolean) => void
 }
 
-const AssetList = ({ className }: Props) => {
-  const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
-  const [filterEnforced, setFilterEnforced] = useState(false)
+const AssetList = ({
+  className,
+  matchedAssetIDs,
+  setMatchedAssetIDs,
+  filterEnforced,
+  setFilterEnforced,
+}: Props) => {
   const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
   const {

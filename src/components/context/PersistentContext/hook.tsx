@@ -24,6 +24,14 @@ export const usePersistentContext = (): ReturnProps => {
 
   const [editingAssetID, setEditingAssetID] = useState<string | null>(null)
 
+  const clearFilters = () => {
+    setTextFilter('')
+    setAssetType('all')
+    setCategoryFilter([])
+    setTagFilter([])
+    setSupportedAvatarFilter([])
+  }
+
   const persistentContextValue: PersistentContextType = {
     sortBy: sortBy,
     setSortBy: setSortBy,
@@ -48,6 +56,8 @@ export const usePersistentContext = (): ReturnProps => {
     setSupportedAvatarFilter,
     supportedAvatarFilterMatchType,
     setSupportedAvatarFilterMatchType,
+
+    clearFilters,
 
     editingAssetID,
     setEditingAssetID,

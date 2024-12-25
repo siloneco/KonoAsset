@@ -8,84 +8,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { AssetType } from '@/lib/entity'
 import { cn } from '@/lib/utils'
 import { useContext } from 'react'
 import { convertToSelectID, handleSortByChange } from './logic'
+import { AssetContext } from '@/components/context/AssetContext'
+import { Button } from '@/components/ui/button'
 
 type Props = {
   className?: string
+  displayAssetCount?: number
 }
 
-const NavBar = ({ className }: Props) => {
-  const {
-    sortBy,
-    setSortBy,
-    reverseOrder,
-    setReverseOrder,
-    assetType,
-    textFilter,
-    categoryFilter,
-    supportedAvatarFilter,
-    tagFilter,
-  } = useContext(PersistentContext)
+const NavBar = ({ className, displayAssetCount }: Props) => {
+  const { sortBy, setSortBy, reverseOrder, setReverseOrder, clearFilters } =
+    useContext(PersistentContext)
+  const { assetDisplaySortedList } = useContext(AssetContext)
 
-  let assetTypeDisplay
-
-  if (assetType === AssetType.Avatar) {
-    assetTypeDisplay = 'アバター'
-  } else if (assetType === AssetType.AvatarRelated) {
-    assetTypeDisplay = 'アバター関連'
-  } else if (assetType === AssetType.World) {
-    assetTypeDisplay = 'ワールド'
-  }
+  const totalAssetCount = assetDisplaySortedList.length
+  const showingCount = displayAssetCount ?? totalAssetCount
 
   return (
     <div className={cn('p-4', className)}>
       <div className="flex flex-row w-full">
         <div className="w-full">
-          <Card className="p-3 pl-4 min-h-14 grid grid-cols-2 xl:grid-cols-4">
-            {assetType !== 'all' && (
-              <div className="my-auto">
-                <span className="text-foreground/70">タイプ: </span>
-                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
-                  {assetTypeDisplay}
-                </span>
-              </div>
-            )}
-            {textFilter !== '' && (
-              <div className="my-auto">
-                <span className="text-foreground/70">文字検索: </span>
-                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
-                  {textFilter}
-                </span>
-              </div>
-            )}
-            {assetType !== AssetType.Avatar && categoryFilter.length > 0 && (
-              <div className="my-auto">
-                <span className="text-foreground/70">カテゴリ: </span>
-                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
-                  {categoryFilter.length}件
-                </span>
-              </div>
-            )}
-            {(assetType === AssetType.AvatarRelated || assetType === 'all') &&
-              supportedAvatarFilter.length > 0 && (
-                <div className="my-auto">
-                  <span className="text-foreground/70">対応アバター: </span>
-                  <span className="bg-primary text-primary-foreground px-2 rounded-lg">
-                    {supportedAvatarFilter.length}件
-                  </span>
-                </div>
+          <Card className="min-h-10 flex items-center">
+            <div className="lg:w-28" />
+            <div className="my-auto ml-4 lg:mx-auto">
+              <span className="text-foreground/70">
+                {totalAssetCount}個のアセットのうち
+              </span>
+              <span className="text-card-foreground font-bold px-2 rounded-lg">
+                {showingCount}個
+              </span>
+              <span className="text-foreground/70">を表示中</span>
+            </div>
+            <div className="w-28 ml-auto mr-2">
+              {totalAssetCount !== showingCount && (
+                <Button
+                  className="h-8"
+                  variant={'outline'}
+                  onClick={clearFilters}
+                >
+                  フィルタをクリア
+                </Button>
               )}
-            {tagFilter.length > 0 && (
-              <div className="my-auto">
-                <span className="text-foreground/70">タグ: </span>
-                <span className="bg-primary text-primary-foreground px-2 rounded-lg">
-                  {tagFilter.length}件
-                </span>
-              </div>
-            )}
+            </div>
           </Card>
         </div>
         <div className="w-fit mx-2 flex items-center">

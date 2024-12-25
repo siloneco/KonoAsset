@@ -8,7 +8,7 @@ import {
 import TypeSelector from '../../model/TypeSelector'
 import AvatarRelatedAssetFilter from './layout/AvatarRelatedAssetFilter'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, X } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -34,13 +34,10 @@ const MainSidebar = () => {
   } = useContext(PersistentContext)
 
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
-  const tagValues: Option[] | undefined =
-    tagFilter.length === 0
-      ? undefined
-      : tagFilter.map((tag) => ({
-          value: tag,
-          label: tag,
-        }))
+  const tagValues: Option[] = tagFilter.map((tag) => ({
+    value: tag,
+    label: tag,
+  }))
 
   const updateCategoriesAndTags = async () => {
     setTagCandidates(await fetchAllTags())
@@ -77,12 +74,23 @@ const MainSidebar = () => {
             <SidebarGroupContent className="p-2">
               <div className="mb-4">
                 <Label>テキストで検索</Label>
-                <Input
-                  placeholder="キーワードを入力..."
-                  className="mt-1"
-                  value={textFilter}
-                  onChange={(e) => setTextFilter(e.target.value)}
-                />
+                <div className="relative w-full max-w-sm">
+                  <Input
+                    placeholder="キーワードを入力..."
+                    className="mt-1"
+                    value={textFilter}
+                    onChange={(e) => setTextFilter(e.target.value)}
+                  />
+                  {textFilter && (
+                    <X
+                      size={24}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 mr-2 cursor-pointer"
+                      onClick={() => {
+                        setTextFilter('')
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               <Label>アセットタイプ</Label>
               <TypeSelector />
