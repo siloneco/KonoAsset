@@ -1,18 +1,5 @@
 import { AssetDisplay, CheckForUpdateResult, SortBy } from '@/lib/entity'
 import { invoke } from '@tauri-apps/api/core'
-import { Event } from '@tauri-apps/api/event'
-import { DragDropEvent } from '@tauri-apps/api/webview'
-
-export const onFileDrop = (
-  event: Event<DragDropEvent>,
-  setDragAndHover: (isDragAndHover: boolean) => void,
-) => {
-  if (event.payload.type == 'enter' || event.payload.type == 'over') {
-    setDragAndHover(true)
-  } else {
-    setDragAndHover(false)
-  }
-}
 
 export const refreshAssets = async (
   sortBy: SortBy,

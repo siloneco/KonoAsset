@@ -7,7 +7,11 @@ export const onFileDrop = (
   event: Event<DragDropEvent>,
   setDragAndHover: (isDragAndHover: boolean) => void,
 ) => {
-  if (event.payload.type == 'enter' || event.payload.type == 'over') {
+  if (event.payload.type == 'over') {
+    return
+  }
+
+  if (event.payload.type == 'enter') {
     setDragAndHover(true)
   } else {
     setDragAndHover(false)

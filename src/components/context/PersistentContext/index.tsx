@@ -27,6 +27,8 @@ export type PersistentContextType = {
   supportedAvatarFilterMatchType: MatchType
   setSupportedAvatarFilterMatchType: (matchType: MatchType) => void
 
+  clearFilters: () => void
+
   editingAssetID: string | null
   setEditingAssetID: (assetID: string | null) => void
 }
@@ -55,6 +57,8 @@ export const PersistentContext = createContext<PersistentContextType>({
   setSupportedAvatarFilter: () => {},
   supportedAvatarFilterMatchType: MatchType.OR,
   setSupportedAvatarFilterMatchType: () => {},
+
+  clearFilters: () => {},
 
   editingAssetID: null,
   setEditingAssetID: () => {},

@@ -23,7 +23,7 @@ const DuplicateWarningTab = ({ setTab }: Props) => {
   }
 
   const moveToNextTab = () => {
-    setTab('manual-input')
+    setTab('asset-type-selector')
   }
 
   return (

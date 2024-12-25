@@ -20,20 +20,16 @@ const AvatarRelatedAssetFilter = () => {
     setSupportedAvatarFilterMatchType,
   } = useContext(PersistentContext)
 
-  const categoryValues: Option[] | undefined =
-    categoryFilter.length === 0
-      ? undefined
-      : categoryFilter.map((category) => ({
-          value: category,
-          label: category,
-        }))
-  const supportedAvatarValues: Option[] | undefined =
-    supportedAvatarFilter.length === 0
-      ? undefined
-      : supportedAvatarFilter.map((avatar) => ({
-          value: avatar,
-          label: avatar,
-        }))
+  const categoryValues: Option[] = categoryFilter.map((category) => ({
+    value: category,
+    label: category,
+  }))
+  const supportedAvatarValues: Option[] = supportedAvatarFilter.map(
+    (avatar) => ({
+      value: avatar,
+      label: avatar,
+    }),
+  )
 
   const updateCandidates = async () => {
     setSupportedAvatarCandidates(await fetchAllSupportedAvatars())

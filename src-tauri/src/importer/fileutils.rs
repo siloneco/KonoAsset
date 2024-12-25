@@ -1,5 +1,7 @@
 use std::{error::Error, fs, path::PathBuf};
 
+use zip_extensions::zip_extract;
+
 use crate::booth::image_saver;
 
 pub async fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
@@ -48,7 +50,18 @@ pub fn import_asset(
 
         copy_dir(src_import_asset_path, &new_destination)?;
     } else {
-        copy_file(src_import_asset_path, &new_destination)?;
+        let extension = src_import_asset_path.extension().unwrap();
+        if extension == "zip" {
+            new_destination.pop();
+
+            let result = extract_zip(src_import_asset_path, &new_destination);
+            return match result {
+                Ok(_) => Ok(()),
+                Err(e) => Err(e.into()),
+            };
+        } else {
+            copy_file(src_import_asset_path, &new_destination)?;
+        }
     }
     Ok(())
 }
@@ -69,5 +82,15 @@ fn copy_dir(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
 
 fn copy_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
     fs::copy(src, dest)?;
+    Ok(())
+}
+
+fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
+    let result = zip_extract(src, dest);
+
+    if result.is_err() {
+        return Err(result.err().unwrap().to_string());
+    }
+
     Ok(())
 }

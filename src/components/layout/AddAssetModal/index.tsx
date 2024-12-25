@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
 import { Tabs } from '@/components/ui/tabs'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import SelectorTab from './components/tabs/SelectorTab'
 import BoothInputTab from './components/tabs/BoothInputTab'
 import ManualInputTab from './components/tabs/ManualInputTab'
@@ -94,11 +94,29 @@ const AddAssetModal = ({ className }: Props) => {
     if (event.payload.type == 'drop') {
       const filepath = event.payload.paths[0]
 
+      // 文字をドラッグアンドドロップしようとするとundefinedになる
+      if (filepath === undefined) {
+        return
+      }
+
       setAssetPath(filepath)
       setDialogOpen(true)
       setTab('booth-input')
     }
   })
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'n') {
+        setDialogOpen(true)
+        event.preventDefault()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
