@@ -67,7 +67,7 @@ const MainSidebar = () => {
   }, [])
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="none" className="w-80 border-r-2">
       <SidebarContent>
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center">
