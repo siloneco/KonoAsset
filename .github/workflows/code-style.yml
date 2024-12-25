@@ -4,6 +4,8 @@ on:
     paths-ignore:
       - "**.md"
       - "renovate.json"
+    branches-ignore:
+      - "main"
   pull_request:
     paths-ignore:
       - "**.md"

@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - "src-tauri/**"
+    branches-ignore:
+      - "main"
   pull_request:
     types:
       - reopened
