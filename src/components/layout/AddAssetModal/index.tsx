@@ -118,18 +118,19 @@ const AddAssetModal = ({ className }: Props) => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  useEffect(() => {
+    if (dialogOpen) {
+      clearForm()
+      setTab('selector')
+    }
+  }, [dialogOpen])
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <div className={cn('fixed right-24 bottom-[92px]', className)}>
           <div className="fixed w-16 h-16 rounded-full bg-background" />
-          <Button
-            className="fixed w-16 h-16 rounded-full [&_svg]:size-8"
-            onClick={() => {
-              clearForm()
-              setTab('selector')
-            }}
-          >
+          <Button className="fixed w-16 h-16 rounded-full [&_svg]:size-8">
             <Plus size={32} />
           </Button>
         </div>
