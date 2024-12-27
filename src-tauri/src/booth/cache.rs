@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
-use chrono::Local;
-
 use crate::definitions::entities::{AssetDescription, AssetType};
+use chrono::Local;
+use std::collections::HashMap;
 
 const EXPIRATION_SECONDS: i64 = 60;
 
@@ -23,13 +21,14 @@ impl BoothCache {
         if result.is_none() {
             return None;
         }
-        let result = result.unwrap();
 
+        let result = result.unwrap();
         if result.2 < Local::now().timestamp() {
             return None;
         }
 
-        Some((result.0.clone(), result.1.clone()))
+        let result = (result.0.clone(), result.1.clone());
+        Some(result)
     }
 
     pub fn insert(&mut self, id: u64, value: (AssetDescription, Option<AssetType>)) {

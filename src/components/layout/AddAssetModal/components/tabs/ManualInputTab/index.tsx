@@ -16,10 +16,9 @@ import {
 } from '@/components/ui/form'
 
 import { Loader2 } from 'lucide-react'
-import { AssetType } from '@/lib/entity'
 import AvatarLayout from './layout/AvatarLayout'
-import AvatarRelatedLayout from './layout/AvatarRelatedLayout'
-import WorldLayout from './layout/WorldLayout'
+import AvatarWearableLayout from './layout/AvatarWearableLayout'
+import WorldObjectLayout from './layout/WorldObjectLayout'
 import { useManualInputTabHooks } from './hook'
 import SquareImage from '@/components/model/SquareImage'
 import { AssetFormType } from '@/lib/form'
@@ -36,8 +35,8 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
     submit,
     submitting,
     assetType,
-    imageSrc,
-    setImageSrc,
+    imagePath,
+    setImagePath,
   } = useManualInputTabHooks({ form, setTab, setDialogOpen })
 
   return (
@@ -58,15 +57,15 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
               <div className="w-1/3">
                 <SquareImage
                   assetType={assetType}
-                  path={imageSrc ?? undefined}
-                  setPath={setImageSrc}
+                  path={imagePath ?? undefined}
+                  setPath={setImagePath}
                   selectable
                 />
               </div>
               <div className="w-2/3 space-y-6">
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>アセット名</FormLabel>
@@ -84,7 +83,7 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
                 />
                 <FormField
                   control={form.control}
-                  name="author"
+                  name="creator"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ショップ名</FormLabel>
@@ -103,14 +102,14 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
               </div>
             </div>
 
-            {assetType === AssetType.Avatar && (
+            {assetType === 'Avatar' && (
               <AvatarLayout form={form} submitting={submitting} />
             )}
-            {assetType === AssetType.AvatarRelated && (
-              <AvatarRelatedLayout form={form} submitting={submitting} />
+            {assetType === 'AvatarWearable' && (
+              <AvatarWearableLayout form={form} submitting={submitting} />
             )}
-            {assetType === AssetType.World && (
-              <WorldLayout form={form} submitting={submitting} />
+            {assetType === 'WorldObject' && (
+              <WorldObjectLayout form={form} submitting={submitting} />
             )}
 
             <div className="w-full flex justify-between">

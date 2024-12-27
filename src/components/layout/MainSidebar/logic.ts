@@ -1,10 +1,15 @@
 import { Option } from '@/components/ui/multi-select'
-import { invoke } from '@tauri-apps/api/core'
+import { commands } from '@/lib/bindings'
 
 export const fetchAllTags = async (): Promise<Option[]> => {
-  const tags: string[] = await invoke('get_all_asset_tags')
+  const result = await commands.getAllAssetTags()
 
-  return tags.map((tag) => {
+  if (result.status === 'error') {
+    console.error(result.error)
+    return []
+  }
+
+  return result.data.map((tag) => {
     return { label: tag, value: tag }
   })
 }

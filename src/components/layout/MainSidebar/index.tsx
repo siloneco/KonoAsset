@@ -6,15 +6,14 @@ import {
 } from '@/components/ui/sidebar'
 
 import TypeSelector from '../../model/TypeSelector'
-import AvatarRelatedAssetFilter from './layout/AvatarRelatedAssetFilter'
+import AvatarWearableFilter from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun, X } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { AssetType } from '@/lib/entity'
-import WorldAssetFilter from './layout/WorldAssetFilter'
+import WorldObjectFilter from './layout/WorldObjectFilter'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 import { Option } from '@/components/ui/multi-select'
 import { fetchAllTags } from './logic'
@@ -67,7 +66,7 @@ const MainSidebar = () => {
   }, [])
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="none" className="w-80 border-r-2">
       <SidebarContent>
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center">
@@ -110,11 +109,10 @@ const MainSidebar = () => {
               </div>
               <Label>アセットタイプ</Label>
               <TypeSelector />
-              {(assetType === 'all' ||
-                assetType === AssetType.AvatarRelated) && (
-                <AvatarRelatedAssetFilter />
+              {(assetType === 'All' || assetType === 'AvatarWearable') && (
+                <AvatarWearableFilter />
               )}
-              {assetType === AssetType.World && <WorldAssetFilter />}
+              {assetType === 'WorldObject' && <WorldObjectFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
                   label="タグ"

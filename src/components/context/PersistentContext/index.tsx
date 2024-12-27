@@ -1,6 +1,6 @@
-import { AssetType, MatchType, SortBy } from '@/lib/entity'
 import { createContext, FC } from 'react'
 import { usePersistentContext } from './hook'
+import { AssetType, MatchType, SortBy } from '@/lib/bindings'
 
 export type PersistentContextType = {
   sortBy: SortBy
@@ -11,8 +11,8 @@ export type PersistentContextType = {
   textFilter: string
   setTextFilter: (filter: string) => void
 
-  assetType: AssetType | 'all'
-  setAssetType: (type: AssetType | 'all') => void
+  assetType: AssetType | 'All'
+  setAssetType: (type: AssetType | 'All') => void
 
   categoryFilter: string[]
   setCategoryFilter: (filter: string[]) => void
@@ -34,7 +34,7 @@ export type PersistentContextType = {
 }
 
 export const PersistentContext = createContext<PersistentContextType>({
-  sortBy: SortBy.Title,
+  sortBy: 'CreatedAt',
   setSortBy: () => {},
   reverseOrder: false,
   setReverseOrder: () => {},
@@ -42,7 +42,7 @@ export const PersistentContext = createContext<PersistentContextType>({
   textFilter: '',
   setTextFilter: () => {},
 
-  assetType: 'all',
+  assetType: 'All',
   setAssetType: () => {},
 
   categoryFilter: [],
@@ -50,12 +50,12 @@ export const PersistentContext = createContext<PersistentContextType>({
 
   tagFilter: [],
   setTagFilter: () => {},
-  tagFilterMatchType: MatchType.OR,
+  tagFilterMatchType: 'OR',
   setTagFilterMatchType: () => {},
 
   supportedAvatarFilter: [],
   setSupportedAvatarFilter: () => {},
-  supportedAvatarFilterMatchType: MatchType.OR,
+  supportedAvatarFilterMatchType: 'OR',
   setSupportedAvatarFilterMatchType: () => {},
 
   clearFilters: () => {},

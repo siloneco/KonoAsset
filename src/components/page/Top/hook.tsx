@@ -1,5 +1,4 @@
 import { AssetContextType } from '@/components/context/AssetContext'
-import { AssetDisplay } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useState, useEffect, useContext } from 'react'
 import {
@@ -13,6 +12,7 @@ import { useToast } from '@/hooks/use-toast'
 import { buttonVariants } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { AssetSummary } from '@/lib/bindings'
 
 type ReturnProps = {
   assetContextValue: AssetContextType
@@ -22,7 +22,7 @@ type ReturnProps = {
 export const useTopPage = (): ReturnProps => {
   const { sortBy } = useContext(PersistentContext)
   const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
-    AssetDisplay[]
+    AssetSummary[]
   >([])
 
   const [isDragAndHover, setDragAndHover] = useState(false)

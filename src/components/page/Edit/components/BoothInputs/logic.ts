@@ -1,9 +1,5 @@
-import {
-  AssetDescription,
-  FetchAssetDescriptionFromBoothResult,
-} from '@/lib/entity'
+import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
-import { invoke } from '@tauri-apps/api/core'
 import console from 'console'
 
 type Props = {
@@ -11,19 +7,16 @@ type Props = {
   form: AssetFormType
 }
 export const getAssetDescriptionFromBooth = async ({ id, form }: Props) => {
-  const result: FetchAssetDescriptionFromBoothResult = await invoke(
-    'get_asset_description_from_booth',
-    { boothItemId: id },
-  )
+  const result = await commands.getAssetDescriptionFromBooth(id)
 
-  if (result.success) {
-    const description: AssetDescription =
-      result.asset_description as AssetDescription
-    form.setValue('title', description.title)
-    form.setValue('author', description.author)
-    form.setValue('image_src', description.image_src)
-    form.setValue('published_at', description.published_at)
-  } else {
-    console.error(result.error_message)
+  if (result.status === 'error') {
+    console.error(result.error)
+    return
   }
+
+  const description = result.data.description
+  form.setValue('name', description.name)
+  form.setValue('creator', description.creator)
+  form.setValue('imagePath', description.imagePath)
+  form.setValue('publishedAt', description.publishedAt)
 }

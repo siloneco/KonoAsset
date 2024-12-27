@@ -1,7 +1,7 @@
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { Label } from '@/components/ui/label'
-import { MatchType } from '@/lib/entity'
 import { useMultiFilterItemSelector } from './hook'
+import { MatchType } from '@/lib/bindings'
 
 type Props = {
   label: string

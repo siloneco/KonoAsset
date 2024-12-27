@@ -19,7 +19,7 @@ type Props = {
 }
 
 const BoothInputs = ({ form, disabled }: Props) => {
-  const boothIdValue = form.watch('booth_item_id')
+  const boothIdValue = form.watch('boothItemId')
 
   const defaultBoothUrlInputValue =
     boothIdValue === null ? '' : convertToBoothURL(boothIdValue)
@@ -48,10 +48,10 @@ const BoothInputs = ({ form, disabled }: Props) => {
     setBoothUrlInput(url)
 
     const extractIdResult = extractBoothItemId(url)
-    if (extractIdResult.isSuccess()) {
-      form.setValue('booth_item_id', extractIdResult.value)
+    if (extractIdResult.status === 'ok') {
+      form.setValue('boothItemId', extractIdResult.data)
     } else {
-      form.setValue('booth_item_id', null)
+      form.setValue('boothItemId', null)
     }
   }
 
@@ -59,7 +59,7 @@ const BoothInputs = ({ form, disabled }: Props) => {
     <div className="w-full my-8 mx-auto max-w-[600px]">
       <FormField
         control={form.control}
-        name="booth_item_id"
+        name="boothItemId"
         render={() => {
           return (
             <FormItem>

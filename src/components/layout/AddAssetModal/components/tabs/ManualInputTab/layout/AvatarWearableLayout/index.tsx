@@ -9,8 +9,8 @@ import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 import { Separator } from '@/components/ui/separator'
 import TextInputSelect from '@/components/ui/text-input-select'
+import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
-import { invoke } from '@tauri-apps/api/core'
 import { useEffect, useState } from 'react'
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
   submitting: boolean
 }
 
-const AvatarRelatedLayout = ({ form, submitting }: Props) => {
+const AvatarWearableLayout = ({ form, submitting }: Props) => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -26,9 +26,14 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchSupportedAvatars = async () => {
-    const result: string[] = await invoke('get_all_supported_avatar_values')
+    const result = await commands.getAllSupportedAvatarValues()
 
-    const options = result.map((value) => {
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    const options = result.data.map((value) => {
       return { label: value, value }
     })
 
@@ -36,13 +41,25 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
   }
 
   const fetchExistingCategories = async () => {
-    const result: string[] = await invoke('get_avatar_related_categories')
-    setCategoryCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getAvatarWearableCategories()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setCategoryCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   const fetchTagCandidates = async () => {
-    const result: string[] = await invoke('get_all_asset_tags')
-    setTagCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getAllAssetTags()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setTagCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {
@@ -168,4 +185,4 @@ const AvatarRelatedLayout = ({ form, submitting }: Props) => {
   )
 }
 
-export default AvatarRelatedLayout
+export default AvatarWearableLayout

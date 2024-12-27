@@ -5,21 +5,20 @@ use uuid::Uuid;
 use crate::{
     data_store::provider::StoreProvider,
     definitions::{
-        entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
+        entities::{Avatar, AvatarWearable, WorldObject},
         import_request::{
-            AvatarAssetImportRequest, AvatarAssetImportResult, AvatarRelatedAssetImportRequest,
-            AvatarRelatedAssetImportResult, WorldAssetImportRequest, WorldAssetImportResult,
+            AvatarImportRequest, AvatarWearableImportRequest, WorldObjectImportRequest,
         },
     },
 };
 
 use super::fileutils::{self, execute_image_fixation};
 
-pub async fn import_avatar_asset(
+pub async fn import_avatar(
     basic_store: &StoreProvider,
-    request: AvatarAssetImportRequest,
-) -> AvatarAssetImportResult {
-    let image = &request.pre_asset.description.image_src;
+    request: AvatarImportRequest,
+) -> Result<Avatar, String> {
+    let image = &request.pre_asset.description.image_path;
 
     let mut request = request.clone();
     if image.is_some() {
@@ -30,35 +29,30 @@ pub async fn import_avatar_asset(
         let image_fixation_result =
             execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
-        if let Err(error) = image_fixation_result {
-            return AvatarAssetImportResult {
-                success: false,
-                asset: None,
-                error_message: Some(error),
-            };
+        if image_fixation_result.is_err() {
+            return Err(format!(
+                "Failed to import avatar: {}",
+                image_fixation_result.err().unwrap()
+            ));
         }
 
         if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_src =
+            request.pre_asset.description.image_path =
                 Some(new_image_path.to_str().unwrap().to_string());
         }
     }
 
-    let asset = AvatarAsset::create(request.pre_asset.description);
+    let asset = Avatar::create(request.pre_asset.description);
     let result = basic_store
         .get_avatar_store()
         .add_asset_and_save(asset.clone())
         .await;
 
-    if result.is_err() {
-        return AvatarAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
+    if let Err(err) = result {
+        return Err(format!("Failed to import avatar: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.file_or_dir_absolute_path);
+    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
     let mut destination = basic_store.app_data_dir();
 
     destination.push("data");
@@ -72,32 +66,24 @@ pub async fn import_avatar_asset(
             .delete_asset_and_save(asset.id)
             .await;
 
-        return AvatarAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
-                    "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            }),
-        };
+        return Err(match delete_asset_result {
+            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+            Err(e) => format!(
+                "Failed to import asset and also rollback failed: {}, {}",
+                result.err().unwrap(),
+                e
+            ),
+        });
     }
 
-    AvatarAssetImportResult {
-        success: true,
-        asset: Some(asset),
-        error_message: None,
-    }
+    Ok(asset)
 }
 
-pub async fn import_avatar_related_asset(
+pub async fn import_avatar_wearable(
     basic_store: &StoreProvider,
-    request: AvatarRelatedAssetImportRequest,
-) -> AvatarRelatedAssetImportResult {
-    let image = &request.pre_asset.description.image_src;
+    request: AvatarWearableImportRequest,
+) -> Result<AvatarWearable, String> {
+    let image = &request.pre_asset.description.image_path;
 
     let mut request = request.clone();
     if image.is_some() {
@@ -109,38 +95,30 @@ pub async fn import_avatar_related_asset(
             execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
         if let Err(error) = image_fixation_result {
-            return AvatarRelatedAssetImportResult {
-                success: false,
-                asset: None,
-                error_message: Some(error),
-            };
+            return Err(format!("Failed to import avatar wearable: {}", error));
         }
 
         if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_src =
+            request.pre_asset.description.image_path =
                 Some(new_image_path.to_str().unwrap().to_string());
         }
     }
 
-    let asset = AvatarRelatedAsset::create(
+    let asset = AvatarWearable::create(
         request.pre_asset.description,
         request.pre_asset.category,
         request.pre_asset.supported_avatars,
     );
     let result = basic_store
-        .get_avatar_related_store()
+        .get_avatar_wearable_store()
         .add_asset_and_save(asset.clone())
         .await;
 
-    if result.is_err() {
-        return AvatarRelatedAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
+    if let Err(err) = result {
+        return Err(format!("Failed to import avatar wearable: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.file_or_dir_absolute_path);
+    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
     let mut destination = basic_store.app_data_dir();
 
     destination.push("data");
@@ -150,36 +128,28 @@ pub async fn import_avatar_related_asset(
 
     if result.is_err() {
         let delete_asset_result = basic_store
-            .get_avatar_related_store()
+            .get_avatar_wearable_store()
             .delete_asset_and_save(asset.id)
             .await;
 
-        return AvatarRelatedAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
-                    "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            }),
-        };
+        return Err(match delete_asset_result {
+            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+            Err(e) => format!(
+                "Failed to import asset and also rollback failed: {}, {}",
+                result.err().unwrap(),
+                e
+            ),
+        });
     }
 
-    AvatarRelatedAssetImportResult {
-        success: true,
-        asset: Some(asset),
-        error_message: None,
-    }
+    Ok(asset)
 }
 
-pub async fn import_world_asset(
+pub async fn import_world_object(
     basic_store: &StoreProvider,
-    request: WorldAssetImportRequest,
-) -> WorldAssetImportResult {
-    let image = &request.pre_asset.description.image_src;
+    request: WorldObjectImportRequest,
+) -> Result<WorldObject, String> {
+    let image = &request.pre_asset.description.image_path;
 
     let mut request = request.clone();
     if image.is_some() {
@@ -191,34 +161,26 @@ pub async fn import_world_asset(
             execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
 
         if let Err(error) = image_fixation_result {
-            return WorldAssetImportResult {
-                success: false,
-                asset: None,
-                error_message: Some(error),
-            };
+            return Err(format!("Failed to import world object: {}", error));
         }
 
         if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_src =
+            request.pre_asset.description.image_path =
                 Some(new_image_path.to_str().unwrap().to_string());
         }
     }
 
-    let asset = WorldAsset::create(request.pre_asset.description, request.pre_asset.category);
+    let asset = WorldObject::create(request.pre_asset.description, request.pre_asset.category);
     let result = basic_store
-        .get_world_store()
+        .get_world_object_store()
         .add_asset_and_save(asset.clone())
         .await;
 
-    if result.is_err() {
-        return WorldAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(result.err().unwrap().to_string()),
-        };
+    if let Err(err) = result {
+        return Err(format!("Failed to import world object: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.file_or_dir_absolute_path);
+    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
     let mut destination = basic_store.app_data_dir();
 
     destination.push("data");
@@ -228,29 +190,21 @@ pub async fn import_world_asset(
 
     if result.is_err() {
         let delete_asset_result = basic_store
-            .get_world_store()
+            .get_world_object_store()
             .delete_asset_and_save(asset.id)
             .await;
 
-        return WorldAssetImportResult {
-            success: false,
-            asset: None,
-            error_message: Some(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
-                    "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            }),
-        };
+        return Err(match delete_asset_result {
+            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+            Err(e) => format!(
+                "Failed to import asset and also rollback failed: {}, {}",
+                result.err().unwrap(),
+                e
+            ),
+        });
     }
 
-    WorldAssetImportResult {
-        success: true,
-        asset: Some(asset),
-        error_message: None,
-    }
+    Ok(asset)
 }
 
 fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {

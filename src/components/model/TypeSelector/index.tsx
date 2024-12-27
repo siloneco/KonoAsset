@@ -1,35 +1,48 @@
 import { RadioGroup } from '@/components/ui/radio-group'
 import { useContext } from 'react'
-import { AssetType } from '@/lib/entity'
 import { Separator } from '@/components/ui/separator'
 import TypeSelectorRadioItem from './components/RadioItem'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { AssetType } from '@/lib/bindings'
 
 const TypeSelector = () => {
   const { assetType, setAssetType } = useContext(PersistentContext)
 
+  const onValueChange = (value: string) => {
+    if (
+      value === 'All' ||
+      value === 'Avatar' ||
+      value === 'AvatarWearable' ||
+      value === 'WorldObject'
+    ) {
+      setAssetType(value)
+    } else {
+      setAssetType('All')
+    }
+  }
+
   return (
     <RadioGroup
-      defaultValue="all"
+      defaultValue="All"
       className="space-y-1 mt-3"
-      onValueChange={(v) => setAssetType(v as AssetType)}
+      onValueChange={onValueChange}
       value={assetType}
     >
-      <TypeSelectorRadioItem id="r1" value="all" text="すべて表示" />
+      <TypeSelectorRadioItem id="r1" value="All" text="すべて表示" />
       <Separator />
       <TypeSelectorRadioItem
         id="r2"
-        value={AssetType.Avatar as string}
+        value={'Avatar' as AssetType}
         text="アバター素体"
       />
       <TypeSelectorRadioItem
         id="r3"
-        value={AssetType.AvatarRelated as string}
+        value={'AvatarWearable' as AssetType}
         text="アバター関連アセット"
       />
       <TypeSelectorRadioItem
         id="r4"
-        value={AssetType.World as string}
+        value={'WorldObject' as AssetType}
         text="ワールドアセット"
       />
     </RadioGroup>

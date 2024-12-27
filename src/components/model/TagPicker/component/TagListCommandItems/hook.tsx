@@ -2,17 +2,17 @@ import { KeyboardEvent, useState } from 'react'
 
 type Props = {
   sortedAllTags: string[]
-  setSortedAllTags: (_sortedAllTags: string[]) => void
+  setSortedAllTags: (sortedAllTags: string[]) => void
   sortedSelectedTags: string[]
-  setSortedSelectedTags: (_selectedTags: string[]) => void
+  setSortedSelectedTags: (selectedTags: string[]) => void
 }
 
 type ReturnProps = {
   newTagValue: string
-  setNewTagValue: (_newTagValue: string) => void
+  setNewTagValue: (newTagValue: string) => void
   creatingTag: boolean
   handleKeyDownForCreatingTagInput: (
-    _event: KeyboardEvent<HTMLInputElement>,
+    event: KeyboardEvent<HTMLInputElement>,
   ) => Promise<void>
 }
 

@@ -1,9 +1,9 @@
-import { invoke } from '@tauri-apps/api/core'
+import { commands } from '@/lib/bindings'
 
 type ToggleTagSelectingProps = {
   tag: string
   sortedSelectedTags: string[]
-  setSortedSelectedTags: (_selectedTags: string[]) => void
+  setSortedSelectedTags: (selectedTags: string[]) => void
 }
 
 export const toggleTagSelecting = ({
@@ -19,5 +19,12 @@ export const toggleTagSelecting = ({
 }
 
 export const getAllAvailableTags = async (): Promise<string[]> => {
-  return (await invoke('get_all_asset_tags')) as string[]
+  const result = await commands.getAllAssetTags()
+
+  if (result.status === 'error') {
+    console.error(result.error)
+    return []
+  }
+
+  return result.data
 }

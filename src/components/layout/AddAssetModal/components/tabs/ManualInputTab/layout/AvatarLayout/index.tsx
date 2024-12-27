@@ -6,8 +6,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
-import { invoke } from '@tauri-apps/api/core'
 
 import { useEffect, useState } from 'react'
 
@@ -20,8 +20,14 @@ const AvatarLayout = ({ form, submitting }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {
-    const result: string[] = await invoke('get_all_asset_tags')
-    setTagCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getAllAssetTags()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setTagCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {

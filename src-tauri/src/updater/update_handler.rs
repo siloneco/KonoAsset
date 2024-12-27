@@ -73,9 +73,9 @@ impl UpdateHandler {
         self.update_available
     }
 
-    pub fn update_version(&self) -> Option<&str> {
-        self.update_version.as_deref()
-    }
+    // pub fn update_version(&self) -> Option<&str> {
+    //     self.update_version.as_deref()
+    // }
 
     pub async fn show_notification(&self) -> bool {
         *self.show_notification.lock().await

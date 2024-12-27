@@ -7,9 +7,9 @@ import TagCheckIcon from '../TagCheckIcon'
 
 type Props = {
   sortedAllTags: string[]
-  setSortedAllTags: (_tags: string[]) => void
+  setSortedAllTags: (tags: string[]) => void
   sortedSelectedTags: string[]
-  setSortedSelectedTags: (_tags: string[]) => void
+  setSortedSelectedTags: (tags: string[]) => void
 }
 
 const TagListCommandItems: FC<Props> = ({

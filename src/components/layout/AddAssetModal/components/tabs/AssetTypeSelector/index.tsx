@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/dialog'
 import { TabsContent } from '@/components/ui/tabs'
 import SelectTypeButton from './selector/SelectTypeButton'
-import { AssetType } from '@/lib/entity'
 import { AssetFormType } from '@/lib/form'
 
 type Props = {
@@ -38,23 +37,23 @@ const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
         <SelectTypeButton
           text="アバター素体"
           onClick={() => {
-            form.setValue('assetType', AssetType.Avatar)
+            form.setValue('assetType', 'Avatar')
           }}
-          selected={assetType === AssetType.Avatar}
+          selected={assetType === 'Avatar'}
         />
         <SelectTypeButton
           text="アバター関連 (服 / 髪 / アクセサリ / ギミック等)"
           onClick={() => {
-            form.setValue('assetType', AssetType.AvatarRelated)
+            form.setValue('assetType', 'AvatarWearable')
           }}
-          selected={assetType === AssetType.AvatarRelated}
+          selected={assetType === 'AvatarWearable'}
         />
         <SelectTypeButton
           text="ワールドアセット"
           onClick={() => {
-            form.setValue('assetType', AssetType.World)
+            form.setValue('assetType', 'WorldObject')
           }}
-          selected={assetType === AssetType.World}
+          selected={assetType === 'WorldObject'}
         />
       </div>
       <DialogFooter>

@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils'
 
 type Props = {
   tags: string[]
-  setTags: (_tags: string[]) => void
+  setTags: (tags: string[]) => void
   disabled?: boolean
   className?: string
 }

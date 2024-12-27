@@ -4,10 +4,9 @@ import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { AssetFormType } from '@/lib/form'
-import { AssetType, DirectoryOpenResult } from '@/lib/entity'
 import { ToastAction } from '@/components/ui/toast'
 import { buttonVariants } from '@/components/ui/button'
-import { invoke } from '@tauri-apps/api/core'
+import { AssetType, commands } from '@/lib/bindings'
 
 export type Props = {
   form: AssetFormType
@@ -20,8 +19,8 @@ type ReturnProps = {
   submit: () => void
   submitting: boolean
   assetType: AssetType
-  imageSrc: string | null
-  setImageSrc: (path: string | null) => void
+  imagePath: string | null
+  setImagePath: (path: string | null) => void
 }
 
 export const useManualInputTabHooks = ({
@@ -46,25 +45,25 @@ export const useManualInputTabHooks = ({
     setSubmitting(true)
 
     try {
-      const preAsset = createPreAsset({
+      const preAssetResult = createPreAsset({
         assetType: form.getValues('assetType'),
         description: {
-          title: form.getValues('title'),
-          author: form.getValues('author'),
-          image_src: form.getValues('image_src'),
+          name: form.getValues('name'),
+          creator: form.getValues('creator'),
+          imagePath: form.getValues('imagePath'),
           tags: form.getValues('tags'),
-          booth_item_id: form.getValues('booth_item_id') ?? null,
-          created_at: new Date().getTime(),
-          published_at: form.getValues('published_at') ?? null,
+          boothItemId: form.getValues('boothItemId') ?? null,
+          createdAt: new Date().getTime(),
+          publishedAt: form.getValues('publishedAt') ?? null,
         },
         category: form.getValues('category'),
         supportedAvatars: form.getValues('supportedAvatars'),
       })
 
-      if (preAsset.isFailure()) {
+      if (preAssetResult.status === 'error') {
         toast({
           title: 'データのインポートに失敗しました',
-          description: preAsset.error.message,
+          description: preAssetResult.error,
         })
 
         return
@@ -73,31 +72,26 @@ export const useManualInputTabHooks = ({
       const result = await sendAssetImportRequest(
         form.getValues('assetType'),
         assetPath!,
-        preAsset.value,
+        preAssetResult.data,
       )
 
-      if (result.isSuccess()) {
+      if (result.status === 'ok') {
         await refreshAssets()
 
         const openInFileManager = async () => {
-          const openResult: DirectoryOpenResult = await invoke(
-            'open_in_file_manager',
-            {
-              id: result.value.id,
-            },
-          )
+          const openResult = await commands.openInFileManager(result.data.id)
 
-          if (!openResult.success) {
+          if (openResult.status === 'error') {
             toast({
               title: 'エラー',
-              description: openResult.error_message,
+              description: openResult.error,
             })
           }
         }
 
         toast({
           title: 'アセットが追加されました！',
-          description: form.getValues('title'),
+          description: form.getValues('name'),
           action: (
             <ToastAction
               altText="open"
@@ -115,7 +109,7 @@ export const useManualInputTabHooks = ({
 
       toast({
         title: 'データのインポートに失敗しました',
-        description: result.error.message,
+        description: result.error,
       })
     } finally {
       setSubmitting(false)
@@ -127,7 +121,7 @@ export const useManualInputTabHooks = ({
     submit,
     submitting,
     assetType: form.watch('assetType'),
-    imageSrc: form.watch('image_src'),
-    setImageSrc: (path: string | null) => form.setValue('image_src', path),
+    imagePath: form.watch('imagePath'),
+    setImagePath: (path: string | null) => form.setValue('imagePath', path),
   }
 }

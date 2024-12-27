@@ -1,12 +1,14 @@
 import { Option } from '@/components/ui/multi-select'
 import {
   AssetType,
-  AvatarAsset,
+  Avatar,
+  AvatarWearable,
+  commands,
   GetAssetResult,
-  SimpleResult,
-} from '@/lib/entity'
+  Result,
+  WorldObject,
+} from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
-import { invoke } from '@tauri-apps/api/core'
 
 type UpdateAssetProps = {
   id: string
@@ -16,134 +18,151 @@ type UpdateAssetProps = {
 export const updateAsset = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<SimpleResult> => {
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
   const assetType: AssetType = form.getValues('assetType')
 
-  if (assetType === AssetType.Avatar) {
-    return await updateAvatarAsset({ id, form })
-  } else if (assetType === AssetType.AvatarRelated) {
-    return await updateAvatarRelatedAsset({ id, form })
-  } else if (assetType === AssetType.World) {
-    return await updateWorldAsset({ id, form })
+  if (assetType === 'Avatar') {
+    return await updateAvatar({ id, form })
+  } else if (assetType === 'AvatarWearable') {
+    return await updateAvatarWearable({ id, form })
+  } else if (assetType === 'WorldObject') {
+    return await updateWorldObject({ id, form })
   }
 
-  return { success: false, error_message: 'Invalid asset type' }
+  return { status: 'error', error: 'Invalid asset type' }
 }
 
-const updateAvatarAsset = async ({
+const updateAvatar = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<SimpleResult> => {
-  const title = form.getValues('title')
-  const author = form.getValues('author')
-  const image_src = form.getValues('image_src')
-  const booth_item_id = form.getValues('booth_item_id')
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+  const name = form.getValues('name')
+  const creator = form.getValues('creator')
+  const imagePath = form.getValues('imagePath')
+  const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
-  const publishedAt = form.getValues('published_at')
+  const publishedAt = form.getValues('publishedAt')
 
-  const asset: AvatarAsset = {
+  const asset: Avatar = {
     id,
     description: {
-      title,
-      author,
-      image_src,
-      booth_item_id,
+      name,
+      creator,
+      imagePath,
+      boothItemId,
       tags,
-      created_at: 0, // unused on updating
-      published_at: publishedAt,
+      createdAt: 0, // unused on updating
+      publishedAt,
     },
   }
 
-  const result: SimpleResult = await invoke('update_avatar_asset', { asset })
-  return result
+  return await commands.updateAvatar(asset)
 }
 
-const updateAvatarRelatedAsset = async ({
+const updateAvatarWearable = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<SimpleResult> => {
-  const title = form.getValues('title')
-  const author = form.getValues('author')
-  const image_src = form.getValues('image_src')
-  const booth_item_id = form.getValues('booth_item_id')
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+  const name = form.getValues('name')
+  const creator = form.getValues('creator')
+  const imagePath = form.getValues('imagePath')
+  const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
   const supportedAvatars = form.getValues('supportedAvatars')
-  const publishedAt = form.getValues('published_at')
+  const publishedAt = form.getValues('publishedAt')
 
-  const asset = {
+  const asset: AvatarWearable = {
     id,
     description: {
-      title,
-      author,
-      image_src,
-      booth_item_id,
+      name,
+      creator,
+      imagePath,
+      boothItemId,
       tags,
-      created_at: 0, // unused on updating
-      published_at: publishedAt,
+      createdAt: 0, // unused on updating
+      publishedAt,
     },
     category,
-    supported_avatars: supportedAvatars,
+    supportedAvatars,
   }
 
-  const result: SimpleResult = await invoke('update_avatar_related_asset', {
-    asset,
-  })
-  return result
+  return await commands.updateAvatarWearable(asset)
 }
 
-const updateWorldAsset = async ({
+const updateWorldObject = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<SimpleResult> => {
-  const title = form.getValues('title')
-  const author = form.getValues('author')
-  const image_src = form.getValues('image_src')
-  const booth_item_id = form.getValues('booth_item_id')
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+  const name = form.getValues('name')
+  const creator = form.getValues('creator')
+  const imagePath = form.getValues('imagePath')
+  const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
-  const publishedAt = form.getValues('published_at')
+  const publishedAt = form.getValues('publishedAt')
 
-  const asset = {
+  const asset: WorldObject = {
     id,
     description: {
-      title,
-      author,
-      image_src,
-      booth_item_id,
+      name,
+      creator,
+      imagePath,
+      boothItemId,
       tags,
-      created_at: 0, // unused on updating
-      published_at: publishedAt,
+      createdAt: 0, // unused on updating
+      publishedAt,
     },
     category,
   }
 
-  const result: SimpleResult = await invoke('update_world_asset', { asset })
-  return result
+  return await commands.updateWorldObject(asset)
 }
 
 export const fetchSupportedAvatars = async (): Promise<Option[]> => {
-  const result: string[] = await invoke('get_all_supported_avatar_values')
+  const result = await commands.getAllSupportedAvatarValues()
 
-  const options = result.map((value) => {
+  if (result.status === 'error') {
+    console.log(result.error)
+    return []
+  }
+
+  const options = result.data.map((value) => {
     return { label: value, value }
   })
 
   return options
 }
 
-export const fetchAvatarRelatedCategoryCandidates = async () => {
-  const result: string[] = await invoke('get_avatar_related_categories')
-  return result
+export const fetchAvatarWearableCategoryCandidates = async (): Promise<
+  string[]
+> => {
+  const result = await commands.getAvatarWearableCategories()
+
+  if (result.status === 'error') {
+    console.error(result.error)
+    return []
+  }
+
+  return result.data
 }
 
-export const fetchWorldCategoryCandidates = async () => {
-  const result: string[] = await invoke('get_world_categories')
-  return result
+export const fetchWorldObjectCategoryCandidates = async (): Promise<
+  string[]
+> => {
+  const result = await commands.getWorldObjectCategories()
+
+  if (result.status === 'error') {
+    console.error(result.error)
+    return []
+  }
+
+  return result.data
 }
 
 export const fetchAssetInformation = async (
   id: string,
-): Promise<GetAssetResult> => {
-  return (await invoke('get_asset', { id })) as GetAssetResult
+): Promise<Result<GetAssetResult, string>> => {
+  const result = await commands.getAsset(id)
+  return result
 }

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge'
-import { AssetType } from '@/lib/entity'
+import { AssetType } from '@/lib/bindings'
 
 type Props = {
   className?: string
@@ -8,23 +8,23 @@ type Props = {
 }
 
 const AssetBadge = ({ type, className, onClick }: Props) => {
-  if (type === AssetType.Avatar) {
+  if (type === 'Avatar') {
     return (
       <Badge variant="avatar" className={className} onClick={onClick}>
         アバター素体
       </Badge>
     )
   }
-  if (type === AssetType.AvatarRelated) {
+  if (type === 'AvatarWearable') {
     return (
-      <Badge variant="avatarRelated" className={className} onClick={onClick}>
+      <Badge variant="avatarWearable" className={className} onClick={onClick}>
         アバター関連
       </Badge>
     )
   }
-  if (type === AssetType.World) {
+  if (type === 'WorldObject') {
     return (
-      <Badge variant="world" className={className} onClick={onClick}>
+      <Badge variant="worldObject" className={className} onClick={onClick}>
         ワールドアセット
       </Badge>
     )

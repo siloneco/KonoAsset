@@ -1,11 +1,10 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
-import { AssetDisplay, DirectoryOpenResult, SimpleResult } from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
+import { AssetSummary, commands } from '@/lib/bindings'
 import { useContext } from 'react'
 
 type Props = {
-  asset: AssetDisplay
+  asset: AssetSummary
 }
 
 type ReturnProps = {
@@ -18,24 +17,20 @@ export const useAssetCard = ({ asset }: Props): ReturnProps => {
   const { toast } = useToast()
 
   const openInFileManager = async () => {
-    const result: DirectoryOpenResult = await invoke('open_in_file_manager', {
-      id: asset.id,
-    })
+    const result = await commands.openInFileManager(asset.id)
 
-    if (!result.success) {
+    if (result.status === 'error') {
       toast({
         title: 'エラー',
-        description: result.error_message,
+        description: result.error,
       })
     }
   }
 
   const deleteAsset = async () => {
-    const result: SimpleResult = await invoke('request_asset_deletion', {
-      id: asset.id,
-    })
+    const result = await commands.requestAssetDeletion(asset.id)
 
-    if (result.success) {
+    if (result.status === 'ok') {
       // アセットを一覧から削除
       deleteAssetById(asset.id)
 
@@ -45,7 +40,7 @@ export const useAssetCard = ({ asset }: Props): ReturnProps => {
     } else {
       toast({
         title: '削除に失敗しました',
-        description: result.error_message,
+        description: result.error,
       })
     }
   }

@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
-import { AssetDisplay } from '@/lib/entity'
 import { Folder } from 'lucide-react'
 import { MoreButton } from '../MoreButton'
 import { useAssetCard } from './hook'
@@ -9,9 +8,10 @@ import { Label } from '@/components/ui/label'
 import { RefObject, useContext } from 'react'
 import SquareImage from '@/components/model/SquareImage'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { AssetSummary } from '@/lib/bindings'
 
 type Props = {
-  asset: AssetDisplay
+  asset: AssetSummary
   ref?: RefObject<HTMLDivElement | null>
 }
 
@@ -24,18 +24,18 @@ const AssetCard = ({ asset, ref }: Props) => {
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
           <SquareImage
-            assetType={asset.asset_type}
-            path={asset.image_src ?? undefined}
+            assetType={asset.assetType}
+            path={asset.imagePath ?? undefined}
           />
           <AssetBadge
-            type={asset.asset_type}
+            type={asset.assetType}
             className="mt-3 select-none cursor-pointer"
-            onClick={() => setAssetType(asset.asset_type)}
+            onClick={() => setAssetType(asset.assetType)}
           />
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
-            {asset.title}
+            {asset.name}
           </CardTitle>
-          <Label className="text-sm">{asset.author}</Label>
+          <Label className="text-sm">{asset.creator}</Label>
         </div>
         <div className="flex flex-row mt-2">
           <Button className="w-full mr-2" onClick={openInFileManager}>
@@ -45,7 +45,7 @@ const AssetCard = ({ asset, ref }: Props) => {
           <MoreButton
             id={asset.id}
             executeAssetDeletion={deleteAsset}
-            boothItemID={asset.booth_item_id ?? undefined}
+            boothItemID={asset.boothItemId ?? undefined}
           />
         </div>
       </CardContent>

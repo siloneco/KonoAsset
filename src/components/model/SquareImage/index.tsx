@@ -3,7 +3,7 @@ import { convertFileSrc } from '@tauri-apps/api/core'
 import { ImagePlus } from 'lucide-react'
 import { useImagePicker } from './hook'
 import { cn } from '@/lib/utils'
-import { AssetType } from '@/lib/entity'
+import { AssetType } from '@/lib/bindings'
 
 type Props = {
   assetType: AssetType
@@ -17,12 +17,12 @@ const ALT = 'Asset Image'
 
 const getDefaultImage = (assetType: AssetType) => {
   switch (assetType) {
-    case AssetType.Avatar:
+    case 'Avatar':
       return '/no-image/Avatar.png'
-    case AssetType.AvatarRelated:
-      return '/no-image/AvatarRelated.png'
-    case AssetType.World:
-      return '/no-image/World.png'
+    case 'AvatarWearable':
+      return '/no-image/AvatarWearable.png'
+    case 'WorldObject':
+      return '/no-image/WorldObject.png'
   }
 }
 

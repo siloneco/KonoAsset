@@ -3,38 +3,38 @@ use std::{fs, hash::Hash, path::PathBuf};
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
-use crate::definitions::{results::SimpleResult, traits::AssetTrait};
+use crate::definitions::traits::AssetTrait;
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
-pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> SimpleResult {
+pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, String> {
     let app_dir = provider.app_data_dir();
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await;
     if result.is_err() {
-        return SimpleResult::error(result.err().unwrap());
+        return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return SimpleResult::success();
+        return Ok(true);
     }
 
-    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_related_store(), id).await;
+    let result = delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await;
     if result.is_err() {
-        return SimpleResult::error(result.err().unwrap());
+        return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return SimpleResult::success();
+        return Ok(true);
     }
 
-    let result = delete_asset_from_store(&app_dir, &provider.get_world_store(), id).await;
+    let result = delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await;
     if result.is_err() {
-        return SimpleResult::error(result.err().unwrap());
+        return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return SimpleResult::success();
+        return Ok(true);
     }
 
-    SimpleResult::error("Asset not found".into())
+    Err("Asset not found".into())
 }
 
 async fn delete_asset_from_store<
@@ -73,7 +73,7 @@ async fn delete_asset_from_store<
         return Err("Failed to delete asset directory".into());
     }
 
-    let image = &asset.get_description().image_src;
+    let image = &asset.get_description().image_path;
 
     if image.is_none() {
         return Ok(true);
@@ -83,11 +83,11 @@ async fn delete_asset_from_store<
     delete_asset_image(app_dir, image.as_ref().unwrap())
 }
 
-pub fn delete_asset_image(app_dir: &PathBuf, image_src: &str) -> Result<bool, String> {
-    let mut images_path = app_dir.clone();
-    images_path.push("images");
+pub fn delete_asset_image(app_dir: &PathBuf, image_path: &str) -> Result<bool, String> {
+    let mut images_dir = app_dir.clone();
+    images_dir.push("images");
 
-    let images_path = images_path.canonicalize();
+    let images_path = images_dir.canonicalize();
     if images_path.is_err() {
         return Err(format!(
             "Failed to get images path: {:?}",
@@ -96,7 +96,7 @@ pub fn delete_asset_image(app_dir: &PathBuf, image_src: &str) -> Result<bool, St
     }
     let images_path = images_path.unwrap();
 
-    let path = PathBuf::from(image_src).canonicalize();
+    let path = PathBuf::from(image_path).canonicalize();
     if path.is_err() {
         return Err(format!("Failed to get image path: {:?}", path.err()));
     }

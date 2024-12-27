@@ -3,12 +3,12 @@ import { useEditPageHook } from './hook'
 import { Form } from '@/components/ui/form'
 import CommonInputs from './components/CommonInputs'
 import { Card, CardContent } from '@/components/ui/card'
-import AvatarRelatedInputs from './components/AvatarRelatedInputs'
-import { AssetType, GetAssetResult } from '@/lib/entity'
-import WorldInputs from './components/WorldInputs'
+import AvatarWearableInputs from './components/AvatarWearableInputs'
+import WorldObjectInputs from './components/WorldObjectInputs'
 import { Loader2 } from 'lucide-react'
 import BoothInputs from './components/BoothInputs'
 import { useNavigate } from '@tanstack/react-router'
+import { AssetType, GetAssetResult } from '@/lib/bindings'
 
 type Props = {
   id: string
@@ -22,8 +22,8 @@ const EditPage = ({ id, getAssetResult }: Props) => {
     submit,
     submitting,
     supportedAvatarCandidates,
-    avatarRelatedCategoryCandidates,
-    worldCategoryCandidates,
+    avatarWearableCategoryCandidates,
+    worldObjectCategoryCandidates,
   } = useEditPageHook({ id, getAssetResult })
 
   const assetType: AssetType = form.watch('assetType')
@@ -41,19 +41,19 @@ const EditPage = ({ id, getAssetResult }: Props) => {
               >
                 <BoothInputs form={form} disabled={submitting} />
                 <CommonInputs form={form} disabled={submitting} />
-                {assetType === AssetType.AvatarRelated && (
-                  <AvatarRelatedInputs
+                {assetType === 'AvatarWearable' && (
+                  <AvatarWearableInputs
                     form={form}
                     disabled={submitting}
                     supportedAvatarCandidates={supportedAvatarCandidates}
-                    categoryCandidates={avatarRelatedCategoryCandidates}
+                    categoryCandidates={avatarWearableCategoryCandidates}
                   />
                 )}
-                {assetType === AssetType.World && (
-                  <WorldInputs
+                {assetType === 'WorldObject' && (
+                  <WorldObjectInputs
                     form={form}
                     disabled={submitting}
-                    categoryCandidates={worldCategoryCandidates}
+                    categoryCandidates={worldObjectCategoryCandidates}
                   />
                 )}
                 <div className="mt-8 flex justify-between">

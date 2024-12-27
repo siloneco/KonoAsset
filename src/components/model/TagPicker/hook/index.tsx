@@ -3,7 +3,7 @@ import { getAllAvailableTags } from '../logic'
 
 type ReturnProps = {
   sortedAllTags: string[]
-  setSortedAllTags: (_tags: string[]) => void
+  setSortedAllTags: (tags: string[]) => void
 }
 
 export const useTagPicker = (): ReturnProps => {

@@ -1,4 +1,4 @@
-import { SortBy } from '@/lib/entity'
+import { SortBy } from '@/lib/bindings'
 
 type HandleSortByChangeProps = {
   value: string
@@ -12,36 +12,36 @@ export const handleSortByChange = ({
   setReverseOrder,
 }: HandleSortByChangeProps) => {
   switch (value) {
-    case 'created_at_desc':
-      setSortBy(SortBy.CreatedAt)
+    case 'CreatedAtDesc':
+      setSortBy('CreatedAt')
       setReverseOrder(true)
       break
-    case 'created_at_asc':
-      setSortBy(SortBy.CreatedAt)
+    case 'CreatedAtAsc':
+      setSortBy('CreatedAt')
       setReverseOrder(false)
       break
-    case 'title_asc':
-      setSortBy(SortBy.Title)
+    case 'NameAsc':
+      setSortBy('Name')
       setReverseOrder(false)
       break
-    case 'title_desc':
-      setSortBy(SortBy.Title)
+    case 'NameDesc':
+      setSortBy('Name')
       setReverseOrder(true)
       break
-    case 'author_asc':
-      setSortBy(SortBy.Author)
+    case 'CreatorAsc':
+      setSortBy('Creator')
       setReverseOrder(false)
       break
-    case 'author_desc':
-      setSortBy(SortBy.Author)
+    case 'CreatorDesc':
+      setSortBy('Creator')
       setReverseOrder(true)
       break
-    case 'published_at_desc':
-      setSortBy(SortBy.PublishedAt)
+    case 'PublishedAtDesc':
+      setSortBy('PublishedAt')
       setReverseOrder(true)
       break
-    case 'published_at_asc':
-      setSortBy(SortBy.PublishedAt)
+    case 'PublishedAtAsc':
+      setSortBy('PublishedAt')
       setReverseOrder(false)
       break
   }
@@ -49,13 +49,13 @@ export const handleSortByChange = ({
 
 export const convertToSelectID = (sortBy: SortBy, reverseOrder: boolean) => {
   switch (sortBy) {
-    case SortBy.CreatedAt:
-      return reverseOrder ? 'created_at_desc' : 'created_at_asc'
-    case SortBy.Title:
-      return reverseOrder ? 'title_desc' : 'title_asc'
-    case SortBy.Author:
-      return reverseOrder ? 'author_desc' : 'author_asc'
-    case SortBy.PublishedAt:
-      return reverseOrder ? 'published_at_desc' : 'published_at_asc'
+    case 'CreatedAt':
+      return reverseOrder ? 'CreatedAtDesc' : 'CreatedAtAsc'
+    case 'Name':
+      return reverseOrder ? 'NameDesc' : 'NameAsc'
+    case 'Creator':
+      return reverseOrder ? 'CreatorDesc' : 'CreatorAsc'
+    case 'PublishedAt':
+      return reverseOrder ? 'PublishedAtDesc' : 'PublishedAtAsc'
   }
 }
