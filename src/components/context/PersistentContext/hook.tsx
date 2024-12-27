@@ -1,32 +1,32 @@
-import { AssetType, MatchType, SortBy } from '@/lib/entity'
 import { useState } from 'react'
 import { PersistentContextType } from '.'
+import { AssetType, MatchType, SortBy } from '@/lib/bindings'
 
 type ReturnProps = {
   persistentContextValue: PersistentContextType
 }
 
 export const usePersistentContext = (): ReturnProps => {
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.CreatedAt)
+  const [sortBy, setSortBy] = useState<SortBy>('CreatedAt')
   const [reverseOrder, setReverseOrder] = useState(true)
 
   const [textFilter, setTextFilter] = useState('')
-  const [assetType, setAssetType] = useState<AssetType | 'all'>('all')
+  const [assetType, setAssetType] = useState<AssetType | 'All'>('All')
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [tagFilter, setTagFilter] = useState<string[]>([])
   const [supportedAvatarFilter, setSupportedAvatarFilter] = useState<string[]>(
     [],
   )
 
-  const [tagFilterMatchType, setTagFilterMatchType] = useState(MatchType.OR)
+  const [tagFilterMatchType, setTagFilterMatchType] = useState<MatchType>('OR')
   const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
-    useState(MatchType.OR)
+    useState<MatchType>('OR')
 
   const [editingAssetID, setEditingAssetID] = useState<string | null>(null)
 
   const clearFilters = () => {
     setTextFilter('')
-    setAssetType('all')
+    setAssetType('All')
     setCategoryFilter([])
     setTagFilter([])
     setSupportedAvatarFilter([])

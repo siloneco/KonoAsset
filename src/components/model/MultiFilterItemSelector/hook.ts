@@ -1,4 +1,4 @@
-import { MatchType } from '@/lib/entity'
+import { MatchType } from '@/lib/bindings'
 
 type Props = {
   matchType?: MatchType
@@ -14,7 +14,7 @@ export const useMultiFilterItemSelector = ({
   setMatchType,
 }: Props): ReturnProps => {
   const toggleMatchType = (matchType: MatchType) => {
-    return matchType === MatchType.AND ? MatchType.OR : MatchType.AND
+    return matchType === 'AND' ? 'OR' : 'AND'
   }
 
   const onMatchTypeClicked = () => {

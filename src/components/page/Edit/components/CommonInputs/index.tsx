@@ -9,9 +9,9 @@ import {
 import { Input } from '@/components/ui/input'
 import SquareImage from '@/components/model/SquareImage'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
-import { invoke } from '@tauri-apps/api/core'
 import { useState, useEffect } from 'react'
 import { AssetFormType } from '@/lib/form'
+import { commands } from '@/lib/bindings'
 
 type Props = {
   form: AssetFormType
@@ -22,8 +22,14 @@ const CommonInputs = ({ form, disabled }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {
-    const result: string[] = await invoke('get_all_asset_tags')
-    setTagCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getAllAssetTags()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setTagCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {
@@ -31,7 +37,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
   }, [])
 
   const assetType = form.watch('assetType')
-  const imageSrc = form.watch('image_src')
+  const imagePath = form.watch('imagePath')
   const tags = form.watch('tags')
 
   return (
@@ -39,15 +45,15 @@ const CommonInputs = ({ form, disabled }: Props) => {
       <div className="w-2/5">
         <SquareImage
           assetType={assetType}
-          path={imageSrc ?? undefined}
+          path={imagePath ?? undefined}
           selectable
-          setPath={(path) => form.setValue('image_src', path)}
+          setPath={(path) => form.setValue('imagePath', path)}
         />
       </div>
       <div className="w-3/5 space-y-2">
         <FormField
           control={form.control}
-          name="title"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>アセット名</FormLabel>
@@ -64,7 +70,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
         />
         <FormField
           control={form.control}
-          name="author"
+          name="creator"
           render={({ field }) => (
             <FormItem>
               <FormLabel>ショップ名</FormLabel>

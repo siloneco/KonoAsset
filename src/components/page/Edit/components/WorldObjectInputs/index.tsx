@@ -15,7 +15,7 @@ type Props = {
   categoryCandidates: Option[]
 }
 
-const WorldInputs = ({ form, disabled, categoryCandidates }: Props) => {
+const WorldObjectInputs = ({ form, disabled, categoryCandidates }: Props) => {
   const categoryValueAsStr = form.watch('category')
 
   const categoryValue: Option | undefined =
@@ -68,4 +68,4 @@ const WorldInputs = ({ form, disabled, categoryCandidates }: Props) => {
   )
 }
 
-export default WorldInputs
+export default WorldObjectInputs

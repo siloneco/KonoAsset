@@ -1,79 +1,81 @@
-import { AssetType, FilterRequest, MatchType } from '@/lib/entity'
+import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
 
 export const isFilterEnforced = (filterRequest: FilterRequest) => {
   return (
-    filterRequest.asset_type !== undefined ||
-    filterRequest.query !== undefined ||
+    filterRequest.assetType !== undefined ||
+    filterRequest.text !== undefined ||
     filterRequest.categories !== undefined ||
     filterRequest.tags !== undefined ||
-    filterRequest.supported_avatars !== undefined
+    filterRequest.supportedAvatars !== undefined
   )
 }
 
 type Props = {
-  assetType: AssetType | 'all'
-  query: string
+  assetType: AssetType | 'All'
+  text: string
   categories: string[]
   tags: string[]
   tagMatchType: MatchType
-  supported_avatars: string[]
+  supportedAvatars: string[]
   supportedAvatarMatchType: MatchType
 }
 
 export const createFilterRequest = ({
   assetType,
-  query,
+  text: query,
   categories,
   tags,
   tagMatchType,
-  supported_avatars,
+  supportedAvatars,
   supportedAvatarMatchType,
 }: Props): FilterRequest => {
-  let requestAssetType: AssetType | undefined
-  let requestQuery: string | undefined
-  let requestCategories: string[] | undefined
-  let requestTags: string[] | undefined
-  let requestSupportedAvatars: string[] | undefined
+  let requestAssetType: AssetType | null
+  let requestQuery: string | null
+  let requestCategories: string[] | null
+  let requestTags: string[] | null
+  let requestSupportedAvatars: string[] | null
 
-  if (assetType !== 'all') {
+  if (assetType !== 'All') {
     requestAssetType = assetType
   } else {
-    requestAssetType = undefined
+    requestAssetType = null
   }
 
   if (query.length > 0) {
     requestQuery = query
   } else {
-    requestQuery = undefined
+    requestQuery = null
   }
 
-  if (assetType !== AssetType.Avatar && categories.length > 0) {
+  if (assetType !== 'Avatar' && categories.length > 0) {
     requestCategories = categories
   } else {
-    requestCategories = undefined
+    requestCategories = null
   }
 
   if (tags.length > 0) {
     requestTags = tags
   } else {
-    requestTags = undefined
+    requestTags = null
   }
 
   const enableSupportedAvatarFilter =
-    assetType === AssetType.AvatarRelated || assetType === 'all'
-  if (enableSupportedAvatarFilter && supported_avatars.length > 0) {
-    requestSupportedAvatars = supported_avatars
+    assetType === 'AvatarWearable' || assetType === 'All'
+  if (enableSupportedAvatarFilter && supportedAvatars.length > 0) {
+    requestSupportedAvatars = supportedAvatars
   } else {
-    requestSupportedAvatars = undefined
+    requestSupportedAvatars = null
   }
 
-  return {
-    asset_type: requestAssetType,
-    query: requestQuery,
+  const filterReq: FilterRequest = {
+    assetType: requestAssetType,
+    text: requestQuery,
     categories: requestCategories,
     tags: requestTags,
-    tag_match_type: tagMatchType,
-    supported_avatars: requestSupportedAvatars,
-    supported_avatar_match_type: supportedAvatarMatchType,
+    tagMatchType: tagMatchType,
+    supportedAvatars: requestSupportedAvatars,
+    supportedAvatarMatchType: supportedAvatarMatchType,
   }
+
+  return filterReq
 }

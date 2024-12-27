@@ -9,28 +9,40 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import { invoke } from '@tauri-apps/api/core'
 import TextInputSelect from '@/components/ui/text-input-select'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { AssetFormType } from '@/lib/form'
+import { commands } from '@/lib/bindings'
 
 type Props = {
   form: AssetFormType
   submitting: boolean
 }
 
-const WorldLayout = ({ form, submitting }: Props) => {
+const WorldObjectLayout = ({ form, submitting }: Props) => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchExistingCategories = async () => {
-    const result: string[] = await invoke('get_world_categories')
-    setCategoryCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getWorldObjectCategories()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setCategoryCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   const fetchTagCandidates = async () => {
-    const result: string[] = await invoke('get_all_asset_tags')
-    setTagCandidates(result.map((value) => ({ label: value, value })))
+    const result = await commands.getAllAssetTags()
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setTagCandidates(result.data.map((value) => ({ label: value, value })))
   }
 
   useEffect(() => {
@@ -117,4 +129,4 @@ const WorldLayout = ({ form, submitting }: Props) => {
   )
 }
 
-export default WorldLayout
+export default WorldObjectLayout

@@ -61,27 +61,27 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
             onValueChange={(value) =>
               handleSortByChange({ value, setSortBy, setReverseOrder })
             }
-            defaultValue="created_at_desc"
+            defaultValue="CreatedAtDesc"
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="ソート設定" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="created_at_desc">
+                <SelectItem value="CreatedAtDesc">
                   追加順 (新しいものから)
                 </SelectItem>
-                <SelectItem value="created_at_asc">
+                <SelectItem value="CreatedAtAsc">
                   追加順 (古いものから)
                 </SelectItem>
-                <SelectItem value="title_asc">アセット名 (A-Z順)</SelectItem>
-                <SelectItem value="title_desc">アセット名 (Z-A順)</SelectItem>
-                <SelectItem value="author_asc">ショップ名 (A-Z順)</SelectItem>
-                <SelectItem value="author_desc">ショップ名 (Z-A順)</SelectItem>
-                <SelectItem value="published_at_desc">
+                <SelectItem value="NameAsc">アセット名 (A-Z順)</SelectItem>
+                <SelectItem value="NameDesc">アセット名 (Z-A順)</SelectItem>
+                <SelectItem value="CreatorAsc">ショップ名 (A-Z順)</SelectItem>
+                <SelectItem value="CreatorDesc">ショップ名 (Z-A順)</SelectItem>
+                <SelectItem value="PublishedAtDesc">
                   商品公開日 (新しいものから)
                 </SelectItem>
-                <SelectItem value="published_at_asc">
+                <SelectItem value="PublishedAtAsc">
                   商品公開日 (古いものから)
                 </SelectItem>
               </SelectGroup>

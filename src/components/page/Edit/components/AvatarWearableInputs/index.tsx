@@ -18,7 +18,7 @@ type Props = {
   categoryCandidates: Option[]
 }
 
-const AvatarRelatedInputs = ({
+const AvatarWearableInputs = ({
   form,
   disabled,
   supportedAvatarCandidates,
@@ -119,4 +119,4 @@ const AvatarRelatedInputs = ({
   )
 }
 
-export default AvatarRelatedInputs
+export default AvatarWearableInputs

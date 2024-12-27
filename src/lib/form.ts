@@ -1,16 +1,16 @@
 import { UseFormReturn } from 'react-hook-form'
-import { AssetType } from './entity'
+import { AssetType } from './bindings'
 
 export type AssetFormFields = {
   assetType: AssetType
-  title: string
-  author: string
-  image_src: string | null
-  booth_item_id: number | null
+  name: string
+  creator: string
+  imagePath: string | null
+  boothItemId: number | null
   tags: string[]
   category: string
   supportedAvatars: string[]
-  published_at: number | null
+  publishedAt: number | null
 }
 
 export type AssetFormType = UseFormReturn<

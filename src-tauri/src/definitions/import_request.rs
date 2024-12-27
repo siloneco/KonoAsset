@@ -1,45 +1,43 @@
-use serde::{Deserialize, Serialize};
+use super::entities::AssetDescription;
+use serde::Deserialize;
+use std::collections::BTreeSet;
 
-use super::{
-    entities::{AvatarAsset, AvatarRelatedAsset, WorldAsset},
-    pre::{PreAvatarAsset, PreAvatarRelatedAsset, PreWorldAsset},
-};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AvatarAssetImportRequest {
-    pub pre_asset: PreAvatarAsset,
-    pub file_or_dir_absolute_path: String,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+pub struct PreAvatar {
+    pub description: AssetDescription,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AvatarRelatedAssetImportRequest {
-    pub pre_asset: PreAvatarRelatedAsset,
-    pub file_or_dir_absolute_path: String,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct PreAvatarWearable {
+    pub description: AssetDescription,
+    pub category: String,
+    pub supported_avatars: BTreeSet<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct WorldAssetImportRequest {
-    pub pre_asset: PreWorldAsset,
-    pub file_or_dir_absolute_path: String,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+pub struct PreWorldObject {
+    pub description: AssetDescription,
+    pub category: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AvatarAssetImportResult {
-    pub success: bool,
-    pub asset: Option<AvatarAsset>,
-    pub error_message: Option<String>,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AvatarImportRequest {
+    pub pre_asset: PreAvatar,
+    pub absolute_path: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AvatarRelatedAssetImportResult {
-    pub success: bool,
-    pub asset: Option<AvatarRelatedAsset>,
-    pub error_message: Option<String>,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AvatarWearableImportRequest {
+    pub pre_asset: PreAvatarWearable,
+    pub absolute_path: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct WorldAssetImportResult {
-    pub success: bool,
-    pub asset: Option<WorldAsset>,
-    pub error_message: Option<String>,
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct WorldObjectImportRequest {
+    pub pre_asset: PreWorldObject,
+    pub absolute_path: String,
 }

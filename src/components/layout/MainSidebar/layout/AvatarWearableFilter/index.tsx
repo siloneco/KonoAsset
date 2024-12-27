@@ -5,7 +5,7 @@ import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 
-const AvatarRelatedAssetFilter = () => {
+const AvatarWearableFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -66,4 +66,4 @@ const AvatarRelatedAssetFilter = () => {
   )
 }
 
-export default AvatarRelatedAssetFilter
+export default AvatarWearableFilter

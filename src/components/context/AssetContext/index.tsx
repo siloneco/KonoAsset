@@ -1,9 +1,9 @@
+import { AssetSummary, AssetType } from '@/lib/bindings'
 import { createContext } from 'react'
-import { AssetDisplay, AssetType } from '@/lib/entity'
 
 export type AssetContextType = {
-  assetDisplaySortedList: AssetDisplay[]
-  setAssetDisplaySortedList: (assetDisplaySortedList: AssetDisplay[]) => void
+  assetDisplaySortedList: AssetSummary[]
+  setAssetDisplaySortedList: (assetDisplaySortedList: AssetSummary[]) => void
 
   deleteAssetById: (id: string) => void
 

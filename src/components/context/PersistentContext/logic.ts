@@ -1,26 +1,27 @@
-import { AssetDisplay, CheckForUpdateResult, SortBy } from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
+import { AssetSummary, commands, SortBy } from '@/lib/bindings'
 
 export const refreshAssets = async (
   sortBy: SortBy,
-  setAssetDisplaySortedList: (assets: AssetDisplay[]) => void,
+  setAssetDisplaySortedList: (assets: AssetSummary[]) => void,
 ) => {
-  const assets: AssetDisplay[] = await invoke('get_sorted_assets_for_display', {
-    sortBy: sortBy,
-  })
+  const result = await commands.getSortedAssetsForDisplay(sortBy)
 
-  setAssetDisplaySortedList(assets)
+  if (result.status === 'ok') {
+    setAssetDisplaySortedList(result.data)
+  } else {
+    console.error(result.error)
+  }
 }
 
 export const checkForUpdate = async (): Promise<boolean> => {
-  const result: CheckForUpdateResult = await invoke('check_for_update')
-  return result.success && result.update_available
+  const result = await commands.checkForUpdate()
+  return result.status === 'ok' && result.data
 }
 
 export const executeUpdate = async () => {
-  await invoke('execute_update')
+  await commands.executeUpdate()
 }
 
 export const dismissUpdate = async () => {
-  await invoke('do_not_notify_update')
+  await commands.doNotNotifyUpdate()
 }

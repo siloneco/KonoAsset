@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/core'
+import { commands } from '@/lib/bindings'
 import { downloadDir } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
 
@@ -27,12 +27,14 @@ export const useImagePicker = ({ setPath }: Props): ReturnProps => {
       return
     }
 
-    const result: string = await invoke('copy_image_file_to_images', {
-      path,
-      temporary: true,
-    })
+    const result = await commands.copyImageFileToImages(path, true)
 
-    setPath(result)
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setPath(result.data)
   }
 
   return {

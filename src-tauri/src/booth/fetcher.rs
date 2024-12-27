@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use chrono::{DateTime, Local};
+use chrono::DateTime;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -30,11 +30,11 @@ impl BoothFetcher {
         }
 
         let url = format!("https://booth.pm/ja/items/{}.json", id);
-        let response: BoothJson = get_reqwest_client().get(&url).send().await?.json().await?;
+        let response: BoothJsonSchema = get_reqwest_client().get(&url).send().await?.json().await?;
 
-        let title = response.name;
-        let author = response.shop.name;
-        let image_src = response.images.first().unwrap().original.clone();
+        let name = response.name;
+        let creator = response.shop.name;
+        let image_url = response.images.first().unwrap().original.clone();
         let published_at = DateTime::parse_from_rfc3339(&response.published_at)
             .unwrap()
             .timestamp_millis();
@@ -42,12 +42,12 @@ impl BoothFetcher {
         let mut path = images_dir;
         path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
 
-        let result = save_image_from_url(&image_src, &path).await;
+        let result = save_image_from_url(&image_url, &path).await;
         if result.is_err() {
             return Err(result.err().unwrap());
         }
 
-        let image_src = Some(path.to_str().unwrap().to_string());
+        let image_path = Some(path.to_str().unwrap().to_string());
 
         let estimated_asset_type = match response.category.id {
             208 //   3Dキャラクター
@@ -59,20 +59,20 @@ impl BoothFetcher {
             215 | // 3Dツール・システム
             216 | // 3Dモーション・アニメーション
             127 //   3Dモデル（その他）
-            => Some(AssetType::AvatarRelated),
+            => Some(AssetType::AvatarWearable),
             211 //   3D環境・ワールド
-            => Some(AssetType::World),
+            => Some(AssetType::WorldObject),
             _ => None,
         };
 
         let result = (
             AssetDescription::create(
-                title,
-                author,
-                image_src,
+                name,
+                creator,
+                image_path,
                 vec![],
                 Some(id),
-                Local::now().timestamp_millis(),
+                0,
                 Some(published_at),
             ),
             estimated_asset_type,
@@ -84,7 +84,7 @@ impl BoothFetcher {
 }
 
 #[derive(Deserialize)]
-struct BoothJson {
+struct BoothJsonSchema {
     name: String,
     shop: BoothShop,
     images: Vec<BoothPximg>,

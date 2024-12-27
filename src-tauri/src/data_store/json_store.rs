@@ -4,10 +4,7 @@ use serde::{de::DeserializeOwned, Serialize};
 use tauri::async_runtime::Mutex;
 use uuid::Uuid;
 
-use crate::{
-    booth::extractor::extract_booth_item_id_from_booth_url, definitions::traits::AssetTrait,
-    importer::execute_image_fixation,
-};
+use crate::{definitions::traits::AssetTrait, importer::execute_image_fixation};
 
 use super::delete::delete_asset_image;
 
@@ -31,7 +28,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
     }
 
-    pub async fn get_assets(&self) -> HashSet<T> {
+    pub async fn get_all(&self) -> HashSet<T> {
         self.assets.lock().await.clone()
     }
 
@@ -59,8 +56,6 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             return Err("Failed to open file".into());
         }
 
-        let mut require_save_flag = false;
-
         {
             let mut assets = self.assets.lock().await;
             let result: Result<HashSet<T>, serde_json::Error> =
@@ -70,32 +65,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
                 return Err("Failed to deserialize file".into());
             }
 
-            let deserialized = result.unwrap();
-            let mut result = HashSet::new();
-            deserialized.into_iter().for_each(|mut item| {
-                let url = item.get_description().booth_url.as_ref();
-
-                if url.is_some() {
-                    let item_id = extract_booth_item_id_from_booth_url(url.unwrap());
-
-                    if item_id.is_ok() {
-                        item.get_description_as_mut().booth_item_id = Some(item_id.unwrap());
-                        require_save_flag = true;
-                    }
-                }
-
-                result.insert(item);
-            });
-
-            *assets = result;
-        }
-
-        if require_save_flag {
-            let save_result = self.save().await;
-
-            if save_result.is_err() {
-                return Err(save_result.err().unwrap());
-            }
+            *assets = result.unwrap();
         }
 
         Ok(())
@@ -128,9 +98,9 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
 
             let old_asset = old_asset.unwrap();
 
-            if old_asset.get_description().image_src != asset.get_description().image_src {
-                let old_image = &old_asset.get_description().image_src;
-                let new_image = &asset.get_description().image_src;
+            if old_asset.get_description().image_path != asset.get_description().image_path {
+                let old_image = &old_asset.get_description().image_path;
+                let new_image = &asset.get_description().image_path;
 
                 if old_image.is_some() {
                     let delete_result =
@@ -157,7 +127,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
                     }
 
                     if result.unwrap() {
-                        asset.get_description_as_mut().image_src =
+                        asset.get_description_as_mut().image_path =
                             Some(path.to_str().unwrap().to_string());
                     }
                 }

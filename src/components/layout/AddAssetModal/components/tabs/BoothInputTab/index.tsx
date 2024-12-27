@@ -10,17 +10,11 @@ import { Label } from '@/components/ui/label'
 import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
 import { ChangeEvent, useContext, useState } from 'react'
-import { invoke } from '@tauri-apps/api/core'
-import {
-  AssetDescription,
-  AssetDisplay,
-  AssetType,
-  FetchAssetDescriptionFromBoothResult,
-} from '@/lib/entity'
 import { AddAssetModalContext } from '../../..'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
 import { extractBoothItemId } from '@/lib/utils'
+import { commands } from '@/lib/bindings'
 
 const shopBoothUrlRegex = /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+$/
 const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
@@ -61,40 +55,43 @@ const BoothInputTab = ({ form, setTab }: Props) => {
 
     try {
       setFetching(true)
-      const result: FetchAssetDescriptionFromBoothResult = await invoke(
-        'get_asset_description_from_booth',
-        { boothItemId },
-      )
 
-      if (result.success) {
-        const description: AssetDescription =
-          result.asset_description as AssetDescription
+      const result = await commands.getAssetDescriptionFromBooth(boothItemId)
 
-        form.setValue('title', description.title)
-        form.setValue('author', description.author)
-        form.setValue('image_src', description.image_src)
-        form.setValue('published_at', description.published_at)
-        form.setValue('booth_item_id', boothItemId)
-        form.setValue(
-          'assetType',
-          result.estimated_asset_type ?? AssetType.Avatar,
-        )
+      if (result.status === 'error') {
+        console.error(result.error)
+        return
+      }
 
-        const duplicationCheck: AssetDisplay[] = await invoke(
-          'get_asset_displays_by_booth_id',
-          { boothItemId },
-        )
+      const data = result.data
 
-        if (duplicationCheck.length <= 0) {
-          moveToNextTab()
+      const description = data.description
+
+      form.setValue('name', description.name)
+      form.setValue('creator', description.creator)
+      form.setValue('imagePath', description.imagePath)
+      form.setValue('publishedAt', description.publishedAt)
+      form.setValue('boothItemId', boothItemId)
+      form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')
+
+      const duplicationCheckResult =
+        await commands.getAssetDisplaysByBoothId(boothItemId)
+
+      if (duplicationCheckResult.status === 'ok') {
+        const duplicationCheckData = duplicationCheckResult.data
+
+        if (duplicationCheckData.length > 0) {
+          setDuplicateWarningItems(duplicationCheckData)
+          moveToDuplicationWarning()
           return
         }
-
-        setDuplicateWarningItems(duplicationCheck)
-        moveToDuplicationWarning()
-      } else {
-        console.error(result.error_message)
       }
+
+      if (duplicationCheckResult.status === 'error') {
+        console.error(duplicationCheckResult.error)
+      }
+
+      moveToNextTab()
     } finally {
       setFetching(false)
     }
@@ -105,8 +102,8 @@ const BoothInputTab = ({ form, setTab }: Props) => {
     setBoothUrlInput(url)
 
     const extractIdResult = extractBoothItemId(url)
-    if (extractIdResult.isSuccess()) {
-      setBoothItemId(extractIdResult.value)
+    if (extractIdResult.status === 'ok') {
+      setBoothItemId(extractIdResult.data)
     } else {
       setBoothItemId(null)
     }

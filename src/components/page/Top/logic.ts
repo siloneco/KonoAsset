@@ -1,5 +1,4 @@
-import { AssetDisplay, CheckForUpdateResult, SortBy } from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
+import { AssetSummary, commands, SortBy } from '@/lib/bindings'
 import { Event } from '@tauri-apps/api/event'
 import { DragDropEvent } from '@tauri-apps/api/webview'
 
@@ -20,24 +19,33 @@ export const onFileDrop = (
 
 export const refreshAssets = async (
   sortBy: SortBy,
-  setAssetDisplaySortedList: (assets: AssetDisplay[]) => void,
+  setAssetDisplaySortedList: (assets: AssetSummary[]) => void,
 ) => {
-  const assets: AssetDisplay[] = await invoke('get_sorted_assets_for_display', {
-    sortBy: sortBy,
-  })
+  const result = await commands.getSortedAssetsForDisplay(sortBy)
 
-  setAssetDisplaySortedList(assets)
+  if (result.status === 'error') {
+    console.error(result.error)
+    return
+  }
+
+  setAssetDisplaySortedList(result.data)
 }
 
 export const checkForUpdate = async (): Promise<boolean> => {
-  const result: CheckForUpdateResult = await invoke('check_for_update')
-  return result.success && result.update_available
+  const result = await commands.checkForUpdate()
+
+  if (result.status === 'error') {
+    console.error(result.error)
+    return false
+  }
+
+  return result.data
 }
 
 export const executeUpdate = async () => {
-  await invoke('execute_update')
+  await commands.executeUpdate()
 }
 
 export const dismissUpdate = async () => {
-  await invoke('do_not_notify_update')
+  await commands.doNotNotifyUpdate()
 }

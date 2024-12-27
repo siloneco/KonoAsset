@@ -5,7 +5,7 @@ import { fetchAllCategories } from './logic'
 import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 
-const WorldAssetFilter = () => {
+const WorldObjectFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
@@ -37,4 +37,4 @@ const WorldAssetFilter = () => {
   )
 }
 
-export default WorldAssetFilter
+export default WorldObjectFilter

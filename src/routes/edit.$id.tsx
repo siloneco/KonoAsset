@@ -1,11 +1,10 @@
 import EditPage from '@/components/page/Edit'
-import { GetAssetResult } from '@/lib/entity'
+import { commands } from '@/lib/bindings'
 import { createFileRoute } from '@tanstack/react-router'
-import { invoke } from '@tauri-apps/api/core'
 
 export const Route = createFileRoute('/edit/$id')({
   loader: async ({ params }) => {
-    return (await invoke('get_asset', { id: params.id })) as GetAssetResult
+    return await commands.getAsset(params.id)
   },
   // disable cache
   gcTime: 0,
@@ -14,7 +13,11 @@ export const Route = createFileRoute('/edit/$id')({
 
 function RouteComponent() {
   const { id } = Route.useParams()
-  const getAssetResult = Route.useLoaderData()
+  const result = Route.useLoaderData()
 
-  return <EditPage id={id} getAssetResult={getAssetResult} />
+  if (result.status === 'error') {
+    return <div>Error: {result.error}</div>
+  }
+
+  return <EditPage id={id} getAssetResult={result.data} />
 }

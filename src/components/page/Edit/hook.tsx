@@ -4,15 +4,15 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
-  fetchAvatarRelatedCategoryCandidates,
+  fetchAvatarWearableCategoryCandidates,
   fetchSupportedAvatars,
-  fetchWorldCategoryCandidates,
+  fetchWorldObjectCategoryCandidates,
   updateAsset,
 } from './logic'
-import { AssetType, GetAssetResult, SimpleResult } from '@/lib/entity'
 import { useToast } from '@/hooks/use-toast'
 import { useNavigate } from '@tanstack/react-router'
 import { AssetFormFields, AssetFormType } from '@/lib/form'
+import { AssetType, GetAssetResult } from '@/lib/bindings'
 
 type Props = {
   id: string
@@ -24,8 +24,8 @@ type ReturnProps = {
   submit: () => Promise<void>
   submitting: boolean
   supportedAvatarCandidates: Option[]
-  avatarRelatedCategoryCandidates: Option[]
-  worldCategoryCandidates: Option[]
+  avatarWearableCategoryCandidates: Option[]
+  worldObjectCategoryCandidates: Option[]
 }
 
 export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
@@ -34,24 +34,33 @@ export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
-  const [avatarRelatedCategoryCandidates, setAvatarRelatedCategoryCandidates] =
+  const [
+    avatarWearableCategoryCandidates,
+    setAvatarWearableCategoryCandidates,
+  ] = useState<Option[]>([])
+  const [worldObjectCategoryCandidates, setWorldObjectCategoryCandidates] =
     useState<Option[]>([])
-  const [worldCategoryCandidates, setWorldCategoryCandidates] = useState<
-    Option[]
-  >([])
 
   const navigate = useNavigate()
 
+  const assetTypeAvatar: AssetType = 'Avatar'
+  const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
+  const assetTypeWorldObject: AssetType = 'WorldObject'
+
   const formSchema = z.object({
-    assetType: z.nativeEnum(AssetType),
-    title: z.string().min(1),
-    author: z.string().min(1),
-    image_src: z.string().nullable(),
-    booth_item_id: z.number().nullable(),
+    assetType: z.union([
+      z.literal(assetTypeAvatar),
+      z.literal(assetTypeAvatarWearable),
+      z.literal(assetTypeWorldObject),
+    ]),
+    name: z.string().min(1),
+    creator: z.string().min(1),
+    imagePath: z.string().nullable(),
+    boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
-    published_at: z.number().nullable(),
+    publishedAt: z.number().nullable(),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,12 +71,12 @@ export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
   const submit = async () => {
     setSubmitting(true)
     try {
-      const result: SimpleResult = await updateAsset({ id, form })
+      const result = await updateAsset({ id, form })
 
-      if (!result.success) {
+      if (result.status === 'error') {
         toast({
           title: 'アップデートに失敗しました.',
-          description: result.error_message,
+          description: result.error,
         })
         return
       }
@@ -84,15 +93,16 @@ export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
   }
 
   const updateCategoryCandidates = async () => {
-    const avatarRelatedResult: string[] =
-      await fetchAvatarRelatedCategoryCandidates()
-    setAvatarRelatedCategoryCandidates(
-      avatarRelatedResult.map((value) => ({ label: value, value })),
+    const avatarWearableCategoryResult: string[] =
+      await fetchAvatarWearableCategoryCandidates()
+    setAvatarWearableCategoryCandidates(
+      avatarWearableCategoryResult.map((value) => ({ label: value, value })),
     )
 
-    const worldResult: string[] = await fetchWorldCategoryCandidates()
-    setWorldCategoryCandidates(
-      worldResult.map((value) => ({ label: value, value })),
+    const worldObjectCategoryResult: string[] =
+      await fetchWorldObjectCategoryCandidates()
+    setWorldObjectCategoryCandidates(
+      worldObjectCategoryResult.map((value) => ({ label: value, value })),
     )
   }
 
@@ -106,68 +116,71 @@ export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
     submit,
     submitting,
     supportedAvatarCandidates,
-    avatarRelatedCategoryCandidates,
-    worldCategoryCandidates,
+    avatarWearableCategoryCandidates,
+    worldObjectCategoryCandidates,
   }
 }
 
 const createDefaultValues = (result: GetAssetResult): AssetFormFields => {
-  if (result.avatar_asset !== undefined && result.avatar_asset !== null) {
-    const asset = result.avatar_asset
+  if (result.assetType === 'Avatar' && result.avatar !== null) {
+    const asset = result.avatar
 
     return {
-      assetType: AssetType.Avatar,
-      title: asset.description.title,
-      author: asset.description.author,
-      image_src: asset.description.image_src,
-      booth_item_id: asset.description.booth_item_id,
+      assetType: 'Avatar',
+      name: asset.description.name,
+      creator: asset.description.creator,
+      imagePath: asset.description.imagePath,
+      boothItemId: asset.description.boothItemId,
       tags: asset.description.tags,
       category: '',
       supportedAvatars: [],
-      published_at: asset.description.published_at,
+      publishedAt: asset.description.publishedAt,
     }
   } else if (
-    result.avatar_related_asset !== undefined &&
-    result.avatar_related_asset !== null
+    result.assetType === 'AvatarWearable' &&
+    result.avatarWearable !== null
   ) {
-    const asset = result.avatar_related_asset
+    const asset = result.avatarWearable
 
     return {
-      assetType: AssetType.AvatarRelated,
-      title: asset.description.title,
-      author: asset.description.author,
-      image_src: asset.description.image_src,
-      booth_item_id: asset.description.booth_item_id,
+      assetType: 'AvatarWearable',
+      name: asset.description.name,
+      creator: asset.description.creator,
+      imagePath: asset.description.imagePath,
+      boothItemId: asset.description.boothItemId,
       tags: asset.description.tags,
       category: asset.category,
-      supportedAvatars: asset.supported_avatars,
-      published_at: asset.description.published_at,
+      supportedAvatars: asset.supportedAvatars,
+      publishedAt: asset.description.publishedAt,
     }
-  } else if (result.world_asset !== undefined && result.world_asset !== null) {
-    const asset = result.world_asset
+  } else if (
+    result.assetType === 'WorldObject' &&
+    result.worldObject !== null
+  ) {
+    const asset = result.worldObject
 
     return {
-      assetType: AssetType.World,
-      title: asset.description.title,
-      author: asset.description.author,
-      image_src: asset.description.image_src,
-      booth_item_id: asset.description.booth_item_id,
+      assetType: 'WorldObject',
+      name: asset.description.name,
+      creator: asset.description.creator,
+      imagePath: asset.description.imagePath,
+      boothItemId: asset.description.boothItemId,
       tags: asset.description.tags,
       category: asset.category,
       supportedAvatars: [],
-      published_at: asset.description.published_at,
+      publishedAt: asset.description.publishedAt,
     }
   }
 
   return {
-    assetType: AssetType.Avatar,
-    title: '',
-    author: '',
-    image_src: '',
-    booth_item_id: null,
+    assetType: 'Avatar',
+    name: '',
+    creator: '',
+    imagePath: null,
+    boothItemId: null,
     tags: [],
     category: '',
     supportedAvatars: [],
-    published_at: null,
+    publishedAt: null,
   }
 }

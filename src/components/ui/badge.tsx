@@ -17,9 +17,9 @@ const badgeVariants = cva(
         outline: 'text-foreground',
         avatar:
           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        avatarRelated:
+        avatarWearable:
           'border-transparent bg-yellow-400 hover:bg-yellow-400/80 dark:bg-yellow-600 dark:hover:bg-yellow-600/80',
-        world:
+        worldObject:
           'border-transparent bg-sky-400 hover:bg-sky-400/80 dark:bg-sky-600 dark:hover:bg-sky-600/80',
       },
     },

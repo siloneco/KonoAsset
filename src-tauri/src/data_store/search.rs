@@ -8,47 +8,47 @@ use crate::definitions::{
 
 use super::provider::StoreProvider;
 
-pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid> {
+pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
     let mut results = Vec::new();
 
-    let query_texts: Option<Vec<&str>> = match &request.query {
-        Some(query) => Some(split_by_space(query)),
+    let text_filters: Option<Vec<&str>> = match &req.text {
+        Some(text) => Some(split_by_space(text)),
         None => None,
     };
 
-    if request.asset_type.is_none() || request.asset_type.as_ref().unwrap() == &AssetType::Avatar {
+    if req.asset_type.is_none() || req.asset_type.as_ref().unwrap() == &AssetType::Avatar {
         store
             .get_avatar_store()
-            .get_assets()
+            .get_all()
             .await
             .iter()
             .for_each(|asset| {
                 // カテゴリが指定されている場合はアバターにカテゴリの概念がないので全部スキップ
-                if request.categories.is_some() {
+                if req.categories.is_some() {
                     return;
                 }
                 // 対応アバターが指定されている場合はアバターに対応アバターの概念がないので全部スキップ
-                if request.supported_avatars.is_some() {
+                if req.supported_avatars.is_some() {
                     return;
                 }
-                // クエリが指定されている場合は、テキストに含まれているかを確認
-                if query_texts.clone().is_some() {
-                    if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                // 文字検索が指定されている場合は、含まれているかを確認
+                if text_filters.clone().is_some() {
+                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
                         return;
                     }
                 }
 
                 // タグが指定されている場合
-                if request.tags.is_some() {
-                    let tags = request.tags.clone().unwrap();
+                if req.tags.is_some() {
+                    let tags = req.tags.clone().unwrap();
                     let mut iter = tags.iter();
 
-                    if request.tag_match_type == MatchType::AND {
+                    if req.tag_match_type == MatchType::AND {
                         // タグ検索がANDの場合
                         if !iter.all(|tag| asset.description.tags.contains(&tag)) {
                             return;
                         }
-                    } else if request.tag_match_type == MatchType::OR {
+                    } else if req.tag_match_type == MatchType::OR {
                         // タグ検索がORの場合
                         if !iter.any(|tag| asset.description.tags.contains(&tag)) {
                             return;
@@ -60,25 +60,23 @@ pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid>
             });
     }
 
-    if request.asset_type.is_none()
-        || request.asset_type.as_ref().unwrap() == &AssetType::AvatarRelated
-    {
+    if req.asset_type.is_none() || req.asset_type.as_ref().unwrap() == &AssetType::AvatarWearable {
         store
-            .get_avatar_related_store()
-            .get_assets()
+            .get_avatar_wearable_store()
+            .get_all()
             .await
             .iter()
             .for_each(|asset| {
-                // クエリが指定されている場合は、テキストに含まれているかを確認
-                if query_texts.clone().is_some() {
-                    if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                // 文字検索が指定されている場合は、含まれているかを確認
+                if text_filters.clone().is_some() {
+                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
                         return;
                     }
                 }
 
                 // カテゴリが指定されている場合
-                if request.categories.is_some() {
-                    if !request
+                if req.categories.is_some() {
+                    if !req
                         .categories
                         .clone()
                         .unwrap()
@@ -89,16 +87,16 @@ pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid>
                     }
                 }
                 // 対応アバターが指定されている場合
-                if request.supported_avatars.is_some() {
-                    let supported_avatars = request.supported_avatars.clone().unwrap();
+                if req.supported_avatars.is_some() {
+                    let supported_avatars = req.supported_avatars.clone().unwrap();
                     let mut iter = supported_avatars.iter();
 
-                    if request.supported_avatar_match_type == MatchType::AND {
+                    if req.supported_avatar_match_type == MatchType::AND {
                         // 対応アバター検索がANDの場合
                         if !iter.all(|avatar| asset.supported_avatars.contains(avatar)) {
                             return;
                         }
-                    } else if request.supported_avatar_match_type == MatchType::OR {
+                    } else if req.supported_avatar_match_type == MatchType::OR {
                         // 対応アバター検索がORの場合
                         if !iter.any(|avatar| asset.supported_avatars.contains(avatar)) {
                             return;
@@ -107,16 +105,16 @@ pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid>
                 }
 
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if request.tags.is_some() {
-                    let tags = request.tags.clone().unwrap();
+                if req.tags.is_some() {
+                    let tags = req.tags.clone().unwrap();
                     let mut iter = tags.iter();
 
-                    if request.tag_match_type == MatchType::AND {
+                    if req.tag_match_type == MatchType::AND {
                         // タグ検索がANDの場合
                         if !iter.all(|tag| asset.description.tags.contains(&tag)) {
                             return;
                         }
-                    } else if request.tag_match_type == MatchType::OR {
+                    } else if req.tag_match_type == MatchType::OR {
                         // タグ検索がORの場合
                         if !iter.any(|tag| asset.description.tags.contains(&tag)) {
                             return;
@@ -128,26 +126,26 @@ pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid>
             });
     }
 
-    if request.asset_type.is_none() || request.asset_type.as_ref().unwrap() == &AssetType::World {
+    if req.asset_type.is_none() || req.asset_type.as_ref().unwrap() == &AssetType::WorldObject {
         store
-            .get_world_store()
-            .get_assets()
+            .get_world_object_store()
+            .get_all()
             .await
             .iter()
             .for_each(|asset| {
                 // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ
-                if request.supported_avatars.is_some() {
+                if req.supported_avatars.is_some() {
                     return;
                 }
-                // クエリが指定されている場合は、テキストに含まれているかを確認
-                if query_texts.clone().is_some() {
-                    if !check_text_contains(&asset.description, &query_texts.clone().unwrap()) {
+                // 文字検索が指定されている場合は、含まれているかを確認
+                if text_filters.clone().is_some() {
+                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
                         return;
                     }
                 }
                 // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
-                if request.categories.is_some() {
-                    if !request
+                if req.categories.is_some() {
+                    if !req
                         .categories
                         .clone()
                         .unwrap()
@@ -158,16 +156,16 @@ pub async fn filter(store: &StoreProvider, request: &FilterRequest) -> Vec<Uuid>
                     }
                 }
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if request.tags.is_some() {
-                    let tags = request.tags.clone().unwrap();
+                if req.tags.is_some() {
+                    let tags = req.tags.clone().unwrap();
                     let mut iter = tags.iter();
 
-                    if request.tag_match_type == MatchType::AND {
+                    if req.tag_match_type == MatchType::AND {
                         // タグ検索がANDの場合
                         if !iter.all(|tag| asset.description.tags.contains(&tag)) {
                             return;
                         }
-                    } else if request.tag_match_type == MatchType::OR {
+                    } else if req.tag_match_type == MatchType::OR {
                         // タグ検索がORの場合
                         if !iter.any(|tag| asset.description.tags.contains(&tag)) {
                             return;
@@ -186,9 +184,9 @@ fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> boo
     texts.iter().map(|text| unify_text(text)).all(|text| {
         return
             // タイトルに含まれているか
-            contains_text(&description.title.to_ascii_lowercase(), &text) ||
+            contains_text(&description.name.to_ascii_lowercase(), &text) ||
             // 作者名に含まれているか
-            contains_text(&description.author.to_ascii_lowercase(), &text) ||
+            contains_text(&description.creator.to_ascii_lowercase(), &text) ||
             // タグに含まれているか
             description
                 .tags
@@ -227,11 +225,10 @@ mod tests {
     #[test]
     fn test_check_text_contains() {
         let description = AssetDescription {
-            title: "これはアセットのタイトルです".to_string(),
-            author: "これは制作者の名前です".to_string(),
-            image_src: None,
+            name: "これはアセットの名前です".to_string(),
+            creator: "これは制作者の名前です".to_string(),
+            image_path: None,
             tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
-            booth_url: None,
             booth_item_id: None,
             created_at: chrono::Local::now().timestamp_millis(),
             published_at: Some(chrono::Local::now().timestamp_millis()),

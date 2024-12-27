@@ -10,17 +10,17 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import AssetTypeSelectorTab from './components/tabs/AssetTypeSelector'
-import { AssetDisplay, AssetType } from '@/lib/entity'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { cn } from '@/lib/utils'
 import DuplicateWarningTab from './components/tabs/DuplicateWarningTab'
+import { AssetSummary, AssetType } from '@/lib/bindings'
 
 export const AddAssetModalContext = createContext<{
   assetPath?: string
   setAssetPath: (path: string) => void
 
-  duplicateWarningItems: AssetDisplay[]
-  setDuplicateWarningItems: (items: AssetDisplay[]) => void
+  duplicateWarningItems: AssetSummary[]
+  setDuplicateWarningItems: (items: AssetSummary[]) => void
 }>({
   setAssetPath: () => {},
 
@@ -36,34 +36,42 @@ const AddAssetModal = ({ className }: Props) => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
   const [duplicateWarningItems, setDuplicateWarningItems] = useState<
-    AssetDisplay[]
+    AssetSummary[]
   >([])
   const [dialogOpen, setDialogOpen] = useState(false)
 
+  const assetTypeAvatar: AssetType = 'Avatar'
+  const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
+  const assetTypeWorldObject: AssetType = 'WorldObject'
+
   const formSchema = z.object({
-    assetType: z.nativeEnum(AssetType),
-    title: z.string().min(1),
-    author: z.string().min(1),
-    image_src: z.string().nullable(),
-    booth_item_id: z.number().nullable(),
+    assetType: z.union([
+      z.literal(assetTypeAvatar),
+      z.literal(assetTypeAvatarWearable),
+      z.literal(assetTypeWorldObject),
+    ]),
+    name: z.string().min(1),
+    creator: z.string().min(1),
+    imagePath: z.string().nullable(),
+    boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
-    published_at: z.number().nullable(),
+    publishedAt: z.number().nullable(),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      assetType: AssetType.Avatar,
-      title: '',
-      author: '',
-      image_src: null,
-      booth_item_id: null,
+      assetType: 'Avatar',
+      name: '',
+      creator: '',
+      imagePath: null,
+      boothItemId: null,
       tags: [],
       category: '',
       supportedAvatars: [],
-      published_at: null,
+      publishedAt: null,
     },
   })
 
@@ -76,15 +84,15 @@ const AddAssetModal = ({ className }: Props) => {
 
   const clearForm = () => {
     form.reset({
-      assetType: AssetType.Avatar,
-      title: '',
-      author: '',
-      image_src: null,
-      booth_item_id: null,
+      assetType: 'Avatar',
+      name: '',
+      creator: '',
+      imagePath: null,
+      boothItemId: null,
       tags: [],
       category: '',
       supportedAvatars: [],
-      published_at: null,
+      publishedAt: null,
     })
 
     setAssetPath('')

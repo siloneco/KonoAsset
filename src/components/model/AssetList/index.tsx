@@ -1,11 +1,10 @@
 import { useContext, useEffect, useRef } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
-import { FilterRequest } from '@/lib/entity'
-import { invoke } from '@tauri-apps/api/core'
 import { createFilterRequest, isFilterEnforced } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import AssetCard from './components/AssetCard'
+import { commands, FilterRequest } from '@/lib/bindings'
 
 type Props = {
   className?: string
@@ -40,11 +39,11 @@ const AssetList = ({
   const updateMatchedAssetIDs = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
-      query: textFilter,
+      text: textFilter,
       categories: categoryFilter,
       tags: tagFilter,
       tagMatchType: tagFilterMatchType,
-      supported_avatars: supportedAvatarFilter,
+      supportedAvatars: supportedAvatarFilter,
       supportedAvatarMatchType: supportedAvatarFilterMatchType,
     })
 
@@ -55,10 +54,14 @@ const AssetList = ({
       return
     }
 
-    const uuidList: string[] = await invoke('get_filtered_asset_ids', {
-      request: filterRequest,
-    })
-    setMatchedAssetIDs(uuidList)
+    const result = await commands.getFilteredAssetIds(filterRequest)
+
+    if (result.status === 'error') {
+      console.error(result.error)
+      return
+    }
+
+    setMatchedAssetIDs(result.data)
   }
 
   useEffect(() => {

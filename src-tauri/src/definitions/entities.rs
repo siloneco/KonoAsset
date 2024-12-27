@@ -5,82 +5,85 @@ use uuid::Uuid;
 
 use super::traits::AssetTrait;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AssetDisplay {
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AssetSummary {
     pub id: Uuid,
     pub asset_type: AssetType,
-    pub title: String,
-    pub author: String,
-    pub image_src: Option<String>,
+    pub name: String,
+    pub creator: String,
+    pub image_path: Option<String>,
     pub booth_item_id: Option<u64>,
     pub published_at: Option<i64>,
 }
 
-impl AssetDisplay {
-    pub fn create(
-        id: Uuid,
-        asset_type: AssetType,
-        title: String,
-        author: String,
-        image_src: Option<String>,
-        booth_item_id: Option<u64>,
-        published_at: Option<i64>,
-    ) -> Self {
+impl From<&Avatar> for AssetSummary {
+    fn from(asset: &Avatar) -> Self {
         Self {
-            id,
-            asset_type,
-            title,
-            author,
-            image_src,
-            booth_item_id,
-            published_at,
+            id: asset.id,
+            asset_type: AssetType::Avatar,
+            name: asset.description.name.clone(),
+            creator: asset.description.creator.clone(),
+            image_path: asset.description.image_path.clone(),
+            booth_item_id: asset.description.booth_item_id,
+            published_at: asset.description.published_at,
         }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+impl From<&AvatarWearable> for AssetSummary {
+    fn from(asset: &AvatarWearable) -> Self {
+        Self {
+            id: asset.id,
+            asset_type: AssetType::AvatarWearable,
+            name: asset.description.name.clone(),
+            creator: asset.description.creator.clone(),
+            image_path: asset.description.image_path.clone(),
+            booth_item_id: asset.description.booth_item_id,
+            published_at: asset.description.published_at,
+        }
+    }
+}
+impl From<&WorldObject> for AssetSummary {
+    fn from(asset: &WorldObject) -> Self {
+        Self {
+            id: asset.id,
+            asset_type: AssetType::WorldObject,
+            name: asset.description.name.clone(),
+            creator: asset.description.creator.clone(),
+            image_path: asset.description.image_path.clone(),
+            booth_item_id: asset.description.booth_item_id,
+            published_at: asset.description.published_at,
+        }
+    }
+}
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
+#[serde(rename_all = "camelCase")]
 pub struct AssetDescription {
-    pub title: String,
-    pub author: String,
-    pub image_src: Option<String>,
+    pub name: String,
+    pub creator: String,
+    pub image_path: Option<String>,
     pub tags: Vec<String>,
-    #[serde(default = "default_booth_url", skip_serializing)]
-    pub booth_url: Option<String>,
-    #[serde(default = "default_booth_item_id")]
     pub booth_item_id: Option<u64>,
     pub created_at: i64,
-    #[serde(default = "default_published_at")]
     pub published_at: Option<i64>,
-}
-
-fn default_booth_url() -> Option<String> {
-    None
-}
-
-fn default_published_at() -> Option<i64> {
-    None
-}
-
-fn default_booth_item_id() -> Option<u64> {
-    None
 }
 
 impl AssetDescription {
     pub fn create(
-        title: String,
-        author: String,
-        image_src: Option<String>,
+        name: String,
+        creator: String,
+        image_path: Option<String>,
         tags: Vec<String>,
         booth_item_id: Option<u64>,
         created_at: i64,
         published_at: Option<i64>,
     ) -> Self {
         Self {
-            title,
-            author,
-            image_src,
+            name,
+            creator,
+            image_path,
             tags,
-            booth_url: None,
             booth_item_id,
             created_at,
             published_at,
@@ -88,16 +91,16 @@ impl AssetDescription {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AvatarAsset {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
+pub struct Avatar {
     pub id: Uuid,
     pub description: AssetDescription,
 }
 
-impl AvatarAsset {
+impl Avatar {
     pub fn create(mut description: AssetDescription) -> Self {
-        description.title = description.title.trim().to_string();
-        description.author = description.author.trim().to_string();
+        description.name = description.name.trim().to_string();
+        description.creator = description.creator.trim().to_string();
         description.tags = description
             .tags
             .iter()
@@ -111,9 +114,9 @@ impl AvatarAsset {
     }
 }
 
-impl AssetTrait for AvatarAsset {
+impl AssetTrait for Avatar {
     fn filename() -> String {
-        "avatar.json".into()
+        "avatars.json".into()
     }
 
     fn get_id(&self) -> Uuid {
@@ -129,22 +132,23 @@ impl AssetTrait for AvatarAsset {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AvatarRelatedAsset {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AvatarWearable {
     pub id: Uuid,
     pub description: AssetDescription,
     pub category: String,
     pub supported_avatars: BTreeSet<String>,
 }
 
-impl AvatarRelatedAsset {
+impl AvatarWearable {
     pub fn create(
         mut description: AssetDescription,
         mut category: String,
         mut supported_avatars: BTreeSet<String>,
     ) -> Self {
-        description.title = description.title.trim().to_string();
-        description.author = description.author.trim().to_string();
+        description.name = description.name.trim().to_string();
+        description.creator = description.creator.trim().to_string();
         description.tags = description
             .tags
             .iter()
@@ -166,9 +170,9 @@ impl AvatarRelatedAsset {
     }
 }
 
-impl AssetTrait for AvatarRelatedAsset {
+impl AssetTrait for AvatarWearable {
     fn filename() -> String {
-        "avatar_related.json".into()
+        "avatarWearables.json".into()
     }
 
     fn get_id(&self) -> Uuid {
@@ -184,17 +188,17 @@ impl AssetTrait for AvatarRelatedAsset {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub struct WorldAsset {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
+pub struct WorldObject {
     pub id: Uuid,
     pub description: AssetDescription,
     pub category: String,
 }
 
-impl WorldAsset {
+impl WorldObject {
     pub fn create(mut description: AssetDescription, mut category: String) -> Self {
-        description.title = description.title.trim().to_string();
-        description.author = description.author.trim().to_string();
+        description.name = description.name.trim().to_string();
+        description.creator = description.creator.trim().to_string();
         description.tags = description
             .tags
             .iter()
@@ -211,9 +215,9 @@ impl WorldAsset {
     }
 }
 
-impl AssetTrait for WorldAsset {
+impl AssetTrait for WorldObject {
     fn filename() -> String {
-        "world.json".into()
+        "worldObjects.json".into()
     }
 
     fn get_id(&self) -> Uuid {
@@ -229,31 +233,32 @@ impl AssetTrait for WorldAsset {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, specta::Type)]
 pub enum AssetType {
     Avatar,
-    AvatarRelated,
-    World,
+    AvatarWearable,
+    WorldObject,
 }
 
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, specta::Type)]
 pub enum SortBy {
-    Title,
-    Author,
+    Name,
+    Creator,
     CreatedAt,
     PublishedAt,
 }
 
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone, specta::Type)]
 pub enum MatchType {
     AND,
     OR,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
-    pub query: Option<String>,
+    pub text: Option<String>,
     pub categories: Option<Vec<String>>,
     pub tags: Option<Vec<String>>,
     pub tag_match_type: MatchType,
