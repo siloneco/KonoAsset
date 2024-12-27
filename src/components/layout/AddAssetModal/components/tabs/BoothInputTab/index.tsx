@@ -135,7 +135,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
           <Label className="text-base ml-1">Boothから情報を取得する</Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
-              placeholder="https://booth.pm/ja/items/123456"
+              placeholder="https://booth.pm/ja/items/1234567"
               onChange={onInputValueChange}
               disabled={fetching}
             />
