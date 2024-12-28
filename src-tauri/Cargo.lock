@@ -2044,7 +2044,6 @@ version = "0.2.0"
 dependencies = [
  "chrono",
  "kanaria",
- "open",
  "opener",
  "regex",
  "reqwest",
