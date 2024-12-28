@@ -265,3 +265,19 @@ pub struct FilterRequest {
     pub supported_avatars: Option<Vec<String>>,
     pub supported_avatar_match_type: MatchType,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct FileInfo {
+    pub file_name: String,
+    pub absolute_path: String,
+}
+
+impl FileInfo {
+    pub fn new(file_name: String, absolute_path: String) -> Self {
+        Self {
+            file_name,
+            absolute_path,
+        }
+    }
+}

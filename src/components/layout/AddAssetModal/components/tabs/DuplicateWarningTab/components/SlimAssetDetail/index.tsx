@@ -13,7 +13,7 @@ type Props = {
 
 const SlimAssetDetail: FC<Props> = ({ asset }) => {
   const openInFileManager = async () => {
-    const result = await commands.openInFileManager(asset.id)
+    const result = await commands.openManagedDir(asset.id)
 
     if (result.status === 'error') {
       toast({

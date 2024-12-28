@@ -1,30 +1,16 @@
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)]
-
+use commands::generate_tauri_specta_builder;
 use specta_typescript::{BigIntExportBehavior, Typescript};
-use tauri_specta::{collect_commands, Builder};
 
 use booth::fetcher::BoothFetcher;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use tauri::{async_runtime::Mutex, App, Manager};
-
-use commands::{
-    check_for_update, copy_image_file_to_images, do_not_notify_update, execute_update,
-    get_all_asset_tags, get_all_supported_avatar_values, get_asset,
-    get_asset_description_from_booth, get_asset_displays_by_booth_id,
-    get_avatar_wearable_categories, get_avatar_wearable_supported_avatars, get_filtered_asset_ids,
-    get_sorted_assets_for_display, get_world_object_categories, open_in_file_manager,
-    request_asset_deletion, request_avatar_import, request_avatar_wearable_import,
-    request_world_object_import, update_avatar, update_avatar_wearable, update_world_object,
-};
 use updater::update_handler::UpdateHandler;
 
 mod booth;
 mod commands;
 mod data_store;
 mod definitions;
+mod file_opener;
 mod importer;
 mod updater;
 
@@ -32,7 +18,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = generate_builder();
+    let builder = generate_tauri_specta_builder();
 
     #[cfg(debug_assertions)]
     builder
@@ -103,43 +89,4 @@ fn init(handler: &App) {
 
 fn generate_store_provider(handler: &App) -> StoreProvider {
     StoreProvider::create(handler.path().app_local_data_dir().unwrap())
-}
-
-fn generate_builder() -> Builder<tauri::Wry> {
-    Builder::<tauri::Wry>::new()
-        // Then register them (separated by a comma)
-        .commands(collect_commands![
-            // アセット取得
-            get_asset,
-            get_sorted_assets_for_display,
-            get_asset_displays_by_booth_id,
-            // アセット作成リクエスト
-            request_avatar_import,
-            request_avatar_wearable_import,
-            request_world_object_import,
-            // アセット削除
-            request_asset_deletion,
-            // アセット更新
-            update_avatar,
-            update_avatar_wearable,
-            update_world_object,
-            // フィールドごとの全情報取得系
-            get_all_asset_tags,
-            get_all_supported_avatar_values,
-            get_avatar_wearable_categories,
-            get_avatar_wearable_supported_avatars,
-            get_world_object_categories,
-            // 画像新規作成
-            copy_image_file_to_images,
-            // ファイルマネージャで開く
-            open_in_file_manager,
-            // Boothからアセット情報を取得する
-            get_asset_description_from_booth,
-            // 検索関数
-            get_filtered_asset_ids,
-            // アップデート関連
-            check_for_update,
-            execute_update,
-            do_not_notify_update,
-        ])
 }

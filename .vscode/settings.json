@@ -3,7 +3,9 @@
         "chrono",
         "pximg",
         "reqwest",
-        "tauri"
+        "tauri",
+        "unitypackage",
+        "unitypackages"
     ],
     "prettier.semi": false,
 }
