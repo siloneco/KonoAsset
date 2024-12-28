@@ -134,9 +134,17 @@ async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<s
     else return { status: "error", error: e  as any };
 }
 },
-async openInFileManager(id: string) : Promise<Result<boolean, string>> {
+async openManagedDir(id: string) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("open_in_file_manager", { id }) };
+    return { status: "ok", data: await TAURI_INVOKE("open_managed_dir", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openFileInFileManager(path: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_file_in_file_manager", { path }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -181,6 +189,22 @@ async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getDirectoryPath(id: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_directory_path", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async listUnitypackageFiles(id: string) : Promise<Result<{ [key in string]: FileInfo[] }, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_unitypackage_files", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -202,6 +226,7 @@ export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
 export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePath: string }
 export type BoothInfo = { description: AssetDescription; estimatedAssetType: AssetType | null }
+export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
 export type MatchType = "AND" | "OR"

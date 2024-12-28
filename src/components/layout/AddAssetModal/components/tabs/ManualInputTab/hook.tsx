@@ -79,7 +79,7 @@ export const useManualInputTabHooks = ({
         await refreshAssets()
 
         const openInFileManager = async () => {
-          const openResult = await commands.openInFileManager(result.data.id)
+          const openResult = await commands.openManagedDir(result.data.id)
 
           if (openResult.status === 'error') {
             toast({

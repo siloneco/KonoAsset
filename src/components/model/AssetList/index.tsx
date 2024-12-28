@@ -1,10 +1,12 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { createFilterRequest, isFilterEnforced } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import AssetCard from './components/AssetCard'
-import { commands, FilterRequest } from '@/lib/bindings'
+import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
+
+import SelectUnitypackageDialog from './components/SelectUnitypackageDialog'
 
 type Props = {
   className?: string
@@ -22,6 +24,12 @@ const AssetList = ({
   filterEnforced,
   setFilterEnforced,
 }: Props) => {
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [unitypackages, setUnityPackages] = useState<{
+    [x: string]: FileInfo[]
+  }>({})
+  const [dialogAssetId, setDialogAssetId] = useState<string | null>(null)
+
   const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
   const {
@@ -101,6 +109,9 @@ const AssetList = ({
                   key={asset.id}
                   asset={asset}
                   ref={asset.id === editingAssetID ? scrollRef : undefined}
+                  openDialog={() => setDialogOpen(true)}
+                  setUnitypackageFiles={setUnityPackages}
+                  setDialogAssetId={setDialogAssetId}
                 />
               ),
           )}
@@ -116,10 +127,19 @@ const AssetList = ({
                     key={asset.id}
                     asset={asset}
                     ref={asset.id === editingAssetID ? scrollRef : undefined}
+                    openDialog={() => setDialogOpen(true)}
+                    setUnitypackageFiles={setUnityPackages}
+                    setDialogAssetId={setDialogAssetId}
                   />
                 ),
             )}
       </div>
+      <SelectUnitypackageDialog
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        assetId={dialogAssetId}
+        unitypackageFiles={unitypackages}
+      />
       <div className="w-full h-12" />
     </ScrollArea>
   )

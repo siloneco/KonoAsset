@@ -5,29 +5,78 @@ use std::{
 };
 
 use tauri::{async_runtime::Mutex, State};
+use tauri_specta::{collect_commands, Builder};
 use uuid::Uuid;
 
 use crate::{
     booth::fetcher::BoothFetcher,
     data_store::{
         delete::delete_asset,
+        find::find_unitypackage,
         provider::StoreProvider,
         search::{self},
     },
     definitions::{
-        entities::{AssetSummary, Avatar, AvatarWearable, FilterRequest, SortBy, WorldObject},
+        entities::{
+            AssetSummary, Avatar, AvatarWearable, FileInfo, FilterRequest, SortBy, WorldObject,
+        },
         import_request::{
             AvatarImportRequest, AvatarWearableImportRequest, WorldObjectImportRequest,
         },
         results::{BoothInfo, GetAssetResult},
     },
+    file_opener,
     importer::import_wrapper::{import_avatar, import_avatar_wearable, import_world_object},
     updater::update_handler::UpdateHandler,
 };
 
+pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
+    Builder::<tauri::Wry>::new()
+        // Then register them (separated by a comma)
+        .commands(collect_commands![
+            // アセット取得
+            get_asset,
+            get_sorted_assets_for_display,
+            get_asset_displays_by_booth_id,
+            // アセット作成リクエスト
+            request_avatar_import,
+            request_avatar_wearable_import,
+            request_world_object_import,
+            // アセット削除
+            request_asset_deletion,
+            // アセット更新
+            update_avatar,
+            update_avatar_wearable,
+            update_world_object,
+            // フィールドごとの全情報取得系
+            get_all_asset_tags,
+            get_all_supported_avatar_values,
+            get_avatar_wearable_categories,
+            get_avatar_wearable_supported_avatars,
+            get_world_object_categories,
+            // 画像新規作成
+            copy_image_file_to_images,
+            // ファイルマネージャで開く
+            open_managed_dir,
+            open_file_in_file_manager,
+            // Boothからアセット情報を取得する
+            get_asset_description_from_booth,
+            // 検索関数
+            get_filtered_asset_ids,
+            // アップデート関連
+            check_for_update,
+            execute_update,
+            do_not_notify_update,
+            // 管理ディレクトリのパス取得
+            get_directory_path,
+            // unitypackage探索
+            list_unitypackage_files,
+        ])
+}
+
 #[tauri::command]
 #[specta::specta]
-pub async fn get_sorted_assets_for_display(
+async fn get_sorted_assets_for_display(
     basic_store: State<'_, Mutex<StoreProvider>>,
     sort_by: SortBy,
 ) -> Result<Vec<AssetSummary>, String> {
@@ -101,7 +150,7 @@ pub async fn get_sorted_assets_for_display(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_asset(
+async fn get_asset(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: Uuid,
 ) -> Result<GetAssetResult, String> {
@@ -127,7 +176,7 @@ pub async fn get_asset(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn request_avatar_import(
+async fn request_avatar_import(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: AvatarImportRequest,
 ) -> Result<Avatar, String> {
@@ -137,7 +186,7 @@ pub async fn request_avatar_import(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn request_avatar_wearable_import(
+async fn request_avatar_wearable_import(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: AvatarWearableImportRequest,
 ) -> Result<AvatarWearable, String> {
@@ -147,7 +196,7 @@ pub async fn request_avatar_wearable_import(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn request_world_object_import(
+async fn request_world_object_import(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: WorldObjectImportRequest,
 ) -> Result<WorldObject, String> {
@@ -157,7 +206,7 @@ pub async fn request_world_object_import(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn update_avatar(
+async fn update_avatar(
     basic_store: State<'_, Mutex<StoreProvider>>,
     asset: Avatar,
 ) -> Result<bool, String> {
@@ -178,7 +227,7 @@ pub async fn update_avatar(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn update_avatar_wearable(
+async fn update_avatar_wearable(
     basic_store: State<'_, Mutex<StoreProvider>>,
     asset: AvatarWearable,
 ) -> Result<bool, String> {
@@ -199,7 +248,7 @@ pub async fn update_avatar_wearable(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn update_world_object(
+async fn update_world_object(
     basic_store: State<'_, Mutex<StoreProvider>>,
     asset: WorldObject,
 ) -> Result<bool, String> {
@@ -220,33 +269,27 @@ pub async fn update_world_object(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn open_in_file_manager(
+async fn open_managed_dir(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: String,
-) -> Result<bool, String> {
+) -> Result<(), String> {
     let mut path = basic_store.lock().await.app_data_dir();
     path.push("data");
     path.push(id);
 
-    if !path.exists() {
-        return Err("Directory does not exist".into());
-    }
-
-    if !path.is_dir() {
-        return Err("Path is not a directory".into());
-    }
-
-    let result = opener::open(path);
-
-    match result {
-        Ok(_) => Ok(true),
-        Err(e) => Err(e.to_string()),
-    }
+    file_opener::open_in_file_manager(&path)
 }
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_asset_description_from_booth(
+async fn open_file_in_file_manager(path: String) -> Result<(), String> {
+    let path = PathBuf::from(path);
+    file_opener::open_in_file_manager(&path)
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn get_asset_description_from_booth(
     basic_store: State<'_, Mutex<StoreProvider>>,
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
@@ -270,7 +313,7 @@ pub async fn get_asset_description_from_booth(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_all_asset_tags(
+async fn get_all_asset_tags(
     basic_store: State<'_, Mutex<StoreProvider>>,
 ) -> Result<Vec<String>, String> {
     let basic_store = basic_store.lock().await;
@@ -314,7 +357,7 @@ pub async fn get_all_asset_tags(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_all_supported_avatar_values(
+async fn get_all_supported_avatar_values(
     basic_store: State<'_, Mutex<StoreProvider>>,
 ) -> Result<Vec<String>, String> {
     let mut values: HashSet<String> = HashSet::new();
@@ -337,7 +380,7 @@ pub async fn get_all_supported_avatar_values(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_avatar_wearable_categories(
+async fn get_avatar_wearable_categories(
     basic_store: State<'_, Mutex<StoreProvider>>,
 ) -> Result<Vec<String>, String> {
     let mut categories: HashSet<String> = HashSet::new();
@@ -363,7 +406,7 @@ pub async fn get_avatar_wearable_categories(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_world_object_categories(
+async fn get_world_object_categories(
     basic_store: State<'_, Mutex<StoreProvider>>,
 ) -> Result<Vec<String>, String> {
     let mut categories: HashSet<String> = HashSet::new();
@@ -389,7 +432,7 @@ pub async fn get_world_object_categories(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_avatar_wearable_supported_avatars(
+async fn get_avatar_wearable_supported_avatars(
     basic_store: State<'_, Mutex<StoreProvider>>,
 ) -> Result<Vec<String>, String> {
     let mut supported_avatars: HashSet<String> = HashSet::new();
@@ -412,7 +455,7 @@ pub async fn get_avatar_wearable_supported_avatars(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn request_asset_deletion(
+async fn request_asset_deletion(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: Uuid,
 ) -> Result<bool, String> {
@@ -422,7 +465,7 @@ pub async fn request_asset_deletion(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_filtered_asset_ids(
+async fn get_filtered_asset_ids(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: FilterRequest,
 ) -> Result<Vec<Uuid>, String> {
@@ -432,7 +475,7 @@ pub async fn get_filtered_asset_ids(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_asset_displays_by_booth_id(
+async fn get_asset_displays_by_booth_id(
     basic_store: State<'_, Mutex<StoreProvider>>,
     booth_item_id: u64,
 ) -> Result<Vec<AssetSummary>, String> {
@@ -477,7 +520,7 @@ pub async fn get_asset_displays_by_booth_id(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn copy_image_file_to_images(
+async fn copy_image_file_to_images(
     basic_store: State<'_, Mutex<StoreProvider>>,
     path: String,
     temporary: bool,
@@ -515,7 +558,7 @@ pub async fn copy_image_file_to_images(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn check_for_update(update_handler: State<'_, UpdateHandler>) -> Result<bool, String> {
+async fn check_for_update(update_handler: State<'_, UpdateHandler>) -> Result<bool, String> {
     if !update_handler.is_initialized() {
         return Err(format!("Update handler is not initialized yet."));
     }
@@ -530,7 +573,7 @@ pub async fn check_for_update(update_handler: State<'_, UpdateHandler>) -> Resul
 
 #[tauri::command]
 #[specta::specta]
-pub async fn execute_update(update_handler: State<'_, UpdateHandler>) -> Result<bool, String> {
+async fn execute_update(update_handler: State<'_, UpdateHandler>) -> Result<bool, String> {
     if !update_handler.is_initialized() {
         return Err("Update handler is not initialized yet.".into());
     }
@@ -549,13 +592,49 @@ pub async fn execute_update(update_handler: State<'_, UpdateHandler>) -> Result<
 
 #[tauri::command]
 #[specta::specta]
-pub async fn do_not_notify_update(
-    update_handler: State<'_, UpdateHandler>,
-) -> Result<bool, String> {
+async fn do_not_notify_update(update_handler: State<'_, UpdateHandler>) -> Result<bool, String> {
     if !update_handler.is_initialized() {
         return Err("Update handler is not initialized yet.".into());
     }
 
     update_handler.set_show_notification(false).await;
     Ok(true)
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn get_directory_path(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    id: Uuid,
+) -> Result<String, String> {
+    let mut app_dir = basic_store.lock().await.app_data_dir();
+    app_dir.push("data");
+    app_dir.push(id.to_string());
+
+    Ok(app_dir.to_str().unwrap().to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn list_unitypackage_files(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    id: Uuid,
+) -> Result<HashMap<String, Vec<FileInfo>>, String> {
+    let mut dir = basic_store.lock().await.app_data_dir();
+    dir.push("data");
+    dir.push(id.to_string());
+
+    if !dir.exists() {
+        return Err("Directory does not exist".into());
+    }
+
+    let result = find_unitypackage(&dir);
+
+    if let Err(e) = result {
+        return Err(e);
+    }
+
+    let result = result.unwrap();
+
+    Ok(result)
 }

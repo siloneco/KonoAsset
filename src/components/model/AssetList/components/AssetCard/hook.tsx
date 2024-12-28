@@ -8,24 +8,12 @@ type Props = {
 }
 
 type ReturnProps = {
-  openInFileManager: () => Promise<void>
   deleteAsset: () => Promise<void>
 }
 
 export const useAssetCard = ({ asset }: Props): ReturnProps => {
   const { deleteAssetById } = useContext(AssetContext)
   const { toast } = useToast()
-
-  const openInFileManager = async () => {
-    const result = await commands.openInFileManager(asset.id)
-
-    if (result.status === 'error') {
-      toast({
-        title: 'エラー',
-        description: result.error,
-      })
-    }
-  }
 
   const deleteAsset = async () => {
     const result = await commands.requestAssetDeletion(asset.id)
@@ -45,5 +33,5 @@ export const useAssetCard = ({ asset }: Props): ReturnProps => {
     }
   }
 
-  return { openInFileManager, deleteAsset }
+  return { deleteAsset }
 }
