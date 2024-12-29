@@ -24,7 +24,13 @@ pub fn open_in_file_manager(path: &PathBuf) -> Result<(), String> {
 
 #[cfg(target_os = "windows")]
 fn open_file_with_selected(path: &PathBuf) -> Result<(), String> {
-    let result = Command::new("explorer").arg("/select,").arg(path).spawn();
+    use std::os::windows::process::CommandExt;
+
+    let path_str = path.to_str().unwrap();
+    let result = Command::new("explorer")
+        .arg("/select,")
+        .raw_arg(format!("\"{path_str}\""))
+        .spawn();
 
     match result {
         Ok(_) => Ok(()),
