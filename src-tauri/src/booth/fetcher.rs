@@ -34,7 +34,11 @@ impl BoothFetcher {
 
         let name = response.name;
         let creator = response.shop.name;
-        let image_url = response.images.first().unwrap().original.clone();
+        let image_url = if let Some(item) = response.images.first() {
+            Some(item.original.clone())
+        } else {
+            None
+        };
         let published_at = DateTime::parse_from_rfc3339(&response.published_at)
             .unwrap()
             .timestamp_millis();
@@ -42,12 +46,16 @@ impl BoothFetcher {
         let mut path = images_dir;
         path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
 
-        let result = save_image_from_url(&image_url, &path).await;
-        if result.is_err() {
-            return Err(result.err().unwrap());
-        }
+        let image_path = if let Some(image_url) = image_url {
+            let result = save_image_from_url(&image_url, &path).await;
+            if result.is_err() {
+                return Err(result.err().unwrap());
+            }
 
-        let image_path = Some(path.to_str().unwrap().to_string());
+            Some(path.to_str().unwrap().to_string())
+        } else {
+            None
+        };
 
         let estimated_asset_type = match response.category.id {
             208 //   3Dキャラクター
