@@ -9,13 +9,13 @@ use crate::{definitions::traits::AssetTrait, importer::execute_image_fixation};
 use super::delete::delete_asset_image;
 
 pub struct JsonStore<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> {
-    app_data_dir: PathBuf,
+    data_dir: PathBuf,
     assets: Mutex<HashSet<T>>,
 }
 
 impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore<T> {
-    pub fn create(app_data_dir: PathBuf) -> Self {
-        let mut path = app_data_dir.clone();
+    pub fn create(data_dir: PathBuf) -> Self {
+        let mut path = data_dir.clone();
         path.push("metadata");
 
         if !path.exists() {
@@ -23,7 +23,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
 
         Self {
-            app_data_dir,
+            data_dir,
             assets: Mutex::new(HashSet::new()),
         }
     }
@@ -42,7 +42,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
     }
 
     pub async fn load_assets_from_file(&self) -> Result<(), String> {
-        let mut path = self.app_data_dir.clone();
+        let mut path = self.data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
 
@@ -104,7 +104,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
 
                 if old_image.is_some() {
                     let delete_result =
-                        delete_asset_image(&self.app_data_dir, old_image.as_ref().unwrap());
+                        delete_asset_image(&self.data_dir, old_image.as_ref().unwrap());
 
                     if delete_result.is_err() {
                         return Err(delete_result.err().unwrap());
@@ -116,7 +116,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
                 }
 
                 if new_image.is_some() {
-                    let mut path = self.app_data_dir.clone();
+                    let mut path = self.data_dir.clone();
                     path.push("images");
                     path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
@@ -168,7 +168,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
     }
 
     async fn save(&self) -> Result<(), String> {
-        let mut path = self.app_data_dir.clone();
+        let mut path = self.data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
 

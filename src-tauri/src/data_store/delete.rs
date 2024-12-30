@@ -8,7 +8,7 @@ use crate::definitions::traits::AssetTrait;
 use super::{json_store::JsonStore, provider::StoreProvider};
 
 pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, String> {
-    let app_dir = provider.app_data_dir();
+    let app_dir = provider.data_dir();
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await;
     if result.is_err() {

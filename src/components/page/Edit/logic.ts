@@ -123,7 +123,7 @@ export const fetchSupportedAvatars = async (): Promise<Option[]> => {
   const result = await commands.getAllSupportedAvatarValues()
 
   if (result.status === 'error') {
-    console.log(result.error)
+    console.error(result.error)
     return []
   }
 

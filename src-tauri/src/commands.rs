@@ -27,6 +27,7 @@ use crate::{
     },
     file_opener,
     importer::import_wrapper::{import_avatar, import_avatar_wearable, import_world_object},
+    preference::store::PreferenceStore,
     updater::update_handler::UpdateHandler,
 };
 
@@ -59,6 +60,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
             // ファイルマネージャで開く
             open_managed_dir,
             open_file_in_file_manager,
+            open_data_dir,
             // Boothからアセット情報を取得する
             get_asset_description_from_booth,
             // 検索関数
@@ -71,6 +73,11 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
             get_directory_path,
             // unitypackage探索
             list_unitypackage_files,
+            // 設定
+            get_preferences,
+            set_preferences,
+            // データフォルダ移行
+            migrate_data_dir,
         ])
 }
 
@@ -273,7 +280,7 @@ async fn open_managed_dir(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: String,
 ) -> Result<(), String> {
-    let mut path = basic_store.lock().await.app_data_dir();
+    let mut path = basic_store.lock().await.data_dir();
     path.push("data");
     path.push(id);
 
@@ -289,12 +296,19 @@ async fn open_file_in_file_manager(path: String) -> Result<(), String> {
 
 #[tauri::command]
 #[specta::specta]
+async fn open_data_dir(basic_store: State<'_, Mutex<StoreProvider>>) -> Result<(), String> {
+    let path = basic_store.lock().await.data_dir();
+    file_opener::open_in_file_manager(&path)
+}
+
+#[tauri::command]
+#[specta::specta]
 async fn get_asset_description_from_booth(
     basic_store: State<'_, Mutex<StoreProvider>>,
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
 ) -> Result<BoothInfo, String> {
-    let mut images_dir = basic_store.lock().await.app_data_dir();
+    let mut images_dir = basic_store.lock().await.data_dir();
     images_dir.push("images");
 
     let result = {
@@ -526,7 +540,7 @@ async fn copy_image_file_to_images(
     temporary: bool,
 ) -> Result<String, String> {
     let path = PathBuf::from(path);
-    let mut new_path = basic_store.lock().await.app_data_dir();
+    let mut new_path = basic_store.lock().await.data_dir();
     new_path.push("images");
 
     let filename = if temporary {
@@ -607,7 +621,7 @@ async fn get_directory_path(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: Uuid,
 ) -> Result<String, String> {
-    let mut app_dir = basic_store.lock().await.app_data_dir();
+    let mut app_dir = basic_store.lock().await.data_dir();
     app_dir.push("data");
     app_dir.push(id.to_string());
 
@@ -620,7 +634,7 @@ async fn list_unitypackage_files(
     basic_store: State<'_, Mutex<StoreProvider>>,
     id: Uuid,
 ) -> Result<HashMap<String, Vec<FileInfo>>, String> {
-    let mut dir = basic_store.lock().await.app_data_dir();
+    let mut dir = basic_store.lock().await.data_dir();
     dir.push("data");
     dir.push(id.to_string());
 
@@ -637,4 +651,60 @@ async fn list_unitypackage_files(
     let result = result.unwrap();
 
     Ok(result)
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn get_preferences(
+    preference: State<'_, Mutex<PreferenceStore>>,
+) -> Result<PreferenceStore, String> {
+    let preference = preference.lock().await;
+    Ok(preference.clone())
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn set_preferences(
+    preference: State<'_, Mutex<PreferenceStore>>,
+    new_preference: PreferenceStore,
+) -> Result<(), String> {
+    let mut preference = preference.lock().await;
+
+    if preference.get_data_dir() != new_preference.get_data_dir() {
+        return Err("Data directory cannot be changed via set_preferences function".into());
+    }
+
+    preference.overwrite(&new_preference);
+    preference.save().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn migrate_data_dir(
+    preference: State<'_, Mutex<PreferenceStore>>,
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    new_path: PathBuf,
+    migrate_data: bool,
+) -> Result<(), String> {
+    if !new_path.is_dir() {
+        return Err("New path is not a directory".into());
+    }
+
+    if !new_path.exists() {
+        fs::create_dir_all(&new_path).unwrap();
+    }
+
+    if migrate_data {
+        let mut basic_store = basic_store.lock().await;
+        basic_store.migrate_data_dir(&new_path).await?;
+    }
+
+    let mut preference = preference.lock().await;
+    let mut new_preference = preference.clone();
+    new_preference.set_data_dir(new_path);
+
+    preference.overwrite(&new_preference);
+    preference.save().map_err(|e| e.to_string())?;
+
+    Ok(())
 }
