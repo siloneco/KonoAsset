@@ -30,7 +30,13 @@ impl BoothFetcher {
         }
 
         let url = format!("https://booth.pm/ja/items/{}.json", id);
-        let response: BoothJsonSchema = get_reqwest_client().get(&url).send().await?.json().await?;
+        let response = get_reqwest_client().get(&url).send().await?;
+
+        if response.status().as_u16() == 404 {
+            return Err("商品が見つかりませんでした".into());
+        }
+
+        let response: BoothJsonSchema = response.json().await?;
 
         let name = response.name;
         let creator = response.shop.name;
