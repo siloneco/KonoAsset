@@ -75,6 +75,7 @@ const AssetList = ({
   useEffect(() => {
     updateMatchedAssetIDs()
   }, [
+    assetDisplaySortedList,
     assetType,
     textFilter,
     categoryFilter,

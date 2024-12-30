@@ -22,7 +22,7 @@ pub async fn import_avatar(
 
     let mut request = request.clone();
     if image.is_some() {
-        let mut new_image_path = basic_store.app_data_dir();
+        let mut new_image_path = basic_store.data_dir();
         new_image_path.push("images");
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
@@ -53,7 +53,7 @@ pub async fn import_avatar(
     }
 
     let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.app_data_dir();
+    let mut destination = basic_store.data_dir();
 
     destination.push("data");
     destination.push(asset.id.to_string());
@@ -87,7 +87,7 @@ pub async fn import_avatar_wearable(
 
     let mut request = request.clone();
     if image.is_some() {
-        let mut new_image_path = basic_store.app_data_dir();
+        let mut new_image_path = basic_store.data_dir();
         new_image_path.push("images");
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
@@ -119,7 +119,7 @@ pub async fn import_avatar_wearable(
     }
 
     let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.app_data_dir();
+    let mut destination = basic_store.data_dir();
 
     destination.push("data");
     destination.push(asset.id.to_string());
@@ -153,7 +153,7 @@ pub async fn import_world_object(
 
     let mut request = request.clone();
     if image.is_some() {
-        let mut new_image_path = basic_store.app_data_dir();
+        let mut new_image_path = basic_store.data_dir();
         new_image_path.push("images");
         new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
 
@@ -181,7 +181,7 @@ pub async fn import_world_object(
     }
 
     let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.app_data_dir();
+    let mut destination = basic_store.data_dir();
 
     destination.push("data");
     destination.push(asset.id.to_string());

@@ -9,12 +9,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
-import { ChangeEvent, useContext, useState } from 'react'
-import { AddAssetModalContext } from '../../..'
-import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
-import { extractBoothItemId } from '@/lib/utils'
-import { commands } from '@/lib/bindings'
+import { useBoothInputTab } from './hook'
 
 const shopBoothUrlRegex = /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+$/
 const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
@@ -29,90 +25,18 @@ type Props = {
 }
 
 const BoothInputTab = ({ form, setTab }: Props) => {
-  const [boothUrlInput, setBoothUrlInput] = useState('')
-  const [boothItemId, setBoothItemId] = useState<number | null>(null)
-  const [fetching, setFetching] = useState(false)
-
-  const { assetPath, setDuplicateWarningItems } =
-    useContext(AddAssetModalContext)
-
-  const backToSelect = () => {
-    setTab('selector')
-  }
-
-  const moveToNextTab = () => {
-    setTab('asset-type-selector')
-  }
-
-  const moveToDuplicationWarning = () => {
-    setTab('duplicate-warning')
-  }
-
-  const getAssetDescriptionFromBooth = async () => {
-    if (fetching || boothItemId === null) {
-      return
-    }
-
-    try {
-      setFetching(true)
-
-      const result = await commands.getAssetDescriptionFromBooth(boothItemId)
-
-      if (result.status === 'error') {
-        console.error(result.error)
-        return
-      }
-
-      const data = result.data
-
-      const description = data.description
-
-      form.setValue('name', description.name)
-      form.setValue('creator', description.creator)
-      form.setValue('imagePath', description.imagePath)
-      form.setValue('publishedAt', description.publishedAt)
-      form.setValue('boothItemId', boothItemId)
-      form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')
-
-      const duplicationCheckResult =
-        await commands.getAssetDisplaysByBoothId(boothItemId)
-
-      if (duplicationCheckResult.status === 'ok') {
-        const duplicationCheckData = duplicationCheckResult.data
-
-        if (duplicationCheckData.length > 0) {
-          setDuplicateWarningItems(duplicationCheckData)
-          moveToDuplicationWarning()
-          return
-        }
-      }
-
-      if (duplicationCheckResult.status === 'error') {
-        console.error(duplicationCheckResult.error)
-      }
-
-      moveToNextTab()
-    } finally {
-      setFetching(false)
-    }
-  }
-
-  const onInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value
-    setBoothUrlInput(url)
-
-    const extractIdResult = extractBoothItemId(url)
-    if (extractIdResult.status === 'ok') {
-      setBoothItemId(extractIdResult.data)
-    } else {
-      setBoothItemId(null)
-    }
-  }
-
-  const filename =
-    assetPath !== undefined
-      ? assetPath.split(sep()).pop()
-      : 'ファイルが選択されていません！'
+  const {
+    newAssetFilename,
+    getAssetDescriptionFromBooth,
+    onUrlInputChange,
+    fetching,
+    boothUrlInput,
+    moveToNextTab,
+    backToPreviousTab,
+  } = useBoothInputTab({
+    form,
+    setTab,
+  })
 
   return (
     <TabsContent value="booth-input">
@@ -128,7 +52,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
             <span className="text-foreground/60">
               ファイルまたはフォルダ名:
             </span>{' '}
-            {filename}
+            {newAssetFilename}
           </p>
         </div>
         <div>
@@ -136,7 +60,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
               placeholder="https://booth.pm/ja/items/1234567"
-              onChange={onInputValueChange}
+              onChange={onUrlInputChange}
               disabled={fetching}
             />
             <Button
@@ -161,7 +85,11 @@ const BoothInputTab = ({ form, setTab }: Props) => {
         </div>
       </div>
       <DialogFooter>
-        <Button variant="outline" className="mr-auto" onClick={backToSelect}>
+        <Button
+          variant="outline"
+          className="mr-auto"
+          onClick={backToPreviousTab}
+        >
           戻る
         </Button>
       </DialogFooter>

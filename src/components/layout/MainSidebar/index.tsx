@@ -8,8 +8,7 @@ import {
 import TypeSelector from '../../model/TypeSelector'
 import AvatarWearableFilter from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, X } from 'lucide-react'
-import { useTheme } from 'next-themes'
+import { Settings, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -19,9 +18,11 @@ import { Option } from '@/components/ui/multi-select'
 import { fetchAllTags } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useNavigate } from '@tanstack/react-router'
+import { Route as PreferenceRoute } from '@/routes/preference'
 
 const MainSidebar = () => {
-  const { setTheme } = useTheme()
+  const navigate = useNavigate()
   const {
     assetType,
     textFilter,
@@ -45,10 +46,6 @@ const MainSidebar = () => {
   useEffect(() => {
     updateCategoriesAndTags()
   }, [])
-
-  const onClick = () => {
-    setTheme?.((theme) => (theme === 'dark' ? 'light' : 'dark'))
-  }
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -77,11 +74,9 @@ const MainSidebar = () => {
               variant="outline"
               size="icon"
               className="ml-auto mr-2 flex relative"
-              onClick={onClick}
+              onClick={() => navigate({ to: PreferenceRoute.to })}
             >
-              <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
+              <Settings />
             </Button>
           </div>
           <SidebarGroup>

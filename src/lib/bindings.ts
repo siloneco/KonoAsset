@@ -150,6 +150,14 @@ async openFileInFileManager(path: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async openDataDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_data_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getAssetDescriptionFromBooth(boothItemId: number) : Promise<Result<BoothInfo, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_asset_description_from_booth", { boothItemId }) };
@@ -205,6 +213,38 @@ async listUnitypackageFiles(id: string) : Promise<Result<{ [key in string]: File
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getPreferences() : Promise<Result<PreferenceStore, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_preferences") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setPreferences(newPreference: PreferenceStore) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_preferences", { newPreference }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("migrate_data_dir", { newPath, migrateData }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_image_absolute_path", { filename }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -218,8 +258,8 @@ async listUnitypackageFiles(id: string) : Promise<Result<{ [key in string]: File
 
 /** user-defined types **/
 
-export type AssetDescription = { name: string; creator: string; imagePath: string | null; tags: string[]; boothItemId: number | null; createdAt: number; publishedAt: number | null }
-export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imagePath: string | null; boothItemId: number | null; publishedAt: number | null }
+export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; boothItemId: number | null; createdAt: number; publishedAt: number | null }
+export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string }
@@ -233,7 +273,10 @@ export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
+export type PreferenceStore = { dataDirPath: string; theme: Theme; skipConfirmation: SkipConfirmation }
+export type SkipConfirmation = { deleteFileOrDirOnImport: boolean; openManagedDirOnMultipleUnitypackageFound: boolean }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
+export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
 export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePath: string }
 

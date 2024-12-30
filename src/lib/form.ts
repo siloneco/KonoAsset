@@ -5,7 +5,7 @@ export type AssetFormFields = {
   assetType: AssetType
   name: string
   creator: string
-  imagePath: string | null
+  imageFilename: string | null
   boothItemId: number | null
   tags: string[]
   category: string

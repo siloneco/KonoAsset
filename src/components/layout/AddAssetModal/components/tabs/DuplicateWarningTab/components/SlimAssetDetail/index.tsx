@@ -28,7 +28,7 @@ const SlimAssetDetail: FC<Props> = ({ asset }) => {
       <div className="w-16 h-16">
         <SquareImage
           assetType={asset.assetType}
-          path={asset.imagePath ?? undefined}
+          filename={asset.imageFilename ?? undefined}
         />
       </div>
       <div>

@@ -3,14 +3,15 @@ import { convertFileSrc } from '@tauri-apps/api/core'
 import { ImagePlus } from 'lucide-react'
 import { useImagePicker } from './hook'
 import { cn } from '@/lib/utils'
-import { AssetType } from '@/lib/bindings'
+import { AssetType, commands } from '@/lib/bindings'
+import { useEffect, useState } from 'react'
 
 type Props = {
   assetType: AssetType
   className?: string
   selectable?: boolean
-  path?: string
-  setPath?: (path: string) => void
+  filename?: string
+  setFilename?: (filename: string) => void
 }
 
 const ALT = 'Asset Image'
@@ -30,13 +31,30 @@ const SquareImage = ({
   assetType,
   className,
   selectable = false,
-  path,
-  setPath,
+  filename,
+  setFilename,
 }: Props) => {
-  const { selectImage } = useImagePicker({ setPath })
+  const { selectImage } = useImagePicker({ setFilename })
+  const [fixedPath, setFixedPath] = useState<string | undefined>(undefined)
 
-  const fixedPath = path === undefined || path.length == 0 ? undefined : path
   const defaultImagePath = getDefaultImage(assetType)
+
+  const getAbsolutePathAndSet = async () => {
+    if (filename === undefined || filename.length == 0) {
+      return
+    }
+
+    const absolutePath = await commands.getImageAbsolutePath(filename)
+    if (absolutePath.status === 'ok') {
+      setFixedPath(absolutePath.data)
+    } else {
+      console.error(absolutePath.error)
+    }
+  }
+
+  useEffect(() => {
+    getAbsolutePathAndSet()
+  }, [filename])
 
   return (
     <AspectRatio

@@ -52,7 +52,7 @@ const AddAssetModal = ({ className }: Props) => {
     ]),
     name: z.string().min(1),
     creator: z.string().min(1),
-    imagePath: z.string().nullable(),
+    imageFilename: z.string().nullable(),
     boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
     category: z.string(),
@@ -66,7 +66,7 @@ const AddAssetModal = ({ className }: Props) => {
       assetType: 'Avatar',
       name: '',
       creator: '',
-      imagePath: null,
+      imageFilename: null,
       boothItemId: null,
       tags: [],
       category: '',
@@ -87,7 +87,7 @@ const AddAssetModal = ({ className }: Props) => {
       assetType: 'Avatar',
       name: '',
       creator: '',
-      imagePath: null,
+      imageFilename: null,
       boothItemId: null,
       tags: [],
       category: '',
@@ -127,9 +127,12 @@ const AddAssetModal = ({ className }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (dialogOpen) {
-      clearForm()
-      setTab('selector')
+    if (!dialogOpen) {
+      // 閉じるときにタブが変わってしまうのが見えるため遅延を入れる
+      setTimeout(() => {
+        clearForm()
+        setTab('selector')
+      }, 500)
     }
   }, [dialogOpen])
 

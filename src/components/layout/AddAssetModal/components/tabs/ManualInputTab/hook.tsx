@@ -19,8 +19,8 @@ type ReturnProps = {
   submit: () => void
   submitting: boolean
   assetType: AssetType
-  imagePath: string | null
-  setImagePath: (path: string | null) => void
+  imageFilename: string | null
+  setImageFilename: (path: string | null) => void
 }
 
 export const useManualInputTabHooks = ({
@@ -50,7 +50,7 @@ export const useManualInputTabHooks = ({
         description: {
           name: form.getValues('name'),
           creator: form.getValues('creator'),
-          imagePath: form.getValues('imagePath'),
+          imageFilename: form.getValues('imageFilename'),
           tags: form.getValues('tags'),
           boothItemId: form.getValues('boothItemId') ?? null,
           createdAt: new Date().getTime(),
@@ -121,7 +121,8 @@ export const useManualInputTabHooks = ({
     submit,
     submitting,
     assetType: form.watch('assetType'),
-    imagePath: form.watch('imagePath'),
-    setImagePath: (path: string | null) => form.setValue('imagePath', path),
+    imageFilename: form.watch('imageFilename'),
+    setImageFilename: (path: string | null) =>
+      form.setValue('imageFilename', path),
   }
 }

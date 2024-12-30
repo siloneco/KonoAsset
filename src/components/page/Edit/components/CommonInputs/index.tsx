@@ -37,7 +37,7 @@ const CommonInputs = ({ form, disabled }: Props) => {
   }, [])
 
   const assetType = form.watch('assetType')
-  const imagePath = form.watch('imagePath')
+  const imageFilename = form.watch('imageFilename')
   const tags = form.watch('tags')
 
   return (
@@ -45,9 +45,9 @@ const CommonInputs = ({ form, disabled }: Props) => {
       <div className="w-2/5">
         <SquareImage
           assetType={assetType}
-          path={imagePath ?? undefined}
+          filename={imageFilename ?? undefined}
           selectable
-          setPath={(path) => form.setValue('imagePath', path)}
+          setFilename={(filename) => form.setValue('imageFilename', filename)}
         />
       </div>
       <div className="w-3/5 space-y-2">

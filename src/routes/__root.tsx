@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/misc/ThemeProvider'
 import '../index.css'
 import { Toaster } from '@/components/ui/toaster'
 import PersistentContextProvider from '@/components/context/PersistentContext'
+import PreferenceContextProvider from '@/components/context/PreferenceContext'
 
 export const Route = createRootRoute({
   component: () => (
@@ -13,10 +14,12 @@ export const Route = createRootRoute({
       enableSystem
       disableTransitionOnChange
     >
-      <PersistentContextProvider>
-        <Outlet />
-        <Toaster />
-      </PersistentContextProvider>
+      <PreferenceContextProvider>
+        <PersistentContextProvider>
+          <Outlet />
+          <Toaster />
+        </PersistentContextProvider>
+      </PreferenceContextProvider>
     </ThemeProvider>
   ),
 })

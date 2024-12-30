@@ -35,8 +35,8 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
     submit,
     submitting,
     assetType,
-    imagePath,
-    setImagePath,
+    imageFilename,
+    setImageFilename,
   } = useManualInputTabHooks({ form, setTab, setDialogOpen })
 
   return (
@@ -57,8 +57,8 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
               <div className="w-1/3">
                 <SquareImage
                   assetType={assetType}
-                  path={imagePath ?? undefined}
-                  setPath={setImagePath}
+                  filename={imageFilename ?? undefined}
+                  setFilename={setImageFilename}
                   selectable
                 />
               </div>
