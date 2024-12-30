@@ -37,9 +37,9 @@ const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {
   return (
     <div className="flex flex-row items-center">
       <div className="space-y-2">
-        <Label className="text-xl">データフォルダの位置</Label>
+        <Label className="text-xl">アプリデータの保存先</Label>
         <p className="text-foreground/60 text-sm">
-          アセットや画像を保存する場所を設定します
+          アセットや画像を保存するディレクトリを設定します
         </p>
         <Input value={dataDir} className="min-w-80" disabled />
       </div>
@@ -54,14 +54,14 @@ const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>データフォルダを変更する</DialogTitle>
+            <DialogTitle>アプリデータの保存先を変更する</DialogTitle>
             <DialogDescription>
-              アセットや画像データを保存する位置を変更する場合は以下の入力を行い移行してください
+              アセットや画像データを保存するディレクトリを変更する場合は以下の入力を行い移行してください
             </DialogDescription>
           </DialogHeader>
           <div>
             <div>
-              <Label>元のデータフォルダ</Label>
+              <Label>元の保存先</Label>
               <div className="mt-1 flex flex-row items-center">
                 <Input value={dataDir} disabled />
                 <Button
@@ -74,7 +74,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {
               </div>
             </div>
             <div className="mt-4">
-              <Label>新しいデータフォルダ</Label>
+              <Label>新しい保存先</Label>
               <div className="mt-1 flex flex-row items-center">
                 <Input value={migrateDestinationPath} disabled />
                 <Button
