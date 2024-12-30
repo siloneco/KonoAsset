@@ -127,9 +127,12 @@ const AddAssetModal = ({ className }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (dialogOpen) {
-      clearForm()
-      setTab('selector')
+    if (!dialogOpen) {
+      // 閉じるときにタブが変わってしまうのが見えるため遅延を入れる
+      setTimeout(() => {
+        clearForm()
+        setTab('selector')
+      }, 500)
     }
   }, [dialogOpen])
 
