@@ -1,11 +1,6 @@
 import { commands, FileInfo } from '@/lib/bindings'
 import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import UnitypackageSelector from './components/UnitypackageSelector'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -41,8 +36,7 @@ const SelectUnitypackageDialog = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>どのUnitypackageを利用しますか？</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogTitle>どのファイルを利用しますか？</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-96 pr-4">
           <div className="space-y-4">
