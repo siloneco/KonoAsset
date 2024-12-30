@@ -38,7 +38,7 @@ const updateAvatar = async ({
 }: UpdateAssetProps): Promise<Result<boolean, string>> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
-  const imagePath = form.getValues('imagePath')
+  const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
   const publishedAt = form.getValues('publishedAt')
@@ -48,7 +48,7 @@ const updateAvatar = async ({
     description: {
       name,
       creator,
-      imagePath,
+      imageFilename,
       boothItemId,
       tags,
       createdAt: 0, // unused on updating
@@ -65,7 +65,7 @@ const updateAvatarWearable = async ({
 }: UpdateAssetProps): Promise<Result<boolean, string>> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
-  const imagePath = form.getValues('imagePath')
+  const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
@@ -77,7 +77,7 @@ const updateAvatarWearable = async ({
     description: {
       name,
       creator,
-      imagePath,
+      imageFilename,
       boothItemId,
       tags,
       createdAt: 0, // unused on updating
@@ -96,7 +96,7 @@ const updateWorldObject = async ({
 }: UpdateAssetProps): Promise<Result<boolean, string>> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
-  const imagePath = form.getValues('imagePath')
+  const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
   const category = form.getValues('category')
@@ -107,7 +107,7 @@ const updateWorldObject = async ({
     description: {
       name,
       creator,
-      imagePath,
+      imageFilename,
       boothItemId,
       tags,
       createdAt: 0, // unused on updating

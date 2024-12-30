@@ -12,7 +12,7 @@ pub struct AssetSummary {
     pub asset_type: AssetType,
     pub name: String,
     pub creator: String,
-    pub image_path: Option<String>,
+    pub image_filename: Option<String>,
     pub booth_item_id: Option<u64>,
     pub published_at: Option<i64>,
 }
@@ -24,7 +24,7 @@ impl From<&Avatar> for AssetSummary {
             asset_type: AssetType::Avatar,
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
-            image_path: asset.description.image_path.clone(),
+            image_filename: asset.description.image_filename.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -38,12 +38,13 @@ impl From<&AvatarWearable> for AssetSummary {
             asset_type: AssetType::AvatarWearable,
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
-            image_path: asset.description.image_path.clone(),
+            image_filename: asset.description.image_filename.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
     }
 }
+
 impl From<&WorldObject> for AssetSummary {
     fn from(asset: &WorldObject) -> Self {
         Self {
@@ -51,17 +52,20 @@ impl From<&WorldObject> for AssetSummary {
             asset_type: AssetType::WorldObject,
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
-            image_path: asset.description.image_path.clone(),
+            image_filename: asset.description.image_filename.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
     }
 }
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct AssetDescription {
     pub name: String,
     pub creator: String,
+    pub image_filename: Option<String>,
+    #[serde(skip_serializing)]
     pub image_path: Option<String>,
     pub tags: Vec<String>,
     pub booth_item_id: Option<u64>,
@@ -73,7 +77,7 @@ impl AssetDescription {
     pub fn create(
         name: String,
         creator: String,
-        image_path: Option<String>,
+        image_filename: Option<String>,
         tags: Vec<String>,
         booth_item_id: Option<u64>,
         created_at: i64,
@@ -82,7 +86,8 @@ impl AssetDescription {
         Self {
             name,
             creator,
-            image_path,
+            image_filename,
+            image_path: None,
             tags,
             booth_item_id,
             created_at,

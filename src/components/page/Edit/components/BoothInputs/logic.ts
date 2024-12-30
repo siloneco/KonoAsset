@@ -17,6 +17,6 @@ export const getAssetDescriptionFromBooth = async ({ id, form }: Props) => {
   const description = result.data.description
   form.setValue('name', description.name)
   form.setValue('creator', description.creator)
-  form.setValue('imagePath', description.imagePath)
+  form.setValue('imageFilename', description.imageFilename)
   form.setValue('publishedAt', description.publishedAt)
 }

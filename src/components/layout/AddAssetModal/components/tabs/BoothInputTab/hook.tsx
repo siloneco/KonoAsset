@@ -68,7 +68,7 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
 
       form.setValue('name', description.name)
       form.setValue('creator', description.creator)
-      form.setValue('imagePath', description.imagePath)
+      form.setValue('imageFilename', description.imageFilename)
       form.setValue('publishedAt', description.publishedAt)
       form.setValue('boothItemId', boothItemId)
       form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')

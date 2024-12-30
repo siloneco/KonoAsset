@@ -78,6 +78,8 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
             set_preferences,
             // データフォルダ移行
             migrate_data_dir,
+            // 画像の絶対パス取得
+            get_image_absolute_path,
         ])
 }
 
@@ -567,7 +569,7 @@ async fn copy_image_file_to_images(
 
     fs::copy(&path, &new_path).unwrap();
 
-    Ok(new_path.to_str().unwrap().to_string())
+    Ok(new_path.file_name().unwrap().to_str().unwrap().to_string())
 }
 
 #[tauri::command]
@@ -707,4 +709,17 @@ async fn migrate_data_dir(
     preference.save().map_err(|e| e.to_string())?;
 
     Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+async fn get_image_absolute_path(
+    basic_store: State<'_, Mutex<StoreProvider>>,
+    filename: String,
+) -> Result<String, String> {
+    let mut path = basic_store.lock().await.data_dir();
+    path.push("images");
+    path.push(filename);
+
+    Ok(path.to_str().unwrap().to_string())
 }

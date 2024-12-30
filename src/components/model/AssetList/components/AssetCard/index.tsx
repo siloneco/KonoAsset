@@ -34,7 +34,7 @@ const AssetCard = ({
         <div className="h-[calc(100%-3rem)]">
           <SquareImage
             assetType={asset.assetType}
-            path={asset.imagePath ?? undefined}
+            filename={asset.imageFilename ?? undefined}
           />
           <AssetBadge
             type={asset.assetType}

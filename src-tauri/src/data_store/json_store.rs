@@ -56,6 +56,8 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             return Err("Failed to open file".into());
         }
 
+        let trigger_save;
+
         {
             let mut assets = self.assets.lock().await;
             let result: Result<HashSet<T>, serde_json::Error> =
@@ -66,9 +68,51 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             }
 
             *assets = result.unwrap();
+
+            let (save_required, new_assets) = Self::migrate_to_image_filename_field(&mut assets)
+                .map_err(|e| format!("Failed to migrate: {}", e))?;
+
+            if save_required {
+                *assets = new_assets;
+            }
+
+            trigger_save = save_required;
+        }
+
+        if trigger_save {
+            self.save().await?;
         }
 
         Ok(())
+    }
+
+    fn migrate_to_image_filename_field(
+        items: &mut HashSet<T>,
+    ) -> Result<(bool, HashSet<T>), String> {
+        let mut save_required = false;
+        let mut new_items = HashSet::new();
+
+        for item in items.iter() {
+            let mut item = item.clone();
+            let old_image_field = item.get_description().image_path.clone();
+
+            if old_image_field.is_none() {
+                new_items.insert(item);
+                continue;
+            }
+
+            let old_image_field = old_image_field.unwrap();
+
+            let path = PathBuf::from(&old_image_field);
+            let new_image_field = path.file_name().unwrap().to_str().unwrap().to_string();
+
+            save_required = true;
+            item.get_description_as_mut().image_filename = Some(new_image_field);
+
+            new_items.insert(item);
+        }
+
+        Ok((save_required, new_items))
     }
 
     pub async fn add_asset_and_save(&self, asset: T) -> Result<(), String> {

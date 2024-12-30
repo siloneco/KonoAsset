@@ -237,6 +237,14 @@ async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<nul
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_image_absolute_path", { filename }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -250,8 +258,8 @@ async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<nul
 
 /** user-defined types **/
 
-export type AssetDescription = { name: string; creator: string; imagePath: string | null; tags: string[]; boothItemId: number | null; createdAt: number; publishedAt: number | null }
-export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imagePath: string | null; boothItemId: number | null; publishedAt: number | null }
+export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; boothItemId: number | null; createdAt: number; publishedAt: number | null }
+export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string }
