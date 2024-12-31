@@ -142,37 +142,39 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
 
             let old_asset = old_asset.unwrap();
 
-            if old_asset.get_description().image_path != asset.get_description().image_path {
-                let old_image = &old_asset.get_description().image_path;
-                let new_image = &asset.get_description().image_path;
+            if old_asset.get_description().image_filename != asset.get_description().image_filename
+            {
+                let images_dir = self.data_dir.clone().join("images");
+
+                let old_image = &old_asset.get_description().image_filename;
+                let new_image = &asset.get_description().image_filename;
 
                 if old_image.is_some() {
+                    let old_image_path = images_dir.join(old_image.as_ref().unwrap());
                     let delete_result =
-                        delete_asset_image(&self.data_dir, old_image.as_ref().unwrap());
+                        delete_asset_image(&self.data_dir, old_image_path.to_str().unwrap());
 
                     if delete_result.is_err() {
                         return Err(delete_result.err().unwrap());
                     }
-
-                    if !delete_result.unwrap() {
-                        return Err("Failed to delete old image".into());
-                    }
                 }
 
                 if new_image.is_some() {
-                    let mut path = self.data_dir.clone();
-                    path.push("images");
-                    path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+                    let temp_new_image = images_dir.join(new_image.as_ref().unwrap());
+                    let extension = temp_new_image.extension().unwrap().to_str().unwrap();
+                    let path =
+                        images_dir.join(format!("{}.{}", Uuid::new_v4().to_string(), extension));
 
-                    let result = execute_image_fixation(new_image.as_ref().unwrap(), &path).await;
+                    let result =
+                        execute_image_fixation(temp_new_image.to_str().unwrap(), &path).await;
 
                     if result.is_err() {
                         return Err(result.err().unwrap());
                     }
 
                     if result.unwrap() {
-                        asset.get_description_as_mut().image_path =
-                            Some(path.to_str().unwrap().to_string());
+                        asset.get_description_as_mut().image_filename =
+                            Some(path.file_name().unwrap().to_str().unwrap().to_string());
                     }
                 }
             }
