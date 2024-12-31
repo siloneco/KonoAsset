@@ -59,6 +59,7 @@ export const useDataDirSelector = ({ setDataDir }: Props): ReturnProps => {
     const path = await open({
       directory: true,
       multiple: false,
+      defaultPath: 'file:\\\\PC',
     })
 
     if (path === null) {

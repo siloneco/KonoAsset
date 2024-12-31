@@ -52,13 +52,13 @@ impl BoothFetcher {
         let mut path = images_dir;
         path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
 
-        let image_path = if let Some(image_url) = image_url {
+        let image_filename = if let Some(image_url) = image_url {
             let result = save_image_from_url(&image_url, &path).await;
             if result.is_err() {
                 return Err(result.err().unwrap());
             }
 
-            Some(path.to_str().unwrap().to_string())
+            Some(path.file_name().unwrap().to_str().unwrap().to_string())
         } else {
             None
         };
@@ -83,7 +83,7 @@ impl BoothFetcher {
             AssetDescription::create(
                 name,
                 creator,
-                image_path,
+                image_filename,
                 vec![],
                 Some(id),
                 0,

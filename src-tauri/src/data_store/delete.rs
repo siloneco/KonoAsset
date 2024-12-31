@@ -96,7 +96,12 @@ pub fn delete_asset_image(app_dir: &PathBuf, image_path: &str) -> Result<bool, S
     }
     let images_path = images_path.unwrap();
 
-    let path = PathBuf::from(image_path).canonicalize();
+    let path = PathBuf::from(image_path);
+    if !path.exists() {
+        return Ok(false);
+    }
+
+    let path = path.canonicalize();
     if path.is_err() {
         return Err(format!("Failed to get image path: {:?}", path.err()));
     }

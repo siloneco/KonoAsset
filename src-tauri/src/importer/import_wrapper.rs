@@ -18,28 +18,14 @@ pub async fn import_avatar(
     basic_store: &StoreProvider,
     request: AvatarImportRequest,
 ) -> Result<Avatar, String> {
-    let image = &request.pre_asset.description.image_path;
+    let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image.is_some() {
-        let mut new_image_path = basic_store.data_dir();
-        new_image_path.push("images");
-        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    if image_filename.is_some() {
+        let images_path = basic_store.data_dir().join("images");
+        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
 
-        let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
-
-        if image_fixation_result.is_err() {
-            return Err(format!(
-                "Failed to import avatar: {}",
-                image_fixation_result.err().unwrap()
-            ));
-        }
-
-        if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_path =
-                Some(new_image_path.to_str().unwrap().to_string());
-        }
+        request.pre_asset.description.image_filename = Some(new_filename);
     }
 
     let asset = Avatar::create(request.pre_asset.description);
@@ -83,25 +69,14 @@ pub async fn import_avatar_wearable(
     basic_store: &StoreProvider,
     request: AvatarWearableImportRequest,
 ) -> Result<AvatarWearable, String> {
-    let image = &request.pre_asset.description.image_path;
+    let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image.is_some() {
-        let mut new_image_path = basic_store.data_dir();
-        new_image_path.push("images");
-        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    if image_filename.is_some() {
+        let images_path = basic_store.data_dir().join("images");
+        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
 
-        let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
-
-        if let Err(error) = image_fixation_result {
-            return Err(format!("Failed to import avatar wearable: {}", error));
-        }
-
-        if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_path =
-                Some(new_image_path.to_str().unwrap().to_string());
-        }
+        request.pre_asset.description.image_filename = Some(new_filename);
     }
 
     let asset = AvatarWearable::create(
@@ -149,25 +124,14 @@ pub async fn import_world_object(
     basic_store: &StoreProvider,
     request: WorldObjectImportRequest,
 ) -> Result<WorldObject, String> {
-    let image = &request.pre_asset.description.image_path;
+    let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image.is_some() {
-        let mut new_image_path = basic_store.data_dir();
-        new_image_path.push("images");
-        new_image_path.push(format!("{}.jpg", Uuid::new_v4().to_string()));
+    if image_filename.is_some() {
+        let images_path = basic_store.data_dir().join("images");
+        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
 
-        let image_fixation_result =
-            execute_image_fixation(image.as_ref().unwrap(), &new_image_path).await;
-
-        if let Err(error) = image_fixation_result {
-            return Err(format!("Failed to import world object: {}", error));
-        }
-
-        if image_fixation_result.unwrap() {
-            request.pre_asset.description.image_path =
-                Some(new_image_path.to_str().unwrap().to_string());
-        }
+        request.pre_asset.description.image_filename = Some(new_filename);
     }
 
     let asset = WorldObject::create(request.pre_asset.description, request.pre_asset.category);
@@ -223,4 +187,34 @@ fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+async fn fix_image(images_path: &PathBuf, old: &str) -> Result<String, String> {
+    let temp_image_path = images_path.clone().join(old);
+    let extension = temp_image_path.extension().unwrap().to_str().unwrap();
+    let new_image_path =
+        images_path
+            .clone()
+            .join(format!("{}.{}", Uuid::new_v4().to_string(), extension));
+
+    let image_fixation_result =
+        execute_image_fixation(temp_image_path.to_str().unwrap(), &new_image_path).await;
+
+    if image_fixation_result.is_err() {
+        return Err(format!(
+            "Failed to import avatar: {}",
+            image_fixation_result.err().unwrap()
+        ));
+    }
+
+    if image_fixation_result.unwrap() {
+        return Ok(new_image_path
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string());
+    }
+
+    Ok(old.to_string())
 }

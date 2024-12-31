@@ -36,16 +36,22 @@ const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {
 
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2">
+      <div className="space-y-2 flex-grow">
         <Label className="text-xl">アプリデータの保存先</Label>
         <p className="text-foreground/60 text-sm">
           アセットや画像を保存するディレクトリを設定します
         </p>
-        <Input value={dataDir} className="min-w-80" disabled />
+        <div className="flex flex-row w-4/5">
+          <Input value={dataDir} className="w-full max-w-[7y00px]" disabled />
+          <Button
+            variant="outline"
+            className="ml-2"
+            onClick={onOpenButtonClick}
+          >
+            開く
+          </Button>
+        </div>
       </div>
-      <Button variant="outline" className="ml-auto" onClick={onOpenButtonClick}>
-        開く
-      </Button>
       <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
         <DialogTrigger asChild>
           <Button className="ml-2" variant="secondary">
