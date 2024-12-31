@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::Command};
+use std::path::PathBuf;
 
 pub fn open_in_file_manager(path: &PathBuf) -> Result<(), String> {
     if !path.exists() {
@@ -13,47 +13,7 @@ pub fn open_in_file_manager(path: &PathBuf) -> Result<(), String> {
             Err(e) => Err(e.to_string()),
         };
     } else {
-        let result = open_file_with_selected(path);
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(e) => Err(e.to_string()),
-        }
-    }
-}
-
-#[cfg(target_os = "windows")]
-fn open_file_with_selected(path: &PathBuf) -> Result<(), String> {
-    use std::os::windows::process::CommandExt;
-
-    let path_str = path.to_str().unwrap();
-    let result = Command::new("explorer")
-        .arg("/select,")
-        .raw_arg(format!("\"{path_str}\""))
-        .spawn();
-
-    match result {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[cfg(target_os = "macos")]
-fn open_file_with_selected(path: &PathBuf) -> Result<(), String> {
-    let result = Command::new("open").arg("-R").arg(path).spawn();
-
-    match result {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[cfg(target_os = "linux")]
-fn open_file_with_selected(path: &PathBuf) -> Result<(), String> {
-    let result = Command::new("nautilus").arg("--select").arg(path).spawn();
-
-    match result {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
+        showfile::show_path_in_file_manager(path);
+        return Ok(());
     }
 }
