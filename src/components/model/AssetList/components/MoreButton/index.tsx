@@ -68,7 +68,7 @@ export const MoreButton = ({
       <DropdownMenuContent align="end">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger className="cursor-default">
+            <TooltipTrigger className="cursor-default w-full">
               <DropdownMenuItem asChild disabled={boothUrl === undefined}>
                 <a
                   href={boothUrl}
