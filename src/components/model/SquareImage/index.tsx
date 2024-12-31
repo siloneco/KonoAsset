@@ -5,6 +5,7 @@ import { useImagePicker } from './hook'
 import { cn } from '@/lib/utils'
 import { AssetType, commands } from '@/lib/bindings'
 import { useEffect, useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Props = {
   assetType: AssetType
@@ -60,14 +61,18 @@ const SquareImage = ({
     <AspectRatio
       ratio={1}
       className={cn(
-        'w-full h-full flex items-center bg-white rounded-lg overflow-hidden',
+        'w-full h-full flex items-center rounded-lg overflow-hidden',
+        (filename === undefined || fixedPath !== undefined) && 'bg-white',
         className,
       )}
     >
       {fixedPath !== undefined && (
         <img src={convertFileSrc(fixedPath)} alt={ALT} className="w-full" />
       )}
-      {fixedPath === undefined && (
+      {filename !== undefined && fixedPath === undefined && (
+        <Skeleton className="h-full w-full" />
+      )}
+      {filename === undefined && fixedPath === undefined && (
         <img src={defaultImagePath} alt={ALT} className="opacity-60 w-full" />
       )}
       {selectable && (
