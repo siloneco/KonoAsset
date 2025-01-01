@@ -77,6 +77,7 @@ mod tests {
                 name: "name".into(),
                 creator: "creator".into(),
                 image_path: Some("C:\\path\\to\\image.png".into()),
+                image_filename: None,
                 booth_item_id: Some(123),
                 tags: vec!["tag".into()],
                 created_at: 12345,

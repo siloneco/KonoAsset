@@ -10,6 +10,7 @@ pub struct LegacyAssetDescriptionV1 {
     pub name: String,
     pub creator: String,
     pub image_path: Option<String>,
+    pub image_filename: Option<String>,
     pub tags: Vec<String>,
     pub booth_item_id: Option<u64>,
     pub created_at: i64,
@@ -20,7 +21,9 @@ impl TryInto<AssetDescription> for LegacyAssetDescriptionV1 {
     type Error = String;
 
     fn try_into(self) -> Result<AssetDescription, Self::Error> {
-        let image_filename = if let Some(image_path) = self.image_path {
+        let image_filename = if let Some(image_filename) = self.image_filename {
+            Some(image_filename)
+        } else if let Some(image_path) = self.image_path {
             let path = PathBuf::from(image_path);
             Some(path.file_name().unwrap().to_str().unwrap().to_string())
         } else {
