@@ -1,6 +1,6 @@
 [package]
 name = "konoasset"
-version = "0.2.4"
+version = "0.2.5"
 description = "Asset management tool for VRChat"
 authors = ["siloneco"]
 edition = "2021"
