@@ -10,7 +10,7 @@ use super::share::LegacyAssetDescriptionV1;
 #[serde(untagged)]
 pub enum VersionedAvatarWearables {
     AvatarWearables {
-        version: MustBe!(1u64),
+        version: MustBe!(2u64),
         data: HashSet<AvatarWearable>,
     },
     LegacyAvatarWearablesV1(HashSet<LegacyAvatarWearableV1>),
@@ -39,7 +39,7 @@ impl TryFrom<HashSet<AvatarWearable>> for VersionedAvatarWearables {
 
     fn try_from(value: HashSet<AvatarWearable>) -> Result<VersionedAvatarWearables, Self::Error> {
         Ok(VersionedAvatarWearables::AvatarWearables {
-            version: MustBe!(1u64),
+            version: MustBe!(2u64),
             data: value,
         })
     }
@@ -64,5 +64,35 @@ impl TryInto<AvatarWearable> for LegacyAvatarWearableV1 {
             category: self.category,
             supported_avatars: self.supported_avatars,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_legacy_avatar_wearable_v1_migration() {
+        let legacy = LegacyAvatarWearableV1 {
+            id: Uuid::new_v4(),
+            description: LegacyAssetDescriptionV1 {
+                name: "name".into(),
+                creator: "creator".into(),
+                image_path: Some("C:\\path\\to\\image.png".into()),
+                booth_item_id: Some(123),
+                tags: vec!["tag".into()],
+                created_at: 12345,
+                published_at: Some(67890),
+            },
+            category: "category".to_string(),
+            supported_avatars: BTreeSet::new(),
+        };
+
+        let latest: AvatarWearable = legacy.try_into().unwrap();
+
+        assert_eq!(
+            latest.description.image_filename,
+            Some("image.png".to_string()),
+        );
     }
 }

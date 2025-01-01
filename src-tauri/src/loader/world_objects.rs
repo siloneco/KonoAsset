@@ -10,7 +10,7 @@ use super::share::LegacyAssetDescriptionV1;
 #[serde(untagged)]
 pub enum VersionedWorldObjects {
     WorldObjects {
-        version: MustBe!(1u64),
+        version: MustBe!(2u64),
         data: HashSet<WorldObject>,
     },
     LegacyWorldObjectsV1(HashSet<LegacyWorldObjectV1>),
@@ -39,7 +39,7 @@ impl TryFrom<HashSet<WorldObject>> for VersionedWorldObjects {
 
     fn try_from(value: HashSet<WorldObject>) -> Result<VersionedWorldObjects, Self::Error> {
         Ok(VersionedWorldObjects::WorldObjects {
-            version: MustBe!(1u64),
+            version: MustBe!(2u64),
             data: value,
         })
     }
@@ -62,5 +62,34 @@ impl TryInto<WorldObject> for LegacyWorldObjectV1 {
             description: self.description.try_into()?,
             category: self.category,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_legacy_world_object_v1_migration() {
+        let legacy = LegacyWorldObjectV1 {
+            id: Uuid::new_v4(),
+            description: LegacyAssetDescriptionV1 {
+                name: "name".into(),
+                creator: "creator".into(),
+                image_path: Some("C:\\path\\to\\image.png".into()),
+                booth_item_id: Some(123),
+                tags: vec!["tag".into()],
+                created_at: 12345,
+                published_at: Some(67890),
+            },
+            category: "category".to_string(),
+        };
+
+        let latest: WorldObject = legacy.try_into().unwrap();
+
+        assert_eq!(
+            latest.description.image_filename,
+            Some("image.png".to_string()),
+        );
     }
 }

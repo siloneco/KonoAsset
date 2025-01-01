@@ -10,7 +10,7 @@ use super::share::LegacyAssetDescriptionV1;
 #[serde(untagged)]
 pub enum VersionedAvatars {
     Avatars {
-        version: MustBe!(1u64),
+        version: MustBe!(2u64),
         data: HashSet<Avatar>,
     },
     LegacyAvatarsV1(HashSet<LegacyAvatarV1>),
@@ -39,7 +39,7 @@ impl TryFrom<HashSet<Avatar>> for VersionedAvatars {
 
     fn try_from(value: HashSet<Avatar>) -> Result<VersionedAvatars, Self::Error> {
         Ok(VersionedAvatars::Avatars {
-            version: MustBe!(1u64),
+            version: MustBe!(2u64),
             data: value,
         })
     }
@@ -60,5 +60,33 @@ impl TryInto<Avatar> for LegacyAvatarV1 {
             id: self.id,
             description: self.description.try_into()?,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_legacy_avatar_v1_migration() {
+        let legacy = LegacyAvatarV1 {
+            id: Uuid::new_v4(),
+            description: LegacyAssetDescriptionV1 {
+                name: "name".into(),
+                creator: "creator".into(),
+                image_path: Some("C:\\path\\to\\image.png".into()),
+                booth_item_id: Some(123),
+                tags: vec!["tag".into()],
+                created_at: 12345,
+                published_at: Some(67890),
+            },
+        };
+
+        let latest: Avatar = legacy.try_into().unwrap();
+
+        assert_eq!(
+            latest.description.image_filename,
+            Some("image.png".to_string()),
+        );
     }
 }
