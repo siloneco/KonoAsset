@@ -1,5 +1,7 @@
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useToast } from '@/hooks/use-toast'
 import { commands, FileInfo } from '@/lib/bindings'
+import { useContext } from 'react'
 
 type Props = {
   id: string
@@ -19,8 +21,9 @@ export const useAssetCardOpenButton = ({
   openDialog,
 }: Props): ReturnProps => {
   const { toast } = useToast()
+  const { preference } = useContext(PreferenceContext)
 
-  const onMainButtonClick = async () => {
+  const listUnitypackageAndOpen = async () => {
     const result = await commands.listUnitypackageFiles(id)
 
     if (result.status === 'error') {
@@ -58,6 +61,14 @@ export const useAssetCardOpenButton = ({
 
     setUnitypackageFiles(data)
     openDialog()
+  }
+
+  const onMainButtonClick = async () => {
+    if (preference.useUnitypackageSelectedOpen) {
+      await listUnitypackageAndOpen()
+    } else {
+      await onOpenManagedDirButtonClick()
+    }
   }
 
   const onOpenManagedDirButtonClick = async () => {

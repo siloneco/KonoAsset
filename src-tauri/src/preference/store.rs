@@ -3,22 +3,19 @@ use std::{io, path::PathBuf};
 use serde::{Deserialize, Serialize};
 use tauri::{App, Manager};
 
+use crate::loader::VersionedPreferences;
+
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct PreferenceStore {
     #[serde(skip)]
-    file_path: PathBuf,
+    pub file_path: PathBuf,
 
-    data_dir_path: PathBuf,
-    theme: Theme,
-    skip_confirmation: SkipConfirmation,
-}
+    pub data_dir_path: PathBuf,
+    pub theme: Theme,
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct SkipConfirmation {
-    delete_file_or_dir_on_import: bool,
-    open_managed_dir_on_multiple_unitypackage_found: bool,
+    pub delete_on_import: bool,
+    pub use_unitypackage_selected_open: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, specta::Type)]
@@ -47,7 +44,9 @@ impl PreferenceStore {
 
             data_dir_path: data_dir_path,
             theme: Theme::System,
-            skip_confirmation: SkipConfirmation::default(),
+
+            delete_on_import: true,
+            use_unitypackage_selected_open: true,
         }
     }
 
@@ -60,7 +59,15 @@ impl PreferenceStore {
         }
 
         let reader = std::fs::File::open(preference_json_path)?;
-        let mut preference: Self = serde_json::from_reader(reader)?;
+        let preference: Result<PreferenceStore, _> =
+            serde_json::from_reader::<_, VersionedPreferences>(reader)?.try_into();
+
+        if let Err(e) = preference {
+            eprintln!("Failed to load preference: {}", e);
+            return Ok(None);
+        }
+
+        let mut preference = preference.unwrap();
 
         let mut file_path = app.path().app_local_data_dir().unwrap();
         file_path.push("preference.json");
@@ -81,22 +88,22 @@ impl PreferenceStore {
     pub fn overwrite(&mut self, other: &Self) {
         self.data_dir_path = other.data_dir_path.clone();
         self.theme = other.theme;
-        self.skip_confirmation = other.skip_confirmation;
+        self.delete_on_import = other.delete_on_import;
+        self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
     }
 
     pub fn save(&self) -> Result<(), io::Error> {
         let writer = std::fs::File::create(&self.file_path)?;
-        serde_json::to_writer(writer, self)?;
+
+        let versioned = VersionedPreferences::try_from(self.clone());
+
+        if let Err(e) = versioned {
+            eprintln!("Failed to save preference: {}", e);
+            return Ok(());
+        }
+
+        serde_json::to_writer(writer, &versioned.unwrap())?;
 
         Ok(())
-    }
-}
-
-impl SkipConfirmation {
-    pub fn default() -> Self {
-        Self {
-            delete_file_or_dir_on_import: false,
-            open_managed_dir_on_multiple_unitypackage_found: false,
-        }
     }
 }

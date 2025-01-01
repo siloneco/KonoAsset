@@ -86,6 +86,14 @@ async updateWorldObject(asset: WorldObject) : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getFilteredAssetIds(request: FilterRequest) : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_filtered_asset_ids", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getAllAssetTags() : Promise<Result<string[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
@@ -126,49 +134,9 @@ async getWorldObjectCategories() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<string, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("copy_image_file_to_images", { path, temporary }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async openManagedDir(id: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("open_managed_dir", { id }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async openFileInFileManager(path: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("open_file_in_file_manager", { path }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async openDataDir() : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("open_data_dir") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getAssetDescriptionFromBooth(boothItemId: number) : Promise<Result<BoothInfo, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_asset_description_from_booth", { boothItemId }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async getFilteredAssetIds(request: FilterRequest) : Promise<Result<string[], string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("get_filtered_asset_ids", { request }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -198,6 +166,38 @@ async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async openManagedDir(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_managed_dir", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openFileInFileManager(path: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_file_in_file_manager", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openDataDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_data_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("copy_image_file_to_images", { path, temporary }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getDirectoryPath(id: string) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_directory_path", { id }) };
@@ -214,22 +214,6 @@ async listUnitypackageFiles(id: string) : Promise<Result<{ [key in string]: File
     else return { status: "error", error: e  as any };
 }
 },
-async getPreferences() : Promise<Result<PreferenceStore, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("get_preferences") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async setPreferences(newPreference: PreferenceStore) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("set_preferences", { newPreference }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("migrate_data_dir", { newPath, migrateData }) };
@@ -241,6 +225,22 @@ async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<nul
 async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_image_absolute_path", { filename }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getPreferences() : Promise<Result<PreferenceStore, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_preferences") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setPreferences(newPreference: PreferenceStore) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_preferences", { newPreference }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -262,9 +262,9 @@ export type AssetDescription = { name: string; creator: string; imageFilename: s
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
-export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string }
+export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string; deleteSource: boolean }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
-export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePath: string }
+export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePath: string; deleteSource: boolean }
 export type BoothInfo = { description: AssetDescription; estimatedAssetType: AssetType | null }
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
@@ -273,12 +273,11 @@ export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
-export type PreferenceStore = { dataDirPath: string; theme: Theme; skipConfirmation: SkipConfirmation }
-export type SkipConfirmation = { deleteFileOrDirOnImport: boolean; openManagedDirOnMultipleUnitypackageFound: boolean }
+export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
-export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePath: string }
+export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePath: string; deleteSource: boolean }
 
 /** tauri-specta globals **/
 

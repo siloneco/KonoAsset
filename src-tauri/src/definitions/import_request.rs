@@ -26,6 +26,7 @@ pub struct PreWorldObject {
 pub struct AvatarImportRequest {
     pub pre_asset: PreAvatar,
     pub absolute_path: String,
+    pub delete_source: bool,
 }
 
 #[derive(Deserialize, Debug, Clone, specta::Type)]
@@ -33,6 +34,7 @@ pub struct AvatarImportRequest {
 pub struct AvatarWearableImportRequest {
     pub pre_asset: PreAvatarWearable,
     pub absolute_path: String,
+    pub delete_source: bool,
 }
 
 #[derive(Deserialize, Debug, Clone, specta::Type)]
@@ -40,4 +42,5 @@ pub struct AvatarWearableImportRequest {
 pub struct WorldObjectImportRequest {
     pub pre_asset: PreWorldObject,
     pub absolute_path: String,
+    pub delete_source: bool,
 }

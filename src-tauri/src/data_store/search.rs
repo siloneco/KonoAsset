@@ -228,7 +228,6 @@ mod tests {
             name: "これはアセットの名前です".to_string(),
             creator: "これは制作者の名前です".to_string(),
             image_filename: None,
-            image_path: None,
             tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
             booth_item_id: None,
             created_at: chrono::Local::now().timestamp_millis(),

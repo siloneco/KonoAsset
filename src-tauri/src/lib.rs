@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use booth::fetcher::BoothFetcher;
-use commands::generate_tauri_specta_builder;
+use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use preference::store::PreferenceStore;
 use tauri::{async_runtime::Mutex, App, Manager};
@@ -11,11 +11,12 @@ use updater::update_handler::UpdateHandler;
 use specta_typescript::{BigIntExportBehavior, Typescript};
 
 mod booth;
-mod commands;
+mod command;
 mod data_store;
 mod definitions;
 mod file_opener;
 mod importer;
+mod loader;
 mod preference;
 mod updater;
 

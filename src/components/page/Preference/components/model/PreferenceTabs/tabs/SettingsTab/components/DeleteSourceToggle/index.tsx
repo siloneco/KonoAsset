@@ -11,12 +11,12 @@ type Props = {
 const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <Label className="text-lg">
-          インポート後の削除ダイアログを表示しない
+          インポート後に元ファイル/フォルダを削除する
         </Label>
         <p className="text-foreground/60 text-sm w-10/12">
-          この設定が有効の場合、アセットをインポートした後に元ファイル/フォルダが常に自動で削除されます
+          この設定が有効の場合、アセットをインポートした後に元ファイル/フォルダが自動で削除されます
         </p>
       </div>
       <Switch

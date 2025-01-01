@@ -6,8 +6,8 @@ import { commands, Theme } from '@/lib/bindings'
 import { FC, useContext } from 'react'
 import ThemeSelector from './components/ThemeSelector'
 import DataDirSelector from './components/DataDirSelector'
-import SkipUnitypackageSelectorToggle from './components/SkipUnitypackageSelectorToggle'
 import DeleteSourceToggle from './components/DeleteSourceToggle'
+import UseUnitypackageSelectorToggle from './components/UseUnitypackageSelectorToggle'
 
 type Props = {
   id: PreferenceTabIDs
@@ -41,34 +41,25 @@ const SettingsTab: FC<Props> = ({ id }) => {
             return { status: 'ok', data: null }
           }}
         />
-        <SkipUnitypackageSelectorToggle
-          enable={
-            preference.skipConfirmation
-              .openManagedDirOnMultipleUnitypackageFound
-          }
+        <UseUnitypackageSelectorToggle
+          enable={preference.useUnitypackageSelectedOpen}
           setEnable={async (enable: boolean) => {
             await setPreference(
               {
                 ...preference,
-                skipConfirmation: {
-                  ...preference.skipConfirmation,
-                  openManagedDirOnMultipleUnitypackageFound: enable,
-                },
+                useUnitypackageSelectedOpen: enable,
               },
               true,
             )
           }}
         />
         <DeleteSourceToggle
-          enable={preference.skipConfirmation.deleteFileOrDirOnImport}
+          enable={preference.deleteOnImport}
           setEnable={async (enable: boolean) => {
             await setPreference(
               {
                 ...preference,
-                skipConfirmation: {
-                  ...preference.skipConfirmation,
-                  deleteFileOrDirOnImport: enable,
-                },
+                deleteOnImport: enable,
               },
               true,
             )

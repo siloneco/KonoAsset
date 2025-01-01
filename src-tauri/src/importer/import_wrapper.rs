@@ -44,7 +44,7 @@ pub async fn import_avatar(
     destination.push("data");
     destination.push(asset.id.to_string());
 
-    let result = copy_assets(&src_import_asset_path, &destination);
+    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
     if result.is_err() {
         let delete_asset_result = basic_store
@@ -99,7 +99,7 @@ pub async fn import_avatar_wearable(
     destination.push("data");
     destination.push(asset.id.to_string());
 
-    let result = copy_assets(&src_import_asset_path, &destination);
+    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
     if result.is_err() {
         let delete_asset_result = basic_store
@@ -150,8 +150,7 @@ pub async fn import_world_object(
     destination.push("data");
     destination.push(asset.id.to_string());
 
-    let result = copy_assets(&src_import_asset_path, &destination);
-
+    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
     if result.is_err() {
         let delete_asset_result = basic_store
             .get_world_object_store()
@@ -171,7 +170,7 @@ pub async fn import_world_object(
     Ok(asset)
 }
 
-fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
+fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<(), String> {
     if !dest.exists() {
         let result = fs::create_dir_all(dest);
 
@@ -180,7 +179,7 @@ fn copy_assets(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
         }
     }
 
-    let result = fileutils::import_asset(src, dest);
+    let result = fileutils::import_asset(src, dest, delete_source);
 
     if result.is_err() {
         return Err(result.err().unwrap().to_string());

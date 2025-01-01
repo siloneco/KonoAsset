@@ -22,6 +22,8 @@ import WorldObjectLayout from './layout/WorldObjectLayout'
 import { useManualInputTabHooks } from './hook'
 import SquareImage from '@/components/model/SquareImage'
 import { AssetFormType } from '@/lib/form'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
   form: AssetFormType
@@ -37,6 +39,8 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
     assetType,
     imageFilename,
     setImageFilename,
+    deleteSourceChecked,
+    setDeleteSourceChecked,
   } = useManualInputTabHooks({ form, setTab, setDialogOpen })
 
   return (
@@ -120,10 +124,25 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
               >
                 戻る
               </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting && <Loader2 className="animate-spin" />}
-                アセットを追加
-              </Button>
+              <div className="flex flex-row">
+                <div className="flex items-center mr-4">
+                  <Checkbox
+                    checked={deleteSourceChecked}
+                    onCheckedChange={setDeleteSourceChecked}
+                    disabled={submitting}
+                  />
+                  <Label
+                    className="ml-2"
+                    onClick={() => setDeleteSourceChecked(!deleteSourceChecked)}
+                  >
+                    インポート後に元ファイルを削除する
+                  </Label>
+                </div>
+                <Button type="submit" disabled={submitting}>
+                  {submitting && <Loader2 className="animate-spin" />}
+                  アセットを追加
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

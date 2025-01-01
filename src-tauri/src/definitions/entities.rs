@@ -3,6 +3,10 @@ use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::loader::{
+    HashSetVersionedLoader, VersionedAvatarWearables, VersionedAvatars, VersionedWorldObjects,
+};
+
 use super::traits::AssetTrait;
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
@@ -65,8 +69,6 @@ pub struct AssetDescription {
     pub name: String,
     pub creator: String,
     pub image_filename: Option<String>,
-    #[serde(skip_serializing)]
-    pub image_path: Option<String>,
     pub tags: Vec<String>,
     pub booth_item_id: Option<u64>,
     pub created_at: i64,
@@ -87,7 +89,6 @@ impl AssetDescription {
             name,
             creator,
             image_filename,
-            image_path: None,
             tags,
             booth_item_id,
             created_at,
@@ -135,6 +136,10 @@ impl AssetTrait for Avatar {
     fn get_description_as_mut(&mut self) -> &mut AssetDescription {
         &mut self.description
     }
+}
+
+impl HashSetVersionedLoader<Avatar> for Avatar {
+    type VersionedType = VersionedAvatars;
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
@@ -193,6 +198,10 @@ impl AssetTrait for AvatarWearable {
     }
 }
 
+impl HashSetVersionedLoader<AvatarWearable> for AvatarWearable {
+    type VersionedType = VersionedAvatarWearables;
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
 pub struct WorldObject {
     pub id: Uuid,
@@ -236,6 +245,10 @@ impl AssetTrait for WorldObject {
     fn get_description_as_mut(&mut self) -> &mut AssetDescription {
         &mut self.description
     }
+}
+
+impl HashSetVersionedLoader<WorldObject> for WorldObject {
+    type VersionedType = VersionedWorldObjects;
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, specta::Type)]
