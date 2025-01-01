@@ -16,6 +16,7 @@ mod data_store;
 mod definitions;
 mod file_opener;
 mod importer;
+mod loader;
 mod preference;
 mod updater;
 

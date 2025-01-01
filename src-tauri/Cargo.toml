@@ -29,6 +29,7 @@ opener = { version = "0.7.2" }
 tauri-plugin-dialog = "2"
 reqwest = { version = "0.12.9", features = ["json", "blocking"] }
 regex = "1.11.1"
+monostate = "0.1.13"
 kanaria = "0.2.0"
 zip-extensions = "0.8.1"
 specta = {version = "=2.0.0-rc.20", features = ["uuid"] }

@@ -3,6 +3,8 @@ use std::{io, path::PathBuf};
 use serde::{Deserialize, Serialize};
 use tauri::{App, Manager};
 
+use crate::loader::VersionedPreferences;
+
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct PreferenceStore {
@@ -60,7 +62,15 @@ impl PreferenceStore {
         }
 
         let reader = std::fs::File::open(preference_json_path)?;
-        let mut preference: Self = serde_json::from_reader(reader)?;
+        let preference: Result<PreferenceStore, _> =
+            serde_json::from_reader::<_, VersionedPreferences>(reader)?.try_into();
+
+        if let Err(e) = preference {
+            eprintln!("Failed to load preference: {}", e);
+            return Ok(None);
+        }
+
+        let mut preference = preference.unwrap();
 
         let mut file_path = app.path().app_local_data_dir().unwrap();
         file_path.push("preference.json");
@@ -86,7 +96,15 @@ impl PreferenceStore {
 
     pub fn save(&self) -> Result<(), io::Error> {
         let writer = std::fs::File::create(&self.file_path)?;
-        serde_json::to_writer(writer, self)?;
+
+        let versioned = VersionedPreferences::try_from(self.clone());
+
+        if let Err(e) = versioned {
+            eprintln!("Failed to save preference: {}", e);
+            return Ok(());
+        }
+
+        serde_json::to_writer(writer, &versioned.unwrap())?;
 
         Ok(())
     }

@@ -4,16 +4,24 @@ use serde::{de::DeserializeOwned, Serialize};
 use tauri::async_runtime::Mutex;
 use uuid::Uuid;
 
-use crate::{definitions::traits::AssetTrait, importer::execute_image_fixation};
+use crate::{
+    definitions::traits::AssetTrait, importer::execute_image_fixation,
+    loader::HashSetVersionedLoader,
+};
 
 use super::delete::delete_asset_image;
 
-pub struct JsonStore<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> {
+pub struct JsonStore<
+    T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
+> {
     data_dir: PathBuf,
     assets: Mutex<HashSet<T>>,
 }
 
-impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore<T> {
+impl<
+        T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
+    > JsonStore<T>
+{
     pub fn create(data_dir: PathBuf) -> Self {
         let mut path = data_dir.clone();
         path.push("metadata");
@@ -41,7 +49,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             .cloned()
     }
 
-    pub async fn load_assets_from_file(&self) -> Result<(), String> {
+    pub async fn load(&self) -> Result<(), String> {
         let mut path = self.data_dir.clone();
         path.push("metadata");
         path.push(T::filename());
@@ -56,63 +64,30 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             return Err("Failed to open file".into());
         }
 
-        let trigger_save;
-
         {
             let mut assets = self.assets.lock().await;
-            let result: Result<HashSet<T>, serde_json::Error> =
+            let result: Result<T::VersionedType, serde_json::Error> =
                 serde_json::from_reader(file_open_result.unwrap());
 
             if result.is_err() {
-                return Err("Failed to deserialize file".into());
+                return Err(format!(
+                    "Failed to deserialize file: {:?}",
+                    result.err().unwrap()
+                ));
             }
 
-            *assets = result.unwrap();
+            let result = result.unwrap();
 
-            let (save_required, new_assets) = Self::migrate_to_image_filename_field(&mut assets)
-                .map_err(|e| format!("Failed to migrate: {}", e))?;
+            let data: Result<HashSet<T>, _> = result.try_into();
 
-            if save_required {
-                *assets = new_assets;
+            if data.is_err() {
+                return Err(data.err().unwrap());
             }
 
-            trigger_save = save_required;
-        }
-
-        if trigger_save {
-            self.save().await?;
+            *assets = data.unwrap();
         }
 
         Ok(())
-    }
-
-    fn migrate_to_image_filename_field(
-        items: &mut HashSet<T>,
-    ) -> Result<(bool, HashSet<T>), String> {
-        let mut save_required = false;
-        let mut new_items = HashSet::new();
-
-        for item in items.iter() {
-            let mut item = item.clone();
-            let old_image_field = item.get_description().image_path.clone();
-
-            if old_image_field.is_none() {
-                new_items.insert(item);
-                continue;
-            }
-
-            let old_image_field = old_image_field.unwrap();
-
-            let path = PathBuf::from(&old_image_field);
-            let new_image_field = path.file_name().unwrap().to_str().unwrap().to_string();
-
-            save_required = true;
-            item.get_description_as_mut().image_filename = Some(new_image_field);
-
-            new_items.insert(item);
-        }
-
-        Ok((save_required, new_items))
     }
 
     pub async fn add_asset_and_save(&self, asset: T) -> Result<(), String> {
@@ -183,13 +158,7 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             assets.insert(asset.clone());
         }
 
-        let save_result = self.save().await;
-
-        if save_result.is_err() {
-            return Err(save_result.err().unwrap());
-        }
-
-        Ok(())
+        self.save().await
     }
 
     pub async fn delete_asset_and_save(&self, id: Uuid) -> Result<bool, String> {
@@ -204,10 +173,10 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
             assets.remove(&asset.unwrap());
         }
 
-        let save_result = self.save().await;
+        let result = self.save().await;
 
-        if save_result.is_err() {
-            return Err(save_result.err().unwrap());
+        if result.is_err() {
+            return Err(result.err().unwrap());
         }
 
         Ok(true)
@@ -225,11 +194,22 @@ impl<T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash> JsonStore
         }
 
         let assets = self.assets.lock().await;
-        let result = serde_json::to_writer(file_open_result.unwrap(), &*assets);
 
-        match result {
-            Ok(_) => Ok(()),
-            Err(e) => Err(format!("Failed to serialize file: {}", e)),
+        let data = T::VersionedType::try_from(assets.clone());
+
+        if data.is_err() {
+            return Err(data.err().unwrap());
         }
+
+        let result = serde_json::to_writer(file_open_result.unwrap(), &data.unwrap());
+
+        if result.is_err() {
+            return Err(format!(
+                "Failed to serialize file: {}",
+                result.err().unwrap()
+            ));
+        }
+
+        Ok(())
     }
 }

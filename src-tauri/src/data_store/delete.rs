@@ -3,7 +3,7 @@ use std::{fs, hash::Hash, path::PathBuf};
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
-use crate::definitions::traits::AssetTrait;
+use crate::{definitions::traits::AssetTrait, loader::HashSetVersionedLoader};
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
@@ -38,7 +38,7 @@ pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, St
 }
 
 async fn delete_asset_from_store<
-    T: AssetTrait + Clone + Serialize + DeserializeOwned + Eq + Hash,
+    T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
 >(
     app_dir: &PathBuf,
     store: &JsonStore<T>,
@@ -73,14 +73,16 @@ async fn delete_asset_from_store<
         return Err("Failed to delete asset directory".into());
     }
 
-    let image = &asset.get_description().image_path;
+    let image = &asset.get_description().image_filename;
 
     if image.is_none() {
         return Ok(true);
     }
 
+    let image_path = app_dir.join("images").join(image.as_ref().unwrap());
+
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, image.as_ref().unwrap())
+    delete_asset_image(app_dir, image_path.to_str().unwrap())
 }
 
 pub fn delete_asset_image(app_dir: &PathBuf, image_path: &str) -> Result<bool, String> {
