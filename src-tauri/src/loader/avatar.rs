@@ -68,6 +68,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(target_os = "windows")]
     fn test_legacy_avatar_v1_migration() {
         let legacy = LegacyAvatarV1 {
             id: Uuid::new_v4(),
@@ -75,6 +76,31 @@ mod tests {
                 name: "name".into(),
                 creator: "creator".into(),
                 image_path: Some("C:\\path\\to\\image.png".into()),
+                image_filename: None,
+                booth_item_id: Some(123),
+                tags: vec!["tag".into()],
+                created_at: 12345,
+                published_at: Some(67890),
+            },
+        };
+
+        let latest: Avatar = legacy.try_into().unwrap();
+
+        assert_eq!(
+            latest.description.image_filename,
+            Some("image.png".to_string()),
+        );
+    }
+
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn test_legacy_avatar_v1_migration() {
+        let legacy = LegacyAvatarV1 {
+            id: Uuid::new_v4(),
+            description: LegacyAssetDescriptionV1 {
+                name: "name".into(),
+                creator: "creator".into(),
+                image_path: Some("/path/to/image.png".into()),
                 image_filename: None,
                 booth_item_id: Some(123),
                 tags: vec!["tag".into()],
