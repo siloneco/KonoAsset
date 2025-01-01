@@ -41,6 +41,7 @@ pub async fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result
 pub fn import_asset(
     src_import_asset_path: &PathBuf,
     destination: &PathBuf,
+    delete_source: bool,
 ) -> Result<(), Box<dyn Error>> {
     let mut new_destination = destination.clone();
     new_destination.push(src_import_asset_path.file_name().unwrap());
@@ -49,18 +50,30 @@ pub fn import_asset(
         fs::create_dir_all(&new_destination)?;
 
         copy_dir(src_import_asset_path, &new_destination)?;
+
+        if delete_source {
+            delete(src_import_asset_path)?;
+        }
     } else {
         let extension = src_import_asset_path.extension().unwrap();
         if extension == "zip" {
             new_destination.pop();
 
             let result = extract_zip(src_import_asset_path, &new_destination);
-            return match result {
-                Ok(_) => Ok(()),
-                Err(e) => Err(e.into()),
-            };
+
+            if let Err(e) = result {
+                return Err(e.into());
+            }
+
+            if delete_source {
+                delete(src_import_asset_path)?;
+            }
         } else {
-            copy_file(src_import_asset_path, &new_destination)?;
+            if delete_source {
+                move_file(src_import_asset_path, &new_destination)?;
+            } else {
+                copy_file(src_import_asset_path, &new_destination)?;
+            }
         }
     }
     Ok(())
@@ -82,6 +95,20 @@ fn copy_dir(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
 
 fn copy_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
     fs::copy(src, dest)?;
+    Ok(())
+}
+
+fn move_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
+    fs::rename(src, dest)?;
+    Ok(())
+}
+
+fn delete(src: &PathBuf) -> Result<(), Box<dyn Error>> {
+    if src.is_dir() {
+        fs::remove_dir_all(src)?;
+    } else {
+        fs::remove_file(src)?;
+    }
     Ok(())
 }
 

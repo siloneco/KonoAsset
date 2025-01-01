@@ -15,9 +15,7 @@ export const getDefaultPreferences = (): PreferenceStore => {
   return {
     dataDirPath: '',
     theme: 'system',
-    skipConfirmation: {
-      deleteFileOrDirOnImport: false,
-      openManagedDirOnMultipleUnitypackageFound: false,
-    },
+    useUnitypackageSelectedOpen: true,
+    deleteOnImport: true,
   }
 }

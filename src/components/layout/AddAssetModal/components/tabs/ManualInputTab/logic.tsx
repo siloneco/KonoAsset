@@ -60,11 +60,13 @@ export const sendAssetImportRequest = async (
   assetType: AssetType,
   assetPath: string,
   preAsset: PreAvatar | PreAvatarWearable | PreWorldObject,
+  deleteSource: boolean,
 ): Promise<Result<Avatar | AvatarWearable | WorldObject, string>> => {
   if (assetType === 'Avatar') {
     const request: AvatarImportRequest = {
-      preAsset: preAsset,
+      preAsset: preAsset as PreAvatar,
       absolutePath: assetPath,
+      deleteSource,
     }
 
     return await commands.requestAvatarImport(request)
@@ -72,6 +74,7 @@ export const sendAssetImportRequest = async (
     const request: AvatarWearableImportRequest = {
       preAsset: preAsset as PreAvatarWearable,
       absolutePath: assetPath,
+      deleteSource,
     }
 
     return await commands.requestAvatarWearableImport(request)
@@ -79,6 +82,7 @@ export const sendAssetImportRequest = async (
     const request: WorldObjectImportRequest = {
       preAsset: preAsset as PreWorldObject,
       absolutePath: assetPath,
+      deleteSource,
     }
 
     return await commands.requestWorldObjectImport(request)

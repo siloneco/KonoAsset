@@ -8,15 +8,13 @@ type Props = {
   setEnable: (enable: boolean) => void
 }
 
-const SkipUnitypackageSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
+const UseUnitypackageSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
   return (
     <div className="flex flex-row items-center">
       <div className="space-y-2">
-        <Label className="text-lg">
-          Unitypackageを選ぶダイアログを表示しない
-        </Label>
+        <Label className="text-lg">Unitypackageを優先して開く</Label>
         <p className="text-foreground/60 text-sm w-10/12">
-          この設定が有効の場合「開く」ボタンを押したときにUnitypackageを選ぶ画面が表示されなくなり、代わりに管理ディレクトリを開くようになります
+          この設定が有効の場合「開く」ボタンを押したときにUnitypackageが選択された状態で開いたり、複数ある場合は利用するファイルを選ぶダイアログが表示されたりします
         </p>
       </div>
       <Switch
@@ -28,4 +26,4 @@ const SkipUnitypackageSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
   )
 }
 
-export default SkipUnitypackageSelectorToggle
+export default UseUnitypackageSelectorToggle

@@ -12,10 +12,8 @@ export const PreferenceContext = createContext<PreferenceContextType>({
   preference: {
     dataDirPath: '',
     theme: 'system',
-    skipConfirmation: {
-      deleteFileOrDirOnImport: false,
-      openManagedDirOnMultipleUnitypackageFound: false,
-    },
+    useUnitypackageSelectedOpen: true,
+    deleteOnImport: true,
   },
   setPreference: async () => {},
 })

@@ -262,9 +262,9 @@ export type AssetDescription = { name: string; creator: string; imageFilename: s
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
-export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string }
+export type AvatarImportRequest = { preAsset: PreAvatar; absolutePath: string; deleteSource: boolean }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
-export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePath: string }
+export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePath: string; deleteSource: boolean }
 export type BoothInfo = { description: AssetDescription; estimatedAssetType: AssetType | null }
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
@@ -273,12 +273,11 @@ export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
-export type PreferenceStore = { dataDirPath: string; theme: Theme; skipConfirmation: SkipConfirmation }
-export type SkipConfirmation = { deleteFileOrDirOnImport: boolean; openManagedDirOnMultipleUnitypackageFound: boolean }
+export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
-export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePath: string }
+export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePath: string; deleteSource: boolean }
 
 /** tauri-specta globals **/
 

@@ -7,6 +7,7 @@ import { AssetFormType } from '@/lib/form'
 import { ToastAction } from '@/components/ui/toast'
 import { buttonVariants } from '@/components/ui/button'
 import { AssetType, commands } from '@/lib/bindings'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 export type Props = {
   form: AssetFormType
@@ -21,6 +22,8 @@ type ReturnProps = {
   assetType: AssetType
   imageFilename: string | null
   setImageFilename: (path: string | null) => void
+  deleteSourceChecked: boolean
+  setDeleteSourceChecked: (checked: boolean) => void
 }
 
 export const useManualInputTabHooks = ({
@@ -32,6 +35,7 @@ export const useManualInputTabHooks = ({
   const { toast } = useToast()
   const { assetPath } = useContext(AddAssetModalContext)
   const { refreshAssets } = useContext(AssetContext)
+  const { preference, setPreference } = useContext(PreferenceContext)
 
   const backToAssetTypeSelectorTab = () => {
     setTab('asset-type-selector')
@@ -73,6 +77,7 @@ export const useManualInputTabHooks = ({
         form.getValues('assetType'),
         assetPath!,
         preAssetResult.data,
+        preference.deleteOnImport,
       )
 
       if (result.status === 'ok') {
@@ -124,5 +129,8 @@ export const useManualInputTabHooks = ({
     imageFilename: form.watch('imageFilename'),
     setImageFilename: (path: string | null) =>
       form.setValue('imageFilename', path),
+    deleteSourceChecked: preference.deleteOnImport,
+    setDeleteSourceChecked: (checked: boolean) =>
+      setPreference({ ...preference, deleteOnImport: checked }, true),
   }
 }
