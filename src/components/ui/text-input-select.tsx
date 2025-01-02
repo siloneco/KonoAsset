@@ -416,6 +416,13 @@ const TextInputSelect = React.forwardRef<
                     setOpen(false)
                   }
                   inputProps?.onBlur?.(event)
+
+                  if (inputValue.length > 0) {
+                    const newOption = { value: inputValue, label: inputValue }
+                    setSelected(newOption)
+                    setInputValue('')
+                    onChange?.(newOption)
+                  }
                 }}
                 onFocus={(event) => {
                   setOpen(true)
