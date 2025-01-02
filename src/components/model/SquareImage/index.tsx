@@ -4,7 +4,7 @@ import { ImagePlus } from 'lucide-react'
 import { useImagePicker } from './hook'
 import { cn } from '@/lib/utils'
 import { AssetType, commands } from '@/lib/bindings'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type Props = {
@@ -28,13 +28,13 @@ const getDefaultImage = (assetType: AssetType) => {
   }
 }
 
-const SquareImage = ({
+const SquareImage = memo(function SquareImage({
   assetType,
   className,
   selectable = false,
   filename,
   setFilename,
-}: Props) => {
+}: Props) {
   const { selectImage } = useImagePicker({ setFilename })
   const [fixedPath, setFixedPath] = useState<string | undefined>(undefined)
 
@@ -85,6 +85,6 @@ const SquareImage = ({
       )}
     </AspectRatio>
   )
-}
+})
 
 export default SquareImage
