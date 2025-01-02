@@ -1,6 +1,11 @@
 use std::{fs, path::PathBuf};
 
-use crate::definitions::entities::{Avatar, AvatarWearable, WorldObject};
+use log::{info, warn};
+
+use crate::definitions::{
+    entities::{Avatar, AvatarWearable, WorldObject},
+    traits::AssetTrait,
+};
 
 use super::json_store::JsonStore;
 
@@ -24,6 +29,8 @@ impl StoreProvider {
     }
 
     pub async fn load_all_assets_from_files(&self) -> Result<(), String> {
+        backup_metadata(&self.data_dir)?;
+
         match self.avatar_store.load().await {
             Ok(_) => {}
             Err(e) => return Err(e),
@@ -89,7 +96,7 @@ impl StoreProvider {
 
         if old_metadata_path.exists() {
             if new_metadata_path.exists() {
-                backup(&new_metadata_path);
+                rename_conflict_dir(&new_metadata_path);
             }
 
             fs::rename(old_metadata_path, new_metadata_path).unwrap();
@@ -97,7 +104,7 @@ impl StoreProvider {
 
         if old_data_path.exists() {
             if new_data_path.exists() {
-                backup(&new_data_path);
+                rename_conflict_dir(&new_data_path);
             }
 
             fs::rename(old_data_path, new_data_path).unwrap();
@@ -105,7 +112,7 @@ impl StoreProvider {
 
         if old_images_path.exists() {
             if new_images_path.exists() {
-                backup(&new_images_path);
+                rename_conflict_dir(&new_images_path);
             }
 
             fs::rename(old_images_path, new_images_path).unwrap();
@@ -127,7 +134,7 @@ impl StoreProvider {
     }
 }
 
-fn backup(path: &PathBuf) {
+fn rename_conflict_dir(path: &PathBuf) {
     let mut new_name = path.clone();
 
     while new_name.exists() {
@@ -138,4 +145,47 @@ fn backup(path: &PathBuf) {
     }
 
     fs::rename(path, new_name).unwrap();
+}
+
+fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
+    let metadata_path = data_dir.join("metadata");
+    let backup_path = metadata_path.join("backups");
+
+    if !metadata_path.exists() {
+        return Ok(());
+    }
+
+    let dir_name = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+    let backup_path = backup_path.join(dir_name);
+
+    let result = std::fs::create_dir_all(&backup_path);
+
+    if result.is_err() {
+        return Err("Failed to create backup directory".into());
+    }
+
+    let files = vec![
+        Avatar::filename(),
+        AvatarWearable::filename(),
+        WorldObject::filename(),
+    ];
+
+    for file in files {
+        let path = metadata_path.join(&file);
+        if !path.exists() {
+            continue;
+        }
+
+        let backup_file = backup_path.join(&file);
+
+        let result = std::fs::copy(&path, &backup_file);
+
+        if result.is_err() {
+            warn!("Failed to copy file: {:?}", result.err().unwrap());
+        }
+    }
+
+    info!("Backup metadata to {:?}", backup_path);
+
+    Ok(())
 }
