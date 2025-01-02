@@ -17,6 +17,7 @@ mod definitions;
 mod file_opener;
 mod importer;
 mod loader;
+mod logging;
 mod preference;
 mod updater;
 
@@ -43,6 +44,8 @@ pub fn run() {
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
         .setup(|app| {
+            logging::initialize_logger(&app.handle());
+
             let pref_store = PreferenceStore::load(&app);
 
             if pref_store.is_err() {

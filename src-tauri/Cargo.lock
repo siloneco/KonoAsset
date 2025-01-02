@@ -2044,10 +2044,12 @@ version = "0.2.5"
 dependencies = [
  "chrono",
  "kanaria",
+ "log",
  "monostate",
  "opener",
  "regex",
  "reqwest",
+ "ringbuffer",
  "serde",
  "serde_json",
  "showfile",
@@ -3450,6 +3452,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ringbuffer"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3df6368f71f205ff9c33c076d170dd56ebf68e8161c733c0caa07a7a5509ed53"
+
+[[package]]
 name = "rustbus"
 version = "0.19.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3961,6 +3969,7 @@ version = "2.0.0-rc.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ccbb212565d2dc177bc15ecb7b039d66c4490da892436a4eee5b394d620c9bc"
 dependencies = [
+ "chrono",
  "paste",
  "specta-macros",
  "thiserror 1.0.69",
