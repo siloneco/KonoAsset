@@ -39,7 +39,7 @@ const SelectUnitypackageDialog = ({
           <DialogTitle>どのファイルを利用しますか？</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-96 pr-4">
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-[446px]">
             {Object.keys(unitypackageFiles)
               .sort((a, b) => a.localeCompare(b))
               .map((path) => (

@@ -23,18 +23,22 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
   const displayPath = path.length > 0 ? path : './'
 
   return (
-    <div>
+    <div className="w-full">
       <div className="flex flex-row items-center mb-1 text-foreground/60">
         <Folder className="mr-2" size={18} />
         {displayPath}
       </div>
-      <Card className="p-2 pl-4 space-y-2">
+      <Card className="p-2 pl-4 space-y-2 w-full">
         {files.map((file) => (
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center w-full">
             <SiUnity size={18} />
-            <p className="ml-2">{file.fileName}</p>
+            <div className="flex-grow overflow-hidden mr-4">
+              <p className="ml-2 truncate overflow-hidden text-ellipsis whitespace-nowrap">
+                {file.fileName}
+              </p>
+            </div>
             <Button
-              className="ml-auto h-8"
+              className="ml-auto h-8 w-14"
               onClick={() => open(file.absolutePath)}
             >
               開く
