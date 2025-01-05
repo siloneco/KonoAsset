@@ -4,6 +4,10 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import UnitypackageSelector from './components/UnitypackageSelector'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { useContext, useState } from 'react'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 type Props = {
   assetId: string | null
@@ -19,6 +23,11 @@ const SelectUnitypackageDialog = ({
 
   unitypackageFiles,
 }: Props) => {
+  const { preference, setPreference } = useContext(PreferenceContext)
+  const [skipDialog, setSkipDialog] = useState(
+    !preference.useUnitypackageSelectedOpen,
+  )
+
   const openManagedDir = async () => {
     if (assetId === null) {
       console.error('Unable to open managed dir without assetId')
@@ -30,6 +39,14 @@ const SelectUnitypackageDialog = ({
     if (result.status === 'error') {
       console.error(result.error)
     }
+  }
+
+  const setSkipDialogAndSave = async (skipDialog: boolean) => {
+    await setPreference(
+      { ...preference, useUnitypackageSelectedOpen: !skipDialog },
+      true,
+    )
+    setSkipDialog(skipDialog)
   }
 
   return (
@@ -52,12 +69,12 @@ const SelectUnitypackageDialog = ({
               ))}
           </div>
         </ScrollArea>
-        <div className="mt-8 w-fit mx-auto flex items-center">
-          {/* TODO: implement */}
-          {/* <Checkbox />
-              <Label className="ml-2">
-                次回から表示せず常に管理フォルダを開く
-              </Label> */}
+        <div
+          className="my-2 w-fit mx-auto flex items-center"
+          onClick={() => setSkipDialogAndSave(!skipDialog)}
+        >
+          <Checkbox checked={skipDialog} />
+          <Label className="ml-2">次回から表示せず常に管理フォルダを開く</Label>
         </div>
         <DialogFooter>
           <DialogClose asChild>
