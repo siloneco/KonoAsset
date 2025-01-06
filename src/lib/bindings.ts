@@ -94,6 +94,9 @@ async getFilteredAssetIds(request: FilterRequest) : Promise<Result<string[], str
     else return { status: "error", error: e  as any };
 }
 },
+async getLoadStatus() : Promise<LoadResult> {
+    return await TAURI_INVOKE("get_load_status");
+},
 async getAllAssetTags() : Promise<Result<string[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
@@ -166,14 +169,6 @@ async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async openManagedDir(id: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("open_managed_dir", { id }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async openFileInFileManager(path: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_file_in_file_manager", { path }) };
@@ -182,9 +177,41 @@ async openFileInFileManager(path: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async openAppDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_app_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async openDataDir() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_data_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openMetadataDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_metadata_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openAssetDataDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_asset_data_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async openManagedDir(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_managed_dir", { id }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -245,6 +272,14 @@ async setPreferences(newPreference: PreferenceStore) : Promise<Result<null, stri
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async resetApplication(request: ResetApplicationRequest) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("reset_application", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -269,11 +304,13 @@ export type BoothInfo = { description: AssetDescription; estimatedAssetType: Ass
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
+export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
+export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }

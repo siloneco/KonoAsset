@@ -58,10 +58,12 @@ impl<
             return Ok(());
         }
 
-        let file_open_result = File::open(path);
+        let filename = path.file_name().unwrap().to_str().unwrap();
+
+        let file_open_result = File::open(path.clone());
 
         if file_open_result.is_err() {
-            return Err("Failed to open file".into());
+            return Err(format!("Failed to open file: {}", filename));
         }
 
         {
@@ -71,8 +73,9 @@ impl<
 
             if result.is_err() {
                 return Err(format!(
-                    "Failed to deserialize file: {:?}",
-                    result.err().unwrap()
+                    "Failed to deserialize: {:?} ( file: {} )",
+                    result.err().unwrap(),
+                    filename
                 ));
             }
 

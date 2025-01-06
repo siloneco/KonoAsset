@@ -28,7 +28,7 @@ impl StoreProvider {
         }
     }
 
-    pub async fn load_all_assets_from_files(&self) -> Result<(), String> {
+    pub async fn load_all_assets_from_files(&mut self) -> Result<(), String> {
         backup_metadata(&self.data_dir)?;
         prune_old_backup(&self.data_dir)?;
 
