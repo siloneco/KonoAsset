@@ -77,30 +77,24 @@ impl StoreProvider {
 
         let old_path = &self.data_dir;
 
-        let mut old_metadata_path = old_path.clone();
-        let mut new_metadata_path = new_path.clone();
+        let old_metadata_path = old_path.join("metadata");
+        let new_metadata_path = new_path.join("metadata");
 
-        old_metadata_path.push("metadata");
-        new_metadata_path.push("metadata");
+        let old_data_path = old_path.join("data");
+        let new_data_path = new_path.join("data");
 
-        let mut old_data_path = old_path.clone();
-        let mut new_data_path = new_path.clone();
-
-        old_data_path.push("data");
-        new_data_path.push("data");
-
-        let mut old_images_path = old_path.clone();
-        let mut new_images_path = new_path.clone();
-
-        old_images_path.push("images");
-        new_images_path.push("images");
+        let old_images_path = old_path.join("images");
+        let new_images_path = new_path.join("images");
 
         if old_metadata_path.exists() {
             if new_metadata_path.exists() {
                 rename_conflict_dir(&new_metadata_path);
             }
 
-            fs::rename(old_metadata_path, new_metadata_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_metadata_path, &new_metadata_path) {
+                log::error!("Failed to copy metadata: {:?}", e);
+                return Err(e);
+            }
         }
 
         if old_data_path.exists() {
@@ -108,7 +102,10 @@ impl StoreProvider {
                 rename_conflict_dir(&new_data_path);
             }
 
-            fs::rename(old_data_path, new_data_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_data_path, &new_data_path) {
+                log::error!("Failed to copy data: {:?}", e);
+                return Err(e);
+            }
         }
 
         if old_images_path.exists() {
@@ -116,7 +113,10 @@ impl StoreProvider {
                 rename_conflict_dir(&new_images_path);
             }
 
-            fs::rename(old_images_path, new_images_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_images_path, &new_images_path) {
+                log::error!("Failed to copy images: {:?}", e);
+                return Err(e);
+            }
         }
 
         self.avatar_store = JsonStore::create(new_path.clone());
@@ -133,6 +133,49 @@ impl StoreProvider {
 
         Ok(())
     }
+}
+
+fn copy_and_delete(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), String> {
+    let result = copy_dir(old_path, new_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to copy directory: {:?}", e));
+    }
+
+    let result = fs::remove_dir_all(old_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to remove old directory: {:?}", e));
+    }
+
+    Ok(())
+}
+
+fn copy_dir(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), String> {
+    let result = fs::create_dir_all(new_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to create directory: {:?}", e));
+    }
+
+    for entry in fs::read_dir(old_path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        let new_path = new_path.join(path.file_name().unwrap());
+
+        if path.is_dir() {
+            copy_dir(&path, &new_path)?;
+        } else {
+            let result = fs::copy(&path, &new_path);
+
+            if let Err(e) = result {
+                return Err(format!("Failed to copy file: {:?}", e));
+            }
+        }
+    }
+
+    Ok(())
 }
 
 fn rename_conflict_dir(path: &PathBuf) {
