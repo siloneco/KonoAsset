@@ -30,6 +30,7 @@ impl StoreProvider {
 
     pub async fn load_all_assets_from_files(&self) -> Result<(), String> {
         backup_metadata(&self.data_dir)?;
+        prune_old_backup(&self.data_dir)?;
 
         match self.avatar_store.load().await {
             Ok(_) => {}
@@ -186,6 +187,52 @@ fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
     }
 
     info!("Backup metadata to {:?}", backup_path);
+
+    Ok(())
+}
+
+fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
+    let backup_path = data_dir.join("metadata/backups");
+
+    if !backup_path.exists() {
+        return Ok(());
+    }
+
+    let mut entries = Vec::new();
+
+    for entry in std::fs::read_dir(&backup_path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        if !path.is_dir() {
+            continue;
+        }
+
+        entries.push(path);
+    }
+
+    if entries.len() <= 10 {
+        return Ok(());
+    }
+
+    entries.sort_by(|a, b| {
+        let a = a.file_name().unwrap().to_str().unwrap();
+        let b = b.file_name().unwrap().to_str().unwrap();
+
+        a.cmp(b)
+    });
+
+    let to_remove = entries.len() - 10;
+
+    for i in 0..to_remove {
+        let path = &entries[i];
+
+        let result = std::fs::remove_dir_all(path);
+
+        if result.is_err() {
+            warn!("Failed to remove backup: {:?}", result.err().unwrap());
+        }
+    }
 
     Ok(())
 }
