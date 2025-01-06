@@ -1,6 +1,11 @@
 use std::{fs, path::PathBuf};
 
-use crate::definitions::entities::{Avatar, AvatarWearable, WorldObject};
+use log::{info, warn};
+
+use crate::definitions::{
+    entities::{Avatar, AvatarWearable, WorldObject},
+    traits::AssetTrait,
+};
 
 use super::json_store::JsonStore;
 
@@ -23,7 +28,10 @@ impl StoreProvider {
         }
     }
 
-    pub async fn load_all_assets_from_files(&self) -> Result<(), String> {
+    pub async fn load_all_assets_from_files(&mut self) -> Result<(), String> {
+        backup_metadata(&self.data_dir)?;
+        prune_old_backup(&self.data_dir)?;
+
         match self.avatar_store.load().await {
             Ok(_) => {}
             Err(e) => return Err(e),
@@ -69,46 +77,46 @@ impl StoreProvider {
 
         let old_path = &self.data_dir;
 
-        let mut old_metadata_path = old_path.clone();
-        let mut new_metadata_path = new_path.clone();
+        let old_metadata_path = old_path.join("metadata");
+        let new_metadata_path = new_path.join("metadata");
 
-        old_metadata_path.push("metadata");
-        new_metadata_path.push("metadata");
+        let old_data_path = old_path.join("data");
+        let new_data_path = new_path.join("data");
 
-        let mut old_data_path = old_path.clone();
-        let mut new_data_path = new_path.clone();
-
-        old_data_path.push("data");
-        new_data_path.push("data");
-
-        let mut old_images_path = old_path.clone();
-        let mut new_images_path = new_path.clone();
-
-        old_images_path.push("images");
-        new_images_path.push("images");
+        let old_images_path = old_path.join("images");
+        let new_images_path = new_path.join("images");
 
         if old_metadata_path.exists() {
             if new_metadata_path.exists() {
-                backup(&new_metadata_path);
+                rename_conflict_dir(&new_metadata_path);
             }
 
-            fs::rename(old_metadata_path, new_metadata_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_metadata_path, &new_metadata_path) {
+                log::error!("Failed to copy metadata: {:?}", e);
+                return Err(e);
+            }
         }
 
         if old_data_path.exists() {
             if new_data_path.exists() {
-                backup(&new_data_path);
+                rename_conflict_dir(&new_data_path);
             }
 
-            fs::rename(old_data_path, new_data_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_data_path, &new_data_path) {
+                log::error!("Failed to copy data: {:?}", e);
+                return Err(e);
+            }
         }
 
         if old_images_path.exists() {
             if new_images_path.exists() {
-                backup(&new_images_path);
+                rename_conflict_dir(&new_images_path);
             }
 
-            fs::rename(old_images_path, new_images_path).unwrap();
+            if let Err(e) = copy_and_delete(&old_images_path, &new_images_path) {
+                log::error!("Failed to copy images: {:?}", e);
+                return Err(e);
+            }
         }
 
         self.avatar_store = JsonStore::create(new_path.clone());
@@ -127,7 +135,50 @@ impl StoreProvider {
     }
 }
 
-fn backup(path: &PathBuf) {
+fn copy_and_delete(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), String> {
+    let result = copy_dir(old_path, new_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to copy directory: {:?}", e));
+    }
+
+    let result = fs::remove_dir_all(old_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to remove old directory: {:?}", e));
+    }
+
+    Ok(())
+}
+
+fn copy_dir(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), String> {
+    let result = fs::create_dir_all(new_path);
+
+    if let Err(e) = result {
+        return Err(format!("Failed to create directory: {:?}", e));
+    }
+
+    for entry in fs::read_dir(old_path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        let new_path = new_path.join(path.file_name().unwrap());
+
+        if path.is_dir() {
+            copy_dir(&path, &new_path)?;
+        } else {
+            let result = fs::copy(&path, &new_path);
+
+            if let Err(e) = result {
+                return Err(format!("Failed to copy file: {:?}", e));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn rename_conflict_dir(path: &PathBuf) {
     let mut new_name = path.clone();
 
     while new_name.exists() {
@@ -138,4 +189,93 @@ fn backup(path: &PathBuf) {
     }
 
     fs::rename(path, new_name).unwrap();
+}
+
+fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
+    let metadata_path = data_dir.join("metadata");
+    let backup_path = metadata_path.join("backups");
+
+    if !metadata_path.exists() {
+        return Ok(());
+    }
+
+    let dir_name = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+    let backup_path = backup_path.join(dir_name);
+
+    let result = std::fs::create_dir_all(&backup_path);
+
+    if result.is_err() {
+        return Err("Failed to create backup directory".into());
+    }
+
+    let files = vec![
+        Avatar::filename(),
+        AvatarWearable::filename(),
+        WorldObject::filename(),
+    ];
+
+    for file in files {
+        let path = metadata_path.join(&file);
+        if !path.exists() {
+            continue;
+        }
+
+        let backup_file = backup_path.join(&file);
+
+        let result = std::fs::copy(&path, &backup_file);
+
+        if result.is_err() {
+            warn!("Failed to copy file: {:?}", result.err().unwrap());
+        }
+    }
+
+    info!("Backup metadata to {:?}", backup_path);
+
+    Ok(())
+}
+
+fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
+    let backup_path = data_dir.join("metadata/backups");
+
+    if !backup_path.exists() {
+        return Ok(());
+    }
+
+    let mut entries = Vec::new();
+
+    for entry in std::fs::read_dir(&backup_path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        if !path.is_dir() {
+            continue;
+        }
+
+        entries.push(path);
+    }
+
+    if entries.len() <= 10 {
+        return Ok(());
+    }
+
+    entries.sort_by(|a, b| {
+        let a = a.file_name().unwrap().to_str().unwrap();
+        let b = b.file_name().unwrap().to_str().unwrap();
+
+        a.cmp(b)
+    });
+
+    let to_remove = entries.len() - 10;
+
+    for i in 0..to_remove {
+        let path = &entries[i];
+
+        let result = std::fs::remove_dir_all(path);
+
+        if result.is_err() {
+            warn!("Failed to remove backup: {:?}", result.err().unwrap());
+        }
+    }
+
+    Ok(())
 }

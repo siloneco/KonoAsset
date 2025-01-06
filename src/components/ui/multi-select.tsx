@@ -516,6 +516,16 @@ const MultipleSelector = React.forwardRef<
                   setOpen(false)
                 }
                 inputProps?.onBlur?.(event)
+
+                if (inputValue.length > 0) {
+                  const newOptions = [
+                    ...selected,
+                    { value: inputValue, label: inputValue },
+                  ]
+                  setSelected(newOptions)
+                  onChange?.(newOptions)
+                  setInputValue('')
+                }
               }}
               onFocus={(event) => {
                 setOpen(true)

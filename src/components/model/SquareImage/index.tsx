@@ -4,7 +4,7 @@ import { ImagePlus } from 'lucide-react'
 import { useImagePicker } from './hook'
 import { cn } from '@/lib/utils'
 import { AssetType, commands } from '@/lib/bindings'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   className?: string
   selectable?: boolean
   filename?: string
-  setFilename?: (filename: string) => void
+  setFilename?: (filename: string | null) => void
 }
 
 const ALT = 'Asset Image'
@@ -28,13 +28,13 @@ const getDefaultImage = (assetType: AssetType) => {
   }
 }
 
-const SquareImage = ({
+const SquareImage = memo(function SquareImage({
   assetType,
   className,
   selectable = false,
   filename,
   setFilename,
-}: Props) => {
+}: Props) {
   const { selectImage } = useImagePicker({ setFilename })
   const [fixedPath, setFixedPath] = useState<string | undefined>(undefined)
 
@@ -67,7 +67,16 @@ const SquareImage = ({
       )}
     >
       {fixedPath !== undefined && (
-        <img src={convertFileSrc(fixedPath)} alt={ALT} className="w-full" />
+        <img
+          src={convertFileSrc(fixedPath)}
+          alt={ALT}
+          className="w-full"
+          onError={() => {
+            if (setFilename !== undefined) {
+              setFilename(null)
+            }
+          }}
+        />
       )}
       {filename !== undefined && fixedPath === undefined && (
         <Skeleton className="h-full w-full" />
@@ -85,6 +94,6 @@ const SquareImage = ({
       )}
     </AspectRatio>
   )
-}
+})
 
 export default SquareImage

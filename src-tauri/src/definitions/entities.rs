@@ -299,3 +299,29 @@ impl FileInfo {
         }
     }
 }
+
+#[derive(Serialize, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct LoadResult {
+    success: bool,
+    preference_loaded: bool,
+    message: Option<String>,
+}
+
+impl LoadResult {
+    pub fn success() -> Self {
+        Self {
+            success: true,
+            preference_loaded: true,
+            message: None,
+        }
+    }
+
+    pub fn error(preference_loaded: bool, message: String) -> Self {
+        Self {
+            success: false,
+            preference_loaded,
+            message: Some(message),
+        }
+    }
+}
