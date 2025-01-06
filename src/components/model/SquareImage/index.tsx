@@ -12,7 +12,7 @@ type Props = {
   className?: string
   selectable?: boolean
   filename?: string
-  setFilename?: (filename: string) => void
+  setFilename?: (filename: string | null) => void
 }
 
 const ALT = 'Asset Image'
@@ -67,7 +67,16 @@ const SquareImage = memo(function SquareImage({
       )}
     >
       {fixedPath !== undefined && (
-        <img src={convertFileSrc(fixedPath)} alt={ALT} className="w-full" />
+        <img
+          src={convertFileSrc(fixedPath)}
+          alt={ALT}
+          className="w-full"
+          onError={() => {
+            if (setFilename !== undefined) {
+              setFilename(null)
+            }
+          }}
+        />
       )}
       {filename !== undefined && fixedPath === undefined && (
         <Skeleton className="h-full w-full" />
