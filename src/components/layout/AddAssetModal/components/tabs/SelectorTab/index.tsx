@@ -13,7 +13,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { downloadDir } from '@tauri-apps/api/path'
 import { useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
-import { Info } from 'lucide-react'
+import { FolderArchive, Info } from 'lucide-react'
 
 type Props = {
   setTab: (tab: string) => void
@@ -55,10 +55,16 @@ const SelectorTab = ({ setTab }: Props) => {
           }}
         />
       </div>
-      <div className="flex flex-row justify-center text-center my-6">
+      <div className="flex flex-row justify-center text-center mt-6">
         <Info className="text-primary mr-1" />
         <p className="text-card-foreground/70">
           ウィンドウ上にファイルかフォルダをドロップしても追加できます
+        </p>
+      </div>
+      <div className="flex flex-row justify-center text-center mt-4 mb-6">
+        <FolderArchive className="text-primary mr-1" />
+        <p className="text-card-foreground/70">
+          ZIPファイルは自動で展開されます
         </p>
       </div>
       <DialogFooter>
