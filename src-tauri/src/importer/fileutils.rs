@@ -69,10 +69,9 @@ pub fn import_asset(
                 delete(src_import_asset_path)?;
             }
         } else {
+            copy_file(src_import_asset_path, &new_destination)?;
             if delete_source {
-                move_file(src_import_asset_path, &new_destination)?;
-            } else {
-                copy_file(src_import_asset_path, &new_destination)?;
+                delete(src_import_asset_path)?;
             }
         }
     }
@@ -95,11 +94,6 @@ fn copy_dir(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
 
 fn copy_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
     fs::copy(src, dest)?;
-    Ok(())
-}
-
-fn move_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
-    fs::rename(src, dest)?;
     Ok(())
 }
 
