@@ -17,8 +17,8 @@ const SettingsTab: FC<Props> = ({ id }) => {
   const { preference, setPreference } = useContext(PreferenceContext)
 
   return (
-    <TabsContent value={id} className="w-full">
-      <div className="w-full px-12 py-8 space-y-8">
+    <TabsContent value={id} className="mt-0 w-full h-screen">
+      <div className="mt-0 w-full px-12 py-8 space-y-8">
         <ThemeSelector
           theme={preference.theme}
           setTheme={async (theme: Theme) => {

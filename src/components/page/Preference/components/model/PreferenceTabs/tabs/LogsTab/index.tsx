@@ -9,7 +9,7 @@ type Props = {
 
 const LogsTab: FC<Props> = ({ id }) => {
   return (
-    <TabsContent value={id} className="mt-0 w-full h-full">
+    <TabsContent value={id} className="mt-0 w-full h-screen">
       <div className="w-full h-full flex flex-col justify-center items-center">
         <h1 className="text-2xl">未実装</h1>
         <p className="flex flex-row items-center text-foreground/60">
