@@ -27,6 +27,14 @@ impl Log for Logger {
             return;
         }
 
+        // Filter warning that emits every time the window's focus becomes active
+        if format!("{}", record.args()).eq("NewEvents emitted without explicit RedrawEventsCleared")
+            || format!("{}", record.args())
+                .eq("RedrawEventsCleared emitted without explicit MainEventsCleared")
+        {
+            return;
+        }
+
         let entry = LogEntry::new(record);
         self.sender.send(LogChannelMessage::Log(entry)).ok();
     }
@@ -74,7 +82,7 @@ impl From<log::Level> for LogLevel {
 }
 
 #[derive(Serialize, specta::Type, Clone)]
-pub(crate) struct LogEntry {
+pub struct LogEntry {
     #[serde(serialize_with = "to_rfc3339_micros")]
     time: chrono::DateTime<chrono::Local>,
     level: LogLevel,

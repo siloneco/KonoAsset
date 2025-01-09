@@ -26,6 +26,11 @@ pub fn initialize_logger(app_handle: &AppHandle) {
     start_logging_thread(receiver, &app_handle.path().app_log_dir().unwrap());
 }
 
+pub fn get_logs() -> Vec<LogEntry> {
+    let buffer = LOG_BUFFER.lock().unwrap();
+    buffer.iter().cloned().collect()
+}
+
 fn start_logging_thread(receiver: mpsc::Receiver<LogChannelMessage>, logs_dir: &PathBuf) {
     if !logs_dir.exists() {
         std::fs::create_dir_all(&logs_dir).ok();

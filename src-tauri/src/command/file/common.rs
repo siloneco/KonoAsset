@@ -55,25 +55,40 @@ pub async fn migrate_data_dir(
     new_path: PathBuf,
     migrate_data: bool,
 ) -> Result<(), String> {
+    log::info!("Data directory migration triggered (dest: {:?})", new_path);
+
     if !new_path.is_dir() {
-        return Err("New path is not a directory".into());
+        let err = format!("New path is not a directory: {:?}", new_path);
+        log::error!("{}", err);
+        return Err(err);
     }
 
     if !new_path.exists() {
+        log::debug!("Creating directory: {:?}", new_path);
         fs::create_dir_all(&new_path).unwrap();
     }
 
     if migrate_data {
+        log::info!("Migrating data to new path: {:?}", new_path);
         let mut basic_store = basic_store.lock().await;
-        basic_store.migrate_data_dir(&new_path).await?;
+        let result = basic_store.migrate_data_dir(&new_path).await;
+
+        if let Err(e) = result {
+            log::error!("Failed to migrate data: {:?}", e);
+            return Err(e);
+        }
+
+        log::info!("Data migration completed");
     }
 
     let mut preference = preference.lock().await;
     let mut new_preference = preference.clone();
-    new_preference.set_data_dir(new_path);
+    new_preference.set_data_dir(new_path.clone());
 
     preference.overwrite(&new_preference);
     preference.save().map_err(|e| e.to_string())?;
+
+    log::info!("Successfully changed data directory to: {:?}", new_path);
 
     Ok(())
 }

@@ -12,6 +12,11 @@ pub async fn get_asset_description_from_booth(
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
 ) -> Result<BoothInfo, String> {
+    log::info!(
+        "Fetching asset description from Booth (Booth Item ID = {:?})",
+        booth_item_id
+    );
+
     let mut images_dir = basic_store.lock().await.data_dir();
     images_dir.push("images");
 
@@ -19,6 +24,17 @@ pub async fn get_asset_description_from_booth(
         let mut fetcher = booth_fetcher.lock().await;
         fetcher.fetch(booth_item_id, images_dir).await
     };
+
+    if let Ok((asset_description, estimated_asset_type)) = &result {
+        log::info!(
+            "Successfully fetched asset description from Booth (Booth Item ID = {:?})",
+            booth_item_id
+        );
+        log::debug!("Fetched asset description: {:?}", asset_description);
+        log::debug!("Estimated asset type: {:?}", estimated_asset_type);
+    } else {
+        log::error!("Failed to fetch asset description from Booth: {:?}", result);
+    }
 
     match result {
         Ok((asset_description, estimated_asset_type)) => Ok(BoothInfo {

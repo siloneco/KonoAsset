@@ -7,7 +7,7 @@ use crate::{definitions::traits::AssetTrait, loader::HashSetVersionedLoader};
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
-pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, String> {
+pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<(), String> {
     let app_dir = provider.data_dir();
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await;
@@ -15,7 +15,7 @@ pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, St
         return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return Ok(true);
+        return Ok(());
     }
 
     let result = delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await;
@@ -23,7 +23,7 @@ pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, St
         return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return Ok(true);
+        return Ok(());
     }
 
     let result = delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await;
@@ -31,7 +31,7 @@ pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<bool, St
         return Err(result.err().unwrap());
     }
     if result.unwrap() {
-        return Ok(true);
+        return Ok(());
     }
 
     Err("Asset not found".into())

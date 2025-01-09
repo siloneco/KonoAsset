@@ -54,7 +54,7 @@ async requestWorldObjectImport(request: WorldObjectImportRequest) : Promise<Resu
     else return { status: "error", error: e  as any };
 }
 },
-async requestAssetDeletion(id: string) : Promise<Result<boolean, string>> {
+async requestAssetDeletion(id: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_asset_deletion", { id }) };
 } catch (e) {
@@ -217,6 +217,14 @@ async openManagedDir(id: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async openLogsDir() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_logs_dir") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("copy_image_file_to_images", { path, temporary }) };
@@ -280,6 +288,9 @@ async resetApplication(request: ResetApplicationRequest) : Promise<Result<null, 
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getLogs() : Promise<LogEntry[]> {
+    return await TAURI_INVOKE("get_logs");
 }
 }
 
@@ -305,6 +316,8 @@ export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
+export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
+export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
