@@ -27,6 +27,14 @@ impl Log for Logger {
             return;
         }
 
+        // Filter warning that emits every time the window's focus becomes active
+        if format!("{}", record.args()).eq("NewEvents emitted without explicit RedrawEventsCleared")
+            || format!("{}", record.args())
+                .eq("RedrawEventsCleared emitted without explicit MainEventsCleared")
+        {
+            return;
+        }
+
         let entry = LogEntry::new(record);
         self.sender.send(LogChannelMessage::Log(entry)).ok();
     }
