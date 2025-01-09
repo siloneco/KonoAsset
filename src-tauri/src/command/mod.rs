@@ -41,6 +41,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         file::open::open_metadata_dir,
         file::open::open_asset_data_dir,
         file::open::open_managed_dir,
+        file::open::open_logs_dir,
         file::import::copy_image_file_to_images, // 画像新規作成
         file::common::get_directory_path,        // 管理ディレクトリのパス取得
         file::common::list_unitypackage_files,   // unitypackage探索
@@ -50,5 +51,6 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         preference::common::get_preferences,
         preference::common::set_preferences,
         preference::reset::reset_application,
+        preference::logging::get_logs,
     ])
 }

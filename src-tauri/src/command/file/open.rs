@@ -55,3 +55,10 @@ pub fn open_file_in_file_manager(path: String) -> Result<(), String> {
     let path = PathBuf::from(path);
     file_opener::open_in_file_manager(&path)
 }
+
+#[tauri::command]
+#[specta::specta]
+pub async fn open_logs_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
+    let path = handle.path().app_log_dir().unwrap();
+    file_opener::open_in_file_manager(&path)
+}
