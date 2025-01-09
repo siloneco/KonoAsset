@@ -9,6 +9,8 @@ pub async fn reset_application(
     handle: State<'_, AppHandle>,
     request: ResetApplicationRequest,
 ) -> Result<(), String> {
+    log::info!("Resetting application...");
+
     if request.reset_preferences {
         let path = handle
             .path()
@@ -24,6 +26,8 @@ pub async fn reset_application(
                 return Err(e.to_string());
             }
         }
+
+        log::info!("Successfully reset preferences");
     }
 
     let preference_store: Option<State<'_, Mutex<PreferenceStore>>> = handle.try_state();
@@ -45,6 +49,8 @@ pub async fn reset_application(
                     return Err(e.to_string());
                 }
             }
+
+            log::info!("Successfully deleted metadata directory");
         }
 
         if request.delete_asset_data {
@@ -58,9 +64,12 @@ pub async fn reset_application(
                     return Err(e.to_string());
                 }
             }
+
+            log::info!("Successfully deleted asset data directory");
         }
     }
 
+    log::info!("Successfully reset application. Restarting...");
     handle.restart();
 }
 

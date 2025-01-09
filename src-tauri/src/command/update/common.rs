@@ -28,6 +28,7 @@ pub async fn execute_update(update_handler: State<'_, UpdateHandler>) -> Result<
         return Err("No update available.".into());
     }
 
+    log::info!("Executing update. This will restart the application.");
     let result = update_handler.execute_update().await;
 
     match result {

@@ -54,7 +54,7 @@ async requestWorldObjectImport(request: WorldObjectImportRequest) : Promise<Resu
     else return { status: "error", error: e  as any };
 }
 },
-async requestAssetDeletion(id: string) : Promise<Result<boolean, string>> {
+async requestAssetDeletion(id: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_asset_deletion", { id }) };
 } catch (e) {

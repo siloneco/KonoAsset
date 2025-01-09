@@ -12,6 +12,8 @@ pub async fn copy_image_file_to_images(
     path: String,
     temporary: bool,
 ) -> Result<String, String> {
+    log::info!("Copying image file to images directory: {:?}", path);
+
     let path = PathBuf::from(path);
     let mut new_path = basic_store.lock().await.data_dir();
     new_path.push("images");
@@ -36,9 +38,21 @@ pub async fn copy_image_file_to_images(
         )
     };
 
+    log::info!("Filename: {:?}", filename);
+
     new_path.push(filename);
 
-    fs::copy(&path, &new_path).unwrap();
+    let result = fs::copy(&path, &new_path);
+
+    if let Err(e) = result {
+        log::error!("Failed to copy image file: {:?}", e);
+        return Err(e.to_string());
+    }
+
+    log::info!(
+        "Successfully copied image file to images directory (dest: {:?})",
+        new_path
+    );
 
     Ok(new_path.file_name().unwrap().to_str().unwrap().to_string())
 }
