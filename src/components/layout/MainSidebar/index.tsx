@@ -66,10 +66,9 @@ const MainSidebar = () => {
     <Sidebar collapsible="none" className="w-80 border-r-2">
       <SidebarContent>
         <ScrollArea className="h-screen">
-          <div className="flex flex-row items-center">
-            <div className="m-2 border-2 text-lg p-1 px-4 rounded-lg">
-              KonoAsset
-            </div>
+          <div className="flex flex-row items-center m-4 mr-0">
+            <img src="/logo.png" alt="logo" className="w-10 h-10" />
+            <div className="text-xl ml-2">KonoAsset</div>
             <Button
               variant="outline"
               size="icon"
