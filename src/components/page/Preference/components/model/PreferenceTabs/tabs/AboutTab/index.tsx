@@ -100,24 +100,24 @@ const AboutTab: FC<Props> = ({ id }) => {
           <div className="flex flex-row space-x-10">
             <UserProfile
               name="siloneco"
-              iconUrl="https://go.konoasset.dev/avatar/siloneco"
+              iconUrl="https://media.konoasset.dev/avatar/siloneco.jpg"
               xUsername="siloneco_vrc"
               githubUsername="siloneco"
             />
             <UserProfile
               name="Raifa"
-              iconUrl="https://go.konoasset.dev/avatar/Raifa"
+              iconUrl="https://media.konoasset.dev/avatar/Raifa.jpg"
               xUsername="raifa_trtr"
               githubUsername="Raifa21"
             />
             <UserProfile
               name="じゃんくま"
-              iconUrl="https://go.konoasset.dev/avatar/Jan_kuma"
+              iconUrl="https://media.konoasset.dev/avatar/Jan_kuma.jpg"
               xUsername="Jan_kumaVRC"
             />
             <UserProfile
               name="ぷこるふ"
-              iconUrl="https://go.konoasset.dev/avatar/pukorufu"
+              iconUrl="https://media.konoasset.dev/avatar/pukorufu.jpg"
               xUsername="pukorufu"
               githubUsername="puk06"
             />
