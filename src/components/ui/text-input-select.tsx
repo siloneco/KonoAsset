@@ -474,32 +474,34 @@ const TextInputSelect = React.forwardRef<
                       heading={key}
                       className="h-full overflow-auto"
                     >
-                      {dropdowns.map((option) => {
-                        return (
-                          <CommandItem
-                            key={option.value}
-                            value={option.label}
-                            disabled={option.disable}
-                            onMouseDown={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                            }}
-                            onSelect={() => {
-                              setInputValue('')
-                              setSelected(option)
-                              onChange?.(option)
-                              setOpen(false) // Close the dropdown after an item is selected
-                            }}
-                            className={cn(
-                              'cursor-pointer',
-                              option.disable &&
-                                'cursor-default text-muted-foreground',
-                            )}
-                          >
-                            {option.label}
-                          </CommandItem>
-                        )
-                      })}
+                      {dropdowns
+                        .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
+                        .map((option) => {
+                          return (
+                            <CommandItem
+                              key={option.value}
+                              value={option.label}
+                              disabled={option.disable}
+                              onMouseDown={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                              }}
+                              onSelect={() => {
+                                setInputValue('')
+                                setSelected(option)
+                                onChange?.(option)
+                                setOpen(false) // Close the dropdown after an item is selected
+                              }}
+                              className={cn(
+                                'cursor-pointer',
+                                option.disable &&
+                                  'cursor-default text-muted-foreground',
+                              )}
+                            >
+                              {option.label}
+                            </CommandItem>
+                          )
+                        })}
                     </CommandGroup>
                   ))}
                 </>
