@@ -7,6 +7,7 @@ import AssetCard from './components/AssetCard'
 import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
 
 import SelectUnitypackageDialog from './components/SelectUnitypackageDialog'
+import AssetListBackground from './components/AssetListBackground'
 
 type Props = {
   className?: string
@@ -15,6 +16,7 @@ type Props = {
   setMatchedAssetIDs: (uuidList: string[]) => void
   filterEnforced: boolean
   setFilterEnforced: (filterEnforced: boolean) => void
+  openAddAssetDialog: () => void
 }
 
 const AssetList = ({
@@ -23,6 +25,7 @@ const AssetList = ({
   setMatchedAssetIDs,
   filterEnforced,
   setFilterEnforced,
+  openAddAssetDialog,
 }: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [unitypackages, setUnityPackages] = useState<{
@@ -100,6 +103,12 @@ const AssetList = ({
 
   return (
     <ScrollArea className={className}>
+      {assetDisplaySortedList.length === 0 && (
+        <AssetListBackground type="NoAssets" openDialog={openAddAssetDialog} />
+      )}
+      {assetDisplaySortedList.length > 0 && matchedAssetIDs.length === 0 && (
+        <AssetListBackground type="NoResults" openDialog={openAddAssetDialog} />
+      )}
       <div className="grid grid-cols-2 gap-4 m-6 mt-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {assetDisplaySortedList &&
           !reverseOrder &&

@@ -29,8 +29,9 @@ const AboutTab: FC<Props> = ({ id }) => {
       <div className="w-full py-8 flex flex-col items-center">
         <div className="grid grid-cols-8 w-[600px]">
           <div className="col-span-1" />
-          <div className="col-span-6 flex justify-center">
-            <h1 className="text-4xl">
+          <div className="col-span-6 flex justify-center items-center">
+            <img src="/logo.png" className="w-12 h-12" />
+            <h1 className="text-4xl ml-2">
               KonoAsset
               <span className="ml-2 text-base text-foreground/60">
                 v{version}

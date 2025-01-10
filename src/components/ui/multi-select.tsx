@@ -472,6 +472,7 @@ const MultipleSelector = React.forwardRef<
                 <Badge
                   key={option.value}
                   className={cn(
+                    'cursor-default',
                     'data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground overflow-hidden',
                     'data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground overflow-hidden',
                     badgeClassName,
@@ -496,7 +497,7 @@ const MultipleSelector = React.forwardRef<
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    <X className="h-4 w-4 text-foreground" />
                   </button>
                 </Badge>
               )
@@ -598,36 +599,38 @@ const MultipleSelector = React.forwardRef<
                       className="h-full overflow-auto"
                     >
                       <>
-                        {dropdowns.map((option) => {
-                          return (
-                            <CommandItem
-                              key={option.value}
-                              value={option.label}
-                              disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                              }}
-                              onSelect={() => {
-                                if (selected.length >= maxSelected) {
-                                  onMaxSelected?.(selected.length)
-                                  return
-                                }
-                                setInputValue('')
-                                const newOptions = [...selected, option]
-                                setSelected(newOptions)
-                                onChange?.(newOptions)
-                              }}
-                              className={cn(
-                                'cursor-pointer',
-                                option.disable &&
-                                  'cursor-default text-muted-foreground',
-                              )}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          )
-                        })}
+                        {dropdowns
+                          .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
+                          .map((option) => {
+                            return (
+                              <CommandItem
+                                key={option.value}
+                                value={option.label}
+                                disabled={option.disable}
+                                onMouseDown={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                }}
+                                onSelect={() => {
+                                  if (selected.length >= maxSelected) {
+                                    onMaxSelected?.(selected.length)
+                                    return
+                                  }
+                                  setInputValue('')
+                                  const newOptions = [...selected, option]
+                                  setSelected(newOptions)
+                                  onChange?.(newOptions)
+                                }}
+                                className={cn(
+                                  'cursor-pointer',
+                                  option.disable &&
+                                    'cursor-default text-muted-foreground',
+                                )}
+                              >
+                                {option.label}
+                              </CommandItem>
+                            )
+                          })}
                       </>
                     </CommandGroup>
                   ))}

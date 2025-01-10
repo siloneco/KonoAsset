@@ -7,7 +7,7 @@ type Props = {
   log: LogEntry
 }
 
-const logVariants = cva('w-16 border-l-4 pl-1', {
+const logVariants = cva('w-[270px] border-l-4 pl-1', {
   variants: {
     variant: {
       Error: 'border-red-400 dark:border-red-500',
@@ -22,7 +22,15 @@ const logVariants = cva('w-16 border-l-4 pl-1', {
 const LogTray: FC<Props> = ({ log }) => {
   return (
     <div className="flex flex-row items-center whitespace-nowrap">
-      <p className={cn(logVariants({ variant: log.level }))}>{log.level}: </p>
+      <p
+        className={cn(
+          logVariants({ variant: log.level }),
+          'text-card-foreground/50',
+        )}
+      >
+        {log.time}
+      </p>
+      <p className="w-16">{log.level}: </p>
       <p className="text-foreground/80">{log.message}</p>
     </div>
   )

@@ -30,15 +30,17 @@ export const AddAssetModalContext = createContext<{
 
 type Props = {
   className?: string
+
+  dialogOpen: boolean
+  setDialogOpen: (open: boolean) => void
 }
 
-const AddAssetModal = ({ className }: Props) => {
+const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   const [tab, setTab] = useState('selector')
   const [assetPath, setAssetPath] = useState<string>('')
   const [duplicateWarningItems, setDuplicateWarningItems] = useState<
     AssetSummary[]
   >([])
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'

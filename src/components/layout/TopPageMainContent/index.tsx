@@ -6,6 +6,7 @@ import { useState } from 'react'
 const TopPageMainContent = () => {
   const [filterEnforced, setFilterEnforced] = useState(false)
   const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const displayAssetCount: number | undefined = filterEnforced
     ? matchedAssetIDs.length
@@ -20,8 +21,9 @@ const TopPageMainContent = () => {
         setMatchedAssetIDs={setMatchedAssetIDs}
         filterEnforced={filterEnforced}
         setFilterEnforced={setFilterEnforced}
+        openAddAssetDialog={() => setDialogOpen(true)}
       />
-      <AddAssetModal />
+      <AddAssetModal dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
     </main>
   )
 }
