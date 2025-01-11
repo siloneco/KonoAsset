@@ -71,11 +71,10 @@ impl<
             let result: Result<T::VersionedType, serde_json::Error> =
                 serde_json::from_reader(file_open_result.unwrap());
 
-            if result.is_err() {
+            if let Err(e) = result {
                 return Err(format!(
                     "Failed to deserialize: {:?} ( file: {} )",
-                    result.err().unwrap(),
-                    filename
+                    e, filename
                 ));
             }
 

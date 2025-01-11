@@ -95,11 +95,8 @@ pub fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<boo
     let image_delete_result =
         modify_guard::delete_single_file(&image_path, DeletionGuard::new(images_dir_path.clone()));
 
-    if image_delete_result.is_err() {
-        return Err(format!(
-            "Failed to delete image file: {:?}",
-            image_delete_result.err()
-        ));
+    if let Err(e) = image_delete_result {
+        return Err(format!("Failed to delete image file: {:?}", e));
     }
 
     Ok(true)

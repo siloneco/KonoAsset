@@ -15,7 +15,7 @@ pub async fn copy_image_file_to_images(
     path: String,
     temporary: bool,
 ) -> Result<String, String> {
-    log::info!("Copying image file to images directory from: {:?}", path);
+    log::info!("Copying image file to images directory from: {}", path);
 
     let src = PathBuf::from(path);
     let images_dir = {
@@ -25,7 +25,7 @@ pub async fn copy_image_file_to_images(
 
     let filename = create_dest_filename(&src, temporary);
 
-    log::info!("Filename: {:?}", &filename);
+    log::info!("Filename: {}", &filename);
     let dest = images_dir.join(&filename);
 
     let result = modify_guard::copy_file(
@@ -41,8 +41,8 @@ pub async fn copy_image_file_to_images(
     }
 
     log::info!(
-        "Successfully copied image file to images directory (dest: {:?})",
-        &dest
+        "Successfully copied image file to images directory (dest: {})",
+        &dest.display()
     );
 
     Ok(filename)

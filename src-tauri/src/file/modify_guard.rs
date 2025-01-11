@@ -26,8 +26,9 @@ impl DeletionGuard {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidInput,
                 format!(
-                    "Path {:?} is not a child of {:?}",
-                    path_canonicalized, parent_canonicalized
+                    "Path {} is not a child of {}",
+                    path_canonicalized.display(),
+                    parent_canonicalized.display()
                 ),
             ));
         }
@@ -109,8 +110,9 @@ impl FileTransferGuard {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidInput,
                     format!(
-                        "Destination path {:?} is not a child of {:?}",
-                        dest_canonicalized, dest_must_be_parent_canonicalized
+                        "Destination path {} is not a child of {}",
+                        dest_canonicalized.display(),
+                        dest_must_be_parent_canonicalized.display()
                     ),
                 ));
             }

@@ -6,7 +6,7 @@ use crate::file::modify_guard::{self, DeletionGuard, FileTransferGuard};
 
 pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, String> {
     if !src.exists() {
-        return Err(format!("File not found: {:?}", src));
+        return Err(format!("File not found: {}", src.display()));
     }
 
     let filename = src.file_name().unwrap().to_str().unwrap();

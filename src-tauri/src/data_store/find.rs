@@ -9,8 +9,8 @@ pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>
     let entries = std::fs::read_dir(&path).map_err(|e| e.to_string())?;
 
     for entry in entries {
-        if entry.is_err() {
-            println!("Error reading entry: {:?}", entry.err());
+        if let Err(e) = entry {
+            println!("Error reading entry: {:?}", e);
             continue;
         }
         let entry = entry.unwrap();
