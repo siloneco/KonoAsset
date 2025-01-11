@@ -1,4 +1,4 @@
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
@@ -12,7 +12,7 @@ pub async fn save_image_from_url(
 
     let mut parent = output.clone();
     parent.pop();
-    fs::create_dir_all(parent)?;
+    std::fs::create_dir_all(parent)?;
 
     let mut file = File::create(output).unwrap();
     let bytes = get_reqwest_client().get(url).send().await?.bytes().await?;

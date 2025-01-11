@@ -1,9 +1,13 @@
-use std::{fs, hash::Hash, path::PathBuf};
+use std::{hash::Hash, path::PathBuf};
 
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
-use crate::{definitions::traits::AssetTrait, loader::HashSetVersionedLoader};
+use crate::{
+    definitions::traits::AssetTrait,
+    file::modify_guard::{self, DeletionGuard},
+    loader::HashSetVersionedLoader,
+};
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 
@@ -62,15 +66,12 @@ async fn delete_asset_from_store<
         return Ok(false);
     }
 
-    // アセット本体削除
-    let mut path = app_dir.clone();
-    path.push("data");
-    path.push(id.to_string());
+    let path = app_dir.join("data").join(id.to_string());
+    let dir_delete_result =
+        modify_guard::delete_recursive(&path, DeletionGuard::new(app_dir.clone()));
 
-    let dir_delete_result = fs::remove_dir_all(path);
-
-    if dir_delete_result.is_err() {
-        return Err("Failed to delete asset directory".into());
+    if let Err(e) = dir_delete_result {
+        return Err(format!("Failed to delete asset directory: {:?}", e));
     }
 
     let image = &asset.get_description().image_filename;
@@ -82,56 +83,38 @@ async fn delete_asset_from_store<
     let image_path = app_dir.join("images").join(image.as_ref().unwrap());
 
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, image_path.to_str().unwrap())
+    delete_asset_image(app_dir, &image_path)
 }
 
-pub fn delete_asset_image(app_dir: &PathBuf, image_path: &str) -> Result<bool, String> {
-    let mut images_dir = app_dir.clone();
-    images_dir.push("images");
-
-    let images_path = images_dir.canonicalize();
-    if images_path.is_err() {
-        return Err(format!(
-            "Failed to get images path: {:?}",
-            images_path.err()
-        ));
-    }
-    let images_path = images_path.unwrap();
-
-    let path = PathBuf::from(image_path);
-    if !path.exists() {
+pub fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<bool, String> {
+    if !image_path.exists() {
         return Ok(false);
     }
 
-    let path = path.canonicalize();
-    if path.is_err() {
-        return Err(format!("Failed to get image path: {:?}", path.err()));
-    }
-    let path = path.unwrap();
-
-    if !path.starts_with(&images_path) {
-        return Err("Invalid image path. Image path must be under app's images directory".into());
-    }
-
-    let image_delete_result = fs::remove_file(path);
+    let images_dir_path = app_dir.join("images");
+    let image_delete_result =
+        modify_guard::delete_single_file(&image_path, DeletionGuard::new(images_dir_path.clone()));
 
     if image_delete_result.is_err() {
-        return Err("Failed to delete image file".into());
+        return Err(format!(
+            "Failed to delete image file: {:?}",
+            image_delete_result.err()
+        ));
     }
 
     Ok(true)
 }
 
 pub fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
-    let mut images_path = app_dir.clone();
-    images_path.push("images");
+    let images_dir_path = app_dir.join("images");
 
-    let entries = fs::read_dir(&images_path);
-    if entries.is_err() {
-        return Err(format!(
-            "Failed to read images directory: {:?}",
-            entries.err()
-        ));
+    if !images_dir_path.exists() {
+        return Ok(());
+    }
+
+    let entries = std::fs::read_dir(&images_dir_path);
+    if let Err(e) = entries {
+        return Err(format!("Failed to read images directory: {:?}", e));
     }
 
     for entry in entries.unwrap() {
@@ -147,13 +130,11 @@ pub fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
             continue;
         }
 
-        let delete_result = fs::remove_file(path);
+        let delete_result =
+            modify_guard::delete_single_file(&path, DeletionGuard::new(images_dir_path.clone()));
 
-        if delete_result.is_err() {
-            return Err(format!(
-                "Failed to delete image file: {:?}",
-                delete_result.err()
-            ));
+        if let Err(e) = delete_result {
+            return Err(format!("Failed to delete temp image: {:?}", e));
         }
     }
 

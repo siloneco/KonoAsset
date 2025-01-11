@@ -15,7 +15,7 @@ mod booth;
 mod command;
 mod data_store;
 mod definitions;
-mod file_opener;
+mod file;
 mod importer;
 mod loader;
 mod logging;

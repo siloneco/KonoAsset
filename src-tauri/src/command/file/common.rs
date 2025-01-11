@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
@@ -65,7 +65,7 @@ pub async fn migrate_data_dir(
 
     if !new_path.exists() {
         log::debug!("Creating directory: {:?}", new_path);
-        fs::create_dir_all(&new_path).unwrap();
+        std::fs::create_dir_all(&new_path).unwrap();
     }
 
     if migrate_data {

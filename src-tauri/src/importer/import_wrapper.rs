@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::{
     data_store::provider::StoreProvider,
@@ -170,7 +170,7 @@ pub async fn import_world_object(
 
 fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<(), String> {
     if !dest.exists() {
-        let result = fs::create_dir_all(dest);
+        let result = std::fs::create_dir_all(dest);
 
         if result.is_err() {
             return Err(result.err().unwrap().to_string());

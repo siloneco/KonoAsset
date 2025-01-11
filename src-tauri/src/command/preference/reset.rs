@@ -1,7 +1,10 @@
 use serde::Deserialize;
 use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
-use crate::preference::store::PreferenceStore;
+use crate::{
+    file::modify_guard::{self, DeletionGuard},
+    preference::store::PreferenceStore,
+};
 
 #[tauri::command]
 #[specta::specta]
@@ -12,14 +15,14 @@ pub async fn reset_application(
     log::info!("Resetting application...");
 
     if request.reset_preferences {
-        let path = handle
-            .path()
-            .app_local_data_dir()
-            .unwrap()
-            .join("preference.json");
+        let app_local_data_dir = handle.path().app_local_data_dir().unwrap();
+        let preference_path = app_local_data_dir.join("preference.json");
 
-        if path.exists() {
-            let result = std::fs::remove_file(path);
+        if preference_path.exists() {
+            let result = modify_guard::delete_single_file(
+                &preference_path,
+                DeletionGuard::new(app_local_data_dir),
+            );
 
             if let Err(e) = result {
                 log::error!("Failed to delete preferences.json: {}", e);
@@ -33,16 +36,19 @@ pub async fn reset_application(
     let preference_store: Option<State<'_, Mutex<PreferenceStore>>> = handle.try_state();
 
     if let Some(preference_store) = preference_store {
-        let app_data_dir = {
+        let user_data_dir = {
             let preference_store = preference_store.lock().await;
             preference_store.get_data_dir().clone()
         };
 
         if request.delete_metadata {
-            let metadata_dir = app_data_dir.join("metadata");
+            let metadata_dir = user_data_dir.join("metadata");
 
             if metadata_dir.exists() {
-                let result = std::fs::remove_dir_all(metadata_dir);
+                let result = modify_guard::delete_recursive(
+                    &metadata_dir,
+                    DeletionGuard::new(user_data_dir.clone()),
+                );
 
                 if let Err(e) = result {
                     log::error!("Failed to delete metadata directory: {}", e);
@@ -54,10 +60,13 @@ pub async fn reset_application(
         }
 
         if request.delete_asset_data {
-            let asset_data_dir = app_data_dir.join("data");
+            let asset_data_dir = user_data_dir.join("data");
 
             if asset_data_dir.exists() {
-                let result = std::fs::remove_dir_all(asset_data_dir);
+                let result = modify_guard::delete_recursive(
+                    &asset_data_dir,
+                    DeletionGuard::new(user_data_dir.clone()),
+                );
 
                 if let Err(e) = result {
                     log::error!("Failed to delete asset data directory: {}", e);

@@ -129,8 +129,7 @@ impl<
 
                 if old_image.is_some() {
                     let old_image_path = images_dir.join(old_image.as_ref().unwrap());
-                    let delete_result =
-                        delete_asset_image(&self.data_dir, old_image_path.to_str().unwrap());
+                    let delete_result = delete_asset_image(&self.data_dir, &old_image_path);
 
                     if delete_result.is_err() {
                         return Err(delete_result.err().unwrap());

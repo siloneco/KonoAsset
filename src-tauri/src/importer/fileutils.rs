@@ -1,6 +1,8 @@
-use std::{error::Error, fs, path::PathBuf};
+use std::{error::Error, path::PathBuf};
 
 use zip_extensions::zip_extract;
+
+use crate::file::modify_guard::{self, DeletionGuard, FileTransferGuard};
 
 pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, String> {
     if !src.exists() {
@@ -14,9 +16,11 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, St
 
     let new_filename = &filename[5..];
     let new_path = src.with_file_name(new_filename);
-    let result = fs::rename(src, &new_path);
-    if result.is_err() {
-        return Err(result.err().unwrap().to_string());
+
+    let result = modify_guard::move_file_or_dir(src, &new_path, FileTransferGuard::new(None, None));
+
+    if let Err(e) = result {
+        return Err(e.to_string());
     }
 
     return Ok(Some(new_path));
@@ -31,13 +35,14 @@ pub fn import_asset(
     new_destination.push(src_import_asset_path.file_name().unwrap());
 
     if src_import_asset_path.is_dir() {
-        fs::create_dir_all(&new_destination)?;
+        std::fs::create_dir_all(&new_destination)?;
 
-        copy_dir(src_import_asset_path, &new_destination)?;
-
-        if delete_source {
-            delete(src_import_asset_path)?;
-        }
+        modify_guard::copy_dir(
+            src_import_asset_path,
+            &new_destination,
+            delete_source,
+            FileTransferGuard::new(None, None),
+        )?;
     } else {
         let extension = src_import_asset_path.extension().unwrap();
         if extension == "zip" {
@@ -50,43 +55,21 @@ pub fn import_asset(
             }
 
             if delete_source {
-                delete(src_import_asset_path)?;
+                modify_guard::delete_single_file(
+                    src_import_asset_path,
+                    DeletionGuard::new(src_import_asset_path.clone()),
+                )?;
             }
         } else {
-            copy_file(src_import_asset_path, &new_destination)?;
-            if delete_source {
-                delete(src_import_asset_path)?;
-            }
+            modify_guard::copy_file(
+                src_import_asset_path,
+                &new_destination,
+                delete_source,
+                FileTransferGuard::new(None, None),
+            )?;
         }
     }
-    Ok(())
-}
 
-fn copy_dir(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
-    fs::create_dir_all(dest)?;
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_dir() {
-            copy_dir(&path, &dest.join(path.file_name().unwrap()))?;
-        } else {
-            fs::copy(&path, &dest.join(path.file_name().unwrap()))?;
-        }
-    }
-    Ok(())
-}
-
-fn copy_file(src: &PathBuf, dest: &PathBuf) -> Result<(), Box<dyn Error>> {
-    fs::copy(src, dest)?;
-    Ok(())
-}
-
-fn delete(src: &PathBuf) -> Result<(), Box<dyn Error>> {
-    if src.is_dir() {
-        fs::remove_dir_all(src)?;
-    } else {
-        fs::remove_file(src)?;
-    }
     Ok(())
 }
 
