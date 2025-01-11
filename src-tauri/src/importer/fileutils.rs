@@ -2,40 +2,24 @@ use std::{error::Error, fs, path::PathBuf};
 
 use zip_extensions::zip_extract;
 
-use crate::booth::image_saver;
-
-pub async fn execute_image_fixation(url_or_path: &str, dest: &PathBuf) -> Result<bool, String> {
-    let path = PathBuf::from(url_or_path);
-    if PathBuf::from(url_or_path).exists() {
-        // ファイル名が temp_ で始まっている場合、次回再起動時に削除されないようにdestに移動する
-        if path
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .starts_with("temp_")
-        {
-            let result = fs::rename(&path, dest);
-            if result.is_err() {
-                return Err(result.err().unwrap().to_string());
-            }
-            return Ok(true);
-        }
-        return Ok(false);
+pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, String> {
+    if !src.exists() {
+        return Err(format!("File not found: {:?}", src));
     }
 
-    let parsed = reqwest::Url::parse(url_or_path);
-    if parsed.is_err() {
-        return Ok(false);
+    let filename = src.file_name().unwrap().to_str().unwrap();
+    if !filename.starts_with("temp_") {
+        return Ok(None);
     }
 
-    let result = image_saver::save_image_from_url(url_or_path, dest).await;
-
+    let new_filename = &filename[5..];
+    let new_path = src.with_file_name(new_filename);
+    let result = fs::rename(src, &new_path);
     if result.is_err() {
         return Err(result.err().unwrap().to_string());
     }
 
-    Ok(true)
+    return Ok(Some(new_path));
 }
 
 pub fn import_asset(

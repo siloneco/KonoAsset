@@ -139,20 +139,22 @@ impl<
 
                 if new_image.is_some() {
                     let temp_new_image = images_dir.join(new_image.as_ref().unwrap());
-                    let extension = temp_new_image.extension().unwrap().to_str().unwrap();
-                    let path =
-                        images_dir.join(format!("{}.{}", Uuid::new_v4().to_string(), extension));
-
-                    let result =
-                        execute_image_fixation(temp_new_image.to_str().unwrap(), &path).await;
+                    let result = execute_image_fixation(&temp_new_image).await;
 
                     if result.is_err() {
                         return Err(result.err().unwrap());
                     }
 
-                    if result.unwrap() {
-                        asset.get_description_as_mut().image_filename =
-                            Some(path.file_name().unwrap().to_str().unwrap().to_string());
+                    let new_image_path = result.unwrap();
+                    if let Some(new_image_path) = new_image_path {
+                        asset.get_description_as_mut().image_filename = Some(
+                            new_image_path
+                                .file_name()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .to_string(),
+                        );
                     }
                 }
             }
