@@ -1,8 +1,9 @@
 use std::{error::Error, path::PathBuf};
 
-use zip_extensions::zip_extract;
-
-use crate::file::modify_guard::{self, DeletionGuard, FileTransferGuard};
+use crate::{
+    file::modify_guard::{self, DeletionGuard, FileTransferGuard},
+    zip::extractor::extract_zip,
+};
 
 pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, String> {
     if !src.exists() {
@@ -68,16 +69,6 @@ pub fn import_asset(
                 FileTransferGuard::new(None, None),
             )?;
         }
-    }
-
-    Ok(())
-}
-
-fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
-    let result = zip_extract(src, dest);
-
-    if result.is_err() {
-        return Err(result.err().unwrap().to_string());
     }
 
     Ok(())

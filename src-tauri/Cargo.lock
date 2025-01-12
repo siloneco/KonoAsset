@@ -2184,6 +2184,7 @@ name = "konoasset"
 version = "0.2.8"
 dependencies = [
  "chrono",
+ "encoding_rs",
  "kanaria",
  "log",
  "monostate",
@@ -2204,7 +2205,7 @@ dependencies = [
  "tauri-plugin-updater",
  "tauri-specta",
  "uuid",
- "zip-extensions",
+ "zip",
 ]
 
 [[package]]
@@ -6402,15 +6403,6 @@ dependencies = [
  "zeroize",
  "zopfli",
  "zstd",
-]
-
-[[package]]
-name = "zip-extensions"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "386508a00aae1d8218b9252a41f59bba739ccee3f8e420bb90bcb1c30d960d4a"
-dependencies = [
- "zip",
 ]
 
 [[package]]

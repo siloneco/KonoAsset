@@ -21,6 +21,7 @@ mod loader;
 mod logging;
 mod preference;
 mod updater;
+mod zip;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
