@@ -3,7 +3,7 @@ use std::{
     io::{Read, Write},
     path::{PathBuf, MAIN_SEPARATOR_STR},
 };
-use zip::ZipArchive;
+use zip::{HasZipMetadata, ZipArchive};
 
 pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
     let reader = std::fs::File::open(src).map_err(|e| format!("Failed to open zip file: {}", e))?;
@@ -25,7 +25,18 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
         let mut file = archive
             .by_index(i)
             .map_err(|e| format!("Failed to read zip file: {}", e))?;
-        let name = sanitize(fix_encoding(file.name_raw()).as_str());
+        let name = if file.get_metadata().is_utf8 {
+            let enclosed_name = file.enclosed_name();
+            if enclosed_name.is_none() {
+                let text = format!("Failed to read file name: {:?}", file.name_raw());
+                warn!("{}", text);
+                return Err(format!("Failed to extract file from zip file: {}", text));
+            }
+
+            enclosed_name.unwrap().to_str().unwrap().to_string()
+        } else {
+            sanitize(decode_as_shift_jis(file.name_raw()).as_str())
+        };
 
         if name.len() == 0 {
             warn!("Ignoring empty file name");
@@ -75,10 +86,12 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
-fn fix_encoding(name: &[u8]) -> String {
+fn decode_as_shift_jis(name: &[u8]) -> String {
     encoding_rs::SHIFT_JIS.decode(name).0.to_string()
 }
 
 fn sanitize(name: &str) -> String {
-    name.replace("\0", "").replace("\u{202E}", "")
+    name.replace("\0", "")
+        .replace("\u{202E}", "")
+        .replace("/", MAIN_SEPARATOR_STR)
 }
