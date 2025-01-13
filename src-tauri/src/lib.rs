@@ -15,12 +15,13 @@ mod booth;
 mod command;
 mod data_store;
 mod definitions;
-mod file_opener;
+mod file;
 mod importer;
 mod loader;
 mod logging;
 mod preference;
 mod updater;
+mod zip;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 

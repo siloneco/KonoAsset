@@ -11,6 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
+import { useGetElementProperty } from '@/hooks/use-get-element-property'
 
 export interface Option {
   value: string
@@ -151,6 +152,33 @@ const TextInputSelect = React.forwardRef<
     )
     const [inputValue, setInputValue] = React.useState('')
     const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
+
+    const inputDivRef = React.useRef<HTMLDivElement>(null)
+    const [commandListMaxHeight, setCommandListMaxHeight] =
+      React.useState<number>(300)
+    const { getElementProperty } = useGetElementProperty(inputDivRef)
+
+    // suggestの高さを適切に設定する
+    const updateCommandListMaxHeight = () => {
+      const windowHeight = window.innerHeight
+      const inputDivBottom = getElementProperty('bottom')
+      const commandListHeight = Math.min(
+        Math.max(windowHeight - inputDivBottom - 20, 75),
+        300,
+      )
+
+      setCommandListMaxHeight(commandListHeight)
+    }
+
+    useEffect(() => {
+      updateCommandListMaxHeight()
+    }, [selected])
+
+    useEffect(() => {
+      window.addEventListener('resize', updateCommandListMaxHeight)
+      return () =>
+        window.removeEventListener('resize', updateCommandListMaxHeight)
+    })
 
     React.useImperativeHandle(
       ref,
@@ -367,6 +395,7 @@ const TextInputSelect = React.forwardRef<
               },
               className,
             )}
+            ref={inputDivRef}
             onClick={() => {
               if (disabled) return
               inputRef?.current?.focus()
@@ -449,6 +478,9 @@ const TextInputSelect = React.forwardRef<
           {open && (
             <CommandList
               className="absolute top-full z-10 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              style={{
+                maxHeight: `${commandListMaxHeight}px`,
+              }}
               onMouseLeave={() => {
                 setOnScrollbar(false)
               }}

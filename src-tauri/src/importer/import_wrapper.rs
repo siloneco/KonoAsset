@@ -1,6 +1,4 @@
-use std::{fs, path::PathBuf};
-
-use uuid::Uuid;
+use std::path::PathBuf;
 
 use crate::{
     data_store::provider::StoreProvider,
@@ -172,7 +170,7 @@ pub async fn import_world_object(
 
 fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<(), String> {
     if !dest.exists() {
-        let result = fs::create_dir_all(dest);
+        let result = std::fs::create_dir_all(dest);
 
         if result.is_err() {
             return Err(result.err().unwrap().to_string());
@@ -188,25 +186,20 @@ fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<()
     Ok(())
 }
 
-async fn fix_image(images_path: &PathBuf, old: &str) -> Result<String, String> {
-    let temp_image_path = images_path.clone().join(old);
-    let extension = temp_image_path.extension().unwrap().to_str().unwrap();
-    let new_image_path =
-        images_path
-            .clone()
-            .join(format!("{}.{}", Uuid::new_v4().to_string(), extension));
+async fn fix_image(images_path: &PathBuf, temp_path_str: &str) -> Result<String, String> {
+    let temp_image_path = images_path.clone().join(temp_path_str);
 
-    let image_fixation_result =
-        execute_image_fixation(temp_image_path.to_str().unwrap(), &new_image_path).await;
+    let image_fixation_result = execute_image_fixation(&temp_image_path).await;
 
     if image_fixation_result.is_err() {
         return Err(format!(
-            "Failed to import avatar: {}",
+            "Failed to import asset: {}",
             image_fixation_result.err().unwrap()
         ));
     }
 
-    if image_fixation_result.unwrap() {
+    let new_image_path = image_fixation_result.unwrap();
+    if let Some(new_image_path) = new_image_path {
         return Ok(new_image_path
             .file_name()
             .unwrap()
@@ -215,5 +208,6 @@ async fn fix_image(images_path: &PathBuf, old: &str) -> Result<String, String> {
             .to_string());
     }
 
-    Ok(old.to_string())
+    log::warn!("Image does not need to be fixed: {}", temp_path_str);
+    Ok(temp_path_str.to_string())
 }

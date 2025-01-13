@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
@@ -55,21 +55,24 @@ pub async fn migrate_data_dir(
     new_path: PathBuf,
     migrate_data: bool,
 ) -> Result<(), String> {
-    log::info!("Data directory migration triggered (dest: {:?})", new_path);
+    log::info!(
+        "Data directory migration triggered (dest: {})",
+        new_path.display()
+    );
 
     if !new_path.is_dir() {
-        let err = format!("New path is not a directory: {:?}", new_path);
+        let err = format!("New path is not a directory: {}", new_path.display());
         log::error!("{}", err);
         return Err(err);
     }
 
     if !new_path.exists() {
-        log::debug!("Creating directory: {:?}", new_path);
-        fs::create_dir_all(&new_path).unwrap();
+        log::debug!("Creating directory: {}", new_path.display());
+        std::fs::create_dir_all(&new_path).unwrap();
     }
 
     if migrate_data {
-        log::info!("Migrating data to new path: {:?}", new_path);
+        log::info!("Migrating data to new path: {}", new_path.display());
         let mut basic_store = basic_store.lock().await;
         let result = basic_store.migrate_data_dir(&new_path).await;
 
@@ -88,7 +91,10 @@ pub async fn migrate_data_dir(
     preference.overwrite(&new_preference);
     preference.save().map_err(|e| e.to_string())?;
 
-    log::info!("Successfully changed data directory to: {:?}", new_path);
+    log::info!(
+        "Successfully changed data directory to: {}",
+        new_path.display()
+    );
 
     Ok(())
 }

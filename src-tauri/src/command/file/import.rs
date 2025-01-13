@@ -1,9 +1,12 @@
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
-use crate::data_store::provider::StoreProvider;
+use crate::{
+    data_store::provider::StoreProvider,
+    file::modify_guard::{self, FileTransferGuard},
+};
 
 #[tauri::command]
 #[specta::specta]
@@ -12,37 +15,25 @@ pub async fn copy_image_file_to_images(
     path: String,
     temporary: bool,
 ) -> Result<String, String> {
-    log::info!("Copying image file to images directory: {:?}", path);
+    log::info!("Copying image file to images directory from: {}", path);
 
-    let path = PathBuf::from(path);
-    let mut new_path = basic_store.lock().await.data_dir();
-    new_path.push("images");
-
-    let filename = if temporary {
-        format!(
-            "temp_{}.{}",
-            Uuid::new_v4().to_string(),
-            path.extension()
-                .unwrap_or(std::ffi::OsStr::new("png"))
-                .to_str()
-                .unwrap()
-        )
-    } else {
-        format!(
-            "{}.{}",
-            Uuid::new_v4().to_string(),
-            path.extension()
-                .unwrap_or(std::ffi::OsStr::new("png"))
-                .to_str()
-                .unwrap()
-        )
+    let src = PathBuf::from(path);
+    let images_dir = {
+        let store = basic_store.lock().await;
+        store.data_dir().join("images")
     };
 
-    log::info!("Filename: {:?}", filename);
+    let filename = create_dest_filename(&src, temporary);
 
-    new_path.push(filename);
+    log::info!("Filename: {}", &filename);
+    let dest = images_dir.join(&filename);
 
-    let result = fs::copy(&path, &new_path);
+    let result = modify_guard::copy_file(
+        &src,
+        &dest,
+        false,
+        FileTransferGuard::new(None, Some(images_dir)),
+    );
 
     if let Err(e) = result {
         log::error!("Failed to copy image file: {:?}", e);
@@ -50,9 +41,23 @@ pub async fn copy_image_file_to_images(
     }
 
     log::info!(
-        "Successfully copied image file to images directory (dest: {:?})",
-        new_path
+        "Successfully copied image file to images directory (dest: {})",
+        &dest.display()
     );
 
-    Ok(new_path.file_name().unwrap().to_str().unwrap().to_string())
+    Ok(filename)
+}
+
+fn create_dest_filename(src: &PathBuf, temporary: bool) -> String {
+    let extension = src
+        .extension()
+        .unwrap_or(std::ffi::OsStr::new("png"))
+        .to_str()
+        .unwrap();
+
+    if temporary {
+        format!("temp_{}.{}", Uuid::new_v4().to_string(), extension)
+    } else {
+        format!("{}.{}", Uuid::new_v4().to_string(), extension)
+    }
 }
