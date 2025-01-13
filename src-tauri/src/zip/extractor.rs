@@ -1,4 +1,4 @@
-use log::debug;
+use log::{debug, warn};
 use std::{
     io::{Read, Write},
     path::{PathBuf, MAIN_SEPARATOR_STR},
@@ -26,6 +26,11 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
             .by_index(i)
             .map_err(|e| format!("Failed to read zip file: {}", e))?;
         let name = sanitize(fix_encoding(file.name_raw()).as_str());
+
+        if name.len() == 0 {
+            warn!("Ignoring empty file name");
+            continue;
+        }
 
         let path = absolute_dest.join(name);
         let absolute_path = std::path::absolute(path).unwrap();
