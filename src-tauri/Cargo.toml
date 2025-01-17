@@ -35,7 +35,7 @@ monostate = "0.1.13"
 kanaria = "0.2.0"
 zip = { version = "2.2.2" }
 encoding_rs = "0.8.35"
-specta = {version = "=2.0.0-rc.20", features = ["uuid", "chrono"] }
+specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
 specta-typescript = "0.0.7"
 tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }
 
