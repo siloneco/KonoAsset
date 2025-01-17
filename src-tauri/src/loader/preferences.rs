@@ -15,7 +15,7 @@ pub enum VersionedPreferences {
         version: MustBe!(1u64),
         data: LegacyPreferenceStoreV1,
     },
-    LegacyRawPreference(PreferenceStore),
+    LegacyRawPreference(LegacyPreferenceStoreV1),
 }
 
 impl TryInto<PreferenceStore> for VersionedPreferences {
@@ -26,7 +26,7 @@ impl TryInto<PreferenceStore> for VersionedPreferences {
             VersionedPreferences::Preference { data, .. } => Ok(data),
             VersionedPreferences::LegacyPreferenceV1 { data, .. } => Ok(data.into()),
             VersionedPreferences::LegacyRawPreference(legacy_raw_preference) => {
-                Ok(legacy_raw_preference)
+                Ok(legacy_raw_preference.into())
             }
         }
     }
