@@ -230,3 +230,162 @@ fn copy_dir_internal(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), std::
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::File;
+    use std::io::Write;
+
+    fn get_test_dir() -> PathBuf {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test/temp");
+
+        if !path.exists() {
+            std::fs::create_dir_all(&path).unwrap();
+        }
+
+        path
+    }
+
+    #[test]
+    fn test_delete_single_file_success() {
+        let dir = get_test_dir();
+        let file_path = dir.join("test.txt");
+
+        let mut file = File::create(&file_path).unwrap();
+        file.write_all(b"test").unwrap();
+
+        let guard = DeletionGuard::new(dir.to_path_buf());
+        delete_single_file(&file_path, guard).unwrap();
+
+        assert!(!file_path.exists());
+    }
+
+    #[test]
+    fn test_delete_single_file_failure() {
+        let dir = get_test_dir();
+        let file_path = dir.join("test.txt");
+
+        let guard = DeletionGuard::new(dir.join("other_dir"));
+        let result = delete_single_file(&file_path, guard);
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_delete_recursive_success() {
+        let dir = get_test_dir();
+        let sub_dir = dir.join("delete_recursive_success_sub_dir");
+        let file_path = sub_dir.join("test.txt");
+
+        std::fs::create_dir_all(&sub_dir).unwrap();
+        let mut file = File::create(&file_path).unwrap();
+        file.write_all(b"test").unwrap();
+
+        let guard = DeletionGuard::new(dir.to_path_buf());
+        delete_recursive(&sub_dir, guard).unwrap();
+
+        assert!(!sub_dir.exists());
+    }
+
+    #[test]
+    fn test_delete_recursive_failure() {
+        let dir = get_test_dir();
+        let sub_dir = dir.join("delete_recursive_failure_sub_dir");
+        let file_path = sub_dir.join("test.txt");
+
+        std::fs::create_dir_all(&sub_dir).unwrap();
+        let mut file = File::create(&file_path).unwrap();
+        file.write_all(b"test").unwrap();
+
+        let guard = DeletionGuard::new(dir.join("other_dir"));
+        let result = delete_recursive(&sub_dir, guard);
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_move_file_success() {
+        let dir = get_test_dir();
+        let src = dir.join("move_file_success_src");
+        let dest = dir.join("move_file_success_dest");
+
+        let mut file = File::create(&src).unwrap();
+        file.write_all(b"test").unwrap();
+
+        if dest.exists() {
+            std::fs::remove_file(&dest).unwrap();
+        }
+
+        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        move_file_or_dir(&src, &dest, guard).unwrap();
+
+        assert!(dest.exists());
+        assert!(!src.exists());
+    }
+
+    #[test]
+    fn test_move_dir_success() {
+        let dir = get_test_dir();
+        let src = dir.join("move_dir_success_src");
+        let dest = dir.join("move_dir_success_dest");
+
+        std::fs::create_dir(&src).unwrap();
+
+        if dest.exists() {
+            std::fs::remove_dir_all(&dest).unwrap();
+        }
+
+        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        move_file_or_dir(&src, &dest, guard).unwrap();
+
+        assert!(dest.exists());
+        assert!(!src.exists());
+    }
+
+    #[test]
+    fn test_move_file_or_dir_failure() {
+        let dir = get_test_dir();
+        let src = dir.join("move_file_or_dir_failure_src");
+        let dest = dir.join("move_file_or_dir_failure_dest");
+
+        let guard =
+            FileTransferGuard::new(Some(dir.join("other_dir")), Some(dir.join("other_dir")));
+        let result = move_file_or_dir(&src, &dest, guard);
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_copy_file_success() {
+        let dir = get_test_dir();
+        let src = dir.join("copy_file_success_src");
+        let dest = dir.join("copy_file_success_dest");
+
+        let mut file = File::create(&src).unwrap();
+        file.write_all(b"test").unwrap();
+
+        if dest.exists() {
+            std::fs::remove_file(&dest).unwrap();
+        }
+
+        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        copy_file(&src, &dest, false, guard).unwrap();
+
+        assert!(dest.exists());
+        assert!(src.exists());
+    }
+
+    #[test]
+    fn test_copy_file_failure() {
+        let dir = get_test_dir();
+        let src = dir.join("copy_file_failure_src");
+        let dest = dir.join("copy_file_failure_dest");
+
+        let guard =
+            FileTransferGuard::new(Some(dir.join("other_dir")), Some(dir.join("other_dir")));
+        let result = copy_file(&src, &dest, false, guard);
+
+        assert!(result.is_err());
+    }
+}
