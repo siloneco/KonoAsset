@@ -10,25 +10,27 @@ impl DeletionGuard {
     }
 
     fn assert(&self, path: &PathBuf) -> Result<(), std::io::Error> {
-        let parent_canonicalized_result = self.must_be_parent.canonicalize();
-
-        if let Err(e) = parent_canonicalized_result {
-            return Err(std::io::Error::new(
+        let parent_absolute = std::path::absolute(&self.must_be_parent).map_err(|e| {
+            std::io::Error::new(
                 std::io::ErrorKind::InvalidInput,
-                format!("Failed to canonicalize parent path: {:?}", e),
-            ));
-        }
+                format!("Failed to convert parent path to absolute path: {:?}", e),
+            )
+        })?;
 
-        let parent_canonicalized = parent_canonicalized_result.unwrap();
-        let path_canonicalized = path.canonicalize()?;
+        let path_absolute = std::path::absolute(path).map_err(|e| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("Failed to convert path to absolute path: {:?}", e),
+            )
+        })?;
 
-        if !path_canonicalized.starts_with(&parent_canonicalized) {
+        if !path_absolute.starts_with(&parent_absolute) {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidInput,
                 format!(
                     "Path {} is not a child of {}",
-                    path_canonicalized.display(),
-                    parent_canonicalized.display()
+                    path_absolute.display(),
+                    parent_absolute.display()
                 ),
             ));
         }
@@ -69,50 +71,64 @@ impl FileTransferGuard {
 
     fn assert(&self, src: &PathBuf, dest: &PathBuf) -> Result<(), std::io::Error> {
         if let Some(src_must_be_parent) = &self.src_must_be_parent {
-            let src_must_be_parent_canonicalized_result = src_must_be_parent.canonicalize();
+            let src_must_be_parent_absolute =
+                std::path::absolute(src_must_be_parent).map_err(|e| {
+                    std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!(
+                            "Failed to convert source parent path to absolute path: {:?}",
+                            e
+                        ),
+                    )
+                })?;
 
-            if let Err(e) = src_must_be_parent_canonicalized_result {
-                return Err(std::io::Error::new(
+            let src_absolute = std::path::absolute(src).map_err(|e| {
+                std::io::Error::new(
                     std::io::ErrorKind::InvalidInput,
-                    format!("Failed to canonicalize source parent path: {:?}", e),
-                ));
-            }
+                    format!("Failed to convert source path to absolute path: {:?}", e),
+                )
+            })?;
 
-            let src_must_be_parent_canonicalized = src_must_be_parent_canonicalized_result.unwrap();
-            let src_canonicalized = src.canonicalize()?;
-
-            if !src_canonicalized.starts_with(&src_must_be_parent_canonicalized) {
+            if !src_absolute.starts_with(&src_must_be_parent_absolute) {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidInput,
                     format!(
                         "Source path {:?} is not a child of {:?}",
-                        src_canonicalized, src_must_be_parent_canonicalized
+                        src_absolute, src_must_be_parent_absolute
                     ),
                 ));
             }
         }
 
         if let Some(dest_must_be_parent) = &self.dest_must_be_parent {
-            let dest_must_be_parent_canonicalized_result = dest_must_be_parent.canonicalize();
+            let dest_must_be_parent_absolute =
+                std::path::absolute(dest_must_be_parent).map_err(|e| {
+                    std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!(
+                            "Failed to convert destination parent path to absolute path: {:?}",
+                            e
+                        ),
+                    )
+                })?;
 
-            if let Err(e) = dest_must_be_parent_canonicalized_result {
-                return Err(std::io::Error::new(
+            let dest_absolute = std::path::absolute(dest).map_err(|e| {
+                std::io::Error::new(
                     std::io::ErrorKind::InvalidInput,
-                    format!("Failed to canonicalize destination parent path: {:?}", e),
-                ));
-            }
+                    format!(
+                        "Failed to convert destination path to absolute path: {:?}",
+                        e
+                    ),
+                )
+            })?;
 
-            let dest_must_be_parent_canonicalized =
-                dest_must_be_parent_canonicalized_result.unwrap();
-            let dest_canonicalized = dest.canonicalize()?;
-
-            if !dest_canonicalized.starts_with(&dest_must_be_parent_canonicalized) {
+            if !dest_absolute.starts_with(&dest_must_be_parent_absolute) {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidInput,
                     format!(
                         "Destination path {} is not a child of {}",
-                        dest_canonicalized.display(),
-                        dest_must_be_parent_canonicalized.display()
+                        dest_absolute.display(),
+                        dest_must_be_parent_absolute.display()
                     ),
                 ));
             }
