@@ -241,7 +241,7 @@ async getDirectoryPath(id: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async listUnitypackageFiles(id: string) : Promise<Result<{ [key in string]: FileInfo[] }, string>> {
+async listUnitypackageFiles(id: string) : Promise<Result<Partial<{ [key in string]: FileInfo[] }>, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("list_unitypackage_files", { id }) };
 } catch (e) {
