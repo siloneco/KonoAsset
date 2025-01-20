@@ -20,17 +20,17 @@ type Props = {
 }
 
 const SelectorTab = ({ setTab }: Props) => {
-  const { setAssetPath } = useContext(AddAssetModalContext)
+  const { setAssetPaths } = useContext(AddAssetModalContext)
 
   const openFileOrDirSelector = async (dir: boolean) => {
     const path = await open({
-      multiple: false,
+      multiple: true,
       defaultPath: await downloadDir(),
       directory: dir,
     })
 
     if (path !== null) {
-      setAssetPath(path)
+      setAssetPaths(path)
       setTab('booth-input')
     }
   }

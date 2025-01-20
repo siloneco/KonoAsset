@@ -58,14 +58,14 @@ export const createPreAsset = ({
 
 export const sendAssetImportRequest = async (
   assetType: AssetType,
-  assetPath: string,
+  assetPaths: string[],
   preAsset: PreAvatar | PreAvatarWearable | PreWorldObject,
   deleteSource: boolean,
 ): Promise<Result<Avatar | AvatarWearable | WorldObject, string>> => {
   if (assetType === 'Avatar') {
     const request: AvatarImportRequest = {
       preAsset: preAsset as PreAvatar,
-      absolutePath: assetPath,
+      absolutePaths: assetPaths,
       deleteSource,
     }
 
@@ -73,7 +73,7 @@ export const sendAssetImportRequest = async (
   } else if (assetType === 'AvatarWearable') {
     const request: AvatarWearableImportRequest = {
       preAsset: preAsset as PreAvatarWearable,
-      absolutePath: assetPath,
+      absolutePaths: assetPaths,
       deleteSource,
     }
 
@@ -81,7 +81,7 @@ export const sendAssetImportRequest = async (
   } else if (assetType === 'WorldObject') {
     const request: WorldObjectImportRequest = {
       preAsset: preAsset as PreWorldObject,
-      absolutePath: assetPath,
+      absolutePaths: assetPaths,
       deleteSource,
     }
 

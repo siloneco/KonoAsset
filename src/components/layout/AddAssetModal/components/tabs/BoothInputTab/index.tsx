@@ -26,7 +26,8 @@ type Props = {
 
 const BoothInputTab = ({ form, setTab }: Props) => {
   const {
-    newAssetFilename,
+    representativeImportFilename,
+    importFileCount,
     getAssetDescriptionFromBooth,
     onUrlInputChange,
     fetching,
@@ -48,11 +49,16 @@ const BoothInputTab = ({ form, setTab }: Props) => {
       </DialogHeader>
       <div className="my-8 space-y-6">
         <div className="flex justify-center">
-          <p>
+          <p className="space-x-2">
             <span className="text-foreground/60">
               ファイルまたはフォルダ名:
-            </span>{' '}
-            {newAssetFilename}
+            </span>
+            <span>{representativeImportFilename}</span>
+            {importFileCount > 1 && (
+              <span className="text-foreground/60">
+                と他{importFileCount - 1}アイテム
+              </span>
+            )}
           </p>
         </div>
         <div>

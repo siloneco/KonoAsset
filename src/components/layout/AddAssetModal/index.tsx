@@ -16,13 +16,13 @@ import DuplicateWarningTab from './components/tabs/DuplicateWarningTab'
 import { AssetSummary, AssetType } from '@/lib/bindings'
 
 export const AddAssetModalContext = createContext<{
-  assetPath?: string
-  setAssetPath: (path: string) => void
+  assetPaths?: string[]
+  setAssetPaths: (paths: string[]) => void
 
   duplicateWarningItems: AssetSummary[]
   setDuplicateWarningItems: (items: AssetSummary[]) => void
 }>({
-  setAssetPath: () => {},
+  setAssetPaths: () => {},
 
   duplicateWarningItems: [],
   setDuplicateWarningItems: () => {},
@@ -37,7 +37,7 @@ type Props = {
 
 const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   const [tab, setTab] = useState('selector')
-  const [assetPath, setAssetPath] = useState<string>('')
+  const [assetPaths, setAssetPaths] = useState<string[]>([])
   const [duplicateWarningItems, setDuplicateWarningItems] = useState<
     AssetSummary[]
   >([])
@@ -78,8 +78,8 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   })
 
   const contextValue = {
-    assetPath,
-    setAssetPath,
+    assetPaths,
+    setAssetPaths,
     duplicateWarningItems,
     setDuplicateWarningItems,
   }
@@ -97,19 +97,17 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
       publishedAt: null,
     })
 
-    setAssetPath('')
+    setAssetPaths([])
   }
 
   getCurrentWindow().onDragDropEvent((event) => {
     if (event.payload.type == 'drop') {
-      const filepath = event.payload.paths[0]
-
       // 文字をドラッグアンドドロップしようとするとundefinedになる
-      if (filepath === undefined) {
+      if (event.payload.paths.length <= 0) {
         return
       }
 
-      setAssetPath(filepath)
+      setAssetPaths(event.payload.paths)
       setDialogOpen(true)
       setTab('booth-input')
     }

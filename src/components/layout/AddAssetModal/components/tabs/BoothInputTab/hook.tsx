@@ -12,7 +12,8 @@ type Props = {
 }
 
 type ReturnProps = {
-  newAssetFilename: string
+  representativeImportFilename: string
+  importFileCount: number
   getAssetDescriptionFromBooth: () => Promise<void>
   onUrlInputChange: (e: ChangeEvent<HTMLInputElement>) => void
   fetching: boolean
@@ -28,7 +29,7 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
 
   const { toast } = useToast()
 
-  const { assetPath, setDuplicateWarningItems } =
+  const { assetPaths, setDuplicateWarningItems } =
     useContext(AddAssetModalContext)
 
   const backToPreviousTab = () => {
@@ -108,13 +109,16 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
     }
   }
 
-  const newAssetFilename =
-    assetPath !== undefined
-      ? (assetPath.split(sep()).pop() as string)
+  const representativeImportFilename =
+    assetPaths !== undefined && assetPaths.length > 0
+      ? (assetPaths[0].split(sep()).pop() as string)
       : 'ファイルが選択されていません！'
 
+  const importFileCount = assetPaths !== undefined ? assetPaths.length : 0
+
   return {
-    newAssetFilename,
+    representativeImportFilename,
+    importFileCount,
     getAssetDescriptionFromBooth,
     onUrlInputChange,
     fetching,

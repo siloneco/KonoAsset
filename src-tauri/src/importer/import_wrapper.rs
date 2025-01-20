@@ -36,28 +36,30 @@ pub async fn import_avatar(
         return Err(format!("Failed to import avatar: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.data_dir();
+    for path_str in request.absolute_paths {
+        let src_import_asset_path: PathBuf = PathBuf::from(path_str);
+        let mut destination = basic_store.data_dir();
 
-    destination.push("data");
-    destination.push(asset.id.to_string());
+        destination.push("data");
+        destination.push(asset.id.to_string());
 
-    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
+        let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
-    if result.is_err() {
-        let delete_asset_result = basic_store
-            .get_avatar_store()
-            .delete_asset_and_save(asset.id)
-            .await;
+        if result.is_err() {
+            let delete_asset_result = basic_store
+                .get_avatar_store()
+                .delete_asset_and_save(asset.id)
+                .await;
 
-        return Err(match delete_asset_result {
-            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-            Err(e) => format!(
-                "Failed to import asset and also rollback failed: {}, {}",
-                result.err().unwrap(),
-                e
-            ),
-        });
+            return Err(match delete_asset_result {
+                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+                Err(e) => format!(
+                    "Failed to import asset and also rollback failed: {}, {}",
+                    result.err().unwrap(),
+                    e
+                ),
+            });
+        }
     }
 
     Ok(asset)
@@ -91,28 +93,30 @@ pub async fn import_avatar_wearable(
         return Err(format!("Failed to import avatar wearable: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.data_dir();
+    for path_str in request.absolute_paths {
+        let src_import_asset_path: PathBuf = PathBuf::from(path_str);
+        let mut destination = basic_store.data_dir();
 
-    destination.push("data");
-    destination.push(asset.id.to_string());
+        destination.push("data");
+        destination.push(asset.id.to_string());
 
-    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
+        let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
-    if result.is_err() {
-        let delete_asset_result = basic_store
-            .get_avatar_wearable_store()
-            .delete_asset_and_save(asset.id)
-            .await;
+        if result.is_err() {
+            let delete_asset_result = basic_store
+                .get_avatar_wearable_store()
+                .delete_asset_and_save(asset.id)
+                .await;
 
-        return Err(match delete_asset_result {
-            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-            Err(e) => format!(
-                "Failed to import asset and also rollback failed: {}, {}",
-                result.err().unwrap(),
-                e
-            ),
-        });
+            return Err(match delete_asset_result {
+                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+                Err(e) => format!(
+                    "Failed to import asset and also rollback failed: {}, {}",
+                    result.err().unwrap(),
+                    e
+                ),
+            });
+        }
     }
 
     Ok(asset)
@@ -142,27 +146,29 @@ pub async fn import_world_object(
         return Err(format!("Failed to import world object: {}", err));
     }
 
-    let src_import_asset_path: PathBuf = PathBuf::from(request.absolute_path);
-    let mut destination = basic_store.data_dir();
+    for path_str in request.absolute_paths {
+        let src_import_asset_path: PathBuf = PathBuf::from(path_str);
+        let mut destination = basic_store.data_dir();
 
-    destination.push("data");
-    destination.push(asset.id.to_string());
+        destination.push("data");
+        destination.push(asset.id.to_string());
 
-    let result = import_files(&src_import_asset_path, &destination, request.delete_source);
-    if result.is_err() {
-        let delete_asset_result = basic_store
-            .get_world_object_store()
-            .delete_asset_and_save(asset.id)
-            .await;
+        let result = import_files(&src_import_asset_path, &destination, request.delete_source);
+        if result.is_err() {
+            let delete_asset_result = basic_store
+                .get_world_object_store()
+                .delete_asset_and_save(asset.id)
+                .await;
 
-        return Err(match delete_asset_result {
-            Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-            Err(e) => format!(
-                "Failed to import asset and also rollback failed: {}, {}",
-                result.err().unwrap(),
-                e
-            ),
-        });
+            return Err(match delete_asset_result {
+                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
+                Err(e) => format!(
+                    "Failed to import asset and also rollback failed: {}, {}",
+                    result.err().unwrap(),
+                    e
+                ),
+            });
+        }
     }
 
     Ok(asset)

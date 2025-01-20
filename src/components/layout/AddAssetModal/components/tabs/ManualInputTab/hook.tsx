@@ -33,7 +33,7 @@ export const useManualInputTabHooks = ({
 }: Props): ReturnProps => {
   const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
-  const { assetPath } = useContext(AddAssetModalContext)
+  const { assetPaths } = useContext(AddAssetModalContext)
   const { refreshAssets } = useContext(AssetContext)
   const { preference, setPreference } = useContext(PreferenceContext)
 
@@ -75,7 +75,7 @@ export const useManualInputTabHooks = ({
 
       const result = await sendAssetImportRequest(
         form.getValues('assetType'),
-        assetPath!,
+        assetPaths!,
         preAssetResult.data,
         preference.deleteOnImport,
       )

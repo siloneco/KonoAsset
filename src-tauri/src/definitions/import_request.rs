@@ -25,7 +25,7 @@ pub struct PreWorldObject {
 #[serde(rename_all = "camelCase")]
 pub struct AvatarImportRequest {
     pub pre_asset: PreAvatar,
-    pub absolute_path: String,
+    pub absolute_paths: Vec<String>,
     pub delete_source: bool,
 }
 
@@ -33,7 +33,7 @@ pub struct AvatarImportRequest {
 #[serde(rename_all = "camelCase")]
 pub struct AvatarWearableImportRequest {
     pub pre_asset: PreAvatarWearable,
-    pub absolute_path: String,
+    pub absolute_paths: Vec<String>,
     pub delete_source: bool,
 }
 
@@ -41,6 +41,6 @@ pub struct AvatarWearableImportRequest {
 #[serde(rename_all = "camelCase")]
 pub struct WorldObjectImportRequest {
     pub pre_asset: PreWorldObject,
-    pub absolute_path: String,
+    pub absolute_paths: Vec<String>,
     pub delete_source: bool,
 }
