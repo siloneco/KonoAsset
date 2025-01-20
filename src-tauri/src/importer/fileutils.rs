@@ -33,9 +33,10 @@ pub fn import_asset(
     delete_source: bool,
 ) -> Result<(), Box<dyn Error>> {
     let mut new_destination = destination.clone();
-    new_destination.push(src_import_asset_path.file_name().unwrap());
 
     if src_import_asset_path.is_dir() {
+        new_destination.push(src_import_asset_path.file_name().unwrap());
+
         std::fs::create_dir_all(&new_destination)?;
 
         modify_guard::copy_dir(
@@ -45,9 +46,11 @@ pub fn import_asset(
             FileTransferGuard::new(None, None),
         )?;
     } else {
-        let extension = src_import_asset_path.extension().unwrap();
-        if extension == "zip" {
-            new_destination.pop();
+        let extension = src_import_asset_path.extension();
+        if extension.is_some() && extension.unwrap() == "zip" {
+            new_destination.push(src_import_asset_path.file_stem().unwrap());
+
+            std::fs::create_dir_all(&new_destination)?;
 
             let result = extract_zip(src_import_asset_path, &new_destination);
 
@@ -62,6 +65,8 @@ pub fn import_asset(
                 )?;
             }
         } else {
+            new_destination.push(src_import_asset_path.file_name().unwrap());
+
             modify_guard::copy_file(
                 src_import_asset_path,
                 &new_destination,

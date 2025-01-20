@@ -34,17 +34,23 @@ export const useAssetCardOpenButton = ({
       return
     }
 
-    const data: {
-      [x: string]: FileInfo[]
-    } = result.data
+    const data = result.data
+    Object.keys(data).forEach(
+      (key) => data[key] === undefined && delete data[key],
+    )
+
+    const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
       onOpenManagedDirButtonClick()
       return
     }
 
-    if (Object.keys(data).length === 1 && Object.values(data)[0].length === 1) {
-      const item = Object.values(data)[0][0]
+    if (
+      Object.keys(impartialData).length === 1 &&
+      Object.values(impartialData)[0].length === 1
+    ) {
+      const item = Object.values(impartialData)[0][0]
 
       const result = await commands.openFileInFileManager(item.absolutePath)
 
@@ -59,7 +65,7 @@ export const useAssetCardOpenButton = ({
       return
     }
 
-    setUnitypackageFiles(data)
+    setUnitypackageFiles(impartialData)
     openDialog()
   }
 

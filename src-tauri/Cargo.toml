@@ -1,6 +1,6 @@
 [package]
 name = "konoasset"
-version = "0.2.9"
+version = "0.2.10"
 description = "Asset management tool for VRChat"
 authors = ["siloneco"]
 edition = "2021"
@@ -18,7 +18,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-rc.15", features = ["protocol-asset", "devtools"] }
+tauri = { version = "2.2.2", features = ["protocol-asset", "devtools"] }
 tauri-plugin-shell = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -35,9 +35,9 @@ monostate = "0.1.13"
 kanaria = "0.2.0"
 zip = { version = "2.2.2" }
 encoding_rs = "0.8.35"
-specta = {version = "=2.0.0-rc.20", features = ["uuid", "chrono"] }
-specta-typescript = "0.0.7"
-tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }
+specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
+specta-typescript = "0.0.9"
+tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "typescript"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2"

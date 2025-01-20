@@ -17,7 +17,7 @@ pub async fn request_avatar_import(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: AvatarImportRequest,
 ) -> Result<Avatar, String> {
-    log::info!("Importing avatar from: {:?}", request.absolute_path);
+    log::info!("Importing avatar from: {:?}", request.absolute_paths);
     log::debug!("Importing avatar: {:?}", request);
 
     let result = {
@@ -42,7 +42,7 @@ pub async fn request_avatar_wearable_import(
 ) -> Result<AvatarWearable, String> {
     log::info!(
         "Importing avatar wearable from: {:?}",
-        request.absolute_path
+        request.absolute_paths
     );
     log::debug!("Importing avatar wearable: {:?}", request);
 
@@ -69,7 +69,7 @@ pub async fn request_world_object_import(
     basic_store: State<'_, Mutex<StoreProvider>>,
     request: WorldObjectImportRequest,
 ) -> Result<WorldObject, String> {
-    log::info!("Importing world object from: {:?}", request.absolute_path);
+    log::info!("Importing world object from: {:?}", request.absolute_paths);
     log::debug!("Importing world object: {:?}", request);
 
     let result = {
