@@ -46,8 +46,8 @@ pub fn import_asset(
             FileTransferGuard::new(None, None),
         )?;
     } else {
-        let extension = src_import_asset_path.extension().unwrap();
-        if extension == "zip" {
+        let extension = src_import_asset_path.extension();
+        if extension.is_some() && extension.unwrap() == "zip" {
             new_destination.push(src_import_asset_path.file_stem().unwrap());
 
             std::fs::create_dir_all(&new_destination)?;
