@@ -29,7 +29,12 @@ pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>
             continue;
         }
 
-        let extension = path.extension().unwrap().to_ascii_lowercase();
+        let extension = path.extension();
+        if extension.is_none() {
+            continue;
+        }
+
+        let extension = extension.unwrap().to_ascii_lowercase();
         if extension != "unitypackage" {
             continue;
         }
