@@ -76,7 +76,7 @@ pub fn run() {
                 let result = update_handler.check_for_update().await;
 
                 if result.is_err() {
-                    eprintln!("Failed to check for update: {}", result.unwrap_err());
+                    log::error!("Failed to check for update: {}", result.unwrap_err());
                 }
 
                 update_handler
