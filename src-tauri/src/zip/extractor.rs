@@ -1,4 +1,3 @@
-use log::{debug, warn};
 use std::{
     io::{Read, Write},
     path::{PathBuf, MAIN_SEPARATOR_STR},
@@ -30,7 +29,7 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
             let enclosed_name = file.enclosed_name();
             if enclosed_name.is_none() {
                 let text = format!("Failed to read file name: {:?}", file.name_raw());
-                warn!("{}", text);
+                log::warn!("{}", text);
                 return Err(format!("Failed to extract file from zip file: {}", text));
             }
 
@@ -38,7 +37,7 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
             let enclosed_name = enclosed_name.to_str();
             if enclosed_name.is_none() {
                 let text = format!("Failed to read file name: {:?}", file.name_raw());
-                warn!("{}", text);
+                log::warn!("{}", text);
                 return Err(format!("Failed to extract file from zip file: {}", text));
             }
 
@@ -48,7 +47,7 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
         };
 
         if name.len() == 0 {
-            warn!("Ignoring empty file name");
+            log::warn!("Ignoring empty file name");
             continue;
         }
 
@@ -78,7 +77,7 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
             return Err(format!("Invalid path: {}", absolute_path.display()));
         }
 
-        debug!("Extracting: {:?}", absolute_path);
+        log::debug!("Extracting: {:?}", absolute_path);
 
         if absolute_path
             .to_string_lossy()

@@ -1,7 +1,5 @@
 use std::{ffi::OsStr, fs, path::PathBuf};
 
-use log::{info, warn};
-
 use crate::{
     definitions::{
         entities::{Avatar, AvatarWearable, WorldObject},
@@ -242,12 +240,12 @@ fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
 
         if let Err(e) = result {
             let msg = format!("Failed to backup metadata: {:?}", e);
-            warn!("{}", msg);
+            log::warn!("{}", msg);
             return Err(msg);
         }
     }
 
-    info!(
+    log::info!(
         "Successfully created metadata backup in {}",
         backup_path.display()
     );
@@ -305,7 +303,7 @@ fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
         let result = modify_guard::delete_recursive(&path, DeletionGuard::new(backup_path.clone()));
 
         if let Err(e) = result {
-            warn!("Failed to remove old backup: {:?}", e);
+            log::warn!("Failed to remove old backup: {:?}", e);
         }
     }
 
