@@ -52,8 +52,13 @@ fn create_dest_filename(src: &PathBuf, temporary: bool) -> String {
     let extension = src
         .extension()
         .unwrap_or(std::ffi::OsStr::new("png"))
-        .to_str()
-        .unwrap();
+        .to_str();
+
+    let extension = if let Some(ext) = extension {
+        ext
+    } else {
+        "png"
+    };
 
     if temporary {
         format!("temp_{}.{}", Uuid::new_v4().to_string(), extension)

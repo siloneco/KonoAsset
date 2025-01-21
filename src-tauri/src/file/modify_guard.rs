@@ -208,11 +208,21 @@ pub fn copy_dir(
 fn copy_dir_internal(old_path: &PathBuf, new_path: &PathBuf) -> Result<(), std::io::Error> {
     std::fs::create_dir_all(new_path)?;
 
-    for entry in std::fs::read_dir(old_path).unwrap() {
-        let entry = entry.unwrap();
+    for entry in std::fs::read_dir(old_path)? {
+        let entry = entry?;
         let path = entry.path();
 
-        let new_path = new_path.join(path.file_name().unwrap());
+        let file_name = path.file_name();
+
+        if file_name.is_none() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Failed to get file name",
+            ));
+        }
+        let file_name = file_name.unwrap();
+
+        let new_path = new_path.join(file_name);
 
         if path.is_dir() {
             copy_dir_internal(&path, &new_path)?;

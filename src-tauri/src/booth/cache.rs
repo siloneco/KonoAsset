@@ -16,13 +16,8 @@ impl BoothCache {
     }
 
     pub fn get(&self, id: u64) -> Option<(AssetDescription, Option<AssetType>)> {
-        let result = self.cache.get(&id);
+        let result = self.cache.get(&id)?;
 
-        if result.is_none() {
-            return None;
-        }
-
-        let result = result.unwrap();
         if result.2 < Local::now().timestamp() {
             return None;
         }

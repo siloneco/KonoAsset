@@ -1,4 +1,4 @@
-use std::{borrow::BorrowMut, path::PathBuf};
+use std::borrow::BorrowMut;
 
 use booth::fetcher::BoothFetcher;
 use command::generate_tauri_specta_builder;
@@ -58,14 +58,17 @@ pub fn run() {
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
         .setup(|app| {
-            app.get_webview_window("main")
-                .unwrap()
-                .set_title(&format!("KonoAsset v{}", VERSION))
-                .unwrap();
+            logging::initialize_logger(&app.handle());
+
+            if let Some(window) = app.get_webview_window("main") {
+                let result = window.set_title(&format!("KonoAsset v{}", VERSION));
+
+                if result.is_err() {
+                    log::warn!("Failed to set window title: {}", result.unwrap_err());
+                }
+            }
 
             app.manage(app.handle().clone());
-
-            logging::initialize_logger(&app.handle());
 
             let app_handle = app.handle().clone();
             let update_handler = tauri::async_runtime::block_on(async move {
@@ -83,24 +86,41 @@ pub fn run() {
 
             let pref_store = PreferenceStore::load(&app);
 
-            if pref_store.is_err() {
-                let err = format!(
-                    "Failed to load preference.json: {}",
-                    pref_store.unwrap_err().to_string()
-                );
+            if let Err(err) = pref_store {
+                let err = format!("Failed to load preference.json: {}", err.to_string());
+                log::error!("{}", err);
+                app.manage(LoadResult::error(false, err));
+                return Ok(());
+            }
+            let pref_store = if let Some(item) = pref_store.unwrap() {
+                item
+            } else {
+                let default_pref = PreferenceStore::default(&app);
+
+                if let Err(err) = default_pref {
+                    let err = format!("Failed to create default preference: {}", err.to_string());
+                    log::error!("{}", err);
+                    app.manage(LoadResult::error(false, err));
+                    return Ok(());
+                }
+
+                default_pref.unwrap()
+            };
+
+            let data_dir = pref_store.get_data_dir().clone();
+
+            app.manage(Mutex::new(pref_store));
+
+            let result = StoreProvider::create(data_dir.clone());
+
+            if let Err(err) = result {
+                let err = format!("Failed to create store provider: {}", err.to_string());
                 log::error!("{}", err);
                 app.manage(LoadResult::error(false, err));
                 return Ok(());
             }
 
-            let pref_store = pref_store
-                .unwrap()
-                .unwrap_or(PreferenceStore::default(&app));
-            let data_dir = pref_store.get_data_dir().clone();
-
-            app.manage(Mutex::new(pref_store));
-
-            let mut basic_store = generate_store_provider(data_dir.clone());
+            let mut basic_store = result.unwrap();
 
             let app_handle = app.handle().clone();
             let basic_store_ref = basic_store.borrow_mut();
@@ -131,7 +151,4 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-fn generate_store_provider(data_dir_path: PathBuf) -> StoreProvider {
-    StoreProvider::create(data_dir_path)
 }

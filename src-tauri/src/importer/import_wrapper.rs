@@ -19,9 +19,9 @@ pub async fn import_avatar(
     let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image_filename.is_some() {
+    if let Some(image_filename) = image_filename {
         let images_path = basic_store.data_dir().join("images");
-        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
+        let new_filename = fix_image(&images_path, image_filename).await?;
 
         request.pre_asset.description.image_filename = Some(new_filename);
     }
@@ -45,20 +45,20 @@ pub async fn import_avatar(
 
         let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
-        if result.is_err() {
+        if let Err(err) = result {
             let delete_asset_result = basic_store
                 .get_avatar_store()
                 .delete_asset_and_save(asset.id)
                 .await;
 
-            return Err(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
+            if let Err(delete_err) = delete_asset_result {
+                return Err(format!(
                     "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            });
+                    err, delete_err
+                ));
+            }
+
+            return Err(format!("Failed to import asset: {}", err));
         }
     }
 
@@ -72,9 +72,9 @@ pub async fn import_avatar_wearable(
     let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image_filename.is_some() {
+    if let Some(image_filename) = image_filename {
         let images_path = basic_store.data_dir().join("images");
-        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
+        let new_filename = fix_image(&images_path, image_filename).await?;
 
         request.pre_asset.description.image_filename = Some(new_filename);
     }
@@ -102,20 +102,20 @@ pub async fn import_avatar_wearable(
 
         let result = import_files(&src_import_asset_path, &destination, request.delete_source);
 
-        if result.is_err() {
+        if let Err(err) = result {
             let delete_asset_result = basic_store
                 .get_avatar_wearable_store()
                 .delete_asset_and_save(asset.id)
                 .await;
 
-            return Err(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
+            if let Err(delete_err) = delete_asset_result {
+                return Err(format!(
                     "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            });
+                    err, delete_err
+                ));
+            }
+
+            return Err(format!("Failed to import asset: {}", err));
         }
     }
 
@@ -129,9 +129,9 @@ pub async fn import_world_object(
     let image_filename = &request.pre_asset.description.image_filename;
 
     let mut request = request.clone();
-    if image_filename.is_some() {
+    if let Some(image_filename) = image_filename {
         let images_path = basic_store.data_dir().join("images");
-        let new_filename = fix_image(&images_path, image_filename.as_ref().unwrap()).await?;
+        let new_filename = fix_image(&images_path, image_filename).await?;
 
         request.pre_asset.description.image_filename = Some(new_filename);
     }
@@ -154,20 +154,20 @@ pub async fn import_world_object(
         destination.push(asset.id.to_string());
 
         let result = import_files(&src_import_asset_path, &destination, request.delete_source);
-        if result.is_err() {
+        if let Err(err) = result {
             let delete_asset_result = basic_store
                 .get_world_object_store()
                 .delete_asset_and_save(asset.id)
                 .await;
 
-            return Err(match delete_asset_result {
-                Ok(_) => format!("Failed to import asset: {}", result.err().unwrap()),
-                Err(e) => format!(
+            if let Err(delete_err) = delete_asset_result {
+                return Err(format!(
                     "Failed to import asset and also rollback failed: {}, {}",
-                    result.err().unwrap(),
-                    e
-                ),
-            });
+                    err, delete_err
+                ));
+            }
+
+            return Err(format!("Failed to import asset: {}", err));
         }
     }
 
@@ -176,18 +176,12 @@ pub async fn import_world_object(
 
 fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<(), String> {
     if !dest.exists() {
-        let result = std::fs::create_dir_all(dest);
-
-        if result.is_err() {
-            return Err(result.err().unwrap().to_string());
-        }
+        std::fs::create_dir_all(dest)
+            .map_err(|e| format!("Failed to create directory: {:?}", e))?;
     }
 
-    let result = fileutils::import_asset(src, dest, delete_source);
-
-    if result.is_err() {
-        return Err(result.err().unwrap().to_string());
-    }
+    fileutils::import_asset(src, dest, delete_source)
+        .map_err(|e| format!("Failed to import asset: {:?}", e))?;
 
     Ok(())
 }
@@ -195,23 +189,24 @@ fn import_files(src: &PathBuf, dest: &PathBuf, delete_source: bool) -> Result<()
 async fn fix_image(images_path: &PathBuf, temp_path_str: &str) -> Result<String, String> {
     let temp_image_path = images_path.clone().join(temp_path_str);
 
-    let image_fixation_result = execute_image_fixation(&temp_image_path).await;
+    let new_image_path = execute_image_fixation(&temp_image_path)
+        .await
+        .map_err(|e| format!("Failed to import asset: {}", e))?;
 
-    if image_fixation_result.is_err() {
-        return Err(format!(
-            "Failed to import asset: {}",
-            image_fixation_result.err().unwrap()
-        ));
-    }
-
-    let new_image_path = image_fixation_result.unwrap();
     if let Some(new_image_path) = new_image_path {
-        return Ok(new_image_path
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string());
+        let file_name = new_image_path.file_name();
+
+        if file_name.is_none() {
+            return Err("Failed to import asset: Image file name is invalid".to_string());
+        }
+
+        let file_name = file_name.unwrap().to_str();
+
+        if file_name.is_none() {
+            return Err("Failed to import asset: Image file name is invalid".to_string());
+        }
+
+        return Ok(file_name.unwrap().to_string());
     }
 
     log::warn!("Image does not need to be fixed: {}", temp_path_str);

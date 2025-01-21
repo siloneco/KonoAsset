@@ -14,15 +14,12 @@ pub async fn save_image_from_url(
     parent.pop();
     std::fs::create_dir_all(parent)?;
 
-    let mut file = File::create(output).unwrap();
-    let bytes = get_reqwest_client().get(url).send().await?.bytes().await?;
+    let mut file = File::create(output)?;
+    let client = get_reqwest_client().map_err(|e| format!("Unable to get http client: {}", e))?;
+    let bytes = client.get(url).send().await?.bytes().await?;
 
-    let result = file.write_all(bytes.as_ref());
-
-    if result.is_err() {
-        return Err(result.err().unwrap().into());
-    }
-
+    file.write_all(bytes.as_ref())
+        .map_err(|e| format!("Failed to write image to file: {}", e))?;
     Ok(())
 }
 

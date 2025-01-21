@@ -19,7 +19,10 @@ pub async fn get_directory_path(
     app_dir.push("data");
     app_dir.push(id.to_string());
 
-    Ok(app_dir.to_str().unwrap().to_string())
+    match app_dir.to_str() {
+        Some(ans) => Ok(ans.to_string()),
+        None => return Err(format!("Failed to convert path to string (id = {:?})", id)),
+    }
 }
 
 #[tauri::command]
@@ -36,15 +39,7 @@ pub async fn list_unitypackage_files(
         return Err("Directory does not exist".into());
     }
 
-    let result = find_unitypackage(&dir);
-
-    if let Err(e) = result {
-        return Err(e);
-    }
-
-    let result = result.unwrap();
-
-    Ok(result)
+    Ok(find_unitypackage(&dir)?)
 }
 
 #[tauri::command]
@@ -68,18 +63,18 @@ pub async fn migrate_data_dir(
 
     if !new_path.exists() {
         log::debug!("Creating directory: {}", new_path.display());
-        std::fs::create_dir_all(&new_path).unwrap();
+        std::fs::create_dir_all(&new_path)
+            .map_err(|e| format!("Failed to create directory: {}", e))?;
     }
 
     if migrate_data {
         log::info!("Migrating data to new path: {}", new_path.display());
         let mut basic_store = basic_store.lock().await;
-        let result = basic_store.migrate_data_dir(&new_path).await;
-
-        if let Err(e) = result {
-            log::error!("Failed to migrate data: {:?}", e);
-            return Err(e);
-        }
+        basic_store.migrate_data_dir(&new_path).await.map_err(|e| {
+            let msg = format!("Failed to migrate data: {:?}", e);
+            log::error!("{}", msg);
+            msg
+        })?;
 
         log::info!("Data migration completed");
     }
@@ -107,7 +102,15 @@ pub async fn get_image_absolute_path(
 ) -> Result<String, String> {
     let mut path = basic_store.lock().await.data_dir();
     path.push("images");
-    path.push(filename);
+    path.push(&filename);
 
-    Ok(path.to_str().unwrap().to_string())
+    match path.to_str() {
+        Some(ans) => Ok(ans.to_string()),
+        None => {
+            return Err(format!(
+                "Failed to get absolute path for image (filename = {})",
+                filename
+            ))
+        }
+    }
 }

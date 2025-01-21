@@ -10,7 +10,8 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
     let mut archive =
         ZipArchive::new(reader).map_err(|e| format!("Failed to read zip file: {}", e))?;
 
-    let absolute_dest = std::path::absolute(dest).unwrap();
+    let absolute_dest =
+        std::path::absolute(dest).map_err(|e| format!("Failed to get absolute path: {}", e))?;
 
     if absolute_dest.is_file() {
         return Err(format!("Invalid path: {}", absolute_dest.display()));
@@ -33,7 +34,15 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
                 return Err(format!("Failed to extract file from zip file: {}", text));
             }
 
-            enclosed_name.unwrap().to_str().unwrap().to_string()
+            let enclosed_name = enclosed_name.unwrap();
+            let enclosed_name = enclosed_name.to_str();
+            if enclosed_name.is_none() {
+                let text = format!("Failed to read file name: {:?}", file.name_raw());
+                warn!("{}", text);
+                return Err(format!("Failed to extract file from zip file: {}", text));
+            }
+
+            enclosed_name.unwrap().to_string()
         } else {
             sanitize(decode_as_shift_jis(file.name_raw()).as_str())
         };
@@ -44,13 +53,28 @@ pub fn extract_zip(src: &PathBuf, dest: &PathBuf) -> Result<(), String> {
         }
 
         let path = absolute_dest.join(name);
-        let absolute_path = std::path::absolute(path).unwrap();
+        let absolute_path =
+            std::path::absolute(path).map_err(|e| format!("Failed to get absolute path: {}", e))?;
 
-        if !absolute_path
-            .to_str()
-            .unwrap()
-            .starts_with(absolute_dest.to_str().unwrap())
-        {
+        let absolute_path_str = absolute_path.to_str();
+        if absolute_path_str.is_none() {
+            return Err(format!(
+                "Failed to get absolute path as string: {}",
+                absolute_path.display()
+            ));
+        }
+        let absolute_path_str = absolute_path_str.unwrap();
+
+        let dest_str = absolute_dest.to_str();
+        if dest_str.is_none() {
+            return Err(format!(
+                "Failed to get destination path as string: {}",
+                absolute_dest.display()
+            ));
+        }
+        let dest_str = dest_str.unwrap();
+
+        if !absolute_path_str.starts_with(dest_str) {
             return Err(format!("Invalid path: {}", absolute_path.display()));
         }
 

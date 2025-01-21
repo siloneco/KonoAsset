@@ -98,8 +98,8 @@ pub async fn get_sorted_assets_for_display(
         SortBy::CreatedAt => result.sort_by(|a, b| {
             created_at_map
                 .get(&a.id)
-                .unwrap()
-                .cmp(&created_at_map.get(&b.id).unwrap())
+                .unwrap_or(&0)
+                .cmp(&created_at_map.get(&b.id).unwrap_or(&0))
         }),
         SortBy::PublishedAt => result.sort_by(|a, b| {
             a.published_at
