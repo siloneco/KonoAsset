@@ -5,7 +5,7 @@ import {
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
 
-import TypeSelector from '../../model/TypeSelector'
+import TypeSelector from '../TypeSelector'
 import AvatarWearableFilter from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
 import { Settings, X } from 'lucide-react'

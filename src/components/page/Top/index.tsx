@@ -1,8 +1,8 @@
 import { AssetContext } from '@/components/context/AssetContext'
-import MainSidebar from '@/components/layout/MainSidebar'
+import MainSidebar from '@/components/model/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
-import TopPageMainContent from '@/components/layout/TopPageMainContent'
+import TopPageMainContent from '@/components/model/TopPageMainContent'
 import { useTopPage } from './hook'
 
 const TopPage = () => {

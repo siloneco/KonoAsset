@@ -1,5 +1,5 @@
 import NavBar from '@/components/page/Top/components/NavBar'
-import AssetList from '../../model/AssetList'
+import AssetList from '../AssetList'
 import AddAssetModal from '../AddAssetModal'
 import { useState } from 'react'
 
