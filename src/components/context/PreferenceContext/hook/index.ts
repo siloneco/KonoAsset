@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { commands, PreferenceStore } from '@/lib/bindings'
-import { PreferenceContextType } from '.'
-import { getPreferences } from './logic'
+import { PreferenceContextType } from '..'
+import { getPreferences } from '../logic'
 import { getDefaultPreferences } from '@/lib/utils'
 
 type ReturnProps = {

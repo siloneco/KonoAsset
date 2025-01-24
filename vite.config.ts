@@ -38,5 +38,19 @@ export default defineConfig(async () => ({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    coverage: {
+      include: ['src/**'],
+      exclude: [
+        // TanStack Router files
+        'src/main.tsx',
+        'src/routeTree.gen.ts',
+        // shadcn-ui components
+        'src/components/ui/**',
+        'src/hooks/use-toast.ts',
+        'src/hooks/use-mobile.tsx',
+        // Automatically generated files
+        'src/lib/bindings.ts',
+      ],
+    },
   },
 }))

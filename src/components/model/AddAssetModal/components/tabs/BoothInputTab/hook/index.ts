@@ -1,10 +1,10 @@
-import { commands } from '@/lib/bindings'
 import { extractBoothItemId } from '@/lib/utils'
 import { useState, useContext, ChangeEvent } from 'react'
-import { AddAssetModalContext } from '../../..'
+import { AddAssetModalContext } from '../../../..'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
+import { getAndSetAssetDescriptionFromBoothToForm } from '../logic'
 
 type Props = {
   form: AssetFormType
@@ -52,46 +52,26 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
     try {
       setFetching(true)
 
-      const result = await commands.getAssetDescriptionFromBooth(boothItemId)
+      const result = await getAndSetAssetDescriptionFromBoothToForm({
+        boothItemId: boothItemId,
+        form: form,
+      })
 
-      if (result.status === 'error') {
-        console.error(result.error)
+      if (result.status === 'ok') {
+        const data = result.data
+
+        if (data.goNext) {
+          moveToNextTab()
+        } else if (data.duplicated) {
+          setDuplicateWarningItems(data.duplicatedItems)
+          moveToDuplicationWarning()
+        }
+      } else {
         toast({
-          title: '取得に失敗しました',
+          title: '情報取得に失敗しました',
           description: result.error,
         })
-        return
       }
-
-      const data = result.data
-
-      const description = data.description
-
-      form.setValue('name', description.name)
-      form.setValue('creator', description.creator)
-      form.setValue('imageFilename', description.imageFilename)
-      form.setValue('publishedAt', description.publishedAt)
-      form.setValue('boothItemId', boothItemId)
-      form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')
-
-      const duplicationCheckResult =
-        await commands.getAssetDisplaysByBoothId(boothItemId)
-
-      if (duplicationCheckResult.status === 'ok') {
-        const duplicationCheckData = duplicationCheckResult.data
-
-        if (duplicationCheckData.length > 0) {
-          setDuplicateWarningItems(duplicationCheckData)
-          moveToDuplicationWarning()
-          return
-        }
-      }
-
-      if (duplicationCheckResult.status === 'error') {
-        console.error(duplicationCheckResult.error)
-      }
-
-      moveToNextTab()
     } finally {
       setFetching(false)
     }
@@ -102,6 +82,7 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
     setBoothUrlInput(url)
 
     const extractIdResult = extractBoothItemId(url)
+
     if (extractIdResult.status === 'ok') {
       setBoothItemId(extractIdResult.data)
     } else {

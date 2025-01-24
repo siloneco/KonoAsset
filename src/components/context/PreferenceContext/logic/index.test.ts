@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
-import { getPreferences } from './logic'
+import { getPreferences } from '.'
 import { commands, PreferenceStore } from '@/lib/bindings'
 
 import * as utils from '@/lib/utils'
@@ -10,21 +10,6 @@ const mockPreference: PreferenceStore = {
   useUnitypackageSelectedOpen: true,
   deleteOnImport: true,
 }
-
-vi.mock('@/lib/bindings', async () => {
-  return {
-    commands: {
-      getPreferences: vi
-        .fn()
-        .mockImplementationOnce(async () => {
-          return { status: 'ok', data: mockPreference }
-        })
-        .mockImplementationOnce(async () => {
-          return { status: 'error', error: 'error' }
-        }),
-    },
-  }
-})
 
 vi.mock('@/lib/bindings', async () => {
   return {
