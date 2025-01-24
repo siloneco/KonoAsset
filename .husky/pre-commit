@@ -1,3 +1,4 @@
 pnpm type-check
 pnpm lint
 pnpm fmt
+pnpm test:run
