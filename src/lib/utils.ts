@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { Result } from './bindings'
+import { PreferenceStore, Result } from './bindings'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -38,4 +38,13 @@ export const extractBoothItemId = (url: string): Result<number, string> => {
 
 export const convertToBoothURL = (boothItemId: number) => {
   return `https://booth.pm/ja/items/${boothItemId}`
+}
+
+export const getDefaultPreferences = (): PreferenceStore => {
+  return {
+    dataDirPath: '',
+    theme: 'system',
+    useUnitypackageSelectedOpen: true,
+    deleteOnImport: true,
+  }
 }

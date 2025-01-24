@@ -1,4 +1,5 @@
 import { commands, PreferenceStore } from '@/lib/bindings'
+import { getDefaultPreferences } from '@/lib/utils'
 
 export const getPreferences = async (): Promise<PreferenceStore> => {
   const result = await commands.getPreferences()
@@ -8,14 +9,5 @@ export const getPreferences = async (): Promise<PreferenceStore> => {
   } else {
     console.error(result.error)
     return getDefaultPreferences()
-  }
-}
-
-export const getDefaultPreferences = (): PreferenceStore => {
-  return {
-    dataDirPath: '',
-    theme: 'system',
-    useUnitypackageSelectedOpen: true,
-    deleteOnImport: true,
   }
 }
