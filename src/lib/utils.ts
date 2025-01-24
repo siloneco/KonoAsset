@@ -20,7 +20,7 @@ const defaultBoothUrlCaptureRegex =
 
 export const extractBoothItemId = (url: string): Result<number, string> => {
   if (!isBoothURL(url)) {
-    return { status: 'error', error: 'Not a booth URL' }
+    return { status: 'error', error: 'Invalid Booth URL specified' }
   }
 
   const shopMatch = url.match(shopBoothUrlCaptureRegex)
