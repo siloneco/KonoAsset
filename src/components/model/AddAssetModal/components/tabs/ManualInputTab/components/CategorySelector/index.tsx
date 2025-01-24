@@ -66,7 +66,7 @@ const CategorySelector = ({
               value={newValue}
               onChange={(e) => setNewValue(e.target.value)}
               onKeyDown={handleKeyDownForCreatingCategory}
-              className="bg-transparent outline-none w-32"
+              className="bg-transparent outline-hidden w-32"
             />
           </div>
         </SelectGroup>

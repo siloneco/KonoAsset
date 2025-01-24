@@ -36,7 +36,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {
 
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2 flex-grow">
+      <div className="space-y-2 grow">
         <Label className="text-xl">アプリデータの保存先</Label>
         <p className="text-foreground/60 text-sm">
           アセットや画像を保存するディレクトリを設定します
