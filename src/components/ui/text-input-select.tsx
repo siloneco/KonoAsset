@@ -407,7 +407,7 @@ const TextInputSelect = React.forwardRef<
                   <span className="truncate">{selected.label}</span>
                   <button
                     className={cn(
-                      'ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                      'ml-1 rounded-full outline-hidden ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
                       disabled && 'hidden',
                     )}
                     onMouseDown={(e) => {
@@ -464,7 +464,7 @@ const TextInputSelect = React.forwardRef<
                 }}
                 placeholder={selected ? '' : placeholder}
                 className={cn(
-                  'flex-1 bg-transparent outline-none placeholder:text-muted-foreground',
+                  'flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground',
                   {
                     hidden: selected !== null && inputValue === '',
                     'w-full': selected === null || inputValue !== '',
@@ -477,7 +477,7 @@ const TextInputSelect = React.forwardRef<
           </div>
           {open && (
             <CommandList
-              className="absolute top-full z-10 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className="absolute top-full z-10 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in"
               style={{
                 maxHeight: `${commandListMaxHeight}px`,
               }}

@@ -33,7 +33,7 @@ const LogsTab: FC<Props> = ({ id }) => {
         </div>
         <Card className="mt-4 p-4 w-[calc(100vw-330px)]">
           <div className="flex w-full overflow-x-auto">
-            <ScrollArea className="flex-shrink-0 min-w-full">
+            <ScrollArea className="shrink-0 min-w-full">
               <div className="pb-4 space-y-2">
                 {logs.map((log, index) => (
                   <LogTray key={index} log={log} />

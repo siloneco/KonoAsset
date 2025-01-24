@@ -16,7 +16,7 @@ const TopPageMainContent = () => {
     <main className="w-full h-screen flex flex-col">
       <NavBar displayAssetCount={displayAssetCount} />
       <AssetList
-        className="flex-grow"
+        className="grow"
         matchedAssetIDs={matchedAssetIDs}
         setMatchedAssetIDs={setMatchedAssetIDs}
         filterEnforced={filterEnforced}

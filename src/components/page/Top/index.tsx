@@ -18,7 +18,7 @@ const TopPage = () => {
       </AssetContext.Provider>
       <div
         className={cn(
-          'fixed h-full w-full opacity-0 z-[60] pointer-events-none transition-opacity',
+          'fixed h-full w-full opacity-0 z-60 pointer-events-none transition-opacity',
           isDragAndHover && 'opacity-100',
         )}
       >
