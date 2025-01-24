@@ -1,10 +1,5 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
-import {
-  checkForUpdate,
-  dismissUpdate,
-  executeUpdate,
-  refreshAssets,
-} from './logic'
+import { checkForUpdate, dismissUpdate, executeUpdate, refreshAssets } from '.'
 import { AssetSummary, commands, SortBy } from '@/lib/bindings'
 
 const mockSortedAssets: AssetSummary[] = [

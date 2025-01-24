@@ -26,12 +26,13 @@ vi.mock('next-themes', () => {
   }
 })
 
-afterEach(() => {
-  cleanup()
-})
+describe('PreferenceContext', () => {
+  afterEach(() => {
+    cleanup()
+    vi.clearAllMocks()
+  })
 
-describe('AssetBadge', () => {
-  it('renders correctly for the Avatar type', async () => {
+  it('renders children correctly', async () => {
     const childrenText = 'children'
 
     render(
@@ -42,6 +43,14 @@ describe('AssetBadge', () => {
 
     // Check if the children is rendered
     screen.getByText(childrenText)
+  })
+
+  it('calls usePreferenceContext and apply theme', async () => {
+    render(
+      <PreferenceContextProvider>
+        <div />
+      </PreferenceContextProvider>,
+    )
 
     // usePreferenceContext should be called
     const mockUsePreferenceContext = usePreferenceContext as Mock

@@ -3,11 +3,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import SelectTypeButton from '.'
 
-afterEach(() => {
-  cleanup()
-})
+describe('SelectTypeButton', () => {
+  afterEach(() => {
+    cleanup()
+  })
 
-describe('AssetBadge', () => {
   it('renders correctly on selected', async () => {
     const text = 'text'
     const onClick = () => {}

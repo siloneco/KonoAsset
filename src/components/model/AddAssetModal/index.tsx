@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
-import { Tabs } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { createContext, useEffect, useState } from 'react'
 import SelectorTab from './components/tabs/SelectorTab'
 import BoothInputTab from './components/tabs/BoothInputTab'
@@ -154,15 +154,25 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
       >
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <AddAssetModalContext.Provider value={contextValue}>
-            <SelectorTab setTab={setTab} />
-            <BoothInputTab form={form} setTab={setTab} />
-            <DuplicateWarningTab setTab={setTab} />
-            <AssetTypeSelectorTab form={form} setTab={setTab} />
-            <ManualInputTab
-              form={form}
-              setTab={setTab}
-              setDialogOpen={setDialogOpen}
-            />
+            <TabsContent value="selector">
+              <SelectorTab setTab={setTab} />
+            </TabsContent>
+            <TabsContent value="booth-input">
+              <BoothInputTab form={form} setTab={setTab} />
+            </TabsContent>
+            <TabsContent value="duplicate-warning">
+              <DuplicateWarningTab setTab={setTab} />
+            </TabsContent>
+            <TabsContent value="asset-type-selector">
+              <AssetTypeSelectorTab form={form} setTab={setTab} />
+            </TabsContent>
+            <TabsContent value="manual-input">
+              <ManualInputTab
+                form={form}
+                setTab={setTab}
+                setDialogOpen={setDialogOpen}
+              />
+            </TabsContent>
           </AddAssetModalContext.Provider>
         </Tabs>
       </DialogContent>

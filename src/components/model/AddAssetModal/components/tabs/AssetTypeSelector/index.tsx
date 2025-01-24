@@ -5,7 +5,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { TabsContent } from '@/components/ui/tabs'
 import SelectTypeButton from './selector/SelectTypeButton'
 import { AssetFormType } from '@/lib/form'
 
@@ -26,7 +25,7 @@ const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
   const assetType = form.watch('assetType')
 
   return (
-    <TabsContent value="asset-type-selector">
+    <>
       <DialogHeader>
         <DialogTitle>(3/4) アセットのタイプを選択</DialogTitle>
         <DialogDescription>
@@ -68,7 +67,7 @@ const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
           次へ
         </Button>
       </DialogFooter>
-    </TabsContent>
+    </>
   )
 }
 

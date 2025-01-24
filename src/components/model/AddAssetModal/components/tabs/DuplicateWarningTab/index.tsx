@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { TabsContent } from '@/components/ui/tabs'
 import { useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { OctagonAlert } from 'lucide-react'
@@ -27,7 +26,7 @@ const DuplicateWarningTab = ({ setTab }: Props) => {
   }
 
   return (
-    <TabsContent value="duplicate-warning">
+    <>
       <DialogHeader>
         <DialogTitle>(2.5/4) 重複の確認</DialogTitle>
         <DialogDescription>
@@ -61,7 +60,7 @@ const DuplicateWarningTab = ({ setTab }: Props) => {
           このまま進む
         </Button>
       </DialogFooter>
-    </TabsContent>
+    </>
   )
 }
 

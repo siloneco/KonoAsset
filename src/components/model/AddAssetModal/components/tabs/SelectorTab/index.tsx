@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { TabsContent } from '@/components/ui/tabs'
 import SelectDirectoryCard from './selector/SelectDirectoryCard'
 import SelectFileCard from './selector/SelectFileCard'
 import { open } from '@tauri-apps/plugin-dialog'
@@ -36,7 +35,7 @@ const SelectorTab = ({ setTab }: Props) => {
   }
 
   return (
-    <TabsContent value="selector">
+    <>
       <DialogHeader>
         <DialogTitle>(1/4) どちらを追加しますか？</DialogTitle>
         <DialogDescription>
@@ -74,7 +73,7 @@ const SelectorTab = ({ setTab }: Props) => {
           </Button>
         </DialogClose>
       </DialogFooter>
-    </TabsContent>
+    </>
   )
 }
 

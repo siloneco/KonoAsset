@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PersistentContextType } from '.'
+import { PersistentContextType } from '..'
 import { AssetType, MatchType, SortBy } from '@/lib/bindings'
 
 type ReturnProps = {

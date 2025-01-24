@@ -7,17 +7,10 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { TabsContent } from '@/components/ui/tabs'
 import { ChevronRight, Loader2 } from 'lucide-react'
 import { AssetFormType } from '@/lib/form'
 import { useBoothInputTab } from './hook'
-
-const shopBoothUrlRegex = /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+$/
-const defaultBoothUrlRegex = /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+$/
-
-const isBoothUrl = (url: string) => {
-  return defaultBoothUrlRegex.test(url) || shopBoothUrlRegex.test(url)
-}
+import { isBoothURL } from '@/lib/utils'
 
 type Props = {
   form: AssetFormType
@@ -40,7 +33,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
   })
 
   return (
-    <TabsContent value="booth-input">
+    <>
       <DialogHeader>
         <DialogTitle>(2/4) アセット情報を取得</DialogTitle>
         <DialogDescription>
@@ -70,7 +63,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
               disabled={fetching}
             />
             <Button
-              disabled={fetching || !isBoothUrl(boothUrlInput)}
+              disabled={fetching || !isBoothURL(boothUrlInput)}
               onClick={() => getAssetDescriptionFromBooth()}
             >
               {!fetching && <ChevronRight size={16} />}
@@ -99,7 +92,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
           戻る
         </Button>
       </DialogFooter>
-    </TabsContent>
+    </>
   )
 }
 

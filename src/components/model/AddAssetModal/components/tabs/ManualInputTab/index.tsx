@@ -4,7 +4,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { TabsContent } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import {
   Form,
@@ -44,7 +43,7 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
   } = useManualInputTabHooks({ form, setTab, setDialogOpen })
 
   return (
-    <TabsContent value="manual-input">
+    <>
       <DialogHeader>
         <DialogTitle>(4/4) アセット情報の入力</DialogTitle>
         <DialogDescription>
@@ -147,7 +146,7 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
           </form>
         </Form>
       </div>
-    </TabsContent>
+    </>
   )
 }
 
