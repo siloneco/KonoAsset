@@ -2,6 +2,8 @@ use std::{collections::HashMap, ffi::OsStr, path::PathBuf};
 
 use crate::definitions::entities::FileInfo;
 
+const IGNORE_DIRECTORY_NAMES: [&str; 1] = ["__MACOSX"];
+
 pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>, String> {
     let mut unitypackages = HashMap::new();
     let path = dir.clone();
@@ -23,12 +25,11 @@ pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>
             if dir_name.is_none() {
                 continue;
             }
-            let dir_name = dir_name.unwrap().to_str();
+            let dir_name = dir_name.unwrap().to_string_lossy();
 
-            if dir_name.is_none() {
+            if IGNORE_DIRECTORY_NAMES.contains(&dir_name.as_ref()) {
                 continue;
             }
-            let dir_name = dir_name.unwrap().to_string();
 
             for (key, value) in result.drain() {
                 let unitypackage = unitypackages
