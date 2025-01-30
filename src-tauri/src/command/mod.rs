@@ -5,6 +5,7 @@ mod external;
 mod file;
 mod preference;
 mod suggest;
+mod task;
 mod update;
 
 pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
@@ -52,5 +53,8 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         preference::common::set_preferences,
         preference::reset::reset_application,
         preference::logging::get_logs,
+        // タスク関連
+        task::status::get_task_status,
+        task::status::cancel_task_request,
     ])
 }

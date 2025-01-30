@@ -53,7 +53,7 @@ async fn delete_asset_from_store<
 
     let path = app_dir.join("data").join(id.to_string());
     let dir_delete_result =
-        modify_guard::delete_recursive(&path, DeletionGuard::new(app_dir.clone()));
+        modify_guard::delete_recursive(&path, DeletionGuard::new(app_dir.clone())).await;
 
     if let Err(e) = dir_delete_result {
         return Err(format!("Failed to delete asset directory: {:?}", e));
@@ -69,17 +69,18 @@ async fn delete_asset_from_store<
     let image_path = app_dir.join("images").join(image);
 
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, &image_path)
+    delete_asset_image(app_dir, &image_path).await
 }
 
-pub fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<bool, String> {
+pub async fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<bool, String> {
     if !image_path.exists() {
         return Ok(false);
     }
 
     let images_dir_path = app_dir.join("images");
     let image_delete_result =
-        modify_guard::delete_single_file(&image_path, DeletionGuard::new(images_dir_path.clone()));
+        modify_guard::delete_single_file(&image_path, DeletionGuard::new(images_dir_path.clone()))
+            .await;
 
     if let Err(e) = image_delete_result {
         return Err(format!("Failed to delete image file: {:?}", e));
@@ -88,7 +89,7 @@ pub fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<boo
     Ok(true)
 }
 
-pub fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
+pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
     let images_dir_path = app_dir.join("images");
 
     if !images_dir_path.exists() {
@@ -123,6 +124,7 @@ pub fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
         }
 
         modify_guard::delete_single_file(&path, DeletionGuard::new(images_dir_path.clone()))
+            .await
             .map_err(|e| format!("Failed to delete temp image: {:?}", e))?;
     }
 

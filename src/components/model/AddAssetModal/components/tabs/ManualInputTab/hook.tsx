@@ -1,18 +1,15 @@
-import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
 import { useState, useContext } from 'react'
 import { AddAssetModalContext } from '../../..'
 import { createPreAsset, sendAssetImportRequest } from './logic'
 import { AssetFormType } from '@/lib/form'
-import { ToastAction } from '@/components/ui/toast'
-import { buttonVariants } from '@/components/ui/button'
-import { AssetType, commands } from '@/lib/bindings'
+import { AssetType } from '@/lib/bindings'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 export type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
-  setDialogOpen: (open: boolean) => void
+  setImportTaskId: (taskId: string) => void
 }
 
 type ReturnProps = {
@@ -29,12 +26,11 @@ type ReturnProps = {
 export const useManualInputTabHooks = ({
   form,
   setTab,
-  setDialogOpen,
+  setImportTaskId,
 }: Props): ReturnProps => {
   const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
   const { assetPaths } = useContext(AddAssetModalContext)
-  const { refreshAssets } = useContext(AssetContext)
   const { preference, setPreference } = useContext(PreferenceContext)
 
   const backToAssetTypeSelectorTab = () => {
@@ -81,39 +77,15 @@ export const useManualInputTabHooks = ({
       )
 
       if (result.status === 'ok') {
-        await refreshAssets()
-
-        const openInFileManager = async () => {
-          const openResult = await commands.openManagedDir(result.data.id)
-
-          if (openResult.status === 'error') {
-            toast({
-              title: 'エラー',
-              description: openResult.error,
-            })
-          }
-        }
-
-        toast({
-          title: 'アセットが追加されました！',
-          description: form.getValues('name'),
-          action: (
-            <ToastAction
-              altText="open"
-              className={buttonVariants({ variant: 'default' })}
-              onClick={openInFileManager}
-            >
-              開く
-            </ToastAction>
-          ),
-        })
-
-        setDialogOpen(false)
+        setImportTaskId(result.data)
+        setTab('progress')
         return
       }
 
+      console.error(result.error)
+
       toast({
-        title: 'データのインポートに失敗しました',
+        title: 'データのインポートを開始できませんでした',
         description: result.error,
       })
     } finally {

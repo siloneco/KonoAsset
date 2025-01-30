@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
@@ -12,7 +12,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn get_directory_path(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: Uuid,
 ) -> Result<String, String> {
     let mut app_dir = basic_store.lock().await.data_dir();
@@ -28,7 +28,7 @@ pub async fn get_directory_path(
 #[tauri::command]
 #[specta::specta]
 pub async fn list_unitypackage_files(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: Uuid,
 ) -> Result<HashMap<String, Vec<FileInfo>>, String> {
     let mut dir = basic_store.lock().await.data_dir();
@@ -46,7 +46,7 @@ pub async fn list_unitypackage_files(
 #[specta::specta]
 pub async fn migrate_data_dir(
     preference: State<'_, Mutex<PreferenceStore>>,
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     new_path: PathBuf,
     migrate_data: bool,
 ) -> Result<(), String> {
@@ -97,7 +97,7 @@ pub async fn migrate_data_dir(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_image_absolute_path(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     filename: String,
 ) -> Result<String, String> {
     let mut path = basic_store.lock().await.data_dir();

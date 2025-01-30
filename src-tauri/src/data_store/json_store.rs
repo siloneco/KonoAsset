@@ -111,7 +111,7 @@ impl<
 
                 if let Some(old_image_filename) = old_image {
                     let old_image_path = images_dir.join(old_image_filename);
-                    delete_asset_image(&self.data_dir, &old_image_path)?;
+                    delete_asset_image(&self.data_dir, &old_image_path).await?;
                 }
 
                 if let Some(new_image_filename) = new_image {

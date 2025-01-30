@@ -37,7 +37,8 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, St
     let new_filename = &file_name[5..];
     let new_path = src.with_file_name(new_filename);
 
-    let result = modify_guard::move_file_or_dir(src, &new_path, FileTransferGuard::new(None, None));
+    let result =
+        modify_guard::move_file_or_dir(src, &new_path, FileTransferGuard::new(None, None)).await;
 
     if let Err(e) = result {
         return Err(e.to_string());
@@ -46,10 +47,11 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, St
     return Ok(Some(new_path));
 }
 
-pub fn import_asset(
+pub async fn import_asset(
     src_import_asset_path: &PathBuf,
     destination: &PathBuf,
     delete_source: bool,
+    progress_callback: impl Fn(f32, String),
 ) -> Result<(), Box<dyn Error>> {
     let mut new_destination = destination.clone();
 
@@ -66,9 +68,12 @@ pub fn import_asset(
             &new_destination,
             delete_source,
             FileTransferGuard::new(None, None),
-        )?;
+            progress_callback,
+        )
+        .await?;
     } else {
         let extension = src_import_asset_path.extension();
+
         if extension == Some(OsStr::new("zip")) {
             let file_stem = src_import_asset_path
                 .file_stem()
@@ -77,7 +82,8 @@ pub fn import_asset(
             new_destination.push(file_stem);
             std::fs::create_dir_all(&new_destination)?;
 
-            let result = extract_zip(src_import_asset_path, &new_destination);
+            let result =
+                extract_zip(src_import_asset_path, &new_destination, progress_callback).await;
 
             if let Err(e) = result {
                 return Err(e.into());
@@ -87,7 +93,8 @@ pub fn import_asset(
                 modify_guard::delete_single_file(
                     src_import_asset_path,
                     DeletionGuard::new(src_import_asset_path.clone()),
-                )?;
+                )
+                .await?;
             }
         } else {
             let file_name = src_import_asset_path
@@ -101,7 +108,10 @@ pub fn import_asset(
                 &new_destination,
                 delete_source,
                 FileTransferGuard::new(None, None),
-            )?;
+            )
+            .await?;
+
+            progress_callback(1f32, "".to_string());
         }
     }
 

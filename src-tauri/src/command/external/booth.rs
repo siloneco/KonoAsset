@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tauri::{async_runtime::Mutex, State};
 
 use crate::{
@@ -8,7 +10,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn get_asset_description_from_booth(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
 ) -> Result<BoothInfo, String> {

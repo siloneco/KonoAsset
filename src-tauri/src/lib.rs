@@ -1,11 +1,13 @@
-use std::borrow::BorrowMut;
+use std::{borrow::BorrowMut, sync::Arc};
 
 use booth::fetcher::BoothFetcher;
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
-use definitions::entities::LoadResult;
+use definitions::entities::{ImportProgress, LoadResult};
 use preference::store::PreferenceStore;
+use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, Manager};
+use tauri_specta::collect_events;
 use updater::update_handler::UpdateHandler;
 
 #[cfg(debug_assertions)]
@@ -20,6 +22,7 @@ mod importer;
 mod loader;
 mod logging;
 mod preference;
+mod task;
 mod updater;
 mod zip;
 
@@ -27,7 +30,8 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = generate_tauri_specta_builder();
+    let builder =
+        generate_tauri_specta_builder().events(collect_events![ImportProgress, TaskStatusChanged,]);
 
     #[cfg(debug_assertions)]
     builder
@@ -57,8 +61,11 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
-        .setup(|app| {
+        .manage(Arc::new(Mutex::new(TaskContainer::new())))
+        .setup(move |app| {
             logging::initialize_logger(&app.handle());
+
+            builder.mount_events(app);
 
             if let Some(window) = app.get_webview_window("main") {
                 let result = window.set_title(&format!("KonoAsset v{}", VERSION));
@@ -139,13 +146,14 @@ pub fn run() {
                 return Ok(());
             }
 
-            app.manage(Mutex::new(basic_store));
+            app.manage(Arc::new(Mutex::new(basic_store)));
             app.manage(LoadResult::success());
 
-            let result = delete_temporary_images(&data_dir);
-            if result.is_err() {
-                log::warn!("Failed to delete temporary images: {}", result.unwrap_err());
-            }
+            tauri::async_runtime::block_on(async move {
+                if let Err(e) = delete_temporary_images(&data_dir).await {
+                    log::warn!("Failed to delete temporary images: {}", e);
+                }
+            });
 
             Ok(())
         })

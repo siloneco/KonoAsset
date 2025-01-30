@@ -27,10 +27,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
-  setDialogOpen: (open: boolean) => void
+  setImportTaskId: (taskId: string) => void
 }
 
-const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
+const ManualInputTab = ({ form, setTab, setImportTaskId }: Props) => {
   const {
     backToAssetTypeSelectorTab,
     submit,
@@ -40,7 +40,7 @@ const ManualInputTab = ({ form, setTab, setDialogOpen }: Props) => {
     setImageFilename,
     deleteSourceChecked,
     setDeleteSourceChecked,
-  } = useManualInputTabHooks({ form, setTab, setDialogOpen })
+  } = useManualInputTabHooks({ form, setTab, setImportTaskId })
 
   return (
     <>

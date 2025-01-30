@@ -34,8 +34,8 @@ impl StoreProvider {
     }
 
     pub async fn load_all_assets_from_files(&mut self) -> Result<(), String> {
-        backup_metadata(&self.data_dir)?;
-        prune_old_backup(&self.data_dir)?;
+        backup_metadata(&self.data_dir).await?;
+        prune_old_backup(&self.data_dir).await?;
 
         match self.avatar_store.load().await {
             Ok(_) => {}
@@ -94,7 +94,7 @@ impl StoreProvider {
 
         if old_metadata_path.exists() {
             if new_metadata_path.exists() {
-                if let Err(e) = rename_conflict_dir(&new_metadata_path) {
+                if let Err(e) = rename_conflict_dir(&new_metadata_path).await {
                     let msg = format!(
                         "Failed to rename and backup conflicted metadata dir: {:?}",
                         e
@@ -109,7 +109,10 @@ impl StoreProvider {
                 &new_metadata_path,
                 true,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-            ) {
+                |_, _| {},
+            )
+            .await
+            {
                 let msg = format!("Failed to copy and delete metadata dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
@@ -118,7 +121,7 @@ impl StoreProvider {
 
         if old_data_path.exists() {
             if new_data_path.exists() {
-                if let Err(e) = rename_conflict_dir(&new_data_path) {
+                if let Err(e) = rename_conflict_dir(&new_data_path).await {
                     let msg = format!("Failed to rename and backup conflicted data dir: {:?}", e);
                     log::error!("{}", &msg);
                     return Err(msg);
@@ -130,7 +133,10 @@ impl StoreProvider {
                 &new_data_path,
                 true,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-            ) {
+                |_, _| {},
+            )
+            .await
+            {
                 let msg = format!("Failed to copy and delete data dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
@@ -139,7 +145,7 @@ impl StoreProvider {
 
         if old_images_path.exists() {
             if new_images_path.exists() {
-                if let Err(e) = rename_conflict_dir(&new_images_path) {
+                if let Err(e) = rename_conflict_dir(&new_images_path).await {
                     let msg = format!("Failed to rename and backup conflicted images dir: {:?}", e);
                     log::error!("{}", &msg);
                     return Err(msg);
@@ -151,7 +157,10 @@ impl StoreProvider {
                 &new_images_path,
                 true,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-            ) {
+                |_, _| {},
+            )
+            .await
+            {
                 let msg = format!("Failed to copy and delete images dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
@@ -174,7 +183,7 @@ impl StoreProvider {
     }
 }
 
-fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
+async fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
     let filename = path
         .file_name()
         .unwrap_or(OsStr::new("conflicted"))
@@ -198,9 +207,10 @@ fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
         // pathからの相対的なパスしかFileTransferGuardとして指定できず、アサーションの意味がないのでNoneとする
         FileTransferGuard::new(None, None),
     )
+    .await
 }
 
-fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
+async fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
     let metadata_path = data_dir.join("metadata");
     let backup_path = metadata_path.join("backups");
 
@@ -236,7 +246,8 @@ fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
             &backup_file,
             false,
             FileTransferGuard::new(None, None),
-        );
+        )
+        .await;
 
         if let Err(e) = result {
             let msg = format!("Failed to backup metadata: {:?}", e);
@@ -253,7 +264,7 @@ fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
-fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
+async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
     let backup_path = data_dir.join("metadata/backups");
 
     if !backup_path.exists() {
@@ -300,7 +311,8 @@ fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
     for i in 0..to_remove {
         let path = &entries[i];
 
-        let result = modify_guard::delete_recursive(&path, DeletionGuard::new(backup_path.clone()));
+        let result =
+            modify_guard::delete_recursive(&path, DeletionGuard::new(backup_path.clone())).await;
 
         if let Err(e) = result {
             log::warn!("Failed to remove old backup: {:?}", e);

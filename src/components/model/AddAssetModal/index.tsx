@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import SelectorTab from './components/tabs/SelectorTab'
 import BoothInputTab from './components/tabs/BoothInputTab'
 import ManualInputTab from './components/tabs/ManualInputTab'
@@ -14,6 +14,9 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 import { cn } from '@/lib/utils'
 import DuplicateWarningTab from './components/tabs/DuplicateWarningTab'
 import { AssetSummary, AssetType } from '@/lib/bindings'
+import ProgressTab from './components/tabs/ProgressTab'
+import { useToast } from '@/hooks/use-toast'
+import { AssetContext } from '@/components/context/AssetContext'
 
 export const AddAssetModalContext = createContext<{
   assetPaths?: string[]
@@ -41,6 +44,10 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   const [duplicateWarningItems, setDuplicateWarningItems] = useState<
     AssetSummary[]
   >([])
+  const [importTaskId, setImportTaskId] = useState<string | null>(null)
+  const { toast } = useToast()
+
+  const { refreshAssets } = useContext(AssetContext)
 
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
@@ -136,6 +143,28 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
     }
   }, [dialogOpen])
 
+  const onComplete = () => {
+    toast({
+      title: 'アセットが追加されました！',
+      description: form.getValues('name'),
+      duration: 3000,
+    })
+
+    setTab('empty')
+    setDialogOpen(false)
+    refreshAssets()
+  }
+
+  const onCancelled = () => {
+    toast({
+      title: 'キャンセルされました',
+      duration: 2000,
+    })
+
+    setTab('empty')
+    setDialogOpen(false)
+  }
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
@@ -170,9 +199,17 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
               <ManualInputTab
                 form={form}
                 setTab={setTab}
-                setDialogOpen={setDialogOpen}
+                setImportTaskId={setImportTaskId}
               />
             </TabsContent>
+            <TabsContent value="progress">
+              <ProgressTab
+                taskId={importTaskId}
+                onComplete={onComplete}
+                onCancelled={onCancelled}
+              />
+            </TabsContent>
+            <TabsContent value="empty"></TabsContent>
           </AddAssetModalContext.Provider>
         </Tabs>
       </DialogContent>

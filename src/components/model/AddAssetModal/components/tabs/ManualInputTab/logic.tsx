@@ -1,16 +1,13 @@
 import {
   AssetDescription,
   AssetType,
-  Avatar,
   AvatarImportRequest,
-  AvatarWearable,
   AvatarWearableImportRequest,
   commands,
   PreAvatar,
   PreAvatarWearable,
   PreWorldObject,
   Result,
-  WorldObject,
   WorldObjectImportRequest,
 } from '@/lib/bindings'
 
@@ -61,7 +58,8 @@ export const sendAssetImportRequest = async (
   assetPaths: string[],
   preAsset: PreAvatar | PreAvatarWearable | PreWorldObject,
   deleteSource: boolean,
-): Promise<Result<Avatar | AvatarWearable | WorldObject, string>> => {
+): Promise<Result<string, string>> => {
+  console.log('test')
   if (assetType === 'Avatar') {
     const request: AvatarImportRequest = {
       preAsset: preAsset as PreAvatar,

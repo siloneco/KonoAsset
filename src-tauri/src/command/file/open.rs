@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
@@ -7,7 +7,7 @@ use crate::{data_store::provider::StoreProvider, file, preference::store::Prefer
 #[tauri::command]
 #[specta::specta]
 pub async fn open_managed_dir(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: String,
 ) -> Result<(), String> {
     let mut path = basic_store.lock().await.data_dir();

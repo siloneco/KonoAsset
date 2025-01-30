@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tauri::{async_runtime::Mutex, State};
 
 use crate::{
@@ -8,7 +10,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn update_avatar(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     asset: Avatar,
 ) -> Result<bool, String> {
     log::info!("Updating avatar (ID = {:?})", asset.id);
@@ -40,7 +42,7 @@ pub async fn update_avatar(
 #[tauri::command]
 #[specta::specta]
 pub async fn update_avatar_wearable(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     asset: AvatarWearable,
 ) -> Result<bool, String> {
     log::info!("Updating avatar wearable (ID = {:?})", asset.id);
@@ -72,7 +74,7 @@ pub async fn update_avatar_wearable(
 #[tauri::command]
 #[specta::specta]
 pub async fn update_world_object(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     asset: WorldObject,
 ) -> Result<bool, String> {
     log::info!("Updating world object (ID = {:?})", asset.id);

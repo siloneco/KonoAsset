@@ -30,7 +30,7 @@ async getAssetDisplaysByBoothId(boothItemId: number) : Promise<Result<AssetSumma
     else return { status: "error", error: e  as any };
 }
 },
-async requestAvatarImport(request: AvatarImportRequest) : Promise<Result<Avatar, string>> {
+async requestAvatarImport(request: AvatarImportRequest) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_avatar_import", { request }) };
 } catch (e) {
@@ -38,7 +38,7 @@ async requestAvatarImport(request: AvatarImportRequest) : Promise<Result<Avatar,
     else return { status: "error", error: e  as any };
 }
 },
-async requestAvatarWearableImport(request: AvatarWearableImportRequest) : Promise<Result<AvatarWearable, string>> {
+async requestAvatarWearableImport(request: AvatarWearableImportRequest) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_avatar_wearable_import", { request }) };
 } catch (e) {
@@ -46,7 +46,7 @@ async requestAvatarWearableImport(request: AvatarWearableImportRequest) : Promis
     else return { status: "error", error: e  as any };
 }
 },
-async requestWorldObjectImport(request: WorldObjectImportRequest) : Promise<Result<WorldObject, string>> {
+async requestWorldObjectImport(request: WorldObjectImportRequest) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_world_object_import", { request }) };
 } catch (e) {
@@ -291,12 +291,35 @@ async resetApplication(request: ResetApplicationRequest) : Promise<Result<null, 
 },
 async getLogs() : Promise<LogEntry[]> {
     return await TAURI_INVOKE("get_logs");
+},
+async getTaskStatus(id: string) : Promise<Result<TaskStatus, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_task_status", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async cancelTaskRequest(id: string) : Promise<Result<TaskStatus, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cancel_task_request", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
 /** user-defined events **/
 
 
+export const events = __makeEvents__<{
+importProgress: ImportProgress,
+taskStatusChanged: TaskStatusChanged
+}>({
+importProgress: "import-progress",
+taskStatusChanged: "task-status-changed"
+})
 
 /** user-defined constants **/
 
@@ -315,6 +338,7 @@ export type BoothInfo = { description: AssetDescription; estimatedAssetType: Ass
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
+export type ImportProgress = { percentage: number; filename: string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
@@ -325,6 +349,8 @@ export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
+export type TaskStatus = "Running" | "Completed" | "Cancelled"
+export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
 export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePaths: string[]; deleteSource: boolean }

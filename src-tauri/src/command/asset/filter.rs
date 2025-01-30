@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
@@ -9,7 +11,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn get_filtered_asset_ids(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     request: FilterRequest,
 ) -> Result<Vec<Uuid>, String> {
     let basic_store = basic_store.lock().await;
