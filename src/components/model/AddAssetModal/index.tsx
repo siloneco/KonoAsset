@@ -176,7 +176,10 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
         </div>
       </DialogTrigger>
       <DialogContent
-        className="max-w-[650px]"
+        className={cn(
+          'max-w-[650px]',
+          tab === 'progress' && '[&>button]:hidden',
+        )}
         onInteractOutside={(e) => {
           e.preventDefault()
         }}

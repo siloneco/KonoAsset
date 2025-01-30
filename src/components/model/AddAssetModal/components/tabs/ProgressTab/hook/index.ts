@@ -136,7 +136,7 @@ export const useProgressTab = ({
       // It takes a few moments to cancel the task, so delay activation of the button
       setTimeout(() => {
         setCanceling(false)
-      }, 1000)
+      }, 10000)
     }
   }
 
