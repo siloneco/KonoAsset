@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
+use tauri_specta::Event;
 use uuid::Uuid;
 
 use crate::loader::{
@@ -322,6 +323,22 @@ impl LoadResult {
             success: false,
             preference_loaded,
             message: Some(message),
+        }
+    }
+}
+
+#[derive(Serialize, Clone, specta::Type, Event)]
+#[serde(rename_all = "camelCase")]
+pub struct ImportProgress {
+    pub percentage: f32,
+    pub filename: String,
+}
+
+impl ImportProgress {
+    pub fn new(percentage: f32, filename: String) -> Self {
+        Self {
+            percentage,
+            filename,
         }
     }
 }

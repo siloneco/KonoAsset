@@ -22,18 +22,19 @@ impl<
         T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
     > JsonStore<T>
 {
-    pub fn create(data_dir: PathBuf) -> Self {
+    pub fn create(data_dir: PathBuf) -> Result<Self, String> {
         let mut path = data_dir.clone();
         path.push("metadata");
 
         if !path.exists() {
-            std::fs::create_dir_all(&path).unwrap();
+            std::fs::create_dir_all(&path)
+                .map_err(|e| format!("Failed to create directory at {}: {}", path.display(), e))?;
         }
 
-        Self {
+        Ok(Self {
             data_dir,
             assets: Mutex::new(HashSet::new()),
-        }
+        })
     }
 
     pub async fn get_all(&self) -> HashSet<T> {
@@ -50,43 +51,27 @@ impl<
     }
 
     pub async fn load(&self) -> Result<(), String> {
+        let filename = T::filename();
+
         let mut path = self.data_dir.clone();
         path.push("metadata");
-        path.push(T::filename());
+        path.push(&filename);
 
         if !path.exists() {
             return Ok(());
         }
 
-        let filename = path.file_name().unwrap().to_str().unwrap();
-
-        let file_open_result = File::open(path.clone());
-
-        if file_open_result.is_err() {
-            return Err(format!("Failed to open file: {}", filename));
-        }
+        let file = File::open(path.clone())
+            .map_err(|e| format!("Failed to open file at {}: {}", path.display(), e))?;
 
         {
             let mut assets = self.assets.lock().await;
-            let result: Result<T::VersionedType, serde_json::Error> =
-                serde_json::from_reader(file_open_result.unwrap());
+            let result: T::VersionedType = serde_json::from_reader(file)
+                .map_err(|e| format!("Failed to deserialize: {:?} ( file: {} )", e, filename))?;
 
-            if let Err(e) = result {
-                return Err(format!(
-                    "Failed to deserialize: {:?} ( file: {} )",
-                    e, filename
-                ));
-            }
+            let data: HashSet<T> = result.try_into()?;
 
-            let result = result.unwrap();
-
-            let data: Result<HashSet<T>, _> = result.try_into();
-
-            if data.is_err() {
-                return Err(data.err().unwrap());
-            }
-
-            *assets = data.unwrap();
+            *assets = data;
         }
 
         Ok(())
@@ -112,12 +97,10 @@ impl<
             if old_asset.is_none() {
                 return Err("Asset not found".into());
             }
+            let old_asset = old_asset.unwrap();
 
             // update の時は created_at を更新しない
-            asset.get_description_as_mut().created_at =
-                old_asset.as_ref().unwrap().get_description().created_at;
-
-            let old_asset = old_asset.unwrap();
+            asset.get_description_as_mut().created_at = old_asset.get_description().created_at;
 
             if old_asset.get_description().image_filename != asset.get_description().image_filename
             {
@@ -126,33 +109,18 @@ impl<
                 let old_image = &old_asset.get_description().image_filename;
                 let new_image = &asset.get_description().image_filename;
 
-                if old_image.is_some() {
-                    let old_image_path = images_dir.join(old_image.as_ref().unwrap());
-                    let delete_result = delete_asset_image(&self.data_dir, &old_image_path);
-
-                    if delete_result.is_err() {
-                        return Err(delete_result.err().unwrap());
-                    }
+                if let Some(old_image_filename) = old_image {
+                    let old_image_path = images_dir.join(old_image_filename);
+                    delete_asset_image(&self.data_dir, &old_image_path).await?;
                 }
 
-                if new_image.is_some() {
-                    let temp_new_image = images_dir.join(new_image.as_ref().unwrap());
-                    let result = execute_image_fixation(&temp_new_image).await;
+                if let Some(new_image_filename) = new_image {
+                    let temp_new_image = images_dir.join(new_image_filename);
+                    let new_image_path = execute_image_fixation(&temp_new_image).await?;
 
-                    if result.is_err() {
-                        return Err(result.err().unwrap());
-                    }
-
-                    let new_image_path = result.unwrap();
-                    if let Some(new_image_path) = new_image_path {
-                        asset.get_description_as_mut().image_filename = Some(
-                            new_image_path
-                                .file_name()
-                                .unwrap()
-                                .to_str()
-                                .unwrap()
-                                .to_string(),
-                        );
+                    if new_image_path.is_some() {
+                        asset.get_description_as_mut().image_filename =
+                            Some(new_image_filename.to_string());
                     }
                 }
             }
@@ -172,15 +140,12 @@ impl<
             if asset.is_none() {
                 return Ok(false);
             }
+            let asset = asset.unwrap();
 
-            assets.remove(&asset.unwrap());
+            assets.remove(&asset);
         }
 
-        let result = self.save().await;
-
-        if result.is_err() {
-            return Err(result.err().unwrap());
-        }
+        self.save().await?;
 
         Ok(true)
     }
@@ -190,27 +155,18 @@ impl<
         path.push("metadata");
         path.push(T::filename());
 
-        let file_open_result = File::create(path);
+        let file = File::create(&path)
+            .map_err(|e| format!("Failed to create file at {}: {}", path.display(), e))?;
 
-        if file_open_result.is_err() {
-            return Err("Failed to open file".into());
-        }
+        let data = {
+            let assets = self.assets.lock().await;
+            T::VersionedType::try_from(assets.clone())?
+        };
 
-        let assets = self.assets.lock().await;
+        let result = serde_json::to_writer(file, &data);
 
-        let data = T::VersionedType::try_from(assets.clone());
-
-        if data.is_err() {
-            return Err(data.err().unwrap());
-        }
-
-        let result = serde_json::to_writer(file_open_result.unwrap(), &data.unwrap());
-
-        if result.is_err() {
-            return Err(format!(
-                "Failed to serialize file: {}",
-                result.err().unwrap()
-            ));
+        if let Err(e) = result {
+            return Err(format!("Failed to serialize file: {}", e));
         }
 
         Ok(())

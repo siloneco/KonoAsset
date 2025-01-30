@@ -25,7 +25,18 @@ impl TryInto<AssetDescription> for LegacyAssetDescriptionV1 {
             Some(image_filename)
         } else if let Some(image_path) = self.image_path {
             let path = PathBuf::from(image_path);
-            Some(path.file_name().unwrap().to_str().unwrap().to_string())
+
+            let file_name = path.file_name();
+            if file_name.is_none() {
+                return Err("Image path has no file name".to_string());
+            }
+
+            let file_name = file_name.unwrap().to_str();
+            if file_name.is_none() {
+                return Err("Image path file name is not valid UTF-8".to_string());
+            }
+
+            Some(file_name.unwrap().to_string())
         } else {
             None
         };

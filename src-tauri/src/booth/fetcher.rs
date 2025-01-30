@@ -30,7 +30,9 @@ impl BoothFetcher {
         }
 
         let url = format!("https://booth.pm/ja/items/{}.json", id);
-        let response = get_reqwest_client().get(&url).send().await?;
+        let client =
+            get_reqwest_client().map_err(|e| format!("Unable to get http client: {}", e))?;
+        let response = client.get(&url).send().await?;
 
         if response.status().as_u16() == 404 {
             return Err("商品が見つかりませんでした".into());
@@ -45,20 +47,15 @@ impl BoothFetcher {
         } else {
             None
         };
-        let published_at = DateTime::parse_from_rfc3339(&response.published_at)
-            .unwrap()
-            .timestamp_millis();
+        let published_at = DateTime::parse_from_rfc3339(&response.published_at)?.timestamp_millis();
 
         let mut path = images_dir;
-        path.push(format!("temp_{}.jpg", Uuid::new_v4().to_string()));
+        let file_name = format!("temp_{}.jpg", Uuid::new_v4().to_string());
+        path.push(&file_name);
 
         let image_filename = if let Some(image_url) = image_url {
-            let result = save_image_from_url(&image_url, &path).await;
-            if result.is_err() {
-                return Err(result.err().unwrap());
-            }
-
-            Some(path.file_name().unwrap().to_str().unwrap().to_string())
+            save_image_from_url(&image_url, &path).await?;
+            Some(file_name)
         } else {
             None
         };

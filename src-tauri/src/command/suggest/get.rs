@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
 
 use tauri::{async_runtime::Mutex, State};
 
@@ -7,7 +7,7 @@ use crate::data_store::provider::StoreProvider;
 #[tauri::command]
 #[specta::specta]
 pub async fn get_all_asset_tags(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
 ) -> Result<Vec<String>, String> {
     let basic_store = basic_store.lock().await;
     let mut tags: HashSet<String> = HashSet::new();
@@ -51,7 +51,7 @@ pub async fn get_all_asset_tags(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_all_supported_avatar_values(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
 ) -> Result<Vec<String>, String> {
     let mut values: HashSet<String> = HashSet::new();
 
@@ -74,7 +74,7 @@ pub async fn get_all_supported_avatar_values(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_categories(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
 ) -> Result<Vec<String>, String> {
     let mut categories: HashSet<String> = HashSet::new();
 
@@ -100,7 +100,7 @@ pub async fn get_avatar_wearable_categories(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_world_object_categories(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
 ) -> Result<Vec<String>, String> {
     let mut categories: HashSet<String> = HashSet::new();
 
@@ -126,7 +126,7 @@ pub async fn get_world_object_categories(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_supported_avatars(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
 ) -> Result<Vec<String>, String> {
     let mut supported_avatars: HashSet<String> = HashSet::new();
 

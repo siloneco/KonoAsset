@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
@@ -14,7 +14,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn get_asset(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: Uuid,
 ) -> Result<GetAssetResult, String> {
     let basic_store = basic_store.lock().await;
@@ -40,7 +40,7 @@ pub async fn get_asset(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_sorted_assets_for_display(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     sort_by: SortBy,
 ) -> Result<Vec<AssetSummary>, String> {
     let mut created_at_map: HashMap<Uuid, i64> = HashMap::new();
@@ -98,8 +98,8 @@ pub async fn get_sorted_assets_for_display(
         SortBy::CreatedAt => result.sort_by(|a, b| {
             created_at_map
                 .get(&a.id)
-                .unwrap()
-                .cmp(&created_at_map.get(&b.id).unwrap())
+                .unwrap_or(&0)
+                .cmp(&created_at_map.get(&b.id).unwrap_or(&0))
         }),
         SortBy::PublishedAt => result.sort_by(|a, b| {
             a.published_at
@@ -114,7 +114,7 @@ pub async fn get_sorted_assets_for_display(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_asset_displays_by_booth_id(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     booth_item_id: u64,
 ) -> Result<Vec<AssetSummary>, String> {
     let basic_store = basic_store.lock().await;

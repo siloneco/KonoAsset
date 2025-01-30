@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
@@ -11,7 +11,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn copy_image_file_to_images(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     path: String,
     temporary: bool,
 ) -> Result<String, String> {
@@ -33,7 +33,8 @@ pub async fn copy_image_file_to_images(
         &dest,
         false,
         FileTransferGuard::new(None, Some(images_dir)),
-    );
+    )
+    .await;
 
     if let Err(e) = result {
         log::error!("Failed to copy image file: {:?}", e);
@@ -52,8 +53,13 @@ fn create_dest_filename(src: &PathBuf, temporary: bool) -> String {
     let extension = src
         .extension()
         .unwrap_or(std::ffi::OsStr::new("png"))
-        .to_str()
-        .unwrap();
+        .to_str();
+
+    let extension = if let Some(ext) = extension {
+        ext
+    } else {
+        "png"
+    };
 
     if temporary {
         format!("temp_{}.{}", Uuid::new_v4().to_string(), extension)

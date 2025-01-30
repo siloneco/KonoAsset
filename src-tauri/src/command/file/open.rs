@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
@@ -7,7 +7,7 @@ use crate::{data_store::provider::StoreProvider, file, preference::store::Prefer
 #[tauri::command]
 #[specta::specta]
 pub async fn open_managed_dir(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: String,
 ) -> Result<(), String> {
     let mut path = basic_store.lock().await.data_dir();
@@ -45,7 +45,10 @@ pub async fn open_asset_data_dir(
 #[tauri::command]
 #[specta::specta]
 pub fn open_app_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
-    let path = handle.path().app_local_data_dir().unwrap();
+    let path = handle
+        .path()
+        .app_local_data_dir()
+        .map_err(|e| format!("Unable to get app dir: {}", e))?;
     file::open_in_file_manager(&path)
 }
 
@@ -59,6 +62,9 @@ pub fn open_file_in_file_manager(path: String) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub async fn open_logs_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
-    let path = handle.path().app_log_dir().unwrap();
+    let path = handle
+        .path()
+        .app_log_dir()
+        .map_err(|e| format!("Unable to get log dir: {}", e))?;
     file::open_in_file_manager(&path)
 }

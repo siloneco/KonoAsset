@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
@@ -6,7 +8,7 @@ use crate::data_store::{delete::delete_asset, provider::StoreProvider};
 #[tauri::command]
 #[specta::specta]
 pub async fn request_asset_deletion(
-    basic_store: State<'_, Mutex<StoreProvider>>,
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     id: Uuid,
 ) -> Result<(), String> {
     log::info!("Deleting asset with id: {:?}", id);

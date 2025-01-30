@@ -32,15 +32,14 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     return;
                 }
                 // 文字検索が指定されている場合は、含まれているかを確認
-                if text_filters.clone().is_some() {
-                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
+                if let Some(text_filters) = &text_filters {
+                    if !check_text_contains(&asset.description, text_filters) {
                         return;
                     }
                 }
 
                 // タグが指定されている場合
-                if req.tags.is_some() {
-                    let tags = req.tags.clone().unwrap();
+                if let Some(tags) = &req.tags {
                     let mut iter = tags.iter();
 
                     if req.tag_match_type == MatchType::AND {
@@ -68,18 +67,15 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             .iter()
             .for_each(|asset| {
                 // 文字検索が指定されている場合は、含まれているかを確認
-                if text_filters.clone().is_some() {
-                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
+                if let Some(text_filters) = &text_filters {
+                    if !check_text_contains(&asset.description, text_filters) {
                         return;
                     }
                 }
 
                 // カテゴリが指定されている場合
-                if req.categories.is_some() {
-                    if !req
-                        .categories
-                        .clone()
-                        .unwrap()
+                if let Some(categories) = &req.categories {
+                    if !categories
                         .iter()
                         .any(|category| asset.category.contains(category))
                     {
@@ -87,8 +83,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     }
                 }
                 // 対応アバターが指定されている場合
-                if req.supported_avatars.is_some() {
-                    let supported_avatars = req.supported_avatars.clone().unwrap();
+                if let Some(supported_avatars) = &req.supported_avatars {
                     let mut iter = supported_avatars.iter();
 
                     if req.supported_avatar_match_type == MatchType::AND {
@@ -105,8 +100,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                 }
 
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if req.tags.is_some() {
-                    let tags = req.tags.clone().unwrap();
+                if let Some(tags) = &req.tags {
                     let mut iter = tags.iter();
 
                     if req.tag_match_type == MatchType::AND {
@@ -138,17 +132,14 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     return;
                 }
                 // 文字検索が指定されている場合は、含まれているかを確認
-                if text_filters.clone().is_some() {
-                    if !check_text_contains(&asset.description, &text_filters.clone().unwrap()) {
+                if let Some(text_filters) = &text_filters {
+                    if !check_text_contains(&asset.description, text_filters) {
                         return;
                     }
                 }
                 // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
-                if req.categories.is_some() {
-                    if !req
-                        .categories
-                        .clone()
-                        .unwrap()
+                if let Some(categories) = &req.categories {
+                    if !categories
                         .iter()
                         .any(|category| asset.category.contains(category))
                     {
@@ -156,8 +147,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     }
                 }
                 // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if req.tags.is_some() {
-                    let tags = req.tags.clone().unwrap();
+                if let Some(tags) = &req.tags {
                     let mut iter = tags.iter();
 
                     if req.tag_match_type == MatchType::AND {

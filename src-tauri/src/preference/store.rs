@@ -29,50 +29,55 @@ pub enum Theme {
 }
 
 impl PreferenceStore {
-    pub fn default(app: &App) -> Self {
-        let mut file_path = app.path().app_local_data_dir().unwrap();
-        file_path.push("preference.json");
+    pub fn default(app: &App) -> Result<Self, String> {
+        let app_local_data_dir = app.path().app_local_data_dir();
+        if let Err(e) = app_local_data_dir {
+            return Err(format!("Failed to get app local data dir: {}", e));
+        }
+        let app_local_data_dir = app_local_data_dir.unwrap();
 
-        let data_dir_path = app.path().app_local_data_dir().unwrap();
+        let preference_file_path = app_local_data_dir.join("preference.json");
 
         // // 将来的にはこれをデフォルトにする
         // let mut data_dir_path = app.path().document_dir().unwrap();
         // data_dir_path.push("KonoAsset");
 
-        Self {
-            file_path: file_path,
+        Ok(Self {
+            file_path: preference_file_path,
 
-            data_dir_path: data_dir_path,
+            data_dir_path: app_local_data_dir,
             theme: Theme::System,
 
             delete_on_import: true,
             use_unitypackage_selected_open: true,
-        }
+        })
     }
 
     pub fn load(app: &App) -> Result<Option<Self>, io::Error> {
-        let mut preference_json_path = app.path().app_local_data_dir().unwrap();
-        preference_json_path.push("preference.json");
+        let app_local_data_dir = app.path().app_local_data_dir().map_err(|e| {
+            io::Error::new(
+                io::ErrorKind::Other,
+                format!("Failed to get app local data dir: {}", e),
+            )
+        })?;
+
+        let preference_json_path = app_local_data_dir.join("preference.json");
 
         if !preference_json_path.exists() {
             return Ok(None);
         }
 
-        let reader = std::fs::File::open(preference_json_path)?;
+        let reader = std::fs::File::open(&preference_json_path)?;
         let preference: Result<PreferenceStore, _> =
             serde_json::from_reader::<_, VersionedPreferences>(reader)?.try_into();
 
         if let Err(e) = preference {
-            eprintln!("Failed to load preference: {}", e);
+            log::error!("Failed to load preference: {}", e);
             return Ok(None);
         }
 
         let mut preference = preference.unwrap();
-
-        let mut file_path = app.path().app_local_data_dir().unwrap();
-        file_path.push("preference.json");
-
-        preference.file_path = file_path;
+        preference.file_path = preference_json_path;
 
         Ok(Some(preference))
     }
@@ -98,11 +103,12 @@ impl PreferenceStore {
         let versioned = VersionedPreferences::try_from(self.clone());
 
         if let Err(e) = versioned {
-            eprintln!("Failed to save preference: {}", e);
+            log::error!("Failed to save preference: {}", e);
             return Ok(());
         }
+        let versioned = versioned.unwrap();
 
-        serde_json::to_writer(writer, &versioned.unwrap())?;
+        serde_json::to_writer(writer, &versioned)?;
 
         Ok(())
     }

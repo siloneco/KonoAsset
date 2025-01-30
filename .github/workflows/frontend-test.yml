@@ -1,0 +1,45 @@
+name: Frontend Test
+on:
+  push:
+    paths:
+      - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+    branches-ignore:
+      - "main"
+  pull_request:
+    types:
+      - reopened
+      - opened
+      - synchronize
+    paths:
+      - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    name: Run Frontend Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
+        with:
+          node-version: 22.11.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: node --version
+      - run: pnpm --version
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run test:with-coverage

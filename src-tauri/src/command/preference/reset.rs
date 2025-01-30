@@ -15,14 +15,18 @@ pub async fn reset_application(
     log::info!("Resetting application...");
 
     if request.reset_preferences {
-        let app_local_data_dir = handle.path().app_local_data_dir().unwrap();
+        let app_local_data_dir = handle
+            .path()
+            .app_local_data_dir()
+            .map_err(|e| format!("Unable to get app dir: {}", e))?;
         let preference_path = app_local_data_dir.join("preference.json");
 
         if preference_path.exists() {
             let result = modify_guard::delete_single_file(
                 &preference_path,
                 DeletionGuard::new(app_local_data_dir),
-            );
+            )
+            .await;
 
             if let Err(e) = result {
                 log::error!("Failed to delete preferences.json: {}", e);
@@ -48,7 +52,8 @@ pub async fn reset_application(
                 let result = modify_guard::delete_recursive(
                     &metadata_dir,
                     DeletionGuard::new(user_data_dir.clone()),
-                );
+                )
+                .await;
 
                 if let Err(e) = result {
                     log::error!("Failed to delete metadata directory: {}", e);
@@ -66,7 +71,8 @@ pub async fn reset_application(
                 let result = modify_guard::delete_recursive(
                     &asset_data_dir,
                     DeletionGuard::new(user_data_dir.clone()),
-                );
+                )
+                .await;
 
                 if let Err(e) = result {
                     log::error!("Failed to delete asset data directory: {}", e);
