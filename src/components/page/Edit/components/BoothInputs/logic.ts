@@ -1,11 +1,11 @@
 import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
-import console from 'console'
 
 type Props = {
   id: number
   form: AssetFormType
 }
+
 export const getAssetDescriptionFromBooth = async ({ id, form }: Props) => {
   const result = await commands.getAssetDescriptionFromBooth(id)
 
