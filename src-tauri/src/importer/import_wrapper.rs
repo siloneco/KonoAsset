@@ -11,7 +11,10 @@ use crate::{
             AvatarImportRequest, AvatarWearableImportRequest, WorldObjectImportRequest,
         },
     },
-    file::cleanup::DeleteDirOnDrop,
+    file::{
+        cleanup::DeleteDirOnDrop,
+        modify_guard::{self, DeletionGuard},
+    },
 };
 
 use super::fileutils::{self, execute_image_fixation};
@@ -33,7 +36,10 @@ pub async fn import_avatar(
 
     let asset = Avatar::create(request.pre_asset.description);
 
-    for i in 0..request.absolute_paths.len() {
+    let file_count = request.absolute_paths.len();
+    let progress_last_updated = Mutex::new(0);
+
+    for i in 0..file_count {
         let path_str = request.absolute_paths.get(i).unwrap();
 
         let src_import_asset_path: PathBuf = PathBuf::from(path_str);
@@ -42,29 +48,21 @@ pub async fn import_avatar(
         destination.push("data");
         destination.push(asset.id.to_string());
 
-        let last_updated = Mutex::new(0);
-
         let progress_callback = |progress, filename| {
             let current_timestamp = chrono::Utc::now().timestamp_millis();
-            let mut last_updated = last_updated.lock().unwrap();
-            if progress == 1.0 || *last_updated + 100 < current_timestamp {
+            let mut last_updated = progress_last_updated.lock().unwrap();
+
+            if *last_updated + 100 < current_timestamp {
                 *last_updated = current_timestamp;
 
-                let total_progress =
-                    ((i + 1) as f32) / (request.absolute_paths.len() as f32) * progress;
+                let total_progress = (i as f32 + progress) / file_count as f32;
                 ImportProgress::new(total_progress, filename)
                     .emit(app_handle)
                     .unwrap();
             }
         };
 
-        let result = import_files(
-            &src_import_asset_path,
-            &destination,
-            request.delete_source,
-            progress_callback,
-        )
-        .await;
+        let result = import_files(&src_import_asset_path, &destination, progress_callback).await;
 
         if let Err(err) = result {
             let delete_asset_result = basic_store
@@ -81,8 +79,6 @@ pub async fn import_avatar(
 
             return Err(format!("Failed to import asset: {}", err));
         }
-
-        progress_callback(1f32, "".into());
     }
 
     let result = basic_store
@@ -92,6 +88,28 @@ pub async fn import_avatar(
 
     if let Err(err) = result {
         return Err(format!("Failed to import avatar: {}", err));
+    }
+
+    if request.delete_source {
+        for i in 0..file_count {
+            let path: PathBuf = PathBuf::from(request.absolute_paths.get(i).unwrap());
+
+            if !path.exists() {
+                continue;
+            }
+
+            let guard = DeletionGuard::new(path.clone());
+
+            let result = if path.is_dir() {
+                modify_guard::delete_recursive(&path, guard).await
+            } else {
+                modify_guard::delete_single_file(&path, guard).await
+            };
+
+            if let Err(err) = result {
+                return Err(format!("Failed to delete source: {}", err));
+            }
+        }
     }
 
     Ok(asset)
@@ -118,7 +136,10 @@ pub async fn import_avatar_wearable(
         request.pre_asset.supported_avatars,
     );
 
-    for i in 0..request.absolute_paths.len() {
+    let file_count = request.absolute_paths.len();
+    let progress_last_updated = Mutex::new(0);
+
+    for i in 0..file_count {
         let path_str = request.absolute_paths.get(i).unwrap();
 
         let src_import_asset_path: PathBuf = PathBuf::from(path_str);
@@ -127,29 +148,21 @@ pub async fn import_avatar_wearable(
         destination.push("data");
         destination.push(asset.id.to_string());
 
-        let last_updated = Mutex::new(0);
-
         let progress_callback = |progress, filename| {
             let current_timestamp = chrono::Utc::now().timestamp_millis();
-            let mut last_updated = last_updated.lock().unwrap();
-            if progress == 1.0 || *last_updated + 100 < current_timestamp {
+            let mut last_updated = progress_last_updated.lock().unwrap();
+
+            if *last_updated + 100 < current_timestamp {
                 *last_updated = current_timestamp;
 
-                let total_progress =
-                    ((i + 1) as f32) / (request.absolute_paths.len() as f32) * progress;
+                let total_progress = (i as f32 + progress) / file_count as f32;
                 ImportProgress::new(total_progress, filename)
                     .emit(app_handle)
                     .unwrap();
             }
         };
 
-        let result = import_files(
-            &src_import_asset_path,
-            &destination,
-            request.delete_source,
-            progress_callback,
-        )
-        .await;
+        let result = import_files(&src_import_asset_path, &destination, progress_callback).await;
 
         if let Err(err) = result {
             let delete_asset_result = basic_store
@@ -166,8 +179,6 @@ pub async fn import_avatar_wearable(
 
             return Err(format!("Failed to import asset: {}", err));
         }
-
-        progress_callback(1f32, "".into());
     }
 
     let result = basic_store
@@ -177,6 +188,28 @@ pub async fn import_avatar_wearable(
 
     if let Err(err) = result {
         return Err(format!("Failed to import avatar wearable: {}", err));
+    }
+
+    if request.delete_source {
+        for i in 0..file_count {
+            let path: PathBuf = PathBuf::from(request.absolute_paths.get(i).unwrap());
+
+            if !path.exists() {
+                continue;
+            }
+
+            let guard = DeletionGuard::new(path.clone());
+
+            let result = if path.is_dir() {
+                modify_guard::delete_recursive(&path, guard).await
+            } else {
+                modify_guard::delete_single_file(&path, guard).await
+            };
+
+            if let Err(err) = result {
+                return Err(format!("Failed to delete source: {}", err));
+            }
+        }
     }
 
     Ok(asset)
@@ -199,7 +232,10 @@ pub async fn import_world_object(
 
     let asset = WorldObject::create(request.pre_asset.description, request.pre_asset.category);
 
-    for i in 0..request.absolute_paths.len() {
+    let file_count = request.absolute_paths.len();
+    let progress_last_updated = Mutex::new(0);
+
+    for i in 0..file_count {
         let path_str = request.absolute_paths.get(i).unwrap();
 
         let src_import_asset_path: PathBuf = PathBuf::from(path_str);
@@ -208,29 +244,21 @@ pub async fn import_world_object(
         destination.push("data");
         destination.push(asset.id.to_string());
 
-        let last_updated = Mutex::new(0);
-
         let progress_callback = |progress, filename| {
             let current_timestamp = chrono::Utc::now().timestamp_millis();
-            let mut last_updated = last_updated.lock().unwrap();
-            if progress == 1.0 || *last_updated + 100 < current_timestamp {
+            let mut last_updated = progress_last_updated.lock().unwrap();
+
+            if *last_updated + 100 < current_timestamp {
                 *last_updated = current_timestamp;
 
-                let total_progress =
-                    ((i + 1) as f32) / (request.absolute_paths.len() as f32) * progress;
+                let total_progress = (i as f32 + progress) / file_count as f32;
                 ImportProgress::new(total_progress, filename)
                     .emit(app_handle)
                     .unwrap();
             }
         };
 
-        let result = import_files(
-            &src_import_asset_path,
-            &destination,
-            request.delete_source,
-            progress_callback,
-        )
-        .await;
+        let result = import_files(&src_import_asset_path, &destination, progress_callback).await;
 
         if let Err(err) = result {
             let delete_asset_result = basic_store
@@ -247,8 +275,6 @@ pub async fn import_world_object(
 
             return Err(format!("Failed to import asset: {}", err));
         }
-
-        progress_callback(1f32, "".into());
     }
 
     let result = basic_store
@@ -260,13 +286,34 @@ pub async fn import_world_object(
         return Err(format!("Failed to import world object: {}", err));
     }
 
+    if request.delete_source {
+        for i in 0..file_count {
+            let path: PathBuf = PathBuf::from(request.absolute_paths.get(i).unwrap());
+
+            if !path.exists() {
+                continue;
+            }
+
+            let guard = DeletionGuard::new(path.clone());
+
+            let result = if path.is_dir() {
+                modify_guard::delete_recursive(&path, guard).await
+            } else {
+                modify_guard::delete_single_file(&path, guard).await
+            };
+
+            if let Err(err) = result {
+                return Err(format!("Failed to delete source: {}", err));
+            }
+        }
+    }
+
     Ok(asset)
 }
 
 async fn import_files(
     src: &PathBuf,
     dest: &PathBuf,
-    delete_source: bool,
     progress_callback: impl Fn(f32, String),
 ) -> Result<(), String> {
     if !dest.exists() {
@@ -276,7 +323,7 @@ async fn import_files(
 
     let mut delete_dir_on_drop = DeleteDirOnDrop::new(dest.clone());
 
-    fileutils::import_asset(src, dest, delete_source, progress_callback)
+    fileutils::import_asset(src, dest, progress_callback)
         .await
         .map_err(|e| format!("Failed to import asset: {:?}", e))?;
 

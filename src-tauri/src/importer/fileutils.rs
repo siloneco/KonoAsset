@@ -1,7 +1,7 @@
 use std::{error::Error, ffi::OsStr, path::PathBuf};
 
 use crate::{
-    file::modify_guard::{self, DeletionGuard, FileTransferGuard},
+    file::modify_guard::{self, FileTransferGuard},
     zip::extractor::extract_zip,
 };
 
@@ -50,7 +50,6 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, St
 pub async fn import_asset(
     src_import_asset_path: &PathBuf,
     destination: &PathBuf,
-    delete_source: bool,
     progress_callback: impl Fn(f32, String),
 ) -> Result<(), Box<dyn Error>> {
     let mut new_destination = destination.clone();
@@ -66,7 +65,7 @@ pub async fn import_asset(
         modify_guard::copy_dir(
             src_import_asset_path,
             &new_destination,
-            delete_source,
+            false,
             FileTransferGuard::new(None, None),
             progress_callback,
         )
@@ -88,14 +87,6 @@ pub async fn import_asset(
             if let Err(e) = result {
                 return Err(e.into());
             }
-
-            if delete_source {
-                modify_guard::delete_single_file(
-                    src_import_asset_path,
-                    DeletionGuard::new(src_import_asset_path.clone()),
-                )
-                .await?;
-            }
         } else {
             let file_name = src_import_asset_path
                 .file_name()
@@ -106,12 +97,10 @@ pub async fn import_asset(
             modify_guard::copy_file(
                 src_import_asset_path,
                 &new_destination,
-                delete_source,
+                false,
                 FileTransferGuard::new(None, None),
             )
             .await?;
-
-            progress_callback(1f32, "".to_string());
         }
     }
 
