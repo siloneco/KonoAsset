@@ -1,6 +1,17 @@
-use super::entities::AssetDescription;
+use super::{
+    entities::{AssetDescription, Avatar, AvatarWearable, WorldObject},
+    traits::AssetTrait,
+};
 use serde::Deserialize;
 use std::collections::BTreeSet;
+
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct AssetImportRequest<T: PreAsset> {
+    pub pre_asset: T,
+    pub absolute_paths: Vec<String>,
+    pub delete_source: bool,
+}
 
 #[derive(Deserialize, Debug, Clone, specta::Type)]
 pub struct PreAvatar {
@@ -21,26 +32,49 @@ pub struct PreWorldObject {
     pub category: String,
 }
 
-#[derive(Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct AvatarImportRequest {
-    pub pre_asset: PreAvatar,
-    pub absolute_paths: Vec<String>,
-    pub delete_source: bool,
+pub trait PreAsset {
+    type AssetType: AssetTrait + Clone;
+
+    fn description(&mut self) -> &mut AssetDescription;
+    fn create(&self) -> Self::AssetType;
 }
 
-#[derive(Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct AvatarWearableImportRequest {
-    pub pre_asset: PreAvatarWearable,
-    pub absolute_paths: Vec<String>,
-    pub delete_source: bool,
+impl PreAsset for PreAvatar {
+    type AssetType = Avatar;
+
+    fn description(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
+
+    fn create(&self) -> Self::AssetType {
+        Avatar::create(self.description.clone())
+    }
 }
 
-#[derive(Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct WorldObjectImportRequest {
-    pub pre_asset: PreWorldObject,
-    pub absolute_paths: Vec<String>,
-    pub delete_source: bool,
+impl PreAsset for PreAvatarWearable {
+    type AssetType = AvatarWearable;
+
+    fn description(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
+
+    fn create(&self) -> Self::AssetType {
+        AvatarWearable::create(
+            self.description.clone(),
+            self.category.clone(),
+            self.supported_avatars.clone(),
+        )
+    }
+}
+
+impl PreAsset for PreWorldObject {
+    type AssetType = WorldObject;
+
+    fn description(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
+
+    fn create(&self) -> Self::AssetType {
+        WorldObject::create(self.description.clone(), self.category.clone())
+    }
 }
