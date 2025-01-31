@@ -1,11 +1,16 @@
 use std::{ffi::OsStr, fs, path::PathBuf};
 
+use serde::Serialize;
+
 use crate::{
     definitions::{
         entities::{Avatar, AvatarWearable, WorldObject},
         traits::AssetTrait,
     },
-    file::modify_guard::{self, DeletionGuard, FileTransferGuard},
+    file::{
+        cleanup::DeleteDirOnDrop,
+        modify_guard::{self, DeletionGuard, FileTransferGuard},
+    },
 };
 
 use super::json_store::JsonStore;
@@ -71,7 +76,7 @@ impl StoreProvider {
         self.data_dir.clone()
     }
 
-    pub async fn migrate_data_dir(&mut self, new_path: &PathBuf) -> Result<(), String> {
+    pub async fn migrate_data_dir(&mut self, new_path: &PathBuf) -> Result<MigrateResult, String> {
         if !new_path.is_dir() {
             return Err("New path is not a directory".into());
         }
@@ -81,7 +86,7 @@ impl StoreProvider {
                 .map_err(|e| format!("Failed to create directory: {:?}", e))?;
         }
 
-        let old_path = &self.data_dir;
+        let old_path = self.data_dir.clone();
 
         let old_metadata_path = old_path.join("metadata");
         let new_metadata_path = new_path.join("metadata");
@@ -91,6 +96,8 @@ impl StoreProvider {
 
         let old_images_path = old_path.join("images");
         let new_images_path = new_path.join("images");
+
+        let mut dir_cleanups = Vec::new();
 
         if old_metadata_path.exists() {
             if new_metadata_path.exists() {
@@ -104,16 +111,18 @@ impl StoreProvider {
                 }
             }
 
+            dir_cleanups.push(DeleteDirOnDrop::new(new_metadata_path.clone()));
+
             if let Err(e) = modify_guard::copy_dir(
                 &old_metadata_path,
                 &new_metadata_path,
-                true,
+                false,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
                 |_, _| {},
             )
             .await
             {
-                let msg = format!("Failed to copy and delete metadata dir: {:?}", e);
+                let msg = format!("Failed to copy metadata dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
             }
@@ -128,16 +137,18 @@ impl StoreProvider {
                 }
             }
 
+            dir_cleanups.push(DeleteDirOnDrop::new(new_data_path.clone()));
+
             if let Err(e) = modify_guard::copy_dir(
                 &old_data_path,
                 &new_data_path,
-                true,
+                false,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
                 |_, _| {},
             )
             .await
             {
-                let msg = format!("Failed to copy and delete data dir: {:?}", e);
+                let msg = format!("Failed to copy data dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
             }
@@ -152,16 +163,18 @@ impl StoreProvider {
                 }
             }
 
+            dir_cleanups.push(DeleteDirOnDrop::new(new_images_path.clone()));
+
             if let Err(e) = modify_guard::copy_dir(
                 &old_images_path,
                 &new_images_path,
-                true,
+                false,
                 FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
                 |_, _| {},
             )
             .await
             {
-                let msg = format!("Failed to copy and delete images dir: {:?}", e);
+                let msg = format!("Failed to copy images dir: {:?}", e);
                 log::error!("{}", &msg);
                 return Err(msg);
             }
@@ -176,11 +189,41 @@ impl StoreProvider {
         let result = self.load_all_assets_from_files().await;
 
         if let Err(e) = result {
-            return Err(format!("test: {}", e));
+            return Err(format!("Failed to load assets: {:?}", e));
         }
 
-        Ok(())
+        dir_cleanups
+            .iter_mut()
+            .for_each(|cleanup| cleanup.mark_as_completed());
+
+        for old in vec![old_metadata_path, old_data_path, old_images_path] {
+            let mut successfully_deleted = true;
+
+            if old.exists() {
+                log::info!("Removing old dir: {}", old.display());
+                let result =
+                    modify_guard::delete_recursive(&old, DeletionGuard::new(old_path.clone()))
+                        .await;
+
+                if let Err(e) = result {
+                    log::warn!("Failed to remove old data dir: {:?}", e);
+                    successfully_deleted = false;
+                }
+            }
+
+            if !successfully_deleted {
+                return Ok(MigrateResult::MigratedButFailedToDeleteOldDir);
+            }
+        }
+
+        Ok(MigrateResult::Migrated)
     }
+}
+
+#[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq, specta::Type)]
+pub enum MigrateResult {
+    Migrated,
+    MigratedButFailedToDeleteOldDir,
 }
 
 async fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {

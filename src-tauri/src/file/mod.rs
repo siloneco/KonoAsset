@@ -1,3 +1,4 @@
+pub mod cleanup;
 pub mod modify_guard;
 
 mod open;

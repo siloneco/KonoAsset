@@ -11,6 +11,7 @@ use crate::{
             AvatarImportRequest, AvatarWearableImportRequest, WorldObjectImportRequest,
         },
     },
+    file::cleanup::DeleteDirOnDrop,
 };
 
 use super::fileutils::{self, execute_image_fixation};
@@ -309,27 +310,4 @@ async fn fix_image(images_path: &PathBuf, temp_path_str: &str) -> Result<String,
 
     log::warn!("Image does not need to be fixed: {}", temp_path_str);
     Ok(temp_path_str.to_string())
-}
-
-struct DeleteDirOnDrop {
-    path: Option<PathBuf>,
-}
-
-impl DeleteDirOnDrop {
-    fn new(path: PathBuf) -> Self {
-        Self { path: Some(path) }
-    }
-
-    fn mark_as_completed(&mut self) {
-        self.path.take();
-    }
-}
-
-impl Drop for DeleteDirOnDrop {
-    fn drop(&mut self) {
-        if let Some(path) = self.path.take() {
-            log::debug!("Deleting directory: {}", path.display());
-            std::fs::remove_dir_all(path).unwrap();
-        }
-    }
 }

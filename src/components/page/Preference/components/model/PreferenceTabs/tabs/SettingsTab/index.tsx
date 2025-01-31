@@ -38,7 +38,7 @@ const SettingsTab: FC<Props> = ({ id }) => {
             // 上の migrateDataDir コマンドで変更が保存されるため保存はしない
             await setPreference({ ...preference, dataDirPath: dataDir }, false)
 
-            return { status: 'ok', data: null }
+            return { status: 'ok', data: result.data }
           }}
         />
         <UseUnitypackageSelectorToggle

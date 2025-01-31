@@ -4,7 +4,10 @@ use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
 use crate::{
-    data_store::{find::find_unitypackage, provider::StoreProvider},
+    data_store::{
+        find::find_unitypackage,
+        provider::{MigrateResult, StoreProvider},
+    },
     definitions::entities::FileInfo,
     preference::store::PreferenceStore,
 };
@@ -49,7 +52,7 @@ pub async fn migrate_data_dir(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     new_path: PathBuf,
     migrate_data: bool,
-) -> Result<(), String> {
+) -> Result<Option<MigrateResult>, String> {
     log::info!(
         "Data directory migration triggered (dest: {})",
         new_path.display()
@@ -67,17 +70,25 @@ pub async fn migrate_data_dir(
             .map_err(|e| format!("Failed to create directory: {}", e))?;
     }
 
-    if migrate_data {
+    let migrate_result = if migrate_data {
         log::info!("Migrating data to new path: {}", new_path.display());
         let mut basic_store = basic_store.lock().await;
-        basic_store.migrate_data_dir(&new_path).await.map_err(|e| {
+        let result = basic_store.migrate_data_dir(&new_path).await.map_err(|e| {
             let msg = format!("Failed to migrate data: {:?}", e);
             log::error!("{}", msg);
             msg
         })?;
 
-        log::info!("Data migration completed");
-    }
+        if result == MigrateResult::Migrated {
+            log::info!("Data migration completed");
+        } else if result == MigrateResult::MigratedButFailedToDeleteOldDir {
+            log::warn!("Data migration completed, but failed to delete old directory");
+        }
+
+        Some(result)
+    } else {
+        None
+    };
 
     let mut preference = preference.lock().await;
     let mut new_preference = preference.clone();
@@ -91,7 +102,7 @@ pub async fn migrate_data_dir(
         new_path.display()
     );
 
-    Ok(())
+    Ok(migrate_result)
 }
 
 #[tauri::command]

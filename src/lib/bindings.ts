@@ -249,7 +249,7 @@ async listUnitypackageFiles(id: string) : Promise<Result<Partial<{ [key in strin
     else return { status: "error", error: e  as any };
 }
 },
-async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<null, string>> {
+async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<MigrateResult | null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("migrate_data_dir", { newPath, migrateData }) };
 } catch (e) {
@@ -343,6 +343,7 @@ export type LoadResult = { success: boolean; preferenceLoaded: boolean; message:
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
+export type MigrateResult = "Migrated" | "MigratedButFailedToDeleteOldDir"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
