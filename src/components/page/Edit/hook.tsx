@@ -23,6 +23,8 @@ type ReturnProps = {
   form: AssetFormType
   submit: () => Promise<void>
   submitting: boolean
+  imageUrls: string[]
+  setImageUrls: (urls: string[]) => void
   supportedAvatarCandidates: Option[]
   avatarWearableCategoryCandidates: Option[]
   worldObjectCategoryCandidates: Option[]
@@ -31,6 +33,7 @@ type ReturnProps = {
 export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
   const { toast } = useToast()
   const [submitting, setSubmitting] = useState(false)
+  const [imageUrls, setImageUrls] = useState<string[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
@@ -115,6 +118,8 @@ export const useEditPageHook = ({ id, getAssetResult }: Props): ReturnProps => {
     form,
     submit,
     submitting,
+    imageUrls,
+    setImageUrls,
     supportedAvatarCandidates,
     avatarWearableCategoryCandidates,
     worldObjectCategoryCandidates,

@@ -110,17 +110,15 @@ impl<
                 let new_image = &asset.get_description().image_filename;
 
                 if let Some(old_image_filename) = old_image {
-                    let old_image_path = images_dir.join(old_image_filename);
-                    delete_asset_image(&self.data_dir, &old_image_path).await?;
+                    delete_asset_image(&self.data_dir, old_image_filename).await?;
                 }
 
                 if let Some(new_image_filename) = new_image {
                     let temp_new_image = images_dir.join(new_image_filename);
                     let new_image_path = execute_image_fixation(&temp_new_image).await?;
 
-                    if new_image_path.is_some() {
-                        asset.get_description_as_mut().image_filename =
-                            Some(new_image_filename.to_string());
+                    if let Some(new_image_filename) = new_image_path {
+                        asset.get_description_as_mut().image_filename = Some(new_image_filename);
                     }
                 }
             }

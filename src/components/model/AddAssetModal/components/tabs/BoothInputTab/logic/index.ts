@@ -4,6 +4,7 @@ import { AssetFormType } from '@/lib/form'
 type Props = {
   boothItemId: number
   form: AssetFormType
+  setImageUrls: (imageUrls: string[]) => void
 }
 
 type ReturnProps =
@@ -17,11 +18,12 @@ type ReturnProps =
       duplicatedItems: AssetSummary[]
     }
 
-export const getAndSetAssetDescriptionFromBoothToForm = async ({
+export const getAndSetAssetInfoFromBoothToForm = async ({
   boothItemId,
   form,
+  setImageUrls,
 }: Props): Promise<Result<ReturnProps, string>> => {
-  const result = await commands.getAssetDescriptionFromBooth(boothItemId)
+  const result = await commands.getAssetInfoFromBooth(boothItemId)
 
   if (result.status === 'error') {
     return result
@@ -29,14 +31,22 @@ export const getAndSetAssetDescriptionFromBoothToForm = async ({
 
   const data = result.data
 
-  const description = data.description
-
-  form.setValue('name', description.name)
-  form.setValue('creator', description.creator)
-  form.setValue('imageFilename', description.imageFilename)
-  form.setValue('publishedAt', description.publishedAt)
+  form.setValue('name', data.name)
+  form.setValue('creator', data.creator)
+  form.setValue('publishedAt', data.publishedAt)
   form.setValue('boothItemId', boothItemId)
   form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')
+
+  setImageUrls(data.imageUrls)
+  if (data.imageUrls.length > 0) {
+    const imageResolveResult = await commands.resolvePximgFilename(
+      data.imageUrls[0],
+    )
+
+    if (imageResolveResult.status === 'ok') {
+      form.setValue('imageFilename', imageResolveResult.data)
+    }
+  }
 
   const duplicationCheckResult =
     await commands.getAssetDisplaysByBoothId(boothItemId)

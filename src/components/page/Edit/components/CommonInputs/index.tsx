@@ -16,10 +16,12 @@ import { commands } from '@/lib/bindings'
 type Props = {
   form: AssetFormType
   disabled: boolean
+  imageUrls: string[]
 }
 
-const CommonInputs = ({ form, disabled }: Props) => {
+const CommonInputs = ({ form, disabled, imageUrls }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+  const [imageUrlIndex, setImageUrlIndex] = useState(0)
 
   const fetchTagCandidates = async () => {
     const result = await commands.getAllAssetTags()
@@ -36,6 +38,10 @@ const CommonInputs = ({ form, disabled }: Props) => {
     fetchTagCandidates()
   }, [])
 
+  useEffect(() => {
+    setImageUrlIndex(0)
+  }, [imageUrls])
+
   const assetType = form.watch('assetType')
   const imageFilename = form.watch('imageFilename')
   const tags = form.watch('tags')
@@ -48,6 +54,9 @@ const CommonInputs = ({ form, disabled }: Props) => {
           filename={imageFilename ?? undefined}
           selectable
           setFilename={(filename) => form.setValue('imageFilename', filename)}
+          imageUrls={imageUrls}
+          urlImageIndex={imageUrlIndex}
+          setUrlImageIndex={setImageUrlIndex}
         />
       </div>
       <div className="w-3/5 space-y-2">

@@ -1,13 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::entities::{AssetDescription, AssetType, Avatar, AvatarWearable, WorldObject};
-
-#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct BoothInfo {
-    pub description: AssetDescription,
-    pub estimated_asset_type: Option<AssetType>,
-}
+use super::entities::{AssetType, Avatar, AvatarWearable, WorldObject};
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]

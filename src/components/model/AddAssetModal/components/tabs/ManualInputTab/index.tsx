@@ -28,9 +28,15 @@ type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
   setImportTaskId: (taskId: string) => void
+  imageUrls: string[]
 }
 
-const ManualInputTab = ({ form, setTab, setImportTaskId }: Props) => {
+const ManualInputTab = ({
+  form,
+  setTab,
+  setImportTaskId,
+  imageUrls,
+}: Props) => {
   const {
     backToAssetTypeSelectorTab,
     submit,
@@ -38,6 +44,8 @@ const ManualInputTab = ({ form, setTab, setImportTaskId }: Props) => {
     assetType,
     imageFilename,
     setImageFilename,
+    imageUrlIndex,
+    setImageUrlIndex,
     deleteSourceChecked,
     setDeleteSourceChecked,
   } = useManualInputTabHooks({ form, setTab, setImportTaskId })
@@ -63,6 +71,9 @@ const ManualInputTab = ({ form, setTab, setImportTaskId }: Props) => {
                   filename={imageFilename ?? undefined}
                   setFilename={setImageFilename}
                   selectable
+                  imageUrls={imageUrls}
+                  urlImageIndex={imageUrlIndex}
+                  setUrlImageIndex={setImageUrlIndex}
                 />
               </div>
               <div className="w-2/3 space-y-6">

@@ -2,47 +2,47 @@ use std::sync::Arc;
 
 use tauri::{async_runtime::Mutex, State};
 
-use crate::{
-    booth::fetcher::BoothFetcher, data_store::provider::StoreProvider,
-    definitions::results::BoothInfo,
-};
+use crate::booth::{fetcher::BoothFetcher, image_resolver::PximgResolver, BoothAssetInfo};
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_asset_description_from_booth(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+pub async fn get_asset_info_from_booth(
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
     booth_item_id: u64,
-) -> Result<BoothInfo, String> {
+) -> Result<BoothAssetInfo, String> {
     log::info!(
         "Fetching asset description from Booth (Booth Item ID = {:?})",
         booth_item_id
     );
 
-    let mut images_dir = basic_store.lock().await.data_dir();
-    images_dir.push("images");
-
     let result = {
         let mut fetcher = booth_fetcher.lock().await;
-        fetcher.fetch(booth_item_id, images_dir).await
+        fetcher.fetch(booth_item_id).await
     };
 
-    if let Ok((asset_description, estimated_asset_type)) = &result {
+    if let Ok(info) = &result {
         log::info!(
             "Successfully fetched asset description from Booth (Booth Item ID = {:?})",
             booth_item_id
         );
-        log::debug!("Fetched asset description: {:?}", asset_description);
-        log::debug!("Estimated asset type: {:?}", estimated_asset_type);
+        log::debug!("Fetched info: {:?}", info);
     } else {
         log::error!("Failed to fetch asset description from Booth: {:?}", result);
     }
 
-    match result {
-        Ok((asset_description, estimated_asset_type)) => Ok(BoothInfo {
-            description: asset_description,
-            estimated_asset_type,
-        }),
-        Err(e) => Err(e.to_string()),
-    }
+    result.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn resolve_pximg_filename(
+    pximg_resolver: State<'_, Arc<Mutex<PximgResolver>>>,
+    url: String,
+) -> Result<String, String> {
+    let result = {
+        let mut resolver = pximg_resolver.lock().await;
+        resolver.resolve(&url).await
+    };
+
+    result.map_err(|e| e.to_string())
 }

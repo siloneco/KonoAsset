@@ -1,12 +1,12 @@
-use std::path::PathBuf;
-
 use chrono::DateTime;
 use serde::Deserialize;
-use uuid::Uuid;
 
-use crate::definitions::entities::{AssetDescription, AssetType};
+use crate::definitions::entities::AssetType;
 
-use super::{cache::BoothCache, common::get_reqwest_client, image_saver::save_image_from_url};
+use super::{
+    cache::BoothCache,
+    common::{get_reqwest_client, BoothAssetInfo},
+};
 
 pub struct BoothFetcher {
     cache: BoothCache,
@@ -19,13 +19,8 @@ impl BoothFetcher {
         }
     }
 
-    pub async fn fetch(
-        &mut self,
-        id: u64,
-        images_dir: PathBuf,
-    ) -> Result<(AssetDescription, Option<AssetType>), Box<dyn std::error::Error>> {
-        let cache_result = self.cache.get(id);
-        if let Some(cached_result) = cache_result {
+    pub async fn fetch(&mut self, id: u64) -> Result<BoothAssetInfo, Box<dyn std::error::Error>> {
+        if let Some(cached_result) = (&self.cache).get(id) {
             return Ok(cached_result);
         }
 
@@ -42,23 +37,8 @@ impl BoothFetcher {
 
         let name = response.name;
         let creator = response.shop.name;
-        let image_url = if let Some(item) = response.images.first() {
-            Some(item.original.clone())
-        } else {
-            None
-        };
+        let image_urls: Vec<String> = response.images.into_iter().map(|i| i.original).collect();
         let published_at = DateTime::parse_from_rfc3339(&response.published_at)?.timestamp_millis();
-
-        let mut path = images_dir;
-        let file_name = format!("temp_{}.jpg", Uuid::new_v4().to_string());
-        path.push(&file_name);
-
-        let image_filename = if let Some(image_url) = image_url {
-            save_image_from_url(&image_url, &path).await?;
-            Some(file_name)
-        } else {
-            None
-        };
 
         let estimated_asset_type = match response.category.id {
             208 //   3Dキャラクター
@@ -76,16 +56,12 @@ impl BoothFetcher {
             _ => None,
         };
 
-        let result = (
-            AssetDescription::create(
-                name,
-                creator,
-                image_filename,
-                vec![],
-                Some(id),
-                0,
-                Some(published_at),
-            ),
+        let result = BoothAssetInfo::new(
+            id,
+            name,
+            creator,
+            image_urls,
+            published_at,
             estimated_asset_type,
         );
 

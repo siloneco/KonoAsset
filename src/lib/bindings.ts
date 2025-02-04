@@ -137,9 +137,17 @@ async getWorldObjectCategories() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAssetDescriptionFromBooth(boothItemId: number) : Promise<Result<BoothInfo, string>> {
+async getAssetInfoFromBooth(boothItemId: number) : Promise<Result<BoothAssetInfo, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_asset_description_from_booth", { boothItemId }) };
+    return { status: "ok", data: await TAURI_INVOKE("get_asset_info_from_booth", { boothItemId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async resolvePximgFilename(url: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("resolve_pximg_filename", { url }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -333,7 +341,7 @@ export type AssetSummary = { id: string; assetType: AssetType; name: string; cre
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
-export type BoothInfo = { description: AssetDescription; estimatedAssetType: AssetType | null }
+export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }

@@ -2,11 +2,11 @@ import { describe, expect, it, Mock, vi } from 'vitest'
 import { useBoothInputTab } from '.'
 import { act, renderHook } from '@testing-library/react'
 import { useToast } from '@/hooks/use-toast'
-import { getAndSetAssetDescriptionFromBoothToForm } from '../logic'
+import { getAndSetAssetInfoFromBoothToForm } from '../logic'
 
 vi.mock('../logic', () => {
   return {
-    getAndSetAssetDescriptionFromBoothToForm: vi
+    getAndSetAssetInfoFromBoothToForm: vi
       .fn()
       .mockResolvedValueOnce({
         status: 'ok',
@@ -56,7 +56,7 @@ describe('BoothInputTab Hook', () => {
 
     // Nothing happens before the input
     await result.current.getAssetDescriptionFromBooth()
-    expect(getAndSetAssetDescriptionFromBoothToForm).not.toHaveBeenCalled()
+    expect(getAndSetAssetInfoFromBoothToForm).not.toHaveBeenCalled()
 
     // Success Case
     act(() => {

@@ -1,6 +1,6 @@
 use std::{borrow::BorrowMut, sync::Arc};
 
-use booth::fetcher::BoothFetcher;
+use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use definitions::entities::{ImportProgress, LoadResult};
@@ -64,7 +64,6 @@ pub fn run() {
         .manage(Arc::new(Mutex::new(TaskContainer::new())))
         .setup(move |app| {
             logging::initialize_logger(&app.handle());
-
             builder.mount_events(app);
 
             if let Some(window) = app.get_webview_window("main") {
@@ -117,6 +116,10 @@ pub fn run() {
             let data_dir = pref_store.get_data_dir().clone();
 
             app.manage(Mutex::new(pref_store));
+
+            app.manage(Arc::new(Mutex::new(PximgResolver::new(
+                data_dir.join("images"),
+            ))));
 
             let result = StoreProvider::create(data_dir.clone());
 

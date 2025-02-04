@@ -76,28 +76,6 @@ pub struct AssetDescription {
     pub published_at: Option<i64>,
 }
 
-impl AssetDescription {
-    pub fn create(
-        name: String,
-        creator: String,
-        image_filename: Option<String>,
-        tags: Vec<String>,
-        booth_item_id: Option<u64>,
-        created_at: i64,
-        published_at: Option<i64>,
-    ) -> Self {
-        Self {
-            name,
-            creator,
-            image_filename,
-            tags,
-            booth_item_id,
-            created_at,
-            published_at,
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
 pub struct Avatar {
     pub id: Uuid,

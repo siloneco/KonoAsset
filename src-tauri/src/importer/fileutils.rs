@@ -5,7 +5,7 @@ use crate::{
     zip::extractor::extract_zip,
 };
 
-pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, String> {
+pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<String>, String> {
     if !src.exists() {
         return Err(format!("File not found: {}", src.display()));
     }
@@ -38,13 +38,13 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<PathBuf>, St
     let new_path = src.with_file_name(new_filename);
 
     let result =
-        modify_guard::move_file_or_dir(src, &new_path, FileTransferGuard::new(None, None)).await;
+        modify_guard::copy_file(src, &new_path, false, FileTransferGuard::new(None, None)).await;
 
     if let Err(e) = result {
         return Err(e.to_string());
     }
 
-    return Ok(Some(new_path));
+    return Ok(Some(new_filename.to_string()));
 }
 
 pub async fn import_asset(

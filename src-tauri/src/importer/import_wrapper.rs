@@ -198,20 +198,8 @@ async fn bind_temp_image(images_path: &PathBuf, temp_path_str: &str) -> Result<S
         .await
         .map_err(|e| format!("Failed to import asset: {}", e))?;
 
-    if let Some(new_image_path) = new_image_path {
-        let file_name = new_image_path.file_name();
-
-        if file_name.is_none() {
-            return Err("Failed to import asset: Image file name is invalid".to_string());
-        }
-
-        let file_name = file_name.unwrap().to_str();
-
-        if file_name.is_none() {
-            return Err("Failed to import asset: Image file name is invalid".to_string());
-        }
-
-        return Ok(file_name.unwrap().to_string());
+    if let Some(new_image_filename) = new_image_path {
+        return Ok(new_image_filename);
     }
 
     log::warn!("Image does not need to be fixed: {}", temp_path_str);

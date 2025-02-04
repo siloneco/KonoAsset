@@ -64,20 +64,22 @@ async fn delete_asset_from_store<
     if image.is_none() {
         return Ok(true);
     }
-    let image = image.as_ref().unwrap();
-
-    let image_path = app_dir.join("images").join(image);
+    let image_filename = image.as_ref().unwrap();
 
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, &image_path).await
+    delete_asset_image(app_dir, image_filename).await
 }
 
-pub async fn delete_asset_image(app_dir: &PathBuf, image_path: &PathBuf) -> Result<bool, String> {
+pub async fn delete_asset_image(app_dir: &PathBuf, filename: &str) -> Result<bool, String> {
+    let images_dir_path = app_dir.join("images");
+    let image_path = images_dir_path.join(filename);
+
+    log::info!("Image file path: {}", image_path.display());
+
     if !image_path.exists() {
-        return Ok(false);
+        return Ok(true);
     }
 
-    let images_dir_path = app_dir.join("images");
     let image_delete_result =
         modify_guard::delete_single_file(&image_path, DeletionGuard::new(images_dir_path.clone()))
             .await;

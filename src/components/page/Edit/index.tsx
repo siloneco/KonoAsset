@@ -21,6 +21,8 @@ const EditPage = ({ id, getAssetResult }: Props) => {
     form,
     submit,
     submitting,
+    imageUrls,
+    setImageUrls,
     supportedAvatarCandidates,
     avatarWearableCategoryCandidates,
     worldObjectCategoryCandidates,
@@ -39,8 +41,16 @@ const EditPage = ({ id, getAssetResult }: Props) => {
                 className="space-y-4"
                 autoComplete="off"
               >
-                <BoothInputs form={form} disabled={submitting} />
-                <CommonInputs form={form} disabled={submitting} />
+                <BoothInputs
+                  form={form}
+                  disabled={submitting}
+                  setImageUrls={setImageUrls}
+                />
+                <CommonInputs
+                  form={form}
+                  disabled={submitting}
+                  imageUrls={imageUrls}
+                />
                 {assetType === 'AvatarWearable' && (
                   <AvatarWearableInputs
                     form={form}

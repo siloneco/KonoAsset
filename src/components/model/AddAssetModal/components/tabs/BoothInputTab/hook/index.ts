@@ -4,11 +4,12 @@ import { AddAssetModalContext } from '../../../..'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
-import { getAndSetAssetDescriptionFromBoothToForm } from '../logic'
+import { getAndSetAssetInfoFromBoothToForm } from '../logic'
 
 type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
+  setImageUrls: (imageUrls: string[]) => void
 }
 
 type ReturnProps = {
@@ -22,7 +23,11 @@ type ReturnProps = {
   backToPreviousTab: () => void
 }
 
-export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
+export const useBoothInputTab = ({
+  form,
+  setTab,
+  setImageUrls,
+}: Props): ReturnProps => {
   const [boothUrlInput, setBoothUrlInput] = useState('')
   const [boothItemId, setBoothItemId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
@@ -52,9 +57,10 @@ export const useBoothInputTab = ({ form, setTab }: Props): ReturnProps => {
     try {
       setFetching(true)
 
-      const result = await getAndSetAssetDescriptionFromBoothToForm({
+      const result = await getAndSetAssetInfoFromBoothToForm({
         boothItemId: boothItemId,
         form: form,
+        setImageUrls,
       })
 
       if (result.status === 'ok') {
