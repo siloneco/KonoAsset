@@ -13,11 +13,14 @@ import {
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Info, Loader2 } from 'lucide-react'
-import { Result } from '@/lib/bindings'
+import { MigrateResult, Result } from '@/lib/bindings'
 
 type Props = {
   dataDir: string
-  setDataDir: (dataDir: string, save: boolean) => Promise<Result<null, string>>
+  setDataDir: (
+    dataDir: string,
+    save: boolean,
+  ) => Promise<Result<MigrateResult | null, string>>
 }
 
 const DataDirSelector: FC<Props> = ({ dataDir, setDataDir }) => {

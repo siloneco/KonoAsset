@@ -30,7 +30,7 @@ async getAssetDisplaysByBoothId(boothItemId: number) : Promise<Result<AssetSumma
     else return { status: "error", error: e  as any };
 }
 },
-async requestAvatarImport(request: AvatarImportRequest) : Promise<Result<string, string>> {
+async requestAvatarImport(request: AssetImportRequest<PreAvatar>) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_avatar_import", { request }) };
 } catch (e) {
@@ -38,7 +38,7 @@ async requestAvatarImport(request: AvatarImportRequest) : Promise<Result<string,
     else return { status: "error", error: e  as any };
 }
 },
-async requestAvatarWearableImport(request: AvatarWearableImportRequest) : Promise<Result<string, string>> {
+async requestAvatarWearableImport(request: AssetImportRequest<PreAvatarWearable>) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_avatar_wearable_import", { request }) };
 } catch (e) {
@@ -46,7 +46,7 @@ async requestAvatarWearableImport(request: AvatarWearableImportRequest) : Promis
     else return { status: "error", error: e  as any };
 }
 },
-async requestWorldObjectImport(request: WorldObjectImportRequest) : Promise<Result<string, string>> {
+async requestWorldObjectImport(request: AssetImportRequest<PreWorldObject>) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_world_object_import", { request }) };
 } catch (e) {
@@ -137,9 +137,17 @@ async getWorldObjectCategories() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAssetDescriptionFromBooth(boothItemId: number) : Promise<Result<BoothInfo, string>> {
+async getAssetInfoFromBooth(boothItemId: number) : Promise<Result<BoothAssetInfo, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_asset_description_from_booth", { boothItemId }) };
+    return { status: "ok", data: await TAURI_INVOKE("get_asset_info_from_booth", { boothItemId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async resolvePximgFilename(url: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("resolve_pximg_filename", { url }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -249,7 +257,7 @@ async listUnitypackageFiles(id: string) : Promise<Result<Partial<{ [key in strin
     else return { status: "error", error: e  as any };
 }
 },
-async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<null, string>> {
+async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<MigrateResult | null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("migrate_data_dir", { newPath, migrateData }) };
 } catch (e) {
@@ -328,13 +336,12 @@ taskStatusChanged: "task-status-changed"
 /** user-defined types **/
 
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; boothItemId: number | null; createdAt: number; publishedAt: number | null }
+export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
-export type AvatarImportRequest = { preAsset: PreAvatar; absolutePaths: string[]; deleteSource: boolean }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
-export type AvatarWearableImportRequest = { preAsset: PreAvatarWearable; absolutePaths: string[]; deleteSource: boolean }
-export type BoothInfo = { description: AssetDescription; estimatedAssetType: AssetType | null }
+export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
@@ -343,6 +350,7 @@ export type LoadResult = { success: boolean; preferenceLoaded: boolean; message:
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
+export type MigrateResult = "Migrated" | "MigratedButFailedToDeleteOldDir"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
@@ -353,7 +361,6 @@ export type TaskStatus = "Running" | "Completed" | "Cancelled"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
-export type WorldObjectImportRequest = { preAsset: PreWorldObject; absolutePaths: string[]; deleteSource: boolean }
 
 /** tauri-specta globals **/
 

@@ -15,9 +15,10 @@ import { isBoothURL } from '@/lib/utils'
 type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
+  setImageUrls: (imageUrls: string[]) => void
 }
 
-const BoothInputTab = ({ form, setTab }: Props) => {
+const BoothInputTab = ({ form, setTab, setImageUrls }: Props) => {
   const {
     representativeImportFilename,
     importFileCount,
@@ -30,6 +31,7 @@ const BoothInputTab = ({ form, setTab }: Props) => {
   } = useBoothInputTab({
     form,
     setTab,
+    setImageUrls,
   })
 
   return (

@@ -41,6 +41,7 @@ type Props = {
 const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   const [tab, setTab] = useState('selector')
   const [assetPaths, setAssetPaths] = useState<string[]>([])
+  const [imageUrls, setImageUrls] = useState<string[]>([])
   const [duplicateWarningItems, setDuplicateWarningItems] = useState<
     AssetSummary[]
   >([])
@@ -105,6 +106,7 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
     })
 
     setAssetPaths([])
+    setImageUrls([])
   }
 
   getCurrentWindow().onDragDropEvent((event) => {
@@ -190,7 +192,11 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
               <SelectorTab setTab={setTab} />
             </TabsContent>
             <TabsContent value="booth-input">
-              <BoothInputTab form={form} setTab={setTab} />
+              <BoothInputTab
+                form={form}
+                setTab={setTab}
+                setImageUrls={setImageUrls}
+              />
             </TabsContent>
             <TabsContent value="duplicate-warning">
               <DuplicateWarningTab setTab={setTab} />
@@ -203,6 +209,7 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
                 form={form}
                 setTab={setTab}
                 setImportTaskId={setImportTaskId}
+                imageUrls={imageUrls}
               />
             </TabsContent>
             <TabsContent value="progress">

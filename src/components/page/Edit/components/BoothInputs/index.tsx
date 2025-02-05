@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
-import { getAssetDescriptionFromBooth } from './logic'
+import { getAssetInfoFromBooth } from './logic'
 import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
 import { AssetFormType } from '@/lib/form'
 import { Loader2 } from 'lucide-react'
@@ -16,9 +16,10 @@ import { Loader2 } from 'lucide-react'
 type Props = {
   form: AssetFormType
   disabled: boolean
+  setImageUrls: (urls: string[]) => void
 }
 
-const BoothInputs = ({ form, disabled }: Props) => {
+const BoothInputs = ({ form, disabled, setImageUrls }: Props) => {
   const boothIdValue = form.watch('boothItemId')
 
   const defaultBoothUrlInputValue =
@@ -34,9 +35,10 @@ const BoothInputs = ({ form, disabled }: Props) => {
         return
       }
 
-      await getAssetDescriptionFromBooth({
+      await getAssetInfoFromBooth({
         id: boothIdValue,
         form,
+        setImageUrls,
       })
     } finally {
       setFetching(false)

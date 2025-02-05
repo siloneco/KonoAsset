@@ -1,14 +1,12 @@
 import {
   AssetDescription,
+  AssetImportRequest,
   AssetType,
-  AvatarImportRequest,
-  AvatarWearableImportRequest,
   commands,
   PreAvatar,
   PreAvatarWearable,
   PreWorldObject,
   Result,
-  WorldObjectImportRequest,
 } from '@/lib/bindings'
 
 type CreatePreAssetProps = {
@@ -61,7 +59,7 @@ export const sendAssetImportRequest = async (
 ): Promise<Result<string, string>> => {
   console.log('test')
   if (assetType === 'Avatar') {
-    const request: AvatarImportRequest = {
+    const request: AssetImportRequest<PreAvatar> = {
       preAsset: preAsset as PreAvatar,
       absolutePaths: assetPaths,
       deleteSource,
@@ -69,7 +67,7 @@ export const sendAssetImportRequest = async (
 
     return await commands.requestAvatarImport(request)
   } else if (assetType === 'AvatarWearable') {
-    const request: AvatarWearableImportRequest = {
+    const request: AssetImportRequest<PreAvatarWearable> = {
       preAsset: preAsset as PreAvatarWearable,
       absolutePaths: assetPaths,
       deleteSource,
@@ -77,7 +75,7 @@ export const sendAssetImportRequest = async (
 
     return await commands.requestAvatarWearableImport(request)
   } else if (assetType === 'WorldObject') {
-    const request: WorldObjectImportRequest = {
+    const request: AssetImportRequest<PreWorldObject> = {
       preAsset: preAsset as PreWorldObject,
       absolutePaths: assetPaths,
       deleteSource,

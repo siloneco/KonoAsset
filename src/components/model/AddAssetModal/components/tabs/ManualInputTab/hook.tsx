@@ -19,6 +19,8 @@ type ReturnProps = {
   assetType: AssetType
   imageFilename: string | null
   setImageFilename: (path: string | null) => void
+  imageUrlIndex: number
+  setImageUrlIndex: (index: number) => void
   deleteSourceChecked: boolean
   setDeleteSourceChecked: (checked: boolean) => void
 }
@@ -29,6 +31,7 @@ export const useManualInputTabHooks = ({
   setImportTaskId,
 }: Props): ReturnProps => {
   const [submitting, setSubmitting] = useState(false)
+  const [imageUrlIndex, setImageUrlIndex] = useState(0)
   const { toast } = useToast()
   const { assetPaths } = useContext(AddAssetModalContext)
   const { preference, setPreference } = useContext(PreferenceContext)
@@ -101,6 +104,8 @@ export const useManualInputTabHooks = ({
     imageFilename: form.watch('imageFilename'),
     setImageFilename: (path: string | null) =>
       form.setValue('imageFilename', path),
+    imageUrlIndex,
+    setImageUrlIndex,
     deleteSourceChecked: preference.deleteOnImport,
     setDeleteSourceChecked: (checked: boolean) =>
       setPreference({ ...preference, deleteOnImport: checked }, true),
