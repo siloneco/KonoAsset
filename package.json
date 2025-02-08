@@ -57,7 +57,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.19.0",
+    "@eslint/js": "9.20.0",
     "@tanstack/router-devtools": "1.99.13",
     "@tanstack/router-plugin": "1.99.14",
     "@tauri-apps/cli": "2.2.7",
@@ -69,7 +69,7 @@
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-v8": "3.0.5",
     "autoprefixer": "10.4.20",
-    "eslint": "9.19.0",
+    "eslint": "9.20.0",
     "eslint-plugin-react": "7.37.4",
     "eslint-plugin-unused-imports": "4.1.4",
     "globals": "15.14.0",
