@@ -44,11 +44,14 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         file::open::open_asset_data_dir,
         file::open::open_managed_dir,
         file::open::open_logs_dir,
-        file::import::copy_image_file_to_images, // 画像新規作成
-        file::common::get_directory_path,        // 管理ディレクトリのパス取得
-        file::common::list_unitypackage_files,   // unitypackage探索
-        file::common::migrate_data_dir,          // データフォルダ移行
-        file::common::get_image_absolute_path,   // 画像の絶対パス取得
+        file::import::import_file_entries_to_asset, // 追加のファイル等をインポート
+        file::import::copy_image_file_to_images,    // 画像新規作成
+        file::list::list_asset_dir_entry,           // アセットのディレクトリの内容を取得
+        file::delete::delete_entry_from_asset_data_dir, // アセットデータディレクトリからエントリを削除
+        file::common::get_directory_path,               // 管理ディレクトリのパス取得
+        file::common::list_unitypackage_files,          // unitypackage探索
+        file::common::migrate_data_dir,                 // データフォルダ移行
+        file::common::get_image_absolute_path,          // 画像の絶対パス取得
         // 設定関連
         preference::common::get_preferences,
         preference::common::set_preferences,

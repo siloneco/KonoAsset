@@ -6,7 +6,7 @@ import { useContext } from 'react'
 type Props = {
   id: string
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
-  openDialog: () => void
+  openSelectUnitypackageDialog: () => void
 }
 
 type ReturnProps = {
@@ -18,7 +18,7 @@ type ReturnProps = {
 export const useAssetCardOpenButton = ({
   id,
   setUnitypackageFiles,
-  openDialog,
+  openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
@@ -66,7 +66,7 @@ export const useAssetCardOpenButton = ({
     }
 
     setUnitypackageFiles(impartialData)
-    openDialog()
+    openSelectUnitypackageDialog()
   }
 
   const onMainButtonClick = async () => {

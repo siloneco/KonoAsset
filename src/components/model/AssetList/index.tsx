@@ -8,6 +8,7 @@ import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
 
 import SelectUnitypackageDialog from './components/SelectUnitypackageDialog'
 import AssetListBackground from './components/AssetListBackground'
+import DataManagementDialog from './components/DataManagementDialog'
 
 type Props = {
   className?: string
@@ -27,11 +28,18 @@ const AssetList = ({
   setFilterEnforced,
   openAddAssetDialog,
 }: Props) => {
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectUnitypackageDialogOpen, setSelectUnitypackageDialogOpen] =
+    useState(false)
   const [unitypackages, setUnityPackages] = useState<{
     [x: string]: FileInfo[]
   }>({})
-  const [dialogAssetId, setDialogAssetId] = useState<string | null>(null)
+  const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
+    useState<string | null>(null)
+
+  const [dataManagementDialogOpen, setDataManagementDialogOpen] =
+    useState(false)
+  const [dataManagementDialogAssetId, setDataManagementDialogAssetId] =
+    useState<string | null>(null)
 
   const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
@@ -119,9 +127,15 @@ const AssetList = ({
                   key={asset.id}
                   asset={asset}
                   ref={asset.id === editingAssetID ? scrollRef : undefined}
-                  openDialog={() => setDialogOpen(true)}
+                  openSelectUnitypackageDialog={() =>
+                    setSelectUnitypackageDialogOpen(true)
+                  }
                   setUnitypackageFiles={setUnityPackages}
-                  setDialogAssetId={setDialogAssetId}
+                  setDialogAssetId={setSelectUnitypackageDialogAssetId}
+                  openDataManagementDialog={(assetId) => {
+                    setDataManagementDialogAssetId(assetId)
+                    setDataManagementDialogOpen(true)
+                  }}
                 />
               ),
           )}
@@ -137,18 +151,29 @@ const AssetList = ({
                     key={asset.id}
                     asset={asset}
                     ref={asset.id === editingAssetID ? scrollRef : undefined}
-                    openDialog={() => setDialogOpen(true)}
+                    openSelectUnitypackageDialog={() =>
+                      setSelectUnitypackageDialogOpen(true)
+                    }
                     setUnitypackageFiles={setUnityPackages}
-                    setDialogAssetId={setDialogAssetId}
+                    setDialogAssetId={setSelectUnitypackageDialogAssetId}
+                    openDataManagementDialog={(assetId) => {
+                      setDataManagementDialogAssetId(assetId)
+                      setDataManagementDialogOpen(true)
+                    }}
                   />
                 ),
             )}
       </div>
       <SelectUnitypackageDialog
-        dialogOpen={dialogOpen}
-        setDialogOpen={setDialogOpen}
-        assetId={dialogAssetId}
+        dialogOpen={selectUnitypackageDialogOpen}
+        setDialogOpen={setSelectUnitypackageDialogOpen}
+        assetId={selectUnitypackageDialogAssetId}
         unitypackageFiles={unitypackages}
+      />
+      <DataManagementDialog
+        assetId={dataManagementDialogAssetId}
+        open={dataManagementDialogOpen}
+        onOpenChange={setDataManagementDialogOpen}
       />
       <div className="w-full h-12" />
     </ScrollArea>

@@ -1,35 +1,43 @@
-import { useToast } from '@/hooks/use-toast'
+import { Button } from '@/components/ui/button'
 import { commands, events } from '@/lib/bindings'
+import { cn } from '@/lib/utils'
 import { UnlistenFn } from '@tauri-apps/api/event'
-import { useEffect, useState } from 'react'
+import { Ban, Check, Loader2 } from 'lucide-react'
+import { FC, useEffect, useState } from 'react'
 
 type Props = {
-  taskId: string | null
-  onComplete: () => void
-  onCancelled: () => void
-}
-
-type ReturnProps = {
-  progress: number
+  taskId: string
   filename: string
-  canceling: boolean
-  onCancelButtonClick: () => Promise<void>
+  onCancelled: () => void
+  markAsFinished: () => void
 }
 
-export const useProgressTab = ({
+const OngoingImportRow: FC<Props> = ({
   taskId,
-  onComplete,
+  filename,
   onCancelled,
-}: Props): ReturnProps => {
-  const [canceling, setCanceling] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [filename, setFilename] = useState('')
-  const { toast } = useToast()
+  markAsFinished,
+}) => {
+  const [completed, setCompleted] = useState(false)
+  const [cancelled, setCancelled] = useState(false)
+
+  const cancelTask = async () => {
+    const result = await commands.cancelTaskRequest(taskId)
+
+    if (result.status === 'ok') {
+      if (result.data === 'Cancelled') {
+        setCancelled(true)
+        markAsFinished()
+      } else if (result.data === 'Completed') {
+        setCompleted(true)
+        markAsFinished()
+      }
+    }
+  }
 
   useEffect(() => {
     let isCancelled = false
     let onCompletedOrCancelledExecuted = false
-    let unlistenProgressFn: UnlistenFn | undefined = undefined
     let unlistenCompleteFn: UnlistenFn | undefined = undefined
 
     const setupListener = async () => {
@@ -50,7 +58,8 @@ export const useProgressTab = ({
 
           onCompletedOrCancelledExecuted = true
           if (status == 'Completed') {
-            onComplete()
+            setCompleted(true)
+            markAsFinished()
           } else if (status === 'Cancelled') {
             onCancelled()
           }
@@ -61,15 +70,7 @@ export const useProgressTab = ({
           return
         }
 
-        unlistenProgressFn = await events.importProgress.listen((e) => {
-          if (isCancelled) return
-
-          setProgress(e.payload.percentage)
-          setFilename(e.payload.filename)
-        })
-
         if (isCancelled) {
-          unlistenProgressFn()
           unlistenCompleteFn()
           return
         }
@@ -86,7 +87,8 @@ export const useProgressTab = ({
         }
 
         if (result.data === 'Completed') {
-          onComplete()
+          setCompleted(true)
+          markAsFinished()
         } else if (result.data === 'Cancelled') {
           onCancelled()
         }
@@ -102,46 +104,32 @@ export const useProgressTab = ({
 
     return () => {
       isCancelled = true
-      unlistenProgressFn?.()
       unlistenCompleteFn?.()
     }
-  }, [taskId, onComplete, onCancelled])
+  }, [taskId])
 
-  const onCancelButtonClick = async () => {
-    try {
-      setCanceling(true)
-
-      if (taskId === null) {
-        toast({
-          title: 'エラー',
-          description: 'タスク ID が見つかりませんでした。',
-        })
-        return
-      }
-
-      const result = await commands.cancelTaskRequest(taskId)
-
-      if (result.status === 'error') {
-        console.error('Failed to cancel task:', result.error)
-
-        toast({
-          title: 'エラー',
-          description: 'タスクのキャンセルに失敗しました。',
-        })
-        return
-      }
-    } finally {
-      // It takes a few moments to cancel the task, so delay activation of the button
-      setTimeout(() => {
-        setCanceling(false)
-      }, 10000)
-    }
-  }
-
-  return {
-    progress,
-    filename,
-    canceling,
-    onCancelButtonClick,
-  }
+  return (
+    <div className="flex flex-row items-center space-x-2">
+      {!completed && !cancelled && (
+        <Loader2 size={24} className="animate-spin text-foreground/60" />
+      )}
+      {!completed && cancelled && <Ban size={20} className="text-red-400" />}
+      {completed && <Check size={24} className="text-green-600" />}
+      <p className="w-96 truncate">
+        {cancelled && (
+          <span className="text-foreground/60 mr-2">
+            (キャンセルされました)
+          </span>
+        )}
+        <span className={cn(cancelled && 'line-through')}>{filename}</span>
+      </p>
+      {!completed && !cancelled && (
+        <Button variant="destructive" className="w-8 h-8" onClick={cancelTask}>
+          <Ban />
+        </Button>
+      )}
+    </div>
+  )
 }
+
+export default OngoingImportRow

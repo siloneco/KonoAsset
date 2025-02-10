@@ -233,9 +233,33 @@ async openLogsDir() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async importFileEntriesToAsset(assetId: string, paths: string[]) : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("import_file_entries_to_asset", { assetId, paths }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("copy_image_file_to_images", { path, temporary }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async listAssetDirEntry(id: string) : Promise<Result<SimplifiedDirEntry[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_asset_dir_entry", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async deleteEntryFromAssetDataDir(assetId: string, entryName: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_entry_from_asset_data_dir", { assetId, entryName }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -342,6 +366,7 @@ export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
 export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
+export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
@@ -356,6 +381,7 @@ export type PreAvatarWearable = { description: AssetDescription; category: strin
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
+export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
 export type TaskStatus = "Running" | "Completed" | "Cancelled"
 export type TaskStatusChanged = { id: string; status: TaskStatus }

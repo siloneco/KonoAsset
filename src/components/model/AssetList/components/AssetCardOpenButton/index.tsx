@@ -16,21 +16,25 @@ type Props = {
   className?: string
   id: string
 
-  openDialog: () => void
+  openSelectUnitypackageDialog: () => void
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
-  openDialog,
+  openSelectUnitypackageDialog,
   setUnitypackageFiles,
 }: Props) => {
   const {
     onMainButtonClick,
     onOpenManagedDirButtonClick,
     onCopyPathButtonClick,
-  } = useAssetCardOpenButton({ id, openDialog, setUnitypackageFiles })
+  } = useAssetCardOpenButton({
+    id,
+    openSelectUnitypackageDialog,
+    setUnitypackageFiles,
+  })
 
   return (
     <div className={cn('flex flex-row ', className)}>

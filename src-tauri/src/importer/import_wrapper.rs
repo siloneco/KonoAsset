@@ -1,7 +1,14 @@
-use std::{future::Future, path::PathBuf, pin::Pin, sync::Mutex};
+use std::{
+    future::Future,
+    path::{Path, PathBuf},
+    pin::Pin,
+    sync::Arc,
+};
 
 use tauri::AppHandle;
 use tauri_specta::Event;
+use tokio::sync::Mutex;
+use uuid::Uuid;
 
 use crate::{
     data_store::provider::StoreProvider,
@@ -11,7 +18,7 @@ use crate::{
         traits::AssetTrait,
     },
     file::{
-        cleanup::DeleteDirOnDrop,
+        cleanup::DeleteOnDrop,
         modify_guard::{self, DeletionGuard},
     },
 };
@@ -43,7 +50,7 @@ where
     let asset = request.pre_asset.create();
 
     let file_count = request.absolute_paths.len();
-    let progress_last_updated = Mutex::new(0);
+    let progress_last_updated = std::sync::Mutex::new(0);
 
     for i in 0..file_count {
         let path_str = request.absolute_paths.get(i).unwrap();
@@ -170,6 +177,32 @@ where
     .await
 }
 
+pub async fn import_additional_data<P>(
+    basic_store: Arc<Mutex<StoreProvider>>,
+    id: Uuid,
+    path: P,
+) -> Result<(), String>
+where
+    P: AsRef<Path>,
+{
+    let asset_data_dir = {
+        let store_provider = basic_store.lock().await;
+        store_provider.data_dir().join("data").join(id.to_string())
+    };
+
+    let path = path.as_ref();
+
+    if !path.exists() {
+        return Err(format!("File or directory not found: {}", path.display()));
+    }
+
+    fileutils::import_asset(path, &asset_data_dir, true, |_, _| {})
+        .await
+        .map_err(|e| format!("Failed to import additional data for asset ({}): {}", id, e))?;
+
+    Ok(())
+}
+
 async fn import_files(
     src: &PathBuf,
     dest: &PathBuf,
@@ -180,13 +213,13 @@ async fn import_files(
             .map_err(|e| format!("Failed to create directory: {:?}", e))?;
     }
 
-    let mut delete_dir_on_drop = DeleteDirOnDrop::new(dest.clone());
+    let mut delete_on_drop = DeleteOnDrop::new(dest.clone());
 
-    fileutils::import_asset(src, dest, progress_callback)
+    fileutils::import_asset(src, dest, false, progress_callback)
         .await
         .map_err(|e| format!("Failed to import asset: {:?}", e))?;
 
-    delete_dir_on_drop.mark_as_completed();
+    delete_on_drop.mark_as_completed();
 
     Ok(())
 }

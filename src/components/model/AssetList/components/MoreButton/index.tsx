@@ -16,7 +16,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { MoreHorizontal, ExternalLink, Loader2 } from 'lucide-react'
+import {
+  MoreHorizontal,
+  ExternalLink,
+  Loader2,
+  Pencil,
+  Folder,
+  Trash2,
+} from 'lucide-react'
 import { useContext, useState } from 'react'
 import {
   TooltipProvider,
@@ -33,12 +40,14 @@ type Props = {
   id: string
   boothItemID?: number
   executeAssetDeletion: () => Promise<void>
+  openDataManagementDialog: () => void
 }
 
 export const MoreButton = ({
   id,
   boothItemID,
   executeAssetDeletion,
+  openDataManagementDialog,
 }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
@@ -93,8 +102,13 @@ export const MoreButton = ({
             className="decoration-inherit text-inherit"
             onClick={() => setEditingAssetID(id)}
           >
-            編集
+            <Pencil size={16} className="text-card-foreground/40" />
+            情報を編集
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={openDataManagementDialog}>
+          <Folder size={16} className="text-card-foreground/40" />
+          データ管理
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <AlertDialog open={dialogOpened} onOpenChange={setDialogOpened}>
@@ -103,6 +117,7 @@ export const MoreButton = ({
               className="font-bold text-destructive focus:text-destructive dark:text-red-500 dark:focus:text-red-500"
               onSelect={(e) => e.preventDefault()}
             >
+              <Trash2 size={16} className="text-card-foreground/40" />
               削除
             </DropdownMenuItem>
           </AlertDialogTrigger>

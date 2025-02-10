@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import SelectorTab from './components/tabs/SelectorTab'
 import BoothInputTab from './components/tabs/BoothInputTab'
 import ManualInputTab from './components/tabs/ManualInputTab'
@@ -17,6 +17,8 @@ import { AssetSummary, AssetType } from '@/lib/bindings'
 import ProgressTab from './components/tabs/ProgressTab'
 import { useToast } from '@/hooks/use-toast'
 import { AssetContext } from '@/components/context/AssetContext'
+import { DragDropContext } from '@/components/context/DragDropContext'
+import { UnlistenFn } from '@tauri-apps/api/event'
 
 export const AddAssetModalContext = createContext<{
   assetPaths?: string[]
@@ -49,6 +51,13 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
   const { toast } = useToast()
 
   const { refreshAssets } = useContext(AssetContext)
+  const { current, lock } = useContext(DragDropContext)
+
+  const currentDragDropUser = useRef<string | null>(null)
+
+  useEffect(() => {
+    currentDragDropUser.current = current
+  }, [current])
 
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
@@ -109,18 +118,48 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
     setImageUrls([])
   }
 
-  getCurrentWindow().onDragDropEvent((event) => {
-    if (event.payload.type == 'drop') {
-      // 文字をドラッグアンドドロップしようとするとundefinedになる
-      if (event.payload.paths.length <= 0) {
+  useEffect(() => {
+    const unlockFn = lock('AddAssetDialog')
+
+    return () => {
+      unlockFn()
+    }
+  }, [])
+
+  useEffect(() => {
+    let isCancelled = false
+    let unlistenFn: UnlistenFn | undefined = undefined
+
+    const setupListener = async () => {
+      unlistenFn = await getCurrentWindow().onDragDropEvent((event) => {
+        if (isCancelled) return
+        if (currentDragDropUser.current !== 'AddAssetDialog') return
+
+        if (event.payload.type == 'drop') {
+          // 文字をドラッグアンドドロップしようとするとpaths.lengthが0になる
+          if (event.payload.paths.length <= 0) {
+            return
+          }
+
+          setAssetPaths(event.payload.paths)
+          setDialogOpen(true)
+          setTab('booth-input')
+        }
+      })
+
+      if (isCancelled) {
+        unlistenFn()
         return
       }
-
-      setAssetPaths(event.payload.paths)
-      setDialogOpen(true)
-      setTab('booth-input')
     }
-  })
+
+    setupListener()
+
+    return () => {
+      isCancelled = true
+      unlistenFn?.()
+    }
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
