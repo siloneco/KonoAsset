@@ -1,7 +1,7 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useToast } from '@/hooks/use-toast'
 import { commands, FileInfo } from '@/lib/bindings'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 type Props = {
   id: string
@@ -11,6 +11,8 @@ type Props = {
 
 type ReturnProps = {
   onMainButtonClick: () => Promise<void>
+  mainButtonLoading: boolean
+  mainButtonChecked: boolean
   onOpenManagedDirButtonClick: () => Promise<void>
   onCopyPathButtonClick: () => Promise<void>
 }
@@ -20,10 +22,13 @@ export const useAssetCardOpenButton = ({
   setUnitypackageFiles,
   openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
+  const [mainButtonLoading, setMainButtonLoading] = useState(false)
+  const [mainButtonChecked, setMainButtonChecked] = useState(false)
+
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
 
-  const listUnitypackageAndOpen = async () => {
+  const listUnitypackageAndOpen = async (): Promise<boolean> => {
     const result = await commands.listUnitypackageFiles(id)
 
     if (result.status === 'error') {
@@ -31,7 +36,7 @@ export const useAssetCardOpenButton = ({
         title: 'エラー',
         description: result.error,
       })
-      return
+      return false
     }
 
     const data = result.data
@@ -42,8 +47,7 @@ export const useAssetCardOpenButton = ({
     const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
-      onOpenManagedDirButtonClick()
-      return
+      return await onOpenManagedDirButtonClick()
     }
 
     if (
@@ -59,25 +63,40 @@ export const useAssetCardOpenButton = ({
           title: 'エラー',
           description: result.error,
         })
-        return
+        return false
       }
 
-      return
+      return true
     }
 
     setUnitypackageFiles(impartialData)
     openSelectUnitypackageDialog()
+    return false
   }
 
   const onMainButtonClick = async () => {
-    if (preference.useUnitypackageSelectedOpen) {
-      await listUnitypackageAndOpen()
-    } else {
-      await onOpenManagedDirButtonClick()
+    setMainButtonLoading(true)
+
+    try {
+      let result
+      if (preference.useUnitypackageSelectedOpen) {
+        result = await listUnitypackageAndOpen()
+      } else {
+        result = await onOpenManagedDirButtonClick()
+      }
+
+      if (result) {
+        setMainButtonChecked(true)
+        setTimeout(() => {
+          setMainButtonChecked(false)
+        }, 1000)
+      }
+    } finally {
+      setMainButtonLoading(false)
     }
   }
 
-  const onOpenManagedDirButtonClick = async () => {
+  const onOpenManagedDirButtonClick = async (): Promise<boolean> => {
     const result = await commands.openManagedDir(id)
 
     if (result.status === 'error') {
@@ -85,7 +104,10 @@ export const useAssetCardOpenButton = ({
         title: 'エラー',
         description: result.error,
       })
+      return false
     }
+
+    return true
   }
 
   const onCopyPathButtonClick = async () => {
@@ -104,7 +126,11 @@ export const useAssetCardOpenButton = ({
 
   return {
     onMainButtonClick,
-    onOpenManagedDirButtonClick,
+    mainButtonLoading,
+    mainButtonChecked,
+    onOpenManagedDirButtonClick: async () => {
+      await onOpenManagedDirButtonClick()
+    },
     onCopyPathButtonClick,
   }
 }

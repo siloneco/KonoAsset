@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, Copy, Folder } from 'lucide-react'
+import { Check, ChevronDown, Copy, Folder, Loader2 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { FileInfo } from '@/lib/bindings'
 
@@ -28,6 +28,8 @@ const AssetCardOpenButton = ({
 }: Props) => {
   const {
     onMainButtonClick,
+    mainButtonChecked,
+    mainButtonLoading,
     onOpenManagedDirButtonClick,
     onCopyPathButtonClick,
   } = useAssetCardOpenButton({
@@ -42,7 +44,14 @@ const AssetCardOpenButton = ({
         className={cn('w-full rounded-r-none')}
         onClick={onMainButtonClick}
       >
-        <Folder size={24} />
+        {!mainButtonLoading && !mainButtonChecked && <Folder size={24} />}
+        {mainButtonLoading && !mainButtonChecked && (
+          <Loader2
+            size={24}
+            className="text-primary-foreground/70 animate-spin"
+          />
+        )}
+        {mainButtonChecked && <Check size={24} />}
         <p>開く</p>
       </Button>
       <Separator orientation="vertical" className="bg-card" />
