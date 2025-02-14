@@ -67,9 +67,12 @@ where
     let dest = dest.as_ref();
 
     if src.is_dir() {
-        let file_name = src.file_name().unwrap_or(OsStr::new("imported"));
-
-        let destination = dest.join(file_name);
+        let file_name = src
+            .file_name()
+            .unwrap_or(OsStr::new("imported"))
+            .to_str()
+            .unwrap_or("imported");
+        let destination = select_destination_path(dest, file_name);
 
         let delete_on_drop = if cleanup_on_fail {
             Some(DeleteOnDrop::new(destination.clone()))
@@ -94,9 +97,12 @@ where
         let extension = src.extension();
 
         if extension == Some(OsStr::new("zip")) {
-            let file_stem = src.file_stem().unwrap_or(OsStr::new("imported"));
-
-            let destination = dest.join(file_stem);
+            let file_stem = src
+                .file_stem()
+                .unwrap_or(OsStr::new("imported"))
+                .to_str()
+                .unwrap_or("imported");
+            let destination = select_destination_path(dest, file_stem);
 
             let delete_on_drop = if cleanup_on_fail {
                 Some(DeleteOnDrop::new(destination.clone()))
@@ -111,9 +117,12 @@ where
                 delete_on_drop.mark_as_completed();
             }
         } else {
-            let file_name = src.file_name().unwrap_or(OsStr::new("imported"));
-
-            let destination = dest.join(file_name);
+            let file_name = src
+                .file_name()
+                .unwrap_or(OsStr::new("imported"))
+                .to_str()
+                .unwrap_or("imported");
+            let destination = select_destination_path(dest, file_name);
 
             let delete_on_drop = if cleanup_on_fail {
                 Some(DeleteOnDrop::new(destination.clone()))
@@ -136,4 +145,17 @@ where
     }
 
     Ok(())
+}
+
+fn select_destination_path(base: &Path, prefer_filename: &str) -> PathBuf {
+    if !base.join(prefer_filename).exists() {
+        return base.join(prefer_filename);
+    }
+
+    let mut i = 1;
+    while base.join(format!("{} ({})", prefer_filename, i)).exists() {
+        i += 1;
+    }
+
+    base.join(format!("{} ({})", prefer_filename, i))
 }
