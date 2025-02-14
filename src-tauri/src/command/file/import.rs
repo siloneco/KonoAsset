@@ -1,12 +1,45 @@
 use std::{path::PathBuf, sync::Arc};
 
-use tauri::{async_runtime::Mutex, State};
+use tauri::{async_runtime::Mutex, AppHandle, State};
 use uuid::Uuid;
 
 use crate::{
     data_store::provider::StoreProvider,
     file::modify_guard::{self, FileTransferGuard},
+    importer::import_wrapper::import_additional_data,
+    task::cancellable_task::TaskContainer,
 };
+
+#[tauri::command]
+#[specta::specta]
+pub async fn import_file_entries_to_asset(
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    handle: State<'_, AppHandle>,
+    asset_id: Uuid,
+    paths: Vec<String>,
+) -> Result<Vec<Uuid>, String> {
+    let mut task_ids = vec![];
+
+    for path in paths {
+        let basic_store = (*basic_store).clone();
+
+        let id = task_container
+            .lock()
+            .await
+            .run((*handle).clone(), async move {
+                let result = import_additional_data(basic_store, asset_id, path).await;
+
+                if let Err(e) = result {
+                    log::error!("Failed to import additional data: {:?}", e);
+                }
+            })?;
+
+        task_ids.push(id);
+    }
+
+    Ok(task_ids)
+}
 
 #[tauri::command]
 #[specta::specta]

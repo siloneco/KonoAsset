@@ -57,7 +57,6 @@ export const sendAssetImportRequest = async (
   preAsset: PreAvatar | PreAvatarWearable | PreWorldObject,
   deleteSource: boolean,
 ): Promise<Result<string, string>> => {
-  console.log('test')
   if (assetType === 'Avatar') {
     const request: AssetImportRequest<PreAvatar> = {
       preAsset: preAsset as PreAvatar,

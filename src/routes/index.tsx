@@ -1,3 +1,4 @@
+import DragDropContextProvider from '@/components/context/DragDropContext'
 import LoadErrorPage from '@/components/page/LoadError'
 import TopPage from '@/components/page/Top'
 import { commands } from '@/lib/bindings'
@@ -15,7 +16,11 @@ function RouteComponent() {
   const result = Route.useLoaderData()
 
   if (result.success) {
-    return <TopPage />
+    return (
+      <DragDropContextProvider>
+        <TopPage />
+      </DragDropContextProvider>
+    )
   }
 
   return (

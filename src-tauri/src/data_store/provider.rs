@@ -8,7 +8,7 @@ use crate::{
         traits::AssetTrait,
     },
     file::{
-        cleanup::DeleteDirOnDrop,
+        cleanup::DeleteOnDrop,
         modify_guard::{self, DeletionGuard, FileTransferGuard},
     },
 };
@@ -111,7 +111,7 @@ impl StoreProvider {
                 }
             }
 
-            dir_cleanups.push(DeleteDirOnDrop::new(new_metadata_path.clone()));
+            dir_cleanups.push(DeleteOnDrop::new(new_metadata_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
                 &old_metadata_path,
@@ -137,7 +137,7 @@ impl StoreProvider {
                 }
             }
 
-            dir_cleanups.push(DeleteDirOnDrop::new(new_data_path.clone()));
+            dir_cleanups.push(DeleteOnDrop::new(new_data_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
                 &old_data_path,
@@ -163,7 +163,7 @@ impl StoreProvider {
                 }
             }
 
-            dir_cleanups.push(DeleteDirOnDrop::new(new_images_path.clone()));
+            dir_cleanups.push(DeleteOnDrop::new(new_images_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
                 &old_images_path,

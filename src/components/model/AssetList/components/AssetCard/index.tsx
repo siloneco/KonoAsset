@@ -13,17 +13,20 @@ type Props = {
   asset: AssetSummary
   ref?: RefObject<HTMLDivElement | null>
 
-  openDialog: () => void
+  openSelectUnitypackageDialog: () => void
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
   setDialogAssetId: (assetId: string | null) => void
+
+  openDataManagementDialog: (assetId: string) => void
 }
 
 const AssetCard = ({
   asset,
   ref,
-  openDialog,
+  openSelectUnitypackageDialog,
   setUnitypackageFiles,
   setDialogAssetId,
+  openDataManagementDialog,
 }: Props) => {
   const { deleteAsset } = useAssetCard({ asset })
   const { setAssetType } = useContext(PersistentContext)
@@ -50,7 +53,7 @@ const AssetCard = ({
           <AssetCardOpenButton
             className="w-full mr-2"
             id={asset.id}
-            openDialog={openDialog}
+            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             setUnitypackageFiles={(obj) => {
               setUnitypackageFiles(obj)
               setDialogAssetId(asset.id)
@@ -60,6 +63,9 @@ const AssetCard = ({
             id={asset.id}
             executeAssetDeletion={deleteAsset}
             boothItemID={asset.boothItemId ?? undefined}
+            openDataManagementDialog={() => {
+              openDataManagementDialog(asset.id)
+            }}
           />
         </div>
       </CardContent>

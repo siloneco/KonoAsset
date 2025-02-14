@@ -41,7 +41,7 @@ const SlimAssetDetail: FC<Props> = ({ asset }) => {
         <Button onClick={openInFileManager}>開く</Button>
         <Button variant={'secondary'}>
           <Link to={Route.to} params={{ id: asset.id }}>
-            編集
+            情報を編集
           </Link>
         </Button>
       </div>

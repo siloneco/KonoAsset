@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, Copy, Folder } from 'lucide-react'
+import { Check, ChevronDown, Copy, Folder, Loader2 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { FileInfo } from '@/lib/bindings'
 
@@ -16,21 +16,27 @@ type Props = {
   className?: string
   id: string
 
-  openDialog: () => void
+  openSelectUnitypackageDialog: () => void
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
-  openDialog,
+  openSelectUnitypackageDialog,
   setUnitypackageFiles,
 }: Props) => {
   const {
     onMainButtonClick,
+    mainButtonChecked,
+    mainButtonLoading,
     onOpenManagedDirButtonClick,
     onCopyPathButtonClick,
-  } = useAssetCardOpenButton({ id, openDialog, setUnitypackageFiles })
+  } = useAssetCardOpenButton({
+    id,
+    openSelectUnitypackageDialog,
+    setUnitypackageFiles,
+  })
 
   return (
     <div className={cn('flex flex-row ', className)}>
@@ -38,7 +44,14 @@ const AssetCardOpenButton = ({
         className={cn('w-full rounded-r-none')}
         onClick={onMainButtonClick}
       >
-        <Folder size={24} />
+        {!mainButtonLoading && !mainButtonChecked && <Folder size={24} />}
+        {mainButtonLoading && !mainButtonChecked && (
+          <Loader2
+            size={24}
+            className="text-primary-foreground/70 animate-spin"
+          />
+        )}
+        {mainButtonChecked && <Check size={24} />}
         <p>開く</p>
       </Button>
       <Separator orientation="vertical" className="bg-card" />
