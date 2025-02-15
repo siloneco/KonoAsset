@@ -1,4 +1,7 @@
-use std::{path::PathBuf, sync::Arc};
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use tokio::sync::Mutex;
 
@@ -7,11 +10,19 @@ pub struct DeletionGuard {
 }
 
 impl DeletionGuard {
-    pub fn new(must_be_parent: PathBuf) -> Self {
-        Self { must_be_parent }
+    pub fn new<P>(must_be_parent: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self {
+            must_be_parent: must_be_parent.as_ref().to_path_buf(),
+        }
     }
 
-    fn assert(&self, path: &PathBuf) -> Result<(), tokio::io::Error> {
+    fn assert<P>(&self, path: P) -> Result<(), tokio::io::Error>
+    where
+        P: AsRef<Path>,
+    {
         let parent_absolute = std::path::absolute(&self.must_be_parent).map_err(|e| {
             tokio::io::Error::new(
                 tokio::io::ErrorKind::InvalidInput,
@@ -41,26 +52,24 @@ impl DeletionGuard {
     }
 }
 
-pub async fn delete_single_file(
-    path: &PathBuf,
-    guard: DeletionGuard,
-) -> Result<(), tokio::io::Error> {
-    guard.assert(path)?;
-    tokio::fs::remove_file(path).await
+pub async fn delete_single_file<P>(path: P, guard: &DeletionGuard) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    guard.assert(&path)?;
+    tokio::fs::remove_file(&path).await
 }
 
-pub async fn delete_recursive(
-    path: &PathBuf,
-    guard: DeletionGuard,
-) -> Result<(), tokio::io::Error> {
-    guard.assert(path)?;
+pub async fn delete_recursive<P>(path: P, guard: &DeletionGuard) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    guard.assert(&path)?;
 
-    let canonicalized = path.canonicalize()?;
-
-    if canonicalized.is_dir() {
-        tokio::fs::remove_dir_all(path).await
+    if path.as_ref().is_dir() {
+        tokio::fs::remove_dir_all(&path).await
     } else {
-        tokio::fs::remove_file(path).await
+        tokio::fs::remove_file(&path).await
     }
 }
 
@@ -70,17 +79,52 @@ pub struct FileTransferGuard {
 }
 
 impl FileTransferGuard {
-    pub fn new(src_must_be_parent: Option<PathBuf>, dest_must_be_parent: Option<PathBuf>) -> Self {
+    pub fn none() -> Self {
         Self {
-            src_must_be_parent,
-            dest_must_be_parent,
+            src_must_be_parent: None,
+            dest_must_be_parent: None,
         }
     }
 
-    fn assert(&self, src: &PathBuf, dest: &PathBuf) -> Result<(), tokio::io::Error> {
+    #[allow(dead_code)]
+    pub fn src<P>(src: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self {
+            src_must_be_parent: Some(src.as_ref().to_path_buf()),
+            dest_must_be_parent: None,
+        }
+    }
+
+    pub fn dest<P>(dest: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self {
+            src_must_be_parent: None,
+            dest_must_be_parent: Some(dest.as_ref().to_path_buf()),
+        }
+    }
+
+    pub fn both<P>(src: P, dest: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self {
+            src_must_be_parent: Some(src.as_ref().to_path_buf()),
+            dest_must_be_parent: Some(dest.as_ref().to_path_buf()),
+        }
+    }
+
+    fn assert<P, Q>(&self, src: P, dest: Q) -> Result<(), tokio::io::Error>
+    where
+        P: AsRef<Path>,
+        Q: AsRef<Path>,
+    {
         if let Some(src_must_be_parent) = &self.src_must_be_parent {
             let src_must_be_parent_absolute =
-                std::path::absolute(src_must_be_parent).map_err(|e| {
+                std::path::absolute(&src_must_be_parent).map_err(|e| {
                     tokio::io::Error::new(
                         tokio::io::ErrorKind::InvalidInput,
                         format!(
@@ -90,7 +134,7 @@ impl FileTransferGuard {
                     )
                 })?;
 
-            let src_absolute = std::path::absolute(src).map_err(|e| {
+            let src_absolute = std::path::absolute(&src).map_err(|e| {
                 tokio::io::Error::new(
                     tokio::io::ErrorKind::InvalidInput,
                     format!("Failed to convert source path to absolute path: {:?}", e),
@@ -110,7 +154,7 @@ impl FileTransferGuard {
 
         if let Some(dest_must_be_parent) = &self.dest_must_be_parent {
             let dest_must_be_parent_absolute =
-                std::path::absolute(dest_must_be_parent).map_err(|e| {
+                std::path::absolute(&dest_must_be_parent).map_err(|e| {
                     tokio::io::Error::new(
                         tokio::io::ErrorKind::InvalidInput,
                         format!(
@@ -120,7 +164,7 @@ impl FileTransferGuard {
                     )
                 })?;
 
-            let dest_absolute = std::path::absolute(dest).map_err(|e| {
+            let dest_absolute = std::path::absolute(&dest).map_err(|e| {
                 tokio::io::Error::new(
                     tokio::io::ErrorKind::InvalidInput,
                     format!(
@@ -146,54 +190,64 @@ impl FileTransferGuard {
     }
 }
 
-pub async fn move_file_or_dir(
-    src: &PathBuf,
-    dest: &PathBuf,
+pub async fn move_file_or_dir<P>(
+    src: P,
+    dest: P,
     guard: FileTransferGuard,
-) -> Result<(), tokio::io::Error> {
-    guard.assert(src, dest)?;
-    tokio::fs::rename(src, dest).await
+) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    guard.assert(&src, &dest)?;
+    tokio::fs::rename(&src, &dest).await
 }
 
-pub async fn copy_file(
-    src: &PathBuf,
-    dest: &PathBuf,
+pub async fn copy_file<P>(
+    src: P,
+    dest: P,
     delete_source: bool,
     guard: FileTransferGuard,
-) -> Result<(), tokio::io::Error> {
-    if !src.is_file() {
+) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    if !src.as_ref().is_file() {
         return Err(tokio::io::Error::new(
             tokio::io::ErrorKind::InvalidInput,
             "Source path must be a file",
         ));
     }
 
-    guard.assert(src, dest)?;
-    tokio::fs::copy(src, dest).await?;
+    guard.assert(&src, &dest)?;
+    tokio::fs::copy(&src, &dest).await?;
 
     if delete_source {
-        let guard = DeletionGuard::new(src.clone());
-        delete_single_file(src, guard).await?;
+        let guard = DeletionGuard::new(&src);
+        delete_single_file(&src, &guard).await?;
     }
 
     Ok(())
 }
 
-pub async fn copy_dir(
-    src: &PathBuf,
-    dest: &PathBuf,
+pub async fn copy_dir<P, Q>(
+    src: P,
+    dest: Q,
     delete_source: bool,
     guard: FileTransferGuard,
     progress_callback: impl Fn(f32, String),
-) -> Result<(), tokio::io::Error> {
-    if !src.is_dir() {
+) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path> + Clone + Send + Sync + 'static,
+    Q: AsRef<Path> + Clone + Send + Sync + 'static,
+{
+    if !src.as_ref().is_dir() {
         return Err(tokio::io::Error::new(
             tokio::io::ErrorKind::InvalidInput,
             "Source path must be a directory",
         ));
     }
 
-    if !dest.exists() {
+    if !dest.as_ref().exists() {
         if let Err(e) = tokio::fs::create_dir_all(&dest).await {
             return Err(tokio::io::Error::new(
                 tokio::io::ErrorKind::InvalidInput,
@@ -202,9 +256,9 @@ pub async fn copy_dir(
         }
     }
 
-    guard.assert(src, dest)?;
+    guard.assert(&src, &dest)?;
 
-    let amount_of_entries = count_entries(src)?;
+    let amount_of_entries = count_entries(&src)?;
 
     let amount_of_processed_entries = Arc::new(Mutex::new(0));
     let (tx, mut rx) = tokio::sync::mpsc::channel::<String>(32);
@@ -212,7 +266,7 @@ pub async fn copy_dir(
     let cloned_amount_of_processed_entries = amount_of_processed_entries.clone();
     tokio::select! {
         result = async {
-            copy_dir_internal(src, dest, amount_of_processed_entries, &tx)
+            copy_dir_internal(src.clone(), dest.clone(), amount_of_processed_entries, &tx)
             .await
             .map_err(|e| {
                 tokio::io::Error::new(
@@ -230,15 +284,18 @@ pub async fn copy_dir(
     }?;
 
     if delete_source {
-        let guard = DeletionGuard::new(src.clone());
-        delete_recursive(src, guard).await?;
+        let guard = DeletionGuard::new(&src);
+        delete_recursive(&src, &guard).await?;
     }
 
     Ok(())
 }
 
-fn count_entries(path: &PathBuf) -> Result<u64, std::io::Error> {
-    let mut entries = std::fs::read_dir(path)?;
+fn count_entries<P>(path: P) -> Result<u64, std::io::Error>
+where
+    P: AsRef<Path>,
+{
+    let mut entries = std::fs::read_dir(&path)?;
 
     let mut amount_of_entries = 0;
     while let Some(entry) = entries.next() {
@@ -254,13 +311,17 @@ fn count_entries(path: &PathBuf) -> Result<u64, std::io::Error> {
     Ok(amount_of_entries)
 }
 
-async fn copy_dir_internal(
-    old_path: &PathBuf,
-    new_path: &PathBuf,
+async fn copy_dir_internal<P, Q>(
+    old_path: P,
+    new_path: Q,
     processed_files: Arc<Mutex<u64>>,
     tx: &tokio::sync::mpsc::Sender<String>,
-) -> Result<(), tokio::io::Error> {
-    let mut entries = tokio::fs::read_dir(old_path).await?;
+) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path> + Send + Sync + 'static,
+    Q: AsRef<Path> + Send + Sync + 'static,
+{
+    let mut entries = tokio::fs::read_dir(&old_path).await?;
 
     while let Some(entry) = entries.next_entry().await? {
         let path = entry.path();
@@ -281,7 +342,7 @@ async fn copy_dir_internal(
             ));
         }
 
-        let new_path = new_path.join(filename.unwrap());
+        let new_path = new_path.as_ref().join(filename.unwrap());
 
         if path.is_dir() {
             if new_path.exists() {
@@ -291,8 +352,8 @@ async fn copy_dir_internal(
             tokio::fs::create_dir(&new_path).await?;
 
             Box::pin(copy_dir_internal(
-                &path,
-                &new_path,
+                path.clone().to_owned(),
+                new_path.clone().to_owned(),
                 processed_files.clone(),
                 tx,
             ))
@@ -353,7 +414,7 @@ mod tests {
         file.write_all(b"test").unwrap();
 
         let guard = DeletionGuard::new(dir.to_path_buf());
-        let result = delete_single_file(&file_path, guard).await;
+        let result = delete_single_file(&file_path, &guard).await;
 
         assert_eq!(result.unwrap(), ());
         assert!(!file_path.exists());
@@ -365,7 +426,7 @@ mod tests {
         let file_path = dir.join("test.txt");
 
         let guard = DeletionGuard::new(dir.join("other_dir"));
-        let result = delete_single_file(&file_path, guard).await;
+        let result = delete_single_file(&file_path, &guard).await;
 
         assert!(result.is_err());
     }
@@ -381,7 +442,7 @@ mod tests {
         file.write_all(b"test").unwrap();
 
         let guard = DeletionGuard::new(dir.to_path_buf());
-        let result = delete_recursive(&sub_dir, guard).await;
+        let result = delete_recursive(&sub_dir, &guard).await;
 
         assert_eq!(result.unwrap(), ());
         assert!(!sub_dir.exists());
@@ -398,7 +459,7 @@ mod tests {
         file.write_all(b"test").unwrap();
 
         let guard = DeletionGuard::new(dir.join("other_dir"));
-        let result = delete_recursive(&sub_dir, guard).await;
+        let result = delete_recursive(&sub_dir, &guard).await;
 
         assert!(result.is_err());
     }
@@ -416,7 +477,7 @@ mod tests {
             std::fs::remove_file(&dest).unwrap();
         }
 
-        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        let guard = FileTransferGuard::both(dir.to_path_buf(), dir.to_path_buf());
         let result = move_file_or_dir(&src, &dest, guard).await;
 
         assert_eq!(result.unwrap(), ());
@@ -437,7 +498,7 @@ mod tests {
             std::fs::remove_dir_all(&dest).unwrap();
         }
 
-        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        let guard = FileTransferGuard::both(dir.to_path_buf(), dir.to_path_buf());
         let result = move_file_or_dir(&src, &dest, guard).await;
 
         assert_eq!(result.unwrap(), ());
@@ -452,8 +513,7 @@ mod tests {
         let src = dir.join("move_file_or_dir_failure_src");
         let dest = dir.join("move_file_or_dir_failure_dest");
 
-        let guard =
-            FileTransferGuard::new(Some(dir.join("other_dir")), Some(dir.join("other_dir")));
+        let guard = FileTransferGuard::both(dir.join("other_dir"), dir.join("other_dir"));
         let result = move_file_or_dir(&src, &dest, guard).await;
 
         assert!(result.is_err());
@@ -472,7 +532,7 @@ mod tests {
             std::fs::remove_file(&dest).unwrap();
         }
 
-        let guard = FileTransferGuard::new(Some(dir.to_path_buf()), Some(dir.to_path_buf()));
+        let guard = FileTransferGuard::both(dir.to_path_buf(), dir.to_path_buf());
         let result = copy_file(&src, &dest, false, guard).await;
 
         assert_eq!(result.unwrap(), ());
@@ -487,8 +547,7 @@ mod tests {
         let src = dir.join("copy_file_failure_src");
         let dest = dir.join("copy_file_failure_dest");
 
-        let guard =
-            FileTransferGuard::new(Some(dir.join("other_dir")), Some(dir.join("other_dir")));
+        let guard = FileTransferGuard::both(dir.join("other_dir"), dir.join("other_dir"));
         let result = copy_file(&src, &dest, false, guard).await;
 
         assert!(result.is_err());

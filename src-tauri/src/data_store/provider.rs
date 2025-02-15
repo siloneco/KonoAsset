@@ -82,7 +82,7 @@ impl StoreProvider {
         }
 
         if !new_path.exists() {
-            fs::create_dir_all(new_path)
+            fs::create_dir_all(&new_path)
                 .map_err(|e| format!("Failed to create directory: {:?}", e))?;
         }
 
@@ -114,10 +114,10 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_metadata_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_metadata_path,
-                &new_metadata_path,
+                old_metadata_path.clone(),
+                new_metadata_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
+                FileTransferGuard::both(&old_path, &new_path),
                 |_, _| {},
             )
             .await
@@ -140,10 +140,10 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_data_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_data_path,
-                &new_data_path,
+                old_data_path.clone(),
+                new_data_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
+                FileTransferGuard::both(&old_path, &new_path),
                 |_, _| {},
             )
             .await
@@ -166,10 +166,10 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_images_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_images_path,
-                &new_images_path,
+                old_images_path.clone(),
+                new_images_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
+                FileTransferGuard::both(&old_path, &new_path),
                 |_, _| {},
             )
             .await
@@ -202,8 +202,7 @@ impl StoreProvider {
             if old.exists() {
                 log::info!("Removing old dir: {}", old.display());
                 let result =
-                    modify_guard::delete_recursive(&old, DeletionGuard::new(old_path.clone()))
-                        .await;
+                    modify_guard::delete_recursive(&old, &DeletionGuard::new(&old_path)).await;
 
                 if let Err(e) = result {
                     log::warn!("Failed to remove old data dir: {:?}", e);
@@ -248,7 +247,7 @@ async fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
         path,
         &new_name,
         // pathからの相対的なパスしかFileTransferGuardとして指定できず、アサーションの意味がないのでNoneとする
-        FileTransferGuard::new(None, None),
+        FileTransferGuard::none(),
     )
     .await
 }
@@ -284,13 +283,8 @@ async fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
 
         let backup_file = backup_path.join(&file);
 
-        let result = modify_guard::copy_file(
-            &path,
-            &backup_file,
-            false,
-            FileTransferGuard::new(None, None),
-        )
-        .await;
+        let result =
+            modify_guard::copy_file(&path, &backup_file, false, FileTransferGuard::none()).await;
 
         if let Err(e) = result {
             let msg = format!("Failed to backup metadata: {:?}", e);
@@ -354,8 +348,7 @@ async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
     for i in 0..to_remove {
         let path = &entries[i];
 
-        let result =
-            modify_guard::delete_recursive(&path, DeletionGuard::new(backup_path.clone())).await;
+        let result = modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path)).await;
 
         if let Err(e) = result {
             log::warn!("Failed to remove old backup: {:?}", e);

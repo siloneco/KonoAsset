@@ -1,13 +1,17 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use async_zip::{error::ZipError, tokio::read::seek::ZipFileReader};
 use tokio_util::compat::FuturesAsyncReadCompatExt;
 
-pub async fn extract_zip(
-    src: &PathBuf,
-    dest: &PathBuf,
+pub async fn extract_zip<P, Q>(
+    src: P,
+    dest: Q,
     progress_callback: impl Fn(f32, String),
-) -> Result<(), String> {
+) -> Result<(), String>
+where
+    P: AsRef<Path>,
+    Q: AsRef<Path>,
+{
     let mut file = tokio::io::BufReader::new(
         tokio::fs::File::open(src)
             .await

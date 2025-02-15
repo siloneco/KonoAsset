@@ -12,7 +12,12 @@ use crate::{
     zip::extractor::extract_zip,
 };
 
-pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<String>, String> {
+pub async fn execute_image_fixation<P>(src: P) -> Result<Option<String>, String>
+where
+    P: AsRef<Path>,
+{
+    let src = src.as_ref();
+
     if !src.exists() {
         return Err(format!("File not found: {}", src.display()));
     }
@@ -44,8 +49,7 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<String>, Str
     let new_filename = &file_name[5..];
     let new_path = src.with_file_name(new_filename);
 
-    let result =
-        modify_guard::copy_file(src, &new_path, false, FileTransferGuard::new(None, None)).await;
+    let result = modify_guard::copy_file(src, &new_path, false, FileTransferGuard::none()).await;
 
     if let Err(e) = result {
         return Err(e.to_string());
@@ -54,14 +58,15 @@ pub async fn execute_image_fixation(src: &PathBuf) -> Result<Option<String>, Str
     return Ok(Some(new_filename.to_string()));
 }
 
-pub async fn import_asset<P>(
+pub async fn import_asset<P, Q>(
     src: P,
-    dest: P,
+    dest: Q,
     cleanup_on_fail: bool,
     progress_callback: impl Fn(f32, String),
 ) -> Result<(), Box<dyn Error>>
 where
     P: AsRef<Path>,
+    Q: AsRef<Path>,
 {
     let src = src.as_ref();
     let dest = dest.as_ref();
@@ -81,11 +86,15 @@ where
         };
 
         tokio::fs::create_dir_all(&destination).await?;
+
+        // Convert to PathBuf to avoid lifetime issues
+        let src = src.to_path_buf();
+
         modify_guard::copy_dir(
-            &src.to_path_buf(),
-            &destination,
+            src,
+            destination,
             false,
-            FileTransferGuard::new(None, None),
+            FileTransferGuard::none(),
             progress_callback,
         )
         .await?;
@@ -134,7 +143,7 @@ where
                 &src.to_path_buf(),
                 &destination,
                 false,
-                FileTransferGuard::new(None, None),
+                FileTransferGuard::none(),
             )
             .await?;
 

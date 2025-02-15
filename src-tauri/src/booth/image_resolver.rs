@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use super::common::get_reqwest_client;
 
@@ -13,10 +13,13 @@ pub struct PximgResolver {
 }
 
 impl PximgResolver {
-    pub fn new(images_dir: PathBuf) -> Self {
+    pub fn new<P>(images_dir: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
         Self {
             client: get_reqwest_client().expect("Failed to create reqwest client"),
-            images_dir,
+            images_dir: images_dir.as_ref().to_path_buf(),
             file_map: HashMap::new(),
         }
     }
@@ -45,16 +48,19 @@ impl PximgResolver {
     }
 }
 
-async fn save_image_from_url(
+async fn save_image_from_url<P>(
     client: &reqwest::Client,
     url: &str,
-    output: &PathBuf,
-) -> Result<(), Box<dyn std::error::Error>> {
+    output: P,
+) -> Result<(), Box<dyn std::error::Error>>
+where
+    P: AsRef<Path>,
+{
     validate_url(url)?;
 
-    let mut parent = output.clone();
-    parent.pop();
-    tokio::fs::create_dir_all(parent).await?;
+    if let Some(parent) = output.as_ref().parent() {
+        tokio::fs::create_dir_all(parent).await?;
+    }
 
     let mut file = std::fs::File::create(output)?;
     let bytes = client.get(url).send().await?.bytes().await?;

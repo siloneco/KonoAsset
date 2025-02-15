@@ -24,7 +24,7 @@ pub async fn reset_application(
         if preference_path.exists() {
             let result = modify_guard::delete_single_file(
                 &preference_path,
-                DeletionGuard::new(app_local_data_dir),
+                &DeletionGuard::new(&app_local_data_dir),
             )
             .await;
 
@@ -51,7 +51,7 @@ pub async fn reset_application(
             if metadata_dir.exists() {
                 let result = modify_guard::delete_recursive(
                     &metadata_dir,
-                    DeletionGuard::new(user_data_dir.clone()),
+                    &DeletionGuard::new(&user_data_dir),
                 )
                 .await;
 
@@ -70,7 +70,7 @@ pub async fn reset_application(
             if asset_data_dir.exists() {
                 let result = modify_guard::delete_recursive(
                     &asset_data_dir,
-                    DeletionGuard::new(user_data_dir.clone()),
+                    &DeletionGuard::new(&user_data_dir),
                 )
                 .await;
 

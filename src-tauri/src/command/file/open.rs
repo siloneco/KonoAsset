@@ -21,7 +21,7 @@ pub async fn open_managed_dir(
 #[specta::specta]
 pub async fn open_data_dir(pref_store: State<'_, Mutex<PreferenceStore>>) -> Result<(), String> {
     let path = &pref_store.lock().await.data_dir_path;
-    file::open_in_file_manager(path)
+    file::open_in_file_manager(&path)
 }
 
 #[tauri::command]
@@ -54,8 +54,7 @@ pub fn open_app_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn open_file_in_file_manager(path: String) -> Result<(), String> {
-    let path = PathBuf::from(path);
+pub fn open_file_in_file_manager(path: PathBuf) -> Result<(), String> {
     file::open_in_file_manager(&path)
 }
 

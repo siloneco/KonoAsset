@@ -1,6 +1,11 @@
-use std::path::PathBuf;
+use std::path::Path;
 
-pub fn open_in_file_manager(path: &PathBuf) -> Result<(), String> {
+pub fn open_in_file_manager<P>(path: P) -> Result<(), String>
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
+
     if !path.exists() {
         return Err("File or directory does not exist".into());
     }
