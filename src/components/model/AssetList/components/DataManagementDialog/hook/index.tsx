@@ -115,7 +115,7 @@ const useDataManagementDialog = ({
     ongoingImportsRef.current = []
     setFinishedImportTaskIDs([])
     refresh(false)
-  }, [assetId])
+  }, [assetId, dialogOpen])
 
   const markOngoingImportAsFinished = (taskId: string) => {
     setFinishedImportTaskIDs([...finishedImportTaskIDs, taskId])
