@@ -1,5 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
-import { MoreButton } from '../MoreButton'
+import { MoreButton } from './components/MoreButton'
 import { useAssetCard } from './hook'
 import AssetBadge from '@/components/part/AssetBadge'
 import { Label } from '@/components/ui/label'
@@ -7,7 +7,7 @@ import { RefObject, useContext } from 'react'
 import SquareImage from '@/components/model/SquareImage'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import AssetCardOpenButton from '@/components/model/AssetList/components/AssetCardOpenButton'
+import AssetCardOpenButton from '@/components/model/AssetCard/components/AssetCardOpenButton'
 
 type Props = {
   asset: AssetSummary

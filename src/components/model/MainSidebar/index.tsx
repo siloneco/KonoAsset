@@ -5,7 +5,7 @@ import {
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
 
-import TypeSelector from '../TypeSelector'
+import TypeSelector from './components/TypeSelector'
 import AvatarWearableFilter from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
 import { Settings, X } from 'lucide-react'
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useContext, useEffect, useRef, useState } from 'react'
 import WorldObjectFilter from './layout/WorldObjectFilter'
-import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
+import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { Option } from '@/components/ui/multi-select'
 import { fetchAllTags } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
