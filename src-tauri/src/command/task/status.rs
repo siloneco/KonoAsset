@@ -42,3 +42,22 @@ pub async fn cancel_task_request(
         None => Err("Task not found.".into()),
     }
 }
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_task_error(
+    task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    id: Uuid,
+) -> Result<Option<String>, String> {
+    let mut container = task_container.lock().await;
+    let task = container.get(id).await;
+
+    match task {
+        Some(task) => {
+            let task = task.lock().await;
+            let error = task.get_error().await;
+            Ok(error)
+        }
+        None => Err("Task not found.".into()),
+    }
+}

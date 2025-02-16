@@ -7,16 +7,18 @@ import { Loader2 } from 'lucide-react'
 
 type Props = {
   taskId: string | null
-  onComplete: () => void
+  onCompleted: () => void
   onCancelled: () => void
+  onFailed: (error: string | null) => void
 }
 
-const ProgressTab = ({ taskId, onComplete, onCancelled }: Props) => {
+const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
   const { progress, filename, canceling, onCancelButtonClick } = useProgressTab(
     {
       taskId,
-      onComplete,
+      onCompleted,
       onCancelled,
+      onFailed,
     },
   )
 

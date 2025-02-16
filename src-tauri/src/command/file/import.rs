@@ -32,7 +32,10 @@ pub async fn import_file_entries_to_asset(
 
                 if let Err(e) = result {
                     log::error!("Failed to import additional data: {:?}", e);
+                    return Err(e);
                 }
+
+                Ok(())
             })?;
 
         task_ids.push(id);

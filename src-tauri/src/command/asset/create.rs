@@ -33,11 +33,14 @@ pub async fn request_avatar_import(
             let basic_store = cloned_basic_store.lock().await;
             let result = import_avatar(&basic_store, request, &cloned_app_handle).await;
 
-            if let Ok(avatar) = result {
-                log::info!("Successfully imported avatar: {:?}", avatar);
-            } else {
-                log::error!("Failed to import avatar: {:?}", result);
+            if let Err(e) = result {
+                log::error!("Failed to import avatar: {}", e);
+                return Err(e);
             }
+
+            log::info!("Successfully imported avatar: {:?}", result.unwrap());
+
+            Ok(())
         });
 
     task
@@ -67,11 +70,16 @@ pub async fn request_avatar_wearable_import(
             let basic_store = cloned_basic_store.lock().await;
             let result = import_avatar_wearable(&basic_store, request, &cloned_app_handle).await;
 
-            if let Ok(avatar) = result {
-                log::info!("Successfully imported avatar: {:?}", avatar);
-            } else {
-                log::error!("Failed to import avatar: {:?}", result);
+            if let Err(e) = result {
+                log::error!("Failed to import avatar wearable: {}", e);
+                return Err(e);
             }
+
+            log::info!(
+                "Successfully imported avatar wearable: {:?}",
+                result.unwrap()
+            );
+            Ok(())
         });
 
     task
@@ -98,11 +106,13 @@ pub async fn request_world_object_import(
             let basic_store = cloned_basic_store.lock().await;
             let result = import_world_object(&basic_store, request, &cloned_app_handle).await;
 
-            if let Ok(avatar) = result {
-                log::info!("Successfully imported avatar: {:?}", avatar);
-            } else {
-                log::error!("Failed to import avatar: {:?}", result);
+            if let Err(e) = result {
+                log::error!("Failed to import world object: {}", e);
+                return Err(e);
             }
+
+            log::info!("Successfully imported world object: {:?}", result.unwrap());
+            Ok(())
         });
 
     task

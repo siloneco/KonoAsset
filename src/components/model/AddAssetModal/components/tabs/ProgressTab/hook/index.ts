@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react'
 
 type Props = {
   taskId: string | null
-  onComplete: () => void
+  onCompleted: () => void
   onCancelled: () => void
+  onFailed: (error: string | null) => void
 }
 
 type ReturnProps = {
@@ -18,8 +19,9 @@ type ReturnProps = {
 
 export const useProgressTab = ({
   taskId,
-  onComplete,
+  onCompleted,
   onCancelled,
+  onFailed,
 }: Props): ReturnProps => {
   const [canceling, setCanceling] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -28,7 +30,7 @@ export const useProgressTab = ({
 
   useEffect(() => {
     let isCancelled = false
-    let onCompletedOrCancelledExecuted = false
+    let callbackExecuted = false
     let unlistenProgressFn: UnlistenFn | undefined = undefined
     let unlistenCompleteFn: UnlistenFn | undefined = undefined
 
@@ -41,18 +43,26 @@ export const useProgressTab = ({
           const status = e.payload.status
 
           if (
-            onCompletedOrCancelledExecuted ||
+            callbackExecuted ||
             completedTaskId !== taskId ||
             status === 'Running'
           ) {
             return
           }
 
-          onCompletedOrCancelledExecuted = true
+          callbackExecuted = true
           if (status == 'Completed') {
-            onComplete()
+            onCompleted()
           } else if (status === 'Cancelled') {
             onCancelled()
+          } else if (status === 'Failed') {
+            commands.getTaskError(taskId).then((result) => {
+              if (result.status === 'ok') {
+                onFailed(result.data)
+              } else {
+                console.error('Failed to get task error:', result.error)
+              }
+            })
           }
         })
 
@@ -74,7 +84,7 @@ export const useProgressTab = ({
           return
         }
 
-        if (taskId === null || onCompletedOrCancelledExecuted) {
+        if (taskId === null || callbackExecuted) {
           return
         }
 
@@ -86,9 +96,17 @@ export const useProgressTab = ({
         }
 
         if (result.data === 'Completed') {
-          onComplete()
+          onCompleted()
         } else if (result.data === 'Cancelled') {
           onCancelled()
+        } else if (result.data === 'Failed') {
+          const errorResult = await commands.getTaskError(taskId)
+
+          if (errorResult.status === 'ok') {
+            onFailed(errorResult.data)
+          } else {
+            console.error('Failed to get task error:', errorResult.error)
+          }
         }
       } catch (error) {
         console.error(
@@ -105,7 +123,7 @@ export const useProgressTab = ({
       unlistenProgressFn?.()
       unlistenCompleteFn?.()
     }
-  }, [taskId, onComplete, onCancelled])
+  }, [taskId, onCompleted, onFailed, onCancelled])
 
   const onCancelButtonClick = async () => {
     try {

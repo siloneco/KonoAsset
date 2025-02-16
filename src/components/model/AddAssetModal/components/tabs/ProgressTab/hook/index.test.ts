@@ -39,14 +39,16 @@ describe('ProgressTab Hook', () => {
 
   it('it cancels the task on cancel button click', async () => {
     const taskId = 'SampleTaskId'
-    const onComplete = vi.fn()
+    const onCompleted = vi.fn()
     const onCancelled = vi.fn()
+    const onFailed = vi.fn()
 
     const { result } = renderHook(() =>
       useProgressTab({
         taskId,
         onCancelled,
-        onComplete,
+        onCompleted,
+        onFailed,
       }),
     )
 
@@ -67,14 +69,16 @@ describe('ProgressTab Hook', () => {
 
   it('shows error toast on failed to determine task id', async () => {
     const taskId = null
-    const onComplete = vi.fn()
+    const onCompleted = vi.fn()
     const onCancelled = vi.fn()
+    const onFailed = vi.fn()
 
     const { result } = renderHook(() =>
       useProgressTab({
         taskId: taskId,
+        onCompleted,
         onCancelled,
-        onComplete,
+        onFailed,
       }),
     )
 

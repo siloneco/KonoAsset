@@ -339,6 +339,14 @@ async cancelTaskRequest(id: string) : Promise<Result<TaskStatus, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getTaskError(id: string) : Promise<Result<string | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_task_error", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -383,7 +391,7 @@ export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImpor
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
-export type TaskStatus = "Running" | "Completed" | "Cancelled"
+export type TaskStatus = "Running" | "Completed" | "Cancelled" | "Failed"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
