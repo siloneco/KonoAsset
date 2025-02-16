@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { commands, events } from '@/lib/bindings'
+import { useToast } from '@/hooks/use-toast'
+import { commands, events, TaskStatus } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { Ban, Check, Loader2 } from 'lucide-react'
@@ -8,29 +9,38 @@ import { FC, useEffect, useState } from 'react'
 type Props = {
   taskId: string
   filename: string
-  onCancelled: () => void
   markAsFinished: () => void
 }
 
-const OngoingImportRow: FC<Props> = ({
-  taskId,
-  filename,
-  onCancelled,
-  markAsFinished,
-}) => {
-  const [completed, setCompleted] = useState(false)
-  const [cancelled, setCancelled] = useState(false)
+const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
+  const [status, setStatus] = useState<TaskStatus>('Running')
+  const { toast } = useToast()
 
   const cancelTask = async () => {
     const result = await commands.cancelTaskRequest(taskId)
 
     if (result.status === 'ok') {
-      if (result.data === 'Cancelled') {
-        setCancelled(true)
-        markAsFinished()
-      } else if (result.data === 'Completed') {
-        setCompleted(true)
-        markAsFinished()
+      const currentStatus = result.data
+
+      if (currentStatus === 'Running') {
+        return
+      }
+
+      setStatus(currentStatus)
+      markAsFinished()
+
+      if (currentStatus === 'Failed') {
+        const errorResult = await commands.getTaskError(taskId)
+
+        if (errorResult.status === 'error') {
+          console.error('Failed to get task error:', errorResult.error)
+          return
+        }
+
+        toast({
+          title: 'ファイルのインポートに失敗しました',
+          description: errorResult.data ?? 'エラーが発生しました',
+        })
       }
     }
   }
@@ -57,11 +67,18 @@ const OngoingImportRow: FC<Props> = ({
           }
 
           onCompletedOrCancelledExecuted = true
-          if (status == 'Completed') {
-            setCompleted(true)
-            markAsFinished()
-          } else if (status === 'Cancelled') {
-            onCancelled()
+          setStatus(status)
+          markAsFinished()
+
+          if (status === 'Failed') {
+            commands.getTaskError(taskId).then((result) => {
+              if (result.status === 'ok') {
+                toast({
+                  title: 'ファイルのインポートに失敗しました',
+                  description: result.data ?? 'エラーが発生しました',
+                })
+              }
+            })
           }
         })
 
@@ -86,11 +103,26 @@ const OngoingImportRow: FC<Props> = ({
           return
         }
 
-        if (result.data === 'Completed') {
-          setCompleted(true)
-          markAsFinished()
-        } else if (result.data === 'Cancelled') {
-          onCancelled()
+        const currentStatus = result.data
+        if (currentStatus === 'Running') {
+          return
+        }
+
+        setStatus(currentStatus)
+        markAsFinished()
+
+        if (currentStatus === 'Failed') {
+          const errorResult = await commands.getTaskError(taskId)
+
+          if (errorResult.status === 'error') {
+            console.error('Failed to get task error:', errorResult.error)
+            return
+          }
+
+          toast({
+            title: 'ファイルのインポートに失敗しました',
+            description: errorResult.data ?? 'エラーが発生しました',
+          })
         }
       } catch (error) {
         console.error(
@@ -110,20 +142,31 @@ const OngoingImportRow: FC<Props> = ({
 
   return (
     <div className="flex flex-row items-center space-x-2">
-      {!completed && !cancelled && (
+      {status === 'Running' && (
         <Loader2 size={24} className="animate-spin text-foreground/60" />
       )}
-      {!completed && cancelled && <Ban size={20} className="text-red-400" />}
-      {completed && <Check size={24} className="text-green-600" />}
+      {(status === 'Cancelled' || status === 'Failed') && (
+        <Ban size={20} className="text-red-400" />
+      )}
+      {status === 'Completed' && <Check size={24} className="text-green-600" />}
       <p className="w-96 truncate">
-        {cancelled && (
+        {status === 'Cancelled' && (
           <span className="text-foreground/60 mr-2">
             (キャンセルされました)
           </span>
         )}
-        <span className={cn(cancelled && 'line-through')}>{filename}</span>
+        {status === 'Failed' && (
+          <span className="text-foreground/60 mr-2">(失敗しました)</span>
+        )}
+        <span
+          className={cn(
+            (status === 'Cancelled' || status === 'Failed') && 'line-through',
+          )}
+        >
+          {filename}
+        </span>
       </p>
-      {!completed && !cancelled && (
+      {status === 'Running' && (
         <Button variant="destructive" className="w-8 h-8" onClick={cancelTask}>
           <Ban />
         </Button>

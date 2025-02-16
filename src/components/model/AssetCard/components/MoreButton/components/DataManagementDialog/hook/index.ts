@@ -118,7 +118,10 @@ const useDataManagementDialog = ({
   }, [assetId, dialogOpen])
 
   const markOngoingImportAsFinished = (taskId: string) => {
-    setFinishedImportTaskIDs([...finishedImportTaskIDs, taskId])
+    setFinishedImportTaskIDs((prevIDs) => {
+      const updated = [...prevIDs, taskId]
+      return updated
+    })
   }
 
   const startImporting = async (paths: string[]) => {
@@ -129,7 +132,7 @@ const useDataManagementDialog = ({
     const result = await commands.importFileEntriesToAsset(assetId, paths)
 
     if (result.status === 'ok') {
-      const ongoing = []
+      const ongoing: OngoingImportEntry[] = []
 
       for (let i = 0; i < paths.length; i++) {
         ongoing.push({
@@ -138,7 +141,9 @@ const useDataManagementDialog = ({
         })
       }
 
-      setOngoingImports([...ongoingImportsRef.current, ...ongoing])
+      setOngoingImports((prev) => {
+        return [...prev, ...ongoing]
+      })
     } else {
       console.error(result.error)
     }
