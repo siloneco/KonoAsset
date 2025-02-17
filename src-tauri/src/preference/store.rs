@@ -1,7 +1,7 @@
 use std::{io, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
-use tauri::{App, Manager};
+use tauri::{AppHandle, Manager};
 
 use crate::loader::VersionedPreferences;
 
@@ -29,7 +29,7 @@ pub enum Theme {
 }
 
 impl PreferenceStore {
-    pub fn default(app: &App) -> Result<Self, String> {
+    pub fn default(app: &AppHandle) -> Result<Self, String> {
         let app_local_data_dir = app.path().app_local_data_dir();
         if let Err(e) = app_local_data_dir {
             return Err(format!("Failed to get app local data dir: {}", e));
@@ -53,7 +53,7 @@ impl PreferenceStore {
         })
     }
 
-    pub fn load(app: &App) -> Result<Option<Self>, io::Error> {
+    pub fn load(app: &AppHandle) -> Result<Option<Self>, io::Error> {
         let app_local_data_dir = app.path().app_local_data_dir().map_err(|e| {
             io::Error::new(
                 io::ErrorKind::Other,

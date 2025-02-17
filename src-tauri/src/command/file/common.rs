@@ -48,7 +48,7 @@ pub async fn list_unitypackage_files(
 #[tauri::command]
 #[specta::specta]
 pub async fn migrate_data_dir(
-    preference: State<'_, Mutex<PreferenceStore>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     new_path: PathBuf,
     migrate_data: bool,

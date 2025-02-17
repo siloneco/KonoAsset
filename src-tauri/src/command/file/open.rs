@@ -19,7 +19,9 @@ pub async fn open_managed_dir(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn open_data_dir(pref_store: State<'_, Mutex<PreferenceStore>>) -> Result<(), String> {
+pub async fn open_data_dir(
+    pref_store: State<'_, Arc<Mutex<PreferenceStore>>>,
+) -> Result<(), String> {
     let path = &pref_store.lock().await.data_dir_path;
     file::open_in_file_manager(&path)
 }
@@ -27,7 +29,7 @@ pub async fn open_data_dir(pref_store: State<'_, Mutex<PreferenceStore>>) -> Res
 #[tauri::command]
 #[specta::specta]
 pub async fn open_metadata_dir(
-    pref_store: State<'_, Mutex<PreferenceStore>>,
+    pref_store: State<'_, Arc<Mutex<PreferenceStore>>>,
 ) -> Result<(), String> {
     let path = pref_store.lock().await.data_dir_path.join("metadata");
     file::open_in_file_manager(&path)
@@ -36,7 +38,7 @@ pub async fn open_metadata_dir(
 #[tauri::command]
 #[specta::specta]
 pub async fn open_asset_data_dir(
-    pref_store: State<'_, Mutex<PreferenceStore>>,
+    pref_store: State<'_, Arc<Mutex<PreferenceStore>>>,
 ) -> Result<(), String> {
     let path = pref_store.lock().await.data_dir_path.join("data");
     file::open_in_file_manager(&path)

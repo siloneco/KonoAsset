@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::Deserialize;
 use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
@@ -37,7 +39,8 @@ pub async fn reset_application(
         log::info!("Successfully reset preferences");
     }
 
-    let preference_store: Option<State<'_, Mutex<PreferenceStore>>> = handle.try_state();
+    // PreferenceStore がロードできていない場合があるため、try_state で取得する
+    let preference_store: Option<State<'_, Arc<Mutex<PreferenceStore>>>> = handle.try_state();
 
     if let Some(preference_store) = preference_store {
         let user_data_dir = {

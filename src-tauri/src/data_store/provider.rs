@@ -24,10 +24,10 @@ pub struct StoreProvider {
 }
 
 impl StoreProvider {
-    pub fn create(data_dir: PathBuf) -> Result<Self, String> {
-        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir.clone())?;
-        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir.clone())?;
-        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir.clone())?;
+    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
+        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir)?;
+        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir)?;
+        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir)?;
 
         Ok(Self {
             data_dir: data_dir.clone(),
@@ -180,9 +180,9 @@ impl StoreProvider {
             }
         }
 
-        self.avatar_store = JsonStore::create(new_path.clone())?;
-        self.avatar_wearable_store = JsonStore::create(new_path.clone())?;
-        self.world_object_store = JsonStore::create(new_path.clone())?;
+        self.avatar_store = JsonStore::create(new_path)?;
+        self.avatar_wearable_store = JsonStore::create(new_path)?;
+        self.world_object_store = JsonStore::create(new_path)?;
 
         self.data_dir = new_path.clone();
 

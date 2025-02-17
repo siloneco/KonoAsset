@@ -1,4 +1,4 @@
-use std::{borrow::BorrowMut, sync::Arc};
+use std::{path::PathBuf, sync::Arc};
 
 use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
@@ -6,7 +6,7 @@ use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use definitions::entities::{LoadResult, ProgressEvent};
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
-use tauri::{async_runtime::Mutex, Manager};
+use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_specta::collect_events;
 use updater::update_handler::UpdateHandler;
 
@@ -66,100 +66,130 @@ pub fn run() {
             logging::initialize_logger(&app.handle());
             builder.mount_events(app);
 
-            if let Some(window) = app.get_webview_window("main") {
-                let result = window.set_title(&format!("KonoAsset v{}", VERSION));
+            set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
-                if result.is_err() {
-                    log::warn!("Failed to set window title: {}", result.unwrap_err());
-                }
-            }
-
+            app.manage(get_update_handler(app.handle().clone()));
             app.manage(app.handle().clone());
 
-            let app_handle = app.handle().clone();
-            let update_handler = tauri::async_runtime::block_on(async move {
-                let mut update_handler = UpdateHandler::new(app_handle);
-                let result = update_handler.check_for_update().await;
+            let result = load_preference_store(app.handle());
+            if let Err(e) = result {
+                log::error!("{}", e);
+                app.manage(LoadResult::error(false, e));
 
-                if result.is_err() {
-                    log::error!("Failed to check for update: {}", result.unwrap_err());
-                }
-
-                update_handler
-            });
-
-            app.manage(update_handler);
-
-            let pref_store = PreferenceStore::load(&app);
-
-            if let Err(err) = pref_store {
-                let err = format!("Failed to load preference.json: {}", err.to_string());
-                log::error!("{}", err);
-                app.manage(LoadResult::error(false, err));
+                // Err を返すとアプリケーションが終了してしまうため Ok を返す
                 return Ok(());
             }
-            let pref_store = if let Some(item) = pref_store.unwrap() {
-                item
-            } else {
-                let default_pref = PreferenceStore::default(&app);
 
-                if let Err(err) = default_pref {
-                    let err = format!("Failed to create default preference: {}", err.to_string());
-                    log::error!("{}", err);
-                    app.manage(LoadResult::error(false, err));
-                    return Ok(());
-                }
-
-                default_pref.unwrap()
-            };
-
+            let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
 
-            app.manage(Mutex::new(pref_store));
+            let pximg_resolver = PximgResolver::new(data_dir.join("images"));
 
-            app.manage(Arc::new(Mutex::new(PximgResolver::new(
-                data_dir.join("images"),
-            ))));
+            app.manage(arc_mutex(pref_store));
+            app.manage(arc_mutex(pximg_resolver));
 
-            let result = StoreProvider::create(data_dir.clone());
-
+            let result = load_store_provider(&data_dir);
             if let Err(err) = result {
-                let err = format!("Failed to create store provider: {}", err.to_string());
                 log::error!("{}", err);
-                app.manage(LoadResult::error(false, err));
+                app.manage(LoadResult::error(true, err));
+
+                // Err を返すとアプリケーションが終了してしまうため Ok を返す
                 return Ok(());
             }
 
-            let mut basic_store = result.unwrap();
+            let store_provider = result.unwrap();
 
-            let app_handle = app.handle().clone();
-            let basic_store_ref = basic_store.borrow_mut();
-            let basic_store_load_result = tauri::async_runtime::block_on(async move {
-                basic_store_ref.load_all_assets_from_files().await
-            });
-
-            if basic_store_load_result.is_err() {
-                let err = format!(
-                    "Failed to load metadata: {}",
-                    basic_store_load_result.unwrap_err()
-                );
-                log::error!("{}", err);
-                app_handle.manage(LoadResult::error(true, err));
-
-                return Ok(());
-            }
-
-            app.manage(Arc::new(Mutex::new(basic_store)));
+            app.manage(arc_mutex(store_provider));
             app.manage(LoadResult::success());
 
-            tauri::async_runtime::block_on(async move {
-                if let Err(e) = delete_temporary_images(&data_dir).await {
-                    log::warn!("Failed to delete temporary images: {}", e);
-                }
-            });
+            cleanup_images_dir(&data_dir);
 
             Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn set_window_title<S>(app: &AppHandle, title: S)
+where
+    S: AsRef<str>,
+{
+    if let Some(window) = app.get_webview_window("main") {
+        let result = window.set_title(title.as_ref());
+
+        if result.is_err() {
+            log::warn!("Failed to set window title: {}", result.unwrap_err());
+        }
+    }
+}
+
+fn get_update_handler(app: AppHandle) -> UpdateHandler {
+    tauri::async_runtime::block_on(async move {
+        let mut update_handler = UpdateHandler::new(app);
+        let result = update_handler.check_for_update().await;
+
+        if result.is_err() {
+            log::error!("Failed to check for update: {}", result.unwrap_err());
+        }
+
+        update_handler
+    })
+}
+
+fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
+    let pref_store = PreferenceStore::load(app);
+
+    if let Err(err) = pref_store {
+        return Err(format!(
+            "Failed to load preference.json: {}",
+            err.to_string()
+        ));
+    }
+
+    let pref_store = pref_store.unwrap();
+
+    if let Some(pref_store) = pref_store {
+        return Ok(pref_store);
+    }
+
+    let default_pref = PreferenceStore::default(&app);
+
+    if let Err(err) = default_pref {
+        return Err(format!("Failed to create default preference: {}", err));
+    }
+
+    Ok(default_pref.unwrap())
+}
+
+fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
+    let result = StoreProvider::create(data_dir);
+
+    if let Err(err) = result {
+        return Err(format!("Failed to create store provider: {}", err));
+    }
+
+    let mut store_provider = result.unwrap();
+    let store_provider_ref = &mut store_provider;
+
+    let result = tauri::async_runtime::block_on(async move {
+        store_provider_ref.load_all_assets_from_files().await
+    });
+
+    if let Err(err) = result {
+        return Err(format!("Failed to load metadata: {}", err));
+    }
+
+    Ok(store_provider)
+}
+
+fn cleanup_images_dir(data_dir: &PathBuf) {
+    tauri::async_runtime::block_on(async move {
+        if let Err(e) = delete_temporary_images(data_dir).await {
+            log::warn!("Failed to delete temporary images: {}", e);
+        }
+    });
+}
+
+fn arc_mutex<T>(value: T) -> Arc<Mutex<T>> {
+    Arc::new(Mutex::new(value))
 }
