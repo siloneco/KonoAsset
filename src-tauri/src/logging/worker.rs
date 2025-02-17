@@ -13,6 +13,8 @@ use tauri::{AppHandle, Manager};
 
 use super::definitions::{LogChannelMessage, LogEntry, Logger};
 
+const LOG_RETENTION_DAYS: i64 = 14;
+
 static LOG_BUFFER: Mutex<ConstGenericRingBuffer<LogEntry, 256>> =
     Mutex::new(ConstGenericRingBuffer::new());
 
@@ -23,7 +25,10 @@ pub fn initialize_logger(app_handle: &AppHandle) {
     log::set_max_level(log::LevelFilter::Debug);
     log::set_boxed_logger(Box::new(logger)).expect("error while setting logger");
 
-    start_logging_thread(receiver, &app_handle.path().app_log_dir().unwrap());
+    let logs_dir = app_handle.path().app_log_dir().unwrap();
+
+    start_logging_thread(receiver, &logs_dir);
+    purge_outdated_logs(&logs_dir).ok();
 }
 
 pub fn get_logs() -> Vec<LogEntry> {
@@ -36,6 +41,7 @@ fn start_logging_thread(receiver: mpsc::Receiver<LogChannelMessage>, logs_dir: &
         std::fs::create_dir_all(&logs_dir).ok();
     }
 
+    // chrono::Local より chrono::Utc の方が安定するため Utc を使用
     let timestamp = chrono::Utc::now()
         .format("%Y-%m-%d_%H-%M-%S.%6f")
         .to_string();
@@ -107,5 +113,77 @@ fn logging_thread_main(
                 }
             }
         }
+    }
+}
+
+fn purge_outdated_logs(logs_dir: &PathBuf) -> Result<(), std::io::Error> {
+    let readdir = logs_dir.read_dir()?;
+
+    for entry in readdir {
+        match entry {
+            Ok(path) => {
+                let path = path.path();
+
+                let file_stem = path.file_stem().unwrap().to_str().unwrap();
+
+                // 先頭の "konoasset-" が10文字なため
+                let timestamp = &file_stem[10..];
+
+                if is_outdated_timestamp(timestamp) {
+                    log::debug!("purging outdated log file: {}", path.display());
+                    std::fs::remove_file(&path).ok();
+                }
+            }
+            Err(e) => {
+                log::error!("error while purging outdated logs: {}", e);
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn is_outdated_timestamp(timestamp: &str) -> bool {
+    let timestamp = match chrono::NaiveDateTime::parse_from_str(&timestamp, "%Y-%m-%d_%H-%M-%S.%6f")
+    {
+        Ok(timestamp) => timestamp,
+        Err(e) => {
+            log::error!("error while parsing timestamp: {}", e);
+            return false;
+        }
+    };
+
+    let timestamp = chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(
+        timestamp,
+        chrono::Utc::now().offset().clone(),
+    );
+
+    let threshold = chrono::Utc::now() - chrono::Duration::days(LOG_RETENTION_DAYS);
+
+    timestamp < threshold
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::Duration;
+
+    use super::*;
+
+    #[test]
+    fn test_is_outdated_timestamp() {
+        let threshold = chrono::Utc::now() - Duration::days(LOG_RETENTION_DAYS);
+
+        let outdated_time = threshold - Duration::minutes(1);
+        let outdated_str = outdated_time.format("%Y-%m-%d_%H-%M-%S.%6f").to_string();
+        assert!(is_outdated_timestamp(&outdated_str));
+
+        let fresh_time = threshold + Duration::minutes(1);
+        let fresh_str = fresh_time.format("%Y-%m-%d_%H-%M-%S.%6f").to_string();
+        assert!(!is_outdated_timestamp(&fresh_str));
+    }
+
+    #[test]
+    fn test_invalid_timestamp() {
+        assert!(!is_outdated_timestamp("invalid"));
     }
 }
