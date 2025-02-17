@@ -3,7 +3,7 @@ use std::{borrow::BorrowMut, sync::Arc};
 use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
-use definitions::entities::{ImportProgress, LoadResult};
+use definitions::entities::{LoadResult, ProgressEvent};
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, Manager};
@@ -31,7 +31,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder =
-        generate_tauri_specta_builder().events(collect_events![ImportProgress, TaskStatusChanged,]);
+        generate_tauri_specta_builder().events(collect_events![ProgressEvent, TaskStatusChanged,]);
 
     #[cfg(debug_assertions)]
     builder

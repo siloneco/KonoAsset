@@ -307,12 +307,12 @@ impl LoadResult {
 
 #[derive(Serialize, Clone, specta::Type, Event)]
 #[serde(rename_all = "camelCase")]
-pub struct ImportProgress {
+pub struct ProgressEvent {
     pub percentage: f32,
     pub filename: String,
 }
 
-impl ImportProgress {
+impl ProgressEvent {
     pub fn new(percentage: f32, filename: String) -> Self {
         Self {
             percentage,

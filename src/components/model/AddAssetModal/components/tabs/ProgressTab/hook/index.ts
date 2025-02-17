@@ -71,7 +71,7 @@ export const useProgressTab = ({
           return
         }
 
-        unlistenProgressFn = await events.importProgress.listen((e) => {
+        unlistenProgressFn = await events.progressEvent.listen((e) => {
           if (isCancelled) return
 
           setProgress(e.payload.percentage)

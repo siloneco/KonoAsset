@@ -13,7 +13,7 @@ use uuid::Uuid;
 use crate::{
     data_store::provider::StoreProvider,
     definitions::{
-        entities::{Avatar, AvatarWearable, ImportProgress, WorldObject},
+        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
         import_request::{AssetImportRequest, PreAsset, PreAvatar},
         traits::AssetTrait,
     },
@@ -48,9 +48,7 @@ where
     }
 
     let asset = request.pre_asset.create();
-
     let file_count = request.absolute_paths.len();
-    let progress_last_updated = std::sync::Mutex::new(0);
 
     for i in 0..file_count {
         let path_str = request.absolute_paths.get(i).unwrap();
@@ -62,17 +60,10 @@ where
             .join(asset.get_id().to_string());
 
         let progress_callback = |progress, filename| {
-            let current_timestamp = chrono::Utc::now().timestamp_millis();
-            let mut last_updated = progress_last_updated.lock().unwrap();
-
-            if *last_updated + 100 < current_timestamp {
-                *last_updated = current_timestamp;
-
-                let total_progress = (i as f32 + progress) / file_count as f32;
-                ImportProgress::new(total_progress, filename)
-                    .emit(app_handle)
-                    .unwrap();
-            }
+            let total_progress = (i as f32 + progress) / file_count as f32;
+            ProgressEvent::new(total_progress, filename)
+                .emit(app_handle)
+                .unwrap();
         };
 
         let result = import_files(&src_import_asset_path, &destination, progress_callback).await;

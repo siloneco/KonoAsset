@@ -354,10 +354,10 @@ async getTaskError(id: string) : Promise<Result<string | null, string>> {
 
 
 export const events = __makeEvents__<{
-importProgress: ImportProgress,
+progressEvent: ProgressEvent,
 taskStatusChanged: TaskStatusChanged
 }>({
-importProgress: "import-progress",
+progressEvent: "progress-event",
 taskStatusChanged: "task-status-changed"
 })
 
@@ -378,7 +378,6 @@ export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type ImportProgress = { percentage: number; filename: string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
@@ -388,6 +387,7 @@ export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
+export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
