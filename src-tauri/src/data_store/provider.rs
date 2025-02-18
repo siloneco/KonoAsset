@@ -124,9 +124,10 @@ impl StoreProvider {
                 new_metadata_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |percentage, filename| {
+                |progress, filename| {
                     // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
-                    let percentage = percentage / 10f32;
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = progress * 10f32;
 
                     if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
                         log::error!("Failed to emit progress event: {:?}", e);
@@ -157,9 +158,10 @@ impl StoreProvider {
                 new_data_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |percentage, filename| {
+                |progress, filename| {
                     // プログレスバーのうち 8/10 をデータのコピーとして扱う
-                    let percentage = 0.1f32 + (percentage * 8f32 / 10f32);
+                    // progress は 0 - 1 の範囲であるため、80倍して % に変換する
+                    let percentage = 10f32 + (progress * 80f32);
 
                     if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
                         log::error!("Failed to emit progress event: {:?}", e);
@@ -190,9 +192,10 @@ impl StoreProvider {
                 new_images_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |percentage, filename| {
+                |progress, filename| {
                     // プログレスバーのうち 1/10 を画像のコピーとして扱う
-                    let percentage = 0.9f32 + (percentage / 10f32);
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = 90f32 + (progress * 10f32);
 
                     if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
                         log::error!("Failed to emit progress event: {:?}", e);

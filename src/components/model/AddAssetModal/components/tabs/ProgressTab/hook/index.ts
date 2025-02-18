@@ -11,7 +11,7 @@ type Props = {
 }
 
 type ReturnProps = {
-  progress: number
+  percentage: number
   filename: string
   canceling: boolean
   onCancelButtonClick: () => Promise<void>
@@ -24,7 +24,7 @@ export const useProgressTab = ({
   onFailed,
 }: Props): ReturnProps => {
   const [canceling, setCanceling] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [percentage, setPercentage] = useState(0)
   const [filename, setFilename] = useState('')
   const { toast } = useToast()
 
@@ -74,7 +74,7 @@ export const useProgressTab = ({
         unlistenProgressFn = await events.progressEvent.listen((e) => {
           if (isCancelled) return
 
-          setProgress(e.payload.percentage)
+          setPercentage(e.payload.percentage)
           setFilename(e.payload.filename)
         })
 
@@ -157,7 +157,7 @@ export const useProgressTab = ({
   }
 
   return {
-    progress,
+    percentage,
     filename,
     canceling,
     onCancelButtonClick,

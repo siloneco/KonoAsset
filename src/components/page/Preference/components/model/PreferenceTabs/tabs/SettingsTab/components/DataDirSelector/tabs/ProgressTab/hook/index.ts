@@ -101,7 +101,7 @@ const useDataDirSelectorProgressTab = ({
         unlistenProgressFn = await events.progressEvent.listen((e) => {
           if (isCancelled) return
 
-          setPercentage(e.payload.percentage * 100)
+          setPercentage(e.payload.percentage)
           setFilename(e.payload.filename)
         })
 

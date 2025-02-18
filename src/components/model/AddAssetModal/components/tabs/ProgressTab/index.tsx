@@ -13,14 +13,13 @@ type Props = {
 }
 
 const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
-  const { progress, filename, canceling, onCancelButtonClick } = useProgressTab(
-    {
+  const { percentage, filename, canceling, onCancelButtonClick } =
+    useProgressTab({
       taskId,
       onCompleted,
       onCancelled,
       onFailed,
-    },
-  )
+    })
 
   return (
     <>
@@ -33,7 +32,7 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
             {truncateFilename(filename)}
           </span>
         </p>
-        <Progress value={progress * 100} />
+        <Progress value={percentage} />
       </div>
       <DialogFooter className="mt-8">
         <Button

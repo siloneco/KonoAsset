@@ -60,8 +60,9 @@ where
             .join(asset.get_id().to_string());
 
         let progress_callback = |progress, filename| {
-            let total_progress = (i as f32 + progress) / file_count as f32;
-            ProgressEvent::new(total_progress, filename)
+            let percentage = (i as f32 + progress) / file_count as f32 * 100f32;
+
+            ProgressEvent::new(percentage, filename)
                 .emit(app_handle)
                 .unwrap();
         };
