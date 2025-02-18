@@ -1,6 +1,6 @@
 use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
-use tauri::{async_runtime::Mutex, State};
+use tauri::{async_runtime::Mutex, AppHandle, State};
 use uuid::Uuid;
 
 use crate::{
@@ -10,6 +10,7 @@ use crate::{
     },
     definitions::entities::FileInfo,
     preference::store::PreferenceStore,
+    task::cancellable_task::TaskContainer,
 };
 
 #[tauri::command]
@@ -50,9 +51,11 @@ pub async fn list_unitypackage_files(
 pub async fn migrate_data_dir(
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    handle: State<'_, AppHandle>,
     new_path: PathBuf,
     migrate_data: bool,
-) -> Result<Option<MigrateResult>, String> {
+) -> Result<Uuid, String> {
     log::info!(
         "Data directory migration triggered (dest: {})",
         new_path.display()
@@ -70,39 +73,52 @@ pub async fn migrate_data_dir(
             .map_err(|e| format!("Failed to create directory: {}", e))?;
     }
 
-    let migrate_result = if migrate_data {
-        log::info!("Migrating data to new path: {}", new_path.display());
-        let mut basic_store = basic_store.lock().await;
-        let result = basic_store.migrate_data_dir(&new_path).await.map_err(|e| {
-            let msg = format!("Failed to migrate data: {:?}", e);
-            log::error!("{}", msg);
-            msg
-        })?;
+    // from
 
-        if result == MigrateResult::Migrated {
-            log::info!("Data migration completed");
-        } else if result == MigrateResult::MigratedButFailedToDeleteOldDir {
-            log::warn!("Data migration completed, but failed to delete old directory");
-        }
+    let cloned_basic_store = (*basic_store).clone();
+    let cloned_preference = (*preference).clone();
+    let cloned_app_handle = (*handle).clone();
 
-        Some(result)
-    } else {
-        None
-    };
+    let task = task_container
+        .lock()
+        .await
+        .run((*handle).clone(), async move {
+            if migrate_data {
+                log::info!("Migrating data to new path: {}", new_path.display());
+                let mut basic_store = cloned_basic_store.lock().await;
 
-    let mut preference = preference.lock().await;
-    let mut new_preference = preference.clone();
-    new_preference.set_data_dir(new_path.clone());
+                let result = basic_store
+                    .migrate_data_dir(&cloned_app_handle, &new_path)
+                    .await
+                    .map_err(|e| {
+                        let msg = format!("Failed to migrate data: {:?}", e);
+                        log::error!("{}", msg);
+                        msg
+                    })?;
 
-    preference.overwrite(&new_preference);
-    preference.save().map_err(|e| e.to_string())?;
+                if result == MigrateResult::Migrated {
+                    log::info!("Data migration completed");
+                } else if result == MigrateResult::MigratedButFailedToDeleteOldDir {
+                    log::warn!("Data migration completed, but failed to delete old directory");
+                }
+            }
 
-    log::info!(
-        "Successfully changed data directory to: {}",
-        new_path.display()
-    );
+            let mut preference = cloned_preference.lock().await;
+            let mut new_preference = preference.clone();
+            new_preference.set_data_dir(new_path.clone());
 
-    Ok(migrate_result)
+            preference.overwrite(&new_preference);
+            preference.save().map_err(|e| e.to_string())?;
+
+            log::info!(
+                "Successfully changed data directory to: {}",
+                new_path.display()
+            );
+
+            Ok(())
+        });
+
+    task
 }
 
 #[tauri::command]

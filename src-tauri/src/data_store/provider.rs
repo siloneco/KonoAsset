@@ -1,10 +1,12 @@
 use std::{ffi::OsStr, fs, path::PathBuf};
 
 use serde::Serialize;
+use tauri::AppHandle;
+use tauri_specta::Event;
 
 use crate::{
     definitions::{
-        entities::{Avatar, AvatarWearable, WorldObject},
+        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
         traits::AssetTrait,
     },
     file::{
@@ -76,7 +78,11 @@ impl StoreProvider {
         self.data_dir.clone()
     }
 
-    pub async fn migrate_data_dir(&mut self, new_path: &PathBuf) -> Result<MigrateResult, String> {
+    pub async fn migrate_data_dir(
+        &mut self,
+        app: &AppHandle,
+        new_path: &PathBuf,
+    ) -> Result<MigrateResult, String> {
         if !new_path.is_dir() {
             return Err("New path is not a directory".into());
         }
@@ -118,7 +124,14 @@ impl StoreProvider {
                 new_metadata_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |_, _| {},
+                |percentage, filename| {
+                    // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
+                    let percentage = percentage / 10f32;
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
@@ -144,7 +157,14 @@ impl StoreProvider {
                 new_data_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |_, _| {},
+                |percentage, filename| {
+                    // プログレスバーのうち 8/10 をデータのコピーとして扱う
+                    let percentage = 0.1f32 + (percentage * 8f32 / 10f32);
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
@@ -170,7 +190,14 @@ impl StoreProvider {
                 new_images_path.clone(),
                 false,
                 FileTransferGuard::both(&old_path, &new_path),
-                |_, _| {},
+                |percentage, filename| {
+                    // プログレスバーのうち 1/10 を画像のコピーとして扱う
+                    let percentage = 0.9f32 + (percentage / 10f32);
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
