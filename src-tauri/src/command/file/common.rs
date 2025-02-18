@@ -67,13 +67,22 @@ pub async fn migrate_data_dir(
         return Err(err);
     }
 
-    if !new_path.exists() {
-        log::debug!("Creating directory: {}", new_path.display());
-        std::fs::create_dir_all(&new_path)
-            .map_err(|e| format!("Failed to create directory: {}", e))?;
-    }
+    if new_path.exists() {
+        let read_dir = new_path
+            .read_dir()
+            .map_err(|e| format!("Failed to read directory: {}", e))?;
+        let entry_count = read_dir.count();
 
-    // from
+        if entry_count > 0 {
+            let err = format!(
+                "Directory is not empty (entry count: {}): {}",
+                entry_count,
+                new_path.display()
+            );
+            log::error!("{}", err);
+            return Err(err);
+        }
+    }
 
     let cloned_basic_store = (*basic_store).clone();
     let cloned_preference = (*preference).clone();
