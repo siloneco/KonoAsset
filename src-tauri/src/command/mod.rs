@@ -60,5 +60,6 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         // タスク関連
         task::status::get_task_status,
         task::status::cancel_task_request,
+        task::status::get_task_error,
     ])
 }

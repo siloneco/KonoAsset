@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tauri::{async_runtime::Mutex, State};
 
 use crate::preference::store::PreferenceStore;
@@ -5,7 +7,7 @@ use crate::preference::store::PreferenceStore;
 #[tauri::command]
 #[specta::specta]
 pub async fn get_preferences(
-    preference: State<'_, Mutex<PreferenceStore>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
 ) -> Result<PreferenceStore, String> {
     let preference = preference.lock().await;
     Ok(preference.clone())
@@ -14,7 +16,7 @@ pub async fn get_preferences(
 #[tauri::command]
 #[specta::specta]
 pub async fn set_preferences(
-    preference: State<'_, Mutex<PreferenceStore>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     new_preference: PreferenceStore,
 ) -> Result<(), String> {
     let mut preference = preference.lock().await;

@@ -22,9 +22,8 @@ impl<
         T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
     > JsonStore<T>
 {
-    pub fn create(data_dir: PathBuf) -> Result<Self, String> {
-        let mut path = data_dir.clone();
-        path.push("metadata");
+    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
+        let path = data_dir.join("metadata");
 
         if !path.exists() {
             std::fs::create_dir_all(&path)
@@ -32,7 +31,7 @@ impl<
         }
 
         Ok(Self {
-            data_dir,
+            data_dir: data_dir.clone(),
             assets: Mutex::new(HashSet::new()),
         })
     }

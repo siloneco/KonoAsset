@@ -281,7 +281,7 @@ async listUnitypackageFiles(id: string) : Promise<Result<Partial<{ [key in strin
     else return { status: "error", error: e  as any };
 }
 },
-async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<MigrateResult | null, string>> {
+async migrateDataDir(newPath: string, migrateData: boolean) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("migrate_data_dir", { newPath, migrateData }) };
 } catch (e) {
@@ -339,6 +339,14 @@ async cancelTaskRequest(id: string) : Promise<Result<TaskStatus, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getTaskError(id: string) : Promise<Result<string | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_task_error", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -346,10 +354,10 @@ async cancelTaskRequest(id: string) : Promise<Result<TaskStatus, string>> {
 
 
 export const events = __makeEvents__<{
-importProgress: ImportProgress,
+progressEvent: ProgressEvent,
 taskStatusChanged: TaskStatusChanged
 }>({
-importProgress: "import-progress",
+progressEvent: "progress-event",
 taskStatusChanged: "task-status-changed"
 })
 
@@ -370,20 +378,19 @@ export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; text: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type ImportProgress = { percentage: number; filename: string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
-export type MigrateResult = "Migrated" | "MigratedButFailedToDeleteOldDir"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
+export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
 export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
-export type TaskStatus = "Running" | "Completed" | "Cancelled"
+export type TaskStatus = "Running" | "Completed" | "Cancelled" | "Failed"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type WorldObject = { id: string; description: AssetDescription; category: string }

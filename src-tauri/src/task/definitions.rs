@@ -6,6 +6,7 @@ pub enum TaskStatus {
     Running,
     Completed,
     Cancelled,
+    Failed,
 }
 
 #[derive(Serialize, Clone, specta::Type, tauri_specta::Event)]

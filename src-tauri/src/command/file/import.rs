@@ -32,7 +32,10 @@ pub async fn import_file_entries_to_asset(
 
                 if let Err(e) = result {
                     log::error!("Failed to import additional data: {:?}", e);
+                    return Err(e);
                 }
+
+                Ok(())
             })?;
 
         task_ids.push(id);
@@ -45,29 +48,26 @@ pub async fn import_file_entries_to_asset(
 #[specta::specta]
 pub async fn copy_image_file_to_images(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-    path: String,
+    path: PathBuf,
     temporary: bool,
 ) -> Result<String, String> {
-    log::info!("Copying image file to images directory from: {}", path);
+    log::info!(
+        "Copying image file to images directory from: {}",
+        path.display()
+    );
 
-    let src = PathBuf::from(path);
     let images_dir = {
         let store = basic_store.lock().await;
         store.data_dir().join("images")
     };
 
-    let filename = create_dest_filename(&src, temporary);
+    let filename = create_dest_filename(&path, temporary);
 
     log::info!("Filename: {}", &filename);
     let dest = images_dir.join(&filename);
 
-    let result = modify_guard::copy_file(
-        &src,
-        &dest,
-        false,
-        FileTransferGuard::new(None, Some(images_dir)),
-    )
-    .await;
+    let result =
+        modify_guard::copy_file(&path, &dest, false, FileTransferGuard::dest(&images_dir)).await;
 
     if let Err(e) = result {
         log::error!("Failed to copy image file: {:?}", e);

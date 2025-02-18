@@ -5,28 +5,55 @@ import { useEffect, useState } from 'react'
 
 type Props = {
   taskId: string | null
-  onCompleted: () => void
-  onCancelled: () => void
-  onFailed: (error: string | null) => void
+  destinationPath: string
+  setDialogOpen: (open: boolean) => void
+  updateLocalDataDir: (dataDir: string) => Promise<void>
 }
 
 type ReturnProps = {
   percentage: number
   filename: string
+
   canceling: boolean
   onCancelButtonClick: () => Promise<void>
 }
 
-export const useProgressTab = ({
+const useDataDirSelectorProgressTab = ({
   taskId,
-  onCompleted,
-  onCancelled,
-  onFailed,
+  destinationPath,
+  setDialogOpen,
+  updateLocalDataDir,
 }: Props): ReturnProps => {
-  const [canceling, setCanceling] = useState(false)
   const [percentage, setPercentage] = useState(0)
   const [filename, setFilename] = useState('')
+  const [canceling, setCanceling] = useState(false)
+
   const { toast } = useToast()
+
+  const onCompleted = async () => {
+    await updateLocalDataDir(destinationPath)
+
+    setDialogOpen(false)
+    toast({
+      title: 'データの移行が完了しました！',
+    })
+  }
+
+  const onCancelled = () => {
+    setCanceling(false)
+    setDialogOpen(false)
+    toast({
+      title: 'キャンセルされました',
+    })
+  }
+
+  const onFailed = (error: string | null) => {
+    setDialogOpen(false)
+    toast({
+      title: 'エラーが発生しました',
+      description: error,
+    })
+  }
 
   useEffect(() => {
     let isCancelled = false
@@ -110,7 +137,7 @@ export const useProgressTab = ({
         }
       } catch (error) {
         console.error(
-          'Failed to listen to TaskCompleted and ImportProgress event:',
+          'Failed to listen to TaskCompleted event and ProgressEvent:',
           error,
         )
       }
@@ -123,43 +150,31 @@ export const useProgressTab = ({
       unlistenProgressFn?.()
       unlistenCompleteFn?.()
     }
-  }, [taskId, onCompleted, onFailed, onCancelled])
+  }, [taskId])
 
   const onCancelButtonClick = async () => {
-    try {
-      setCanceling(true)
+    if (taskId === null) {
+      return
+    }
 
-      if (taskId === null) {
-        toast({
-          title: 'エラー',
-          description: 'タスク ID が見つかりませんでした。',
-        })
-        return
-      }
+    setCanceling(true)
+    setTimeout(() => {
+      setCanceling(false)
+    }, 5000)
 
-      const result = await commands.cancelTaskRequest(taskId)
+    const result = await commands.cancelTaskRequest(taskId)
 
-      if (result.status === 'error') {
-        console.error('Failed to cancel task:', result.error)
-
-        toast({
-          title: 'エラー',
-          description: 'タスクのキャンセルに失敗しました。',
-        })
-        return
-      }
-    } finally {
-      // It takes a few moments to cancel the task, so delay activation of the button
-      setTimeout(() => {
-        setCanceling(false)
-      }, 10000)
+    if (result.status === 'error') {
+      console.error('Failed to cancel task:', result.error)
+      toast({
+        title: 'エラー',
+        description: 'タスクのキャンセルに失敗しました',
+      })
+      return
     }
   }
 
-  return {
-    percentage,
-    filename,
-    canceling,
-    onCancelButtonClick,
-  }
+  return { percentage, filename, canceling, onCancelButtonClick }
 }
+
+export default useDataDirSelectorProgressTab

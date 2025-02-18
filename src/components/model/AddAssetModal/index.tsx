@@ -184,7 +184,7 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
     }
   }, [dialogOpen])
 
-  const onComplete = () => {
+  const onTaskCompleted = () => {
     toast({
       title: 'アセットが追加されました！',
       description: form.getValues('name'),
@@ -196,10 +196,21 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
     refreshAssets()
   }
 
-  const onCancelled = () => {
+  const onTaskCancelled = () => {
     toast({
       title: 'キャンセルされました',
       duration: 2000,
+    })
+
+    setTab('empty')
+    setDialogOpen(false)
+  }
+
+  const onTaskFailed = (error: string | null) => {
+    toast({
+      title: 'エラー: 追加に失敗しました',
+      description: error ?? 'エラー内容はログを参照してください',
+      duration: 3000,
     })
 
     setTab('empty')
@@ -254,8 +265,9 @@ const AddAssetModal = ({ className, dialogOpen, setDialogOpen }: Props) => {
             <TabsContent value="progress">
               <ProgressTab
                 taskId={importTaskId}
-                onComplete={onComplete}
-                onCancelled={onCancelled}
+                onCompleted={onTaskCompleted}
+                onCancelled={onTaskCancelled}
+                onFailed={onTaskFailed}
               />
             </TabsContent>
             <TabsContent value="empty"></TabsContent>

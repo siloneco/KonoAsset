@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::Deserialize;
 use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
@@ -24,7 +26,7 @@ pub async fn reset_application(
         if preference_path.exists() {
             let result = modify_guard::delete_single_file(
                 &preference_path,
-                DeletionGuard::new(app_local_data_dir),
+                &DeletionGuard::new(&app_local_data_dir),
             )
             .await;
 
@@ -37,7 +39,8 @@ pub async fn reset_application(
         log::info!("Successfully reset preferences");
     }
 
-    let preference_store: Option<State<'_, Mutex<PreferenceStore>>> = handle.try_state();
+    // PreferenceStore がロードできていない場合があるため、try_state で取得する
+    let preference_store: Option<State<'_, Arc<Mutex<PreferenceStore>>>> = handle.try_state();
 
     if let Some(preference_store) = preference_store {
         let user_data_dir = {
@@ -51,7 +54,7 @@ pub async fn reset_application(
             if metadata_dir.exists() {
                 let result = modify_guard::delete_recursive(
                     &metadata_dir,
-                    DeletionGuard::new(user_data_dir.clone()),
+                    &DeletionGuard::new(&user_data_dir),
                 )
                 .await;
 
@@ -70,7 +73,7 @@ pub async fn reset_application(
             if asset_data_dir.exists() {
                 let result = modify_guard::delete_recursive(
                     &asset_data_dir,
-                    DeletionGuard::new(user_data_dir.clone()),
+                    &DeletionGuard::new(&user_data_dir),
                 )
                 .await;
 

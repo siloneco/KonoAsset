@@ -68,7 +68,6 @@ const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
                   key={entry.taskId}
                   taskId={entry.taskId}
                   filename={filename}
-                  onCancelled={() => {}}
                   markAsFinished={() =>
                     markOngoingImportAsFinished(entry.taskId)
                   }

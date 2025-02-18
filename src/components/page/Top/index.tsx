@@ -2,18 +2,43 @@ import { AssetContext } from '@/components/context/AssetContext'
 import MainSidebar from '@/components/model/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
-import TopPageMainContent from '@/components/model/TopPageMainContent'
 import { useTopPage } from './hook'
+import { useState } from 'react'
+import NavBar from '../../model/MainNavBar'
+import AssetList from '@/components/model/AssetList'
+import AddAssetModal from '@/components/model/AddAssetModal'
 
 const TopPage = () => {
   const { assetContextValue, isDragAndHover } = useTopPage()
+
+  const [filterEnforced, setFilterEnforced] = useState(false)
+  const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const displayAssetCount: number | undefined = filterEnforced
+    ? matchedAssetIDs.length
+    : undefined
 
   return (
     <div className="flex">
       <AssetContext.Provider value={assetContextValue}>
         <SidebarProvider>
           <MainSidebar />
-          <TopPageMainContent />
+          <main className="w-full h-screen flex flex-col">
+            <NavBar displayAssetCount={displayAssetCount} />
+            <AssetList
+              className="flex-grow"
+              matchedAssetIDs={matchedAssetIDs}
+              setMatchedAssetIDs={setMatchedAssetIDs}
+              filterEnforced={filterEnforced}
+              setFilterEnforced={setFilterEnforced}
+              openAddAssetDialog={() => setDialogOpen(true)}
+            />
+            <AddAssetModal
+              dialogOpen={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            />
+          </main>
         </SidebarProvider>
       </AssetContext.Provider>
       <div

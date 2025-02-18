@@ -2,7 +2,7 @@ import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
-import MultiFilterItemSelector from '@/components/model/MultiFilterItemSelector'
+import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 
 const AvatarWearableFilter = () => {

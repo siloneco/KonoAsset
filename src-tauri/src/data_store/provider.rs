@@ -1,10 +1,12 @@
 use std::{ffi::OsStr, fs, path::PathBuf};
 
 use serde::Serialize;
+use tauri::AppHandle;
+use tauri_specta::Event;
 
 use crate::{
     definitions::{
-        entities::{Avatar, AvatarWearable, WorldObject},
+        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
         traits::AssetTrait,
     },
     file::{
@@ -24,10 +26,10 @@ pub struct StoreProvider {
 }
 
 impl StoreProvider {
-    pub fn create(data_dir: PathBuf) -> Result<Self, String> {
-        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir.clone())?;
-        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir.clone())?;
-        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir.clone())?;
+    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
+        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir)?;
+        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir)?;
+        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir)?;
 
         Ok(Self {
             data_dir: data_dir.clone(),
@@ -76,13 +78,17 @@ impl StoreProvider {
         self.data_dir.clone()
     }
 
-    pub async fn migrate_data_dir(&mut self, new_path: &PathBuf) -> Result<MigrateResult, String> {
+    pub async fn migrate_data_dir(
+        &mut self,
+        app: &AppHandle,
+        new_path: &PathBuf,
+    ) -> Result<MigrateResult, String> {
         if !new_path.is_dir() {
             return Err("New path is not a directory".into());
         }
 
         if !new_path.exists() {
-            fs::create_dir_all(new_path)
+            fs::create_dir_all(&new_path)
                 .map_err(|e| format!("Failed to create directory: {:?}", e))?;
         }
 
@@ -114,11 +120,19 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_metadata_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_metadata_path,
-                &new_metadata_path,
+                old_metadata_path.clone(),
+                new_metadata_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-                |_, _| {},
+                FileTransferGuard::both(&old_path, &new_path),
+                |progress, filename| {
+                    // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = progress * 10f32;
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
@@ -140,11 +154,19 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_data_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_data_path,
-                &new_data_path,
+                old_data_path.clone(),
+                new_data_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-                |_, _| {},
+                FileTransferGuard::both(&old_path, &new_path),
+                |progress, filename| {
+                    // プログレスバーのうち 8/10 をデータのコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、80倍して % に変換する
+                    let percentage = 10f32 + (progress * 80f32);
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
@@ -166,11 +188,19 @@ impl StoreProvider {
             dir_cleanups.push(DeleteOnDrop::new(new_images_path.clone()));
 
             if let Err(e) = modify_guard::copy_dir(
-                &old_images_path,
-                &new_images_path,
+                old_images_path.clone(),
+                new_images_path.clone(),
                 false,
-                FileTransferGuard::new(Some(old_path.clone()), Some(new_path.clone())),
-                |_, _| {},
+                FileTransferGuard::both(&old_path, &new_path),
+                |progress, filename| {
+                    // プログレスバーのうち 1/10 を画像のコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = 90f32 + (progress * 10f32);
+
+                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                        log::error!("Failed to emit progress event: {:?}", e);
+                    }
+                },
             )
             .await
             {
@@ -180,9 +210,9 @@ impl StoreProvider {
             }
         }
 
-        self.avatar_store = JsonStore::create(new_path.clone())?;
-        self.avatar_wearable_store = JsonStore::create(new_path.clone())?;
-        self.world_object_store = JsonStore::create(new_path.clone())?;
+        self.avatar_store = JsonStore::create(new_path)?;
+        self.avatar_wearable_store = JsonStore::create(new_path)?;
+        self.world_object_store = JsonStore::create(new_path)?;
 
         self.data_dir = new_path.clone();
 
@@ -202,8 +232,7 @@ impl StoreProvider {
             if old.exists() {
                 log::info!("Removing old dir: {}", old.display());
                 let result =
-                    modify_guard::delete_recursive(&old, DeletionGuard::new(old_path.clone()))
-                        .await;
+                    modify_guard::delete_recursive(&old, &DeletionGuard::new(&old_path)).await;
 
                 if let Err(e) = result {
                     log::warn!("Failed to remove old data dir: {:?}", e);
@@ -248,7 +277,7 @@ async fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
         path,
         &new_name,
         // pathからの相対的なパスしかFileTransferGuardとして指定できず、アサーションの意味がないのでNoneとする
-        FileTransferGuard::new(None, None),
+        FileTransferGuard::none(),
     )
     .await
 }
@@ -284,13 +313,8 @@ async fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
 
         let backup_file = backup_path.join(&file);
 
-        let result = modify_guard::copy_file(
-            &path,
-            &backup_file,
-            false,
-            FileTransferGuard::new(None, None),
-        )
-        .await;
+        let result =
+            modify_guard::copy_file(&path, &backup_file, false, FileTransferGuard::none()).await;
 
         if let Err(e) = result {
             let msg = format!("Failed to backup metadata: {:?}", e);
@@ -354,8 +378,7 @@ async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
     for i in 0..to_remove {
         let path = &entries[i];
 
-        let result =
-            modify_guard::delete_recursive(&path, DeletionGuard::new(backup_path.clone())).await;
+        let result = modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path)).await;
 
         if let Err(e) = result {
             log::warn!("Failed to remove old backup: {:?}", e);

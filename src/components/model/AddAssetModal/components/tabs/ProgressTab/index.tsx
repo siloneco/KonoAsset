@@ -7,18 +7,19 @@ import { Loader2 } from 'lucide-react'
 
 type Props = {
   taskId: string | null
-  onComplete: () => void
+  onCompleted: () => void
   onCancelled: () => void
+  onFailed: (error: string | null) => void
 }
 
-const ProgressTab = ({ taskId, onComplete, onCancelled }: Props) => {
-  const { progress, filename, canceling, onCancelButtonClick } = useProgressTab(
-    {
+const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
+  const { percentage, filename, canceling, onCancelButtonClick } =
+    useProgressTab({
       taskId,
-      onComplete,
+      onCompleted,
       onCancelled,
-    },
-  )
+      onFailed,
+    })
 
   return (
     <>
@@ -31,7 +32,7 @@ const ProgressTab = ({ taskId, onComplete, onCancelled }: Props) => {
             {truncateFilename(filename)}
           </span>
         </p>
-        <Progress value={progress * 100} />
+        <Progress value={percentage} />
       </div>
       <DialogFooter className="mt-8">
         <Button

@@ -3,12 +3,12 @@ import { AssetContext } from '@/components/context/AssetContext'
 import { createFilterRequest, isFilterEnforced } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import AssetCard from './components/AssetCard'
+import AssetCard from '../AssetCard'
 import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
 
-import SelectUnitypackageDialog from './components/SelectUnitypackageDialog'
+import SelectUnitypackageDialog from '../AssetCard/components/SelectUnitypackageDialog'
 import AssetListBackground from './components/AssetListBackground'
-import DataManagementDialog from './components/DataManagementDialog'
+import DataManagementDialog from '../AssetCard/components/MoreButton/components/DataManagementDialog'
 
 type Props = {
   className?: string

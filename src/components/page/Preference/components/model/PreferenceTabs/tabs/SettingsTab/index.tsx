@@ -2,7 +2,7 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { PreferenceTabIDs } from '@/components/page/Preference/hook'
 
 import { TabsContent } from '@/components/ui/tabs'
-import { commands, Theme } from '@/lib/bindings'
+import { Theme } from '@/lib/bindings'
 import { FC, useContext } from 'react'
 import ThemeSelector from './components/ThemeSelector'
 import DataDirSelector from './components/DataDirSelector'
@@ -27,18 +27,8 @@ const SettingsTab: FC<Props> = ({ id }) => {
         />
         <DataDirSelector
           dataDir={preference.dataDirPath}
-          setDataDir={async (dataDir: string, migrateData: boolean) => {
-            const result = await commands.migrateDataDir(dataDir, migrateData)
-
-            if (result.status === 'error') {
-              console.error(result.error)
-              return result
-            }
-
-            // 上の migrateDataDir コマンドで変更が保存されるため保存はしない
+          updateLocalDataDir={async (dataDir: string) => {
             await setPreference({ ...preference, dataDirPath: dataDir }, false)
-
-            return { status: 'ok', data: result.data }
           }}
         />
         <UseUnitypackageSelectorToggle
