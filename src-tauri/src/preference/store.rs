@@ -34,18 +34,16 @@ impl PreferenceStore {
         if let Err(e) = app_local_data_dir {
             return Err(format!("Failed to get app local data dir: {}", e));
         }
-        let app_local_data_dir = app_local_data_dir.unwrap();
 
+        let app_local_data_dir = app_local_data_dir.unwrap();
         let preference_file_path = app_local_data_dir.join("preference.json");
 
-        // // 将来的にはこれをデフォルトにする
-        // let mut data_dir_path = app.path().document_dir().unwrap();
-        // data_dir_path.push("KonoAsset");
+        let data_dir_path = app.path().document_dir().unwrap().join("KonoAsset");
 
         Ok(Self {
             file_path: preference_file_path,
 
-            data_dir_path: app_local_data_dir,
+            data_dir_path,
             theme: Theme::System,
 
             delete_on_import: true,
