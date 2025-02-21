@@ -26,7 +26,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { useLoadErrorPage } from './hook'
-import ResetDialog from './components/ResetDialog'
+import ResetDialog from '../../model/ResetDialog'
 
 type Props = {
   preferenceLoaded: boolean

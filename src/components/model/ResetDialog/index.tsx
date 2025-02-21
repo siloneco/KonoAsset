@@ -12,12 +12,17 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
-import CheckboxAndLabel from '../CheckboxAndLabel'
+import CheckboxAndLabel from './components/CheckboxAndLabel'
 import { useResetDialog } from './hook'
 import { Loader2 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { FC } from 'react'
 
-const ResetDialog = () => {
+type Props = {
+  className?: string
+}
+
+const ResetDialog: FC<Props> = ({ className }) => {
   const {
     deleteAppData,
     deleteMetadata,
@@ -35,7 +40,9 @@ const ResetDialog = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">初期化する</Button>
+        <Button variant="destructive" className={className}>
+          初期化する
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -8,6 +8,8 @@ import ThemeSelector from './components/ThemeSelector'
 import DataDirSelector from './components/DataDirSelector'
 import DeleteSourceToggle from './components/DeleteSourceToggle'
 import UseUnitypackageSelectorToggle from './components/UseUnitypackageSelectorToggle'
+import ResetButton from './components/ResetButton'
+import { Separator } from '@/components/ui/separator'
 
 type Props = {
   id: PreferenceTabIDs
@@ -55,6 +57,8 @@ const SettingsTab: FC<Props> = ({ id }) => {
             )
           }}
         />
+        <Separator />
+        <ResetButton />
       </div>
     </TabsContent>
   )
