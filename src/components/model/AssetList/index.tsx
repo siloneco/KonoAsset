@@ -9,6 +9,7 @@ import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
 import SelectUnitypackageDialog from '../AssetCard/components/SelectUnitypackageDialog'
 import AssetListBackground from './components/AssetListBackground'
 import DataManagementDialog from '../AssetCard/components/MoreButton/components/DataManagementDialog'
+import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
 
 type Props = {
   className?: string
@@ -40,6 +41,11 @@ const AssetList = ({
     useState(false)
   const [dataManagementDialogAssetId, setDataManagementDialogAssetId] =
     useState<string | null>(null)
+
+  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
+  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
+    string | null
+  >(null)
 
   const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
@@ -136,6 +142,10 @@ const AssetList = ({
                     setDataManagementDialogAssetId(assetId)
                     setDataManagementDialogOpen(true)
                   }}
+                  openEditAssetDialog={(assetId) => {
+                    setEditAssetDialogAssetId(assetId)
+                    setEditAssetDialogOpen(true)
+                  }}
                 />
               ),
           )}
@@ -160,6 +170,10 @@ const AssetList = ({
                       setDataManagementDialogAssetId(assetId)
                       setDataManagementDialogOpen(true)
                     }}
+                    openEditAssetDialog={(assetId) => {
+                      setEditAssetDialogAssetId(assetId)
+                      setEditAssetDialogOpen(true)
+                    }}
                   />
                 ),
             )}
@@ -174,6 +188,11 @@ const AssetList = ({
         assetId={dataManagementDialogAssetId}
         open={dataManagementDialogOpen}
         onOpenChange={setDataManagementDialogOpen}
+      />
+      <EditAssetDialog
+        id={editAssetDialogAssetId}
+        dialogOpen={editAssetDialogOpen}
+        setDialogOpen={setEditAssetDialogOpen}
       />
       <div className="w-full h-12" />
     </ScrollArea>

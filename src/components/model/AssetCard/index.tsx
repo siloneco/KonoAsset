@@ -18,6 +18,7 @@ type Props = {
   setDialogAssetId: (assetId: string | null) => void
 
   openDataManagementDialog: (assetId: string) => void
+  openEditAssetDialog: (assetId: string) => void
 }
 
 const AssetCard = ({
@@ -27,6 +28,7 @@ const AssetCard = ({
   setUnitypackageFiles,
   setDialogAssetId,
   openDataManagementDialog,
+  openEditAssetDialog,
 }: Props) => {
   const { deleteAsset } = useAssetCard({ asset })
   const { setAssetType } = useContext(PersistentContext)
@@ -60,11 +62,13 @@ const AssetCard = ({
             }}
           />
           <MoreButton
-            id={asset.id}
             executeAssetDeletion={deleteAsset}
             boothItemID={asset.boothItemId ?? undefined}
             openDataManagementDialog={() => {
               openDataManagementDialog(asset.id)
+            }}
+            openEditAssetDialog={() => {
+              openEditAssetDialog(asset.id)
             }}
           />
         </div>

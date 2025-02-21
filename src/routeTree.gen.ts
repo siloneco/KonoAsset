@@ -13,7 +13,6 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as PreferenceImport } from './routes/preference'
 import { Route as IndexImport } from './routes/index'
-import { Route as EditIdImport } from './routes/edit.$id'
 
 // Create/Update Routes
 
@@ -26,12 +25,6 @@ const PreferenceRoute = PreferenceImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EditIdRoute = EditIdImport.update({
-  id: '/edit/$id',
-  path: '/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,13 +46,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreferenceImport
       parentRoute: typeof rootRoute
     }
-    '/edit/$id': {
-      id: '/edit/$id'
-      path: '/edit/$id'
-      fullPath: '/edit/$id'
-      preLoaderRoute: typeof EditIdImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -68,41 +54,36 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/preference' | '/edit/$id'
+  fullPaths: '/' | '/preference'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/preference' | '/edit/$id'
-  id: '__root__' | '/' | '/preference' | '/edit/$id'
+  to: '/' | '/preference'
+  id: '__root__' | '/' | '/preference'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PreferenceRoute: typeof PreferenceRoute
-  EditIdRoute: typeof EditIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PreferenceRoute: PreferenceRoute,
-  EditIdRoute: EditIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,8 +97,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/preference",
-        "/edit/$id"
+        "/preference"
       ]
     },
     "/": {
@@ -125,9 +105,6 @@ export const routeTree = rootRoute
     },
     "/preference": {
       "filePath": "preference.tsx"
-    },
-    "/edit/$id": {
-      "filePath": "edit.$id.tsx"
     }
   }
 }

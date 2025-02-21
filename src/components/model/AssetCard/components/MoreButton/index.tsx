@@ -24,7 +24,7 @@ import {
   Folder,
   Trash2,
 } from 'lucide-react'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import {
   TooltipProvider,
   Tooltip,
@@ -32,26 +32,22 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { cn, convertToBoothURL } from '@/lib/utils'
-import { Link } from '@tanstack/react-router'
-import { Route } from '@/routes/edit.$id'
-import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
-  id: string
   boothItemID?: number
   executeAssetDeletion: () => Promise<void>
   openDataManagementDialog: () => void
+  openEditAssetDialog: () => void
 }
 
 export const MoreButton = ({
-  id,
   boothItemID,
   executeAssetDeletion,
   openDataManagementDialog,
+  openEditAssetDialog,
 }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
-  const { setEditingAssetID } = useContext(PersistentContext)
 
   const onClick = async () => {
     setDeleting(true)
@@ -95,16 +91,9 @@ export const MoreButton = ({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <DropdownMenuItem asChild>
-          <Link
-            to={Route.to}
-            params={{ id }}
-            className="decoration-inherit text-inherit"
-            onClick={() => setEditingAssetID(id)}
-          >
-            <Pencil size={16} className="text-card-foreground/40" />
-            情報を編集
-          </Link>
+        <DropdownMenuItem onClick={openEditAssetDialog}>
+          <Pencil size={16} className="text-card-foreground/40" />
+          情報を編集
         </DropdownMenuItem>
         <DropdownMenuItem onClick={openDataManagementDialog}>
           <Folder size={16} className="text-card-foreground/40" />
