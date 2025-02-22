@@ -16,9 +16,18 @@ type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
   setImageUrls: (imageUrls: string[]) => void
+
+  tabIndex: number
+  totalTabs: number
 }
 
-const BoothInputTabForAddDialog = ({ form, setTab, setImageUrls }: Props) => {
+const BoothInputTabForAddDialog = ({
+  form,
+  setTab,
+  setImageUrls,
+  tabIndex,
+  totalTabs,
+}: Props) => {
   const {
     representativeImportFilename,
     importFileCount,
@@ -37,7 +46,9 @@ const BoothInputTabForAddDialog = ({ form, setTab, setImageUrls }: Props) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>(2/4) アセット情報を取得</DialogTitle>
+        <DialogTitle>
+          ({tabIndex}/{totalTabs}) アセット情報を取得
+        </DialogTitle>
         <DialogDescription>
           Boothのリンクを入力すると、自動でアセット情報が入力されます！
         </DialogDescription>

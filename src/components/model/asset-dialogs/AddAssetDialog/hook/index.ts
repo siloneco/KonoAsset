@@ -29,7 +29,6 @@ type ReturnProps = {
   onTaskCompleted: () => void
   onTaskCancelled: () => void
   onTaskFailed: (error: string | null) => void
-  backToPreviousTab: () => void
   onSubmit: () => Promise<void>
   submitting: boolean
 }
@@ -73,6 +72,7 @@ const useAddAssetDialog = ({
     imageFilename: z.string().nullable(),
     boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
+    memo: z.string().nullable(),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
     publishedAt: z.number().nullable(),
@@ -87,6 +87,7 @@ const useAddAssetDialog = ({
       imageFilename: null,
       boothItemId: null,
       tags: [],
+      memo: null,
       category: '',
       supportedAvatars: [],
       publishedAt: null,
@@ -216,10 +217,6 @@ const useAddAssetDialog = ({
     setDialogOpen(false)
   }
 
-  const backToPreviousTab = () => {
-    setTab('asset-type-selector')
-  }
-
   const onSubmit = async () => {
     if (submitting) {
       return
@@ -235,6 +232,7 @@ const useAddAssetDialog = ({
           creator: form.getValues('creator'),
           imageFilename: form.getValues('imageFilename'),
           tags: form.getValues('tags'),
+          memo: form.getValues('memo'),
           boothItemId: form.getValues('boothItemId') ?? null,
           createdAt: new Date().getTime(),
           publishedAt: form.getValues('publishedAt') ?? null,
@@ -287,7 +285,6 @@ const useAddAssetDialog = ({
     onTaskCompleted,
     onTaskCancelled,
     onTaskFailed,
-    backToPreviousTab,
     onSubmit,
     submitting,
   }

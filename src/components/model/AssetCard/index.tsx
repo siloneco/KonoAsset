@@ -8,6 +8,8 @@ import SquareImage from '@/components/model/SquareImage'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
 import AssetCardOpenButton from '@/components/model/AssetCard/components/AssetCardOpenButton'
+import { Button } from '@/components/ui/button'
+import { NotebookText } from 'lucide-react'
 
 type Props = {
   asset: AssetSummary
@@ -19,6 +21,7 @@ type Props = {
 
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
+  openMemoDialog: (assetId: string) => void
 }
 
 const AssetCard = ({
@@ -29,6 +32,7 @@ const AssetCard = ({
   setDialogAssetId,
   openDataManagementDialog,
   openEditAssetDialog,
+  openMemoDialog,
 }: Props) => {
   const { deleteAsset } = useAssetCard({ asset })
   const { setAssetType, setQueryTextMode, setQueryTextFilterForCreator } =
@@ -47,11 +51,22 @@ const AssetCard = ({
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
           />
-          <AssetBadge
-            type={asset.assetType}
-            className="mt-3 select-none cursor-pointer"
-            onClick={() => setAssetType(asset.assetType)}
-          />
+          <div className="mt-2 h-8 flex flex-row justify-between items-center text-center">
+            <AssetBadge
+              type={asset.assetType}
+              className="select-none cursor-pointer"
+              onClick={() => setAssetType(asset.assetType)}
+            />
+            {asset.hasMemo && (
+              <Button
+                variant="outline"
+                className="h-8 w-8"
+                onClick={() => openMemoDialog(asset.id)}
+              >
+                <NotebookText />
+              </Button>
+            )}
+          </div>
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
             {asset.name}
           </CardTitle>

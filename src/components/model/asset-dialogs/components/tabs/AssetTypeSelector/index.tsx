@@ -11,9 +11,12 @@ import { AssetFormType } from '@/lib/form'
 type Props = {
   form: AssetFormType
   setTab: (tab: string) => void
+
+  tabIndex: number
+  totalTabs: number
 }
 
-const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
+const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
   const backToBoothInput = () => {
     setTab('booth-input')
   }
@@ -27,7 +30,9 @@ const AssetTypeSelectorTab = ({ form, setTab }: Props) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>(3/4) アセットのタイプを選択</DialogTitle>
+        <DialogTitle>
+          ({tabIndex}/{totalTabs}) アセットのタイプを選択
+        </DialogTitle>
         <DialogDescription>
           アセットのタイプを選択してください！
         </DialogDescription>

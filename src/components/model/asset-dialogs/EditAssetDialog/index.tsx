@@ -2,9 +2,10 @@ import { TabsContent } from '@/components/ui/tabs'
 import ManualInputTab from '../components/tabs/ManualInputTab'
 import useEditAssetDialog from './hook'
 import DialogWrapper from '../components/DialogWrapper'
-import { Loader2 } from 'lucide-react'
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import BoothInputTabForEditDialog from '../components/tabs/BoothInputTab/edit'
+import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Props = {
   id: string | null
@@ -20,7 +21,6 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
     setTab,
     imageUrls,
     setImageUrls,
-    backToPreviousTab,
     onSubmit,
     submitting,
   } = useEditAssetDialog({
@@ -38,9 +38,16 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
       hideTrigger
     >
       <TabsContent value="loading">
-        <DialogTitle>アセットをロード中...</DialogTitle>
-        <DialogDescription>しばらくお待ちください...</DialogDescription>
-        <Loader2 size={64} className="animate-spin" />
+        <DialogTitle>
+          <Skeleton className="w-72 h-4 rounded-sm" />
+        </DialogTitle>
+        <DialogDescription>
+          <Skeleton className="mt-2 w-52 h-4 rounded-sm" />
+        </DialogDescription>
+        <Skeleton className="mt-8 w-32 h-4 rounded-sm" />
+        <Skeleton className="mt-2 w-full h-8 rounded-sm" />
+        <Skeleton className="mt-6 mx-auto w-24 h-10 rounded-sm" />
+        <Skeleton className="mt-4 w-20 h-8 rounded-sm" />
       </TabsContent>
       <TabsContent value="booth-input">
         <BoothInputTabForEditDialog
@@ -48,17 +55,28 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
           closeDialog={() => setDialogOpen(false)}
           goToNextTab={() => setTab('manual-input')}
           setImageUrls={setImageUrls}
+          tabIndex={1}
+          totalTabs={3}
         />
       </TabsContent>
       <TabsContent value="manual-input">
         <ManualInputTab
           form={form}
           imageUrls={imageUrls}
-          onBackToPreviousTabClicked={backToPreviousTab}
+          onBackToPreviousTabClicked={() => setTab('booth-input')}
+          onGoToNextTabClicked={() => setTab('additional-input')}
+          tabIndex={2}
+          totalTabs={3}
+        />
+      </TabsContent>
+      <TabsContent value="additional-input">
+        <AdditionalInputTab
+          form={form}
+          onBackToPreviousTabClicked={() => setTab('manual-input')}
           onSubmit={onSubmit}
           submitting={submitting}
-          tabIndex={2}
-          totalTabs={2}
+          tabIndex={3}
+          totalTabs={3}
           hideDeleteSourceCheckbox
           submitButtonText="アセットを更新"
         />

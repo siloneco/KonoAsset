@@ -22,7 +22,7 @@ export interface Option {
 }
 
 interface SingleSelectorProps {
-  value?: Option
+  value?: Option | null
   defaultOptions?: Option[]
   options?: Option[]
   placeholder?: string

@@ -12,6 +12,7 @@ type Props = {
   tab: string
   setTab: (tab: string) => void
   hideTrigger?: boolean
+  preventCloseOnOutsideClick?: boolean
 }
 
 const DialogWrapper: FC<Props> = ({
@@ -21,6 +22,7 @@ const DialogWrapper: FC<Props> = ({
   setTab,
   children,
   hideTrigger = false,
+  preventCloseOnOutsideClick = false,
 }) => {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -39,6 +41,11 @@ const DialogWrapper: FC<Props> = ({
           'max-w-[650px]',
           tab === 'progress' && '[&>button]:hidden',
         )}
+        onInteractOutside={(event) => {
+          if (preventCloseOnOutsideClick) {
+            event.preventDefault()
+          }
+        }}
       >
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           {children}

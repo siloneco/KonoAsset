@@ -21,7 +21,6 @@ type ReturnProps = {
   setTab: (tab: string) => void
   imageUrls: string[]
   setImageUrls: (urls: string[]) => void
-  backToPreviousTab: () => void
   onSubmit: () => Promise<void>
   submitting: boolean
 }
@@ -55,6 +54,7 @@ const useEditAssetDialog = ({
     imageFilename: z.string().nullable(),
     boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
+    memo: z.string().nullable(),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
     publishedAt: z.number().nullable(),
@@ -69,6 +69,7 @@ const useEditAssetDialog = ({
       imageFilename: null,
       boothItemId: null,
       tags: [],
+      memo: null,
       category: '',
       supportedAvatars: [],
       publishedAt: null,
@@ -124,6 +125,7 @@ const useEditAssetDialog = ({
       form.setValue('imageFilename', avatar.description.imageFilename)
       form.setValue('boothItemId', avatar.description.boothItemId)
       form.setValue('tags', avatar.description.tags)
+      form.setValue('memo', avatar.description.memo)
       form.setValue('publishedAt', avatar.description.publishedAt)
     } else if (data.assetType === 'AvatarWearable') {
       const avatarWearable = data.avatarWearable!
@@ -134,6 +136,7 @@ const useEditAssetDialog = ({
       form.setValue('imageFilename', avatarWearable.description.imageFilename)
       form.setValue('boothItemId', avatarWearable.description.boothItemId)
       form.setValue('tags', avatarWearable.description.tags)
+      form.setValue('memo', avatarWearable.description.memo)
       form.setValue('category', avatarWearable.category)
       form.setValue('supportedAvatars', avatarWearable.supportedAvatars)
       form.setValue('publishedAt', avatarWearable.description.publishedAt)
@@ -146,6 +149,7 @@ const useEditAssetDialog = ({
       form.setValue('imageFilename', worldObject.description.imageFilename)
       form.setValue('boothItemId', worldObject.description.boothItemId)
       form.setValue('tags', worldObject.description.tags)
+      form.setValue('memo', worldObject.description.memo)
       form.setValue('publishedAt', worldObject.description.publishedAt)
     } else {
       toast({
@@ -165,10 +169,6 @@ const useEditAssetDialog = ({
       loadAssetData(id)
     }
   }, [dialogOpen, id])
-
-  const backToPreviousTab = () => {
-    setTab('booth-input')
-  }
 
   const onSubmit = async () => {
     if (submitting || id === null) {
@@ -214,7 +214,6 @@ const useEditAssetDialog = ({
     setTab,
     imageUrls,
     setImageUrls,
-    backToPreviousTab,
     onSubmit,
     submitting,
   }

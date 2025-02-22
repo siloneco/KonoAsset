@@ -17,6 +17,9 @@ type Props = {
   closeDialog: () => void
   goToNextTab: () => void
   setImageUrls: (imageUrls: string[]) => void
+
+  tabIndex: number
+  totalTabs: number
 }
 
 const BoothInputTabForEditDialog = ({
@@ -24,6 +27,8 @@ const BoothInputTabForEditDialog = ({
   closeDialog,
   goToNextTab,
   setImageUrls,
+  tabIndex,
+  totalTabs,
 }: Props) => {
   const {
     getAssetDescriptionFromBooth,
@@ -39,7 +44,9 @@ const BoothInputTabForEditDialog = ({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>(1/2) Booth情報の編集</DialogTitle>
+        <DialogTitle>
+          ({tabIndex}/{totalTabs}) Booth情報の編集
+        </DialogTitle>
         <DialogDescription>
           Boothのリンクを編集して情報を取得するか、次のタブへ移動してください
         </DialogDescription>

@@ -40,6 +40,7 @@ const updateAvatar = async ({
   const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
+  const memo = form.getValues('memo')
   const publishedAt = form.getValues('publishedAt')
 
   const asset: Avatar = {
@@ -50,6 +51,7 @@ const updateAvatar = async ({
       imageFilename,
       boothItemId,
       tags,
+      memo,
       createdAt: 0, // unused on updating
       publishedAt,
     },
@@ -67,6 +69,7 @@ const updateAvatarWearable = async ({
   const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
+  const memo = form.getValues('memo')
   const category = form.getValues('category')
   const supportedAvatars = form.getValues('supportedAvatars')
   const publishedAt = form.getValues('publishedAt')
@@ -79,6 +82,7 @@ const updateAvatarWearable = async ({
       imageFilename,
       boothItemId,
       tags,
+      memo,
       createdAt: 0, // unused on updating
       publishedAt,
     },
@@ -98,6 +102,7 @@ const updateWorldObject = async ({
   const imageFilename = form.getValues('imageFilename')
   const boothItemId = form.getValues('boothItemId')
   const tags = form.getValues('tags')
+  const memo = form.getValues('memo')
   const category = form.getValues('category')
   const publishedAt = form.getValues('publishedAt')
 
@@ -109,6 +114,7 @@ const updateWorldObject = async ({
       imageFilename,
       boothItemId,
       tags,
+      memo,
       createdAt: 0, // unused on updating
       publishedAt,
     },

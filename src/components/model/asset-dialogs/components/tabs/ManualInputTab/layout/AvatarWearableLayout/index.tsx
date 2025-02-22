@@ -1,10 +1,4 @@
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormDescription,
-  FormMessage,
-} from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 import { Separator } from '@/components/ui/separator'
@@ -15,10 +9,9 @@ import { useEffect, useState } from 'react'
 
 type Props = {
   form: AssetFormType
-  submitting: boolean
 }
 
-const AvatarWearableLayout = ({ form, submitting }: Props) => {
+const AvatarWearableLayout = ({ form }: Props) => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -72,134 +65,103 @@ const AvatarWearableLayout = ({ form, submitting }: Props) => {
     return <div>Loading...</div>
   }
 
+  const rawCategory = form.watch('category')
+  const categoryValue = rawCategory
+    ? { label: rawCategory, value: rawCategory }
+    : null
+
   return (
-    <>
+    <div className="mb-4">
       <div className="w-full flex flex-row space-x-2">
-        <div className="w-1/2">
-          <FormField
-            control={form.control}
-            name="category"
-            render={() => {
-              return (
-                <FormItem>
-                  <FormLabel>対応アバター</FormLabel>
-                  <MultipleSelector
-                    options={supportedAvatarCandidates}
-                    placeholder="対応アバターを選択..."
-                    disabled={submitting}
-                    className="max-w-72"
-                    hidePlaceholderWhenSelected
-                    creatable
-                    emptyIndicator={
-                      <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-                        入力して作成
-                      </p>
-                    }
-                    value={form
-                      .getValues('supportedAvatars')
-                      .map((supportedAvatar) => {
-                        return {
-                          label: supportedAvatar,
-                          value: supportedAvatar,
-                        }
-                      })}
-                    onChange={(value) => {
-                      form.setValue(
-                        'supportedAvatars',
-                        value.map((v) => v.value),
-                      )
-                    }}
-                  />
-                  <FormDescription>
-                    対応アバターは一覧で絞り込みに利用できます
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+        <div className="w-1/2 space-y-2">
+          <Label>対応アバター</Label>
+          <MultipleSelector
+            options={supportedAvatarCandidates}
+            placeholder="対応アバターを選択..."
+            className="max-w-72"
+            hidePlaceholderWhenSelected
+            creatable
+            emptyIndicator={
+              <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                入力して作成
+              </p>
+            }
+            value={form.getValues('supportedAvatars').map((supportedAvatar) => {
+              return {
+                label: supportedAvatar,
+                value: supportedAvatar,
+              }
+            })}
+            onChange={(value) => {
+              form.setValue(
+                'supportedAvatars',
+                value.map((v) => v.value),
               )
             }}
           />
+          <p className="text-foreground/60 text-sm">
+            対応アバターは一覧で絞り込みに利用できます
+          </p>
         </div>
         <Separator orientation="vertical" className="h-32 my-auto" />
-        <div className="w-1/2">
-          <FormField
-            control={form.control}
-            name="category"
-            render={() => {
-              return (
-                <FormItem>
-                  <FormLabel>カテゴリ</FormLabel>
-                  <TextInputSelect
-                    options={categoryCandidates}
-                    placeholder="カテゴリを選択..."
-                    disabled={submitting}
-                    className="max-w-72"
-                    creatable
-                    emptyIndicator={
-                      <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-                        入力して作成
-                      </p>
-                    }
-                    value={{
-                      label: form.getValues('category'),
-                      value: form.getValues('category'),
-                    }}
-                    onChange={(value) => {
-                      form.setValue('category', value?.value as string)
-                    }}
-                  />
-                  <FormDescription>
-                    カテゴリは1つまで選択できます (例: 衣装、髪など)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )
+        <div className="w-1/2 space-y-2">
+          <Label>カテゴリ</Label>
+          <TextInputSelect
+            options={categoryCandidates}
+            placeholder="カテゴリを選択..."
+            className="max-w-72"
+            creatable
+            emptyIndicator={
+              <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+                入力して作成
+              </p>
+            }
+            value={categoryValue}
+            onChange={(value) => {
+              console.log(value)
+              if (value === null) {
+                form.setValue('category', '')
+              } else {
+                form.setValue('category', value.value)
+              }
             }}
           />
+          <p className="text-foreground/60 text-sm">
+            カテゴリは1つまで選択できます (例: 衣装、髪など)
+          </p>
         </div>
       </div>
-      <div className="w-1/2">
-        <FormField
-          control={form.control}
-          name="tags"
-          render={() => {
-            return (
-              <FormItem>
-                <FormLabel>タグ</FormLabel>
-                <MultipleSelector
-                  options={tagCandidates}
-                  placeholder="タグを選択..."
-                  disabled={submitting}
-                  className="max-w-72"
-                  hidePlaceholderWhenSelected
-                  creatable
-                  emptyIndicator={
-                    <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-                      入力して作成
-                    </p>
-                  }
-                  value={form.getValues('tags').map((tag) => {
-                    return {
-                      label: tag,
-                      value: tag,
-                    }
-                  })}
-                  onChange={(value) => {
-                    form.setValue(
-                      'tags',
-                      value.map((v) => v.value),
-                    )
-                  }}
-                />
-                <FormDescription>
-                  タグは複数選択できます (例: Vket、無料、自作など)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+      <div className="w-1/2 space-y-2">
+        <Label>タグ</Label>
+        <MultipleSelector
+          options={tagCandidates}
+          placeholder="タグを選択..."
+          className="max-w-72"
+          hidePlaceholderWhenSelected
+          creatable
+          emptyIndicator={
+            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+              入力して作成
+            </p>
+          }
+          value={form.getValues('tags').map((tag) => {
+            return {
+              label: tag,
+              value: tag,
+            }
+          })}
+          onChange={(value) => {
+            form.setValue(
+              'tags',
+              value.map((v) => v.value),
             )
           }}
         />
+        <p className="text-foreground/60 text-sm">
+          タグは複数選択できます (例: Vket、無料、自作など)
+        </p>
       </div>
-    </>
+    </div>
   )
 }
 

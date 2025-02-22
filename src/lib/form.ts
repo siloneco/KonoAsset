@@ -8,6 +8,7 @@ export type AssetFormFields = {
   imageFilename: string | null
   boothItemId: number | null
   tags: string[]
+  memo: string | null
   category: string
   supportedAvatars: string[]
   publishedAt: number | null

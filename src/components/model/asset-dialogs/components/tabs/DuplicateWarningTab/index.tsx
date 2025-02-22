@@ -13,6 +13,9 @@ import SlimAssetDetail from './components/SlimAssetDetail'
 type Props = {
   setTab: (tab: string) => void
   openEditDialog: (assetId: string) => void
+
+  tabIndex: number
+  totalTabs: number
 }
 
 const DuplicateWarningTab = ({ setTab, openEditDialog }: Props) => {

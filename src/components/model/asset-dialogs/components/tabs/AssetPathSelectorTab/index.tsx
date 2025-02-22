@@ -16,9 +16,12 @@ import { AddAssetDialogContext } from '../../../AddAssetDialog'
 
 type Props = {
   setTab: (tab: string) => void
+
+  tabIndex: number
+  totalTabs: number
 }
 
-const AssetPathSelectorTab = ({ setTab }: Props) => {
+const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
   const { setAssetPaths } = useContext(AddAssetDialogContext)
 
   const openFileOrDirSelector = async (dir: boolean) => {
@@ -37,7 +40,9 @@ const AssetPathSelectorTab = ({ setTab }: Props) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>(1/4) どちらを追加しますか？</DialogTitle>
+        <DialogTitle>
+          ({tabIndex}/{totalTabs}) どちらを追加しますか？
+        </DialogTitle>
         <DialogDescription>
           フォルダとファイルのどちらを追加するか選択してください！
         </DialogDescription>

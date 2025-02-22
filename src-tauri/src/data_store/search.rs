@@ -196,7 +196,12 @@ fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> boo
             description
                 .tags
                 .iter()
-                .any(|tag| contains_text(tag, &text));
+                .any(|tag| contains_text(tag, &text)) ||
+            // メモに含まれているか
+            description
+                .memo
+                .as_ref()
+                .map_or(false, |memo| contains_text(&memo.to_ascii_lowercase(), &text));
     })
 }
 
@@ -234,6 +239,7 @@ mod tests {
             creator: "これは制作者の名前です".to_string(),
             image_filename: None,
             tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
+            memo: Some("メモ".to_string()),
             booth_item_id: None,
             created_at: chrono::Local::now().timestamp_millis(),
             published_at: Some(chrono::Local::now().timestamp_millis()),
@@ -243,6 +249,7 @@ mod tests {
         assert_eq!(check_text_contains(&description, &vec!["制作者"]), true);
         assert_eq!(check_text_contains(&description, &vec!["タグ1"]), true);
         assert_eq!(check_text_contains(&description, &vec!["タグ2"]), true);
+        assert_eq!(check_text_contains(&description, &vec!["メモ"]), true);
 
         // ひらがなとカタカナを区別しない
         assert_eq!(check_text_contains(&description, &vec!["あせっと"]), true);

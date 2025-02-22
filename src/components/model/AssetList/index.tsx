@@ -10,6 +10,7 @@ import SelectUnitypackageDialog from '../AssetCard/components/SelectUnitypackage
 import AssetListBackground from './components/AssetListBackground'
 import DataManagementDialog from '../AssetCard/components/MoreButton/components/DataManagementDialog'
 import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
+import MemoDialog from '../MemoDialog'
 
 type Props = {
   className?: string
@@ -46,6 +47,11 @@ const AssetList = ({
   const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
     string | null
   >(null)
+
+  const [memoDialogOpen, setMemoDialogOpen] = useState(false)
+  const [memoDialogAssetId, setMemoDialogAssetId] = useState<string | null>(
+    null,
+  )
 
   const {
     reverseOrder,
@@ -139,6 +145,10 @@ const AssetList = ({
                     setEditAssetDialogAssetId(assetId)
                     setEditAssetDialogOpen(true)
                   }}
+                  openMemoDialog={(assetId) => {
+                    setMemoDialogAssetId(assetId)
+                    setMemoDialogOpen(true)
+                  }}
                 />
               ),
           )}
@@ -166,6 +176,10 @@ const AssetList = ({
                       setEditAssetDialogAssetId(assetId)
                       setEditAssetDialogOpen(true)
                     }}
+                    openMemoDialog={(assetId) => {
+                      setMemoDialogAssetId(assetId)
+                      setMemoDialogOpen(true)
+                    }}
                   />
                 ),
             )}
@@ -185,6 +199,11 @@ const AssetList = ({
         id={editAssetDialogAssetId}
         dialogOpen={editAssetDialogOpen}
         setDialogOpen={setEditAssetDialogOpen}
+      />
+      <MemoDialog
+        assetId={memoDialogAssetId}
+        dialogOpen={memoDialogOpen}
+        setDialogOpen={setMemoDialogOpen}
       />
       <div className="w-full h-12" />
     </ScrollArea>

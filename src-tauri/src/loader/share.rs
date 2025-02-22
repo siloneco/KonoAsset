@@ -46,6 +46,7 @@ impl TryInto<AssetDescription> for LegacyAssetDescriptionV1 {
             creator: self.creator,
             image_filename: image_filename,
             tags: self.tags,
+            memo: None,
             booth_item_id: self.booth_item_id,
             created_at: self.created_at,
             published_at: self.published_at,
