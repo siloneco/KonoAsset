@@ -22,8 +22,6 @@ export const usePersistentContext = (): ReturnProps => {
   const [supportedAvatarFilterMatchType, setSupportedAvatarFilterMatchType] =
     useState<MatchType>('OR')
 
-  const [editingAssetID, setEditingAssetID] = useState<string | null>(null)
-
   const clearFilters = () => {
     setTextFilter('')
     setAssetType('All')
@@ -58,9 +56,6 @@ export const usePersistentContext = (): ReturnProps => {
     setSupportedAvatarFilterMatchType,
 
     clearFilters,
-
-    editingAssetID,
-    setEditingAssetID,
   }
 
   return { persistentContextValue }

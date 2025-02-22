@@ -88,18 +88,6 @@ describe('PersistentContext Hook', () => {
       supportedAvatarFilter,
     )
 
-    // Test setEditingAssetID works correctly
-    const editingAssetID = 'test'
-    expect(result.current.persistentContextValue.editingAssetID).not.toEqual(
-      editingAssetID,
-    )
-    act(() =>
-      result.current.persistentContextValue.setEditingAssetID(editingAssetID),
-    )
-    expect(result.current.persistentContextValue.editingAssetID).toEqual(
-      editingAssetID,
-    )
-
     // Test clearFilters works correctly
     act(() => result.current.persistentContextValue.clearFilters())
     expect(result.current.persistentContextValue.textFilter).toEqual('')

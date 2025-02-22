@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { createFilterRequest, isFilterEnforced } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
@@ -46,8 +46,6 @@ const AssetList = ({
   const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
     string | null
   >(null)
-
-  const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
 
   const {
     reverseOrder,
@@ -102,19 +100,6 @@ const AssetList = ({
     supportedAvatarFilterMatchType,
   ])
 
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (scrollRef.current !== null) {
-      scrollRef.current.scrollIntoView({
-        behavior: 'instant',
-        block: 'center',
-      })
-
-      setEditingAssetID(null)
-    }
-  }, [assetDisplaySortedList])
-
   return (
     <ScrollArea className={className}>
       {assetDisplaySortedList.length === 0 && (
@@ -132,7 +117,6 @@ const AssetList = ({
                 <AssetCard
                   key={asset.id}
                   asset={asset}
-                  ref={asset.id === editingAssetID ? scrollRef : undefined}
                   openSelectUnitypackageDialog={() =>
                     setSelectUnitypackageDialogOpen(true)
                   }
@@ -160,7 +144,6 @@ const AssetList = ({
                   <AssetCard
                     key={asset.id}
                     asset={asset}
-                    ref={asset.id === editingAssetID ? scrollRef : undefined}
                     openSelectUnitypackageDialog={() =>
                       setSelectUnitypackageDialogOpen(true)
                     }
