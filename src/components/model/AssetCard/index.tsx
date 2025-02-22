@@ -31,7 +31,13 @@ const AssetCard = ({
   openEditAssetDialog,
 }: Props) => {
   const { deleteAsset } = useAssetCard({ asset })
-  const { setAssetType } = useContext(PersistentContext)
+  const { setAssetType, setQueryTextMode, setQueryTextFilterForCreator } =
+    useContext(PersistentContext)
+
+  const onShopNameClicked = () => {
+    setQueryTextMode('advanced')
+    setQueryTextFilterForCreator(asset.creator)
+  }
 
   return (
     <Card className="w-full bg-card m-1" ref={ref}>
@@ -49,7 +55,9 @@ const AssetCard = ({
           <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
             {asset.name}
           </CardTitle>
-          <Label className="text-sm">{asset.creator}</Label>
+          <Label className="text-sm cursor-pointer" onClick={onShopNameClicked}>
+            {asset.creator}
+          </Label>
         </div>
         <div className="flex flex-row mt-2">
           <AssetCardOpenButton

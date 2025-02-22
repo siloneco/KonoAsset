@@ -50,7 +50,10 @@ const AssetList = ({
   const {
     reverseOrder,
     assetType,
-    textFilter,
+    queryTextMode,
+    generalQueryTextFilter,
+    queryTextFilterForName,
+    queryTextFilterForCreator,
     categoryFilter,
     tagFilter,
     tagFilterMatchType,
@@ -62,7 +65,10 @@ const AssetList = ({
   const updateMatchedAssetIDs = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
-      text: textFilter,
+      queryTextMode: queryTextMode,
+      generalQueryText: generalQueryTextFilter,
+      queryTextFilterForName: queryTextFilterForName,
+      queryTextFilterForCreator: queryTextFilterForCreator,
       categories: categoryFilter,
       tags: tagFilter,
       tagMatchType: tagFilterMatchType,
@@ -92,11 +98,14 @@ const AssetList = ({
   }, [
     assetDisplaySortedList,
     assetType,
-    textFilter,
+    queryTextMode,
+    generalQueryTextFilter,
+    queryTextFilterForName,
+    queryTextFilterForCreator,
     categoryFilter,
     tagFilter,
-    supportedAvatarFilter,
     tagFilterMatchType,
+    supportedAvatarFilter,
     supportedAvatarFilterMatchType,
   ])
 

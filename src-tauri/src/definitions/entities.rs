@@ -255,7 +255,7 @@ pub enum MatchType {
 #[serde(rename_all = "camelCase")]
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
-    pub text: Option<String>,
+    pub query_text: Option<String>,
     pub categories: Option<Vec<String>>,
     pub tags: Option<Vec<String>>,
     pub tag_match_type: MatchType,

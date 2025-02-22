@@ -10,7 +10,14 @@ export const usePersistentContext = (): ReturnProps => {
   const [sortBy, setSortBy] = useState<SortBy>('CreatedAt')
   const [reverseOrder, setReverseOrder] = useState(true)
 
-  const [textFilter, setTextFilter] = useState('')
+  const [queryTextMode, setQueryTextMode] = useState<'general' | 'advanced'>(
+    'general',
+  )
+
+  const [generalTextFilter, setGeneralTextFilter] = useState('')
+  const [queryTextFilterForName, setQueryTextFilterForName] = useState('')
+  const [queryTextFilterForCreator, setQueryTextFilterForCreator] = useState('')
+
   const [assetType, setAssetType] = useState<AssetType | 'All'>('All')
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [tagFilter, setTagFilter] = useState<string[]>([])
@@ -23,7 +30,10 @@ export const usePersistentContext = (): ReturnProps => {
     useState<MatchType>('OR')
 
   const clearFilters = () => {
-    setTextFilter('')
+    // setQueryTextMode('general')
+    setGeneralTextFilter('')
+    setQueryTextFilterForName('')
+    setQueryTextFilterForCreator('')
     setAssetType('All')
     setCategoryFilter([])
     setTagFilter([])
@@ -36,8 +46,16 @@ export const usePersistentContext = (): ReturnProps => {
     reverseOrder: reverseOrder,
     setReverseOrder: setReverseOrder,
 
-    textFilter: textFilter,
-    setTextFilter: setTextFilter,
+    queryTextMode: queryTextMode,
+    setQueryTextMode: setQueryTextMode,
+
+    generalQueryTextFilter: generalTextFilter,
+    setGeneralQueryTextFilter: setGeneralTextFilter,
+
+    queryTextFilterForName: queryTextFilterForName,
+    setQueryTextFilterForName: setQueryTextFilterForName,
+    queryTextFilterForCreator: queryTextFilterForCreator,
+    setQueryTextFilterForCreator: setQueryTextFilterForCreator,
 
     assetType: assetType,
     setAssetType: setAssetType,

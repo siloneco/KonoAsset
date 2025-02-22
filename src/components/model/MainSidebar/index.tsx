@@ -8,10 +8,9 @@ import {
 import TypeSelector from './components/TypeSelector'
 import AvatarWearableFilter from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
-import { Settings, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Settings } from 'lucide-react'
 import { Label } from '@/components/ui/label'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import WorldObjectFilter from './layout/WorldObjectFilter'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { Option } from '@/components/ui/multi-select'
@@ -20,13 +19,20 @@ import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from '@tanstack/react-router'
 import { Route as PreferenceRoute } from '@/routes/preference'
+import TextSearch from './components/TextSearch'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
   const {
     assetType,
-    textFilter,
-    setTextFilter,
+    queryTextMode,
+    setQueryTextMode,
+    generalQueryTextFilter,
+    setGeneralQueryTextFilter,
+    queryTextFilterForName,
+    setQueryTextFilterForName,
+    queryTextFilterForCreator,
+    setQueryTextFilterForCreator,
     tagFilter,
     setTagFilter,
     tagFilterMatchType,
@@ -47,21 +53,6 @@ const MainSidebar = () => {
     updateCategoriesAndTags()
   }, [])
 
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === 'f' && inputRef.current) {
-        inputRef.current.focus()
-        event.preventDefault()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
-
   return (
     <Sidebar collapsible="none" className="w-80 border-r-2">
       <SidebarContent>
@@ -80,28 +71,17 @@ const MainSidebar = () => {
           </div>
           <SidebarGroup>
             <SidebarGroupContent className="p-2">
-              <div className="mb-4">
-                <Label>テキストで検索</Label>
-                <div className="relative w-full max-w-sm">
-                  <Input
-                    placeholder="キーワードを入力..."
-                    className="mt-1"
-                    value={textFilter}
-                    onChange={(e) => setTextFilter(e.target.value)}
-                    ref={inputRef}
-                  />
-                  {textFilter && (
-                    <X
-                      size={24}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 mr-2 cursor-pointer"
-                      onClick={() => {
-                        setTextFilter('')
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-              <Label>アセットタイプ</Label>
+              <TextSearch
+                mode={queryTextMode}
+                setMode={setQueryTextMode}
+                general={generalQueryTextFilter}
+                setGeneral={setGeneralQueryTextFilter}
+                name={queryTextFilterForName}
+                setName={setQueryTextFilterForName}
+                creator={queryTextFilterForCreator}
+                setCreator={setQueryTextFilterForCreator}
+              />
+              <Label className="text-base">アセットタイプ</Label>
               <TypeSelector />
               {(assetType === 'All' || assetType === 'AvatarWearable') && (
                 <AvatarWearableFilter />
