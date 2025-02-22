@@ -62,7 +62,6 @@ const AdvancedTextSearch: FC<Props> = ({
             className="mt-1"
             value={creator}
             onChange={(e) => setCreator(e.target.value)}
-            ref={ref}
           />
           {creator && (
             <X
