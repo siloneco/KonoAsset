@@ -9,6 +9,27 @@ inputs:
   args:
     required: false
     description: "Additional arguments to pass to Tauri"
+  GITHUB_TOKEN:
+    required: true
+    description: "The GitHub token to use for the release"
+  TAURI_PRIVATE_KEY:
+    required: true
+    description: "The private key to use for signing the release"
+  TAURI_PRIVATE_KEY_PASSWORD:
+    required: true
+    description: "The password for the private key"
+  R2_ACCOUNT_ID:
+    required: true
+    description: "The account ID for the Cloudflare account"
+  R2_ACCESS_KEY_ID:
+    required: true
+    description: "The access key ID for the R2 bucket"
+  R2_SECRET_ACCESS_KEY:
+    required: true
+    description: "The secret access key for the R2 bucket"
+  R2_BUCKET:
+    required: true
+    description: "The R2 bucket to upload the release to"
 
 runs:
   using: "composite"
@@ -39,9 +60,9 @@ runs:
     - name: Build and Create Release
       uses: tauri-apps/tauri-action@94571df7fd79dbe2aee6d279c0a6b66d086d3b3b # v0
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-        TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        TAURI_SIGNING_PRIVATE_KEY: ${{ inputs.TAURI_PRIVATE_KEY }}
+        TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ inputs.TAURI_PRIVATE_KEY_PASSWORD }}
       with:
         tagName: "konoasset-v__VERSION__"
         releaseName: "KonoAsset v__VERSION__"
@@ -78,9 +99,9 @@ runs:
     - name: Upload artifacts
       uses: ryand56/r2-upload-action@latest
       with:
-        r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-        r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-        r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        r2-bucket: ${{ secrets.R2_BUCKET }}
+        r2-account-id: ${{ inputs.R2_ACCOUNT_ID }}
+        r2-access-key-id: ${{ inputs.R2_ACCESS_KEY_ID }}
+        r2-secret-access-key: ${{ inputs.R2_SECRET_ACCESS_KEY }}
+        r2-bucket: ${{ inputs.R2_BUCKET }}
         source-dir: upload/
         destination-dir: ./
