@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
+      - pre-release
 
 jobs:
-  build-and-release:
+  build-and-release-for-stable:
+    if: github.ref == 'refs/heads/main'
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -23,75 +25,35 @@ jobs:
             args: ""
     runs-on: ${{ matrix.platform }}
     environment:
-      name: main
-
+      name: release
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: pnpm/action-setup@v2
+      - uses: ./.github/workflows/composite/release
         with:
-          version: 10
-          run_install: false
-      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
-        with:
-          node-version: 23
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-
-      - run: node --version
-      - run: pnpm --version
-
-      - run: pnpm install --frozen-lockfile
-
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2
-        with:
-          workspaces: "./src-tauri -> target"
-
-      - name: Build and Create Release
-        uses: tauri-apps/tauri-action@94571df7fd79dbe2aee6d279c0a6b66d086d3b3b # v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
-        with:
-          tagName: "konoasset-v__VERSION__"
-          releaseName: "KonoAsset v__VERSION__"
-          includeUpdaterJson: true
-          updaterJsonPreferNsis: true
+          releaseChannel: "stable"
           args: ${{ matrix.args }}
 
-      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+  build-and-release-for-pre-release:
+    if: github.ref == 'refs/heads/pre-release'
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - platform: "macos-latest" # for Arm based macs (M1 and above).
+          #   args: "--target aarch64-apple-darwin"
+          # - platform: "macos-latest" # for Intel based macs.
+          #   args: "--target x86_64-apple-darwin"
+          # - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+          #   args: ""
+          - platform: "windows-latest"
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    environment:
+      name: release
+    steps:
+      - uses: ./.github/workflows/composite/release
         with:
-          result-encoding: string
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            const latestJsonPath = path.join(process.cwd(), 'latest.json');
-            const latestJson = JSON.parse(fs.readFileSync(latestJsonPath, 'utf8'));
-
-            const url = latestJson['platforms']['windows-x86_64']['url'];
-            const filename = path.basename(url);
-            const newUrl = `https://releases.konoasset.dev/installer/${filename}`;
-
-            latestJson['platforms']['windows-x86_64']['url'] = newUrl;
-
-            fs.writeFileSync(latestJsonPath, JSON.stringify(latestJson, null, 2));
-
-      - name: Create upload Directory
-        run: |
-          mkdir -p upload/manifests
-          mkdir -p upload/installer
-          mv latest.json ./upload/manifests/
-          mv ./src-tauri/target/release/bundle/msi/* ./upload/installer/
-          mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
-
-      - name: Upload artifacts
-        uses: ryand56/r2-upload-action@latest
-        with:
-          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          r2-bucket: ${{ secrets.R2_BUCKET }}
-          source-dir: upload/
-          destination-dir: ./
+          releaseChannel: "pre-release"
+          args: ${{ matrix.args }}

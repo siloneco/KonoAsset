@@ -2,6 +2,7 @@ import { createContext, FC } from 'react'
 import { usePreferenceContext } from './hook'
 import { PreferenceStore } from '@/lib/bindings'
 import { useTheme } from 'next-themes'
+import { getDefaultPreferences } from '@/lib/utils'
 
 export type PreferenceContextType = {
   preference: PreferenceStore
@@ -9,12 +10,7 @@ export type PreferenceContextType = {
 }
 
 export const PreferenceContext = createContext<PreferenceContextType>({
-  preference: {
-    dataDirPath: '',
-    theme: 'system',
-    useUnitypackageSelectedOpen: true,
-    deleteOnImport: true,
-  },
+  preference: getDefaultPreferences(),
   setPreference: async () => {},
 })
 

@@ -9,6 +9,7 @@ const mockPreference: PreferenceStore = {
   theme: 'system',
   useUnitypackageSelectedOpen: true,
   deleteOnImport: true,
+  updateChannel: 'Stable',
 }
 
 vi.mock('@/lib/bindings', async () => {

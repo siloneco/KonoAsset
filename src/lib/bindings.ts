@@ -385,7 +385,7 @@ export type MatchType = "AND" | "OR"
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
-export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean }
+export type PreferenceStore = { dataDirPath: string; theme: Theme; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean; updateChannel: UpdateChannel }
 export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
@@ -393,6 +393,7 @@ export type SortBy = "Name" | "Creator" | "CreatedAt" | "PublishedAt"
 export type TaskStatus = "Running" | "Completed" | "Cancelled" | "Failed"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
+export type UpdateChannel = "Stable" | "PreRelease"
 export type WorldObject = { id: string; description: AssetDescription; category: string }
 
 /** tauri-specta globals **/

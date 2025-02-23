@@ -3,7 +3,7 @@ use std::{io, path::PathBuf};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-use crate::loader::VersionedPreferences;
+use crate::{loader::VersionedPreferences, updater::update_handler::UpdateChannel};
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -16,6 +16,8 @@ pub struct PreferenceStore {
 
     pub delete_on_import: bool,
     pub use_unitypackage_selected_open: bool,
+
+    pub update_channel: UpdateChannel,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, specta::Type)]
@@ -48,6 +50,8 @@ impl PreferenceStore {
 
             delete_on_import: true,
             use_unitypackage_selected_open: true,
+
+            update_channel: UpdateChannel::Stable,
         })
     }
 
@@ -93,6 +97,7 @@ impl PreferenceStore {
         self.theme = other.theme;
         self.delete_on_import = other.delete_on_import;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
+        self.update_channel = other.update_channel;
     }
 
     pub fn save(&self) -> Result<(), io::Error> {

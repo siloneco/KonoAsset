@@ -8,7 +8,7 @@ use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_specta::collect_events;
-use updater::update_handler::UpdateHandler;
+use updater::update_handler::{UpdateChannel, UpdateHandler};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
@@ -68,7 +68,6 @@ pub fn run() {
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
-            app.manage(get_update_handler(app.handle().clone()));
             app.manage(app.handle().clone());
 
             let result = load_preference_store(app.handle());
@@ -82,11 +81,16 @@ pub fn run() {
 
             let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
+            let update_channel = pref_store.update_channel.clone();
 
             let pximg_resolver = PximgResolver::new(data_dir.join("images"));
 
             app.manage(arc_mutex(pref_store));
             app.manage(arc_mutex(pximg_resolver));
+            app.manage(arc_mutex(get_update_handler(
+                app.handle().clone(),
+                &update_channel,
+            )));
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {
@@ -123,10 +127,10 @@ where
     }
 }
 
-fn get_update_handler(app: AppHandle) -> UpdateHandler {
+fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler {
     tauri::async_runtime::block_on(async move {
         let mut update_handler = UpdateHandler::new(app);
-        let result = update_handler.check_for_update().await;
+        let result = update_handler.check_for_update(channel).await;
 
         if result.is_err() {
             log::error!("Failed to check for update: {}", result.unwrap_err());

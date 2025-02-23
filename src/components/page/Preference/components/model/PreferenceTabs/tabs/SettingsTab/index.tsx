@@ -2,7 +2,7 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { PreferenceTabIDs } from '@/components/page/Preference/hook'
 
 import { TabsContent } from '@/components/ui/tabs'
-import { Theme } from '@/lib/bindings'
+import { Theme, UpdateChannel } from '@/lib/bindings'
 import { FC, useContext } from 'react'
 import ThemeSelector from './components/ThemeSelector'
 import DataDirSelector from './components/DataDirSelector'
@@ -10,6 +10,7 @@ import DeleteSourceToggle from './components/DeleteSourceToggle'
 import UseUnitypackageSelectorToggle from './components/UseUnitypackageSelectorToggle'
 import ResetButton from './components/ResetButton'
 import { Separator } from '@/components/ui/separator'
+import UpdateChannelSelector from './components/UpdateChannelSelector'
 
 type Props = {
   id: PreferenceTabIDs
@@ -58,6 +59,12 @@ const SettingsTab: FC<Props> = ({ id }) => {
           }}
         />
         <Separator />
+        <UpdateChannelSelector
+          updateChannel={preference.updateChannel}
+          setUpdateChannel={async (channel: UpdateChannel) => {
+            await setPreference({ ...preference, updateChannel: channel }, true)
+          }}
+        />
         <ResetButton />
       </div>
     </TabsContent>

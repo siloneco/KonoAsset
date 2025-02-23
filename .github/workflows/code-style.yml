@@ -6,6 +6,7 @@ on:
       - "renovate.json"
     branches-ignore:
       - "main"
+      - "pre-release"
   pull_request:
     paths-ignore:
       - "**.md"
