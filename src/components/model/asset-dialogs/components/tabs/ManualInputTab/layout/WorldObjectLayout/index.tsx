@@ -6,12 +6,14 @@ import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { AssetFormType } from '@/lib/form'
 import { commands } from '@/lib/bindings'
 import { Label } from '@/components/ui/label'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
 }
 
 const WorldObjectLayout = ({ form }: Props) => {
+  const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
@@ -54,15 +56,15 @@ const WorldObjectLayout = ({ form }: Props) => {
   return (
     <div className="w-full flex flex-row space-x-2">
       <div className="w-1/2 space-y-2">
-        <Label>カテゴリ</Label>
+        <Label> {t('addasset:category')} </Label>
         <TextInputSelect
           options={categoryCandidates}
-          placeholder="カテゴリを選択..."
+          placeholder={t('addasset:category:placeholder')}
           className="max-w-72"
           creatable
           emptyIndicator={
             <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              入力して作成
+              {t('addasset:empty-indicator')}
             </p>
           }
           value={categoryValue}
@@ -71,21 +73,21 @@ const WorldObjectLayout = ({ form }: Props) => {
           }}
         />
         <p className="text-foreground/60 text-sm">
-          カテゴリは1つまで選択できます (例: 衣装、髪など)
+          {t('addasset:category:explanation-text')}
         </p>
       </div>
       <Separator orientation="vertical" className="h-32 my-auto" />
       <div className="w-1/2 space-y-2">
-        <Label>タグ</Label>
+        <Label> {t('addasset:tag')} </Label>
         <MultipleSelector
           options={tagCandidates}
-          placeholder="タグを選択..."
+          placeholder={t('addasset:tag:placeholder')}
           className="max-w-72"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
             <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              入力して作成
+              {t('addasset:empty-indicator')}
             </p>
           }
           onChange={(value) => {
@@ -96,7 +98,7 @@ const WorldObjectLayout = ({ form }: Props) => {
           }}
         />
         <p className="text-foreground/60 text-sm">
-          タグは複数選択できます (例: Vket、無料、自作など)
+          {t('addasset:tag:explanation-text')}
         </p>
       </div>
     </div>

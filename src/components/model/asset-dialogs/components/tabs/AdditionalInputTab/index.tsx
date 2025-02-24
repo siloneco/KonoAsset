@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-
+import { useLocalization } from '@/hooks/use-localization'
 import { Loader2 } from 'lucide-react'
 import { useAdditionalInputTab } from './hook'
 import { AssetFormType } from '@/lib/form'
@@ -46,15 +46,16 @@ const AdditionalInputTab = ({
     deleteSourceChecked,
     setDeleteSourceChecked,
   } = useAdditionalInputTab({ form })
+  const { t } = useLocalization()
 
   return (
     <div>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) アセット情報の入力
+          ({tabIndex}/{totalTabs}) {t('addasset:additional-input')}
         </DialogTitle>
         <DialogDescription>
-          アセットの情報を入力してください！
+          {t('addasset:additional-input:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div className="mt-4">
@@ -70,7 +71,7 @@ const AdditionalInputTab = ({
             onClick={onBackToPreviousTabClicked}
             disabled={submitting}
           >
-            戻る
+            {t('general:button:back')}
           </Button>
           <div className="flex flex-row">
             {!hideDeleteSourceCheckbox && (
@@ -84,7 +85,7 @@ const AdditionalInputTab = ({
                   className="ml-2"
                   onClick={() => setDeleteSourceChecked(!deleteSourceChecked)}
                 >
-                  インポート後に元ファイルを削除する
+                  {t('addasset:additional-input:delete-source')}
                 </Label>
               </div>
             )}

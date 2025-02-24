@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dialog'
 import SelectTypeButton from './selector/SelectTypeButton'
 import { AssetFormType } from '@/lib/form'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
@@ -17,6 +18,7 @@ type Props = {
 }
 
 const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
+  const { t } = useLocalization()
   const backToBoothInput = () => {
     setTab('booth-input')
   }
@@ -31,29 +33,29 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
     <>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) アセットのタイプを選択
+          ({tabIndex}/{totalTabs}) {t('addasset:select-type')}
         </DialogTitle>
         <DialogDescription>
-          アセットのタイプを選択してください！
+          {t('addasset:select-type:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div className="my-8 space-y-6 flex flex-col items-center">
         <SelectTypeButton
-          text="アバター素体"
+          text={t('addasset:select-type:avatar')}
           onClick={() => {
             form.setValue('assetType', 'Avatar')
           }}
           selected={assetType === 'Avatar'}
         />
         <SelectTypeButton
-          text="アバター関連 (服 / 髪 / アクセサリ / ギミック等)"
+          text={t('addasset:select-type:avatar-wearable')}
           onClick={() => {
             form.setValue('assetType', 'AvatarWearable')
           }}
           selected={assetType === 'AvatarWearable'}
         />
         <SelectTypeButton
-          text="ワールドアセット"
+          text={t('addasset:select-type:world-object')}
           onClick={() => {
             form.setValue('assetType', 'WorldObject')
           }}
@@ -66,10 +68,10 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
           className="mr-auto"
           onClick={backToBoothInput}
         >
-          戻る
+          {t('general:button:back')}
         </Button>
         <Button className="mr-auto" onClick={moveToManualInputTab}>
-          次へ
+          {t('general:button:next')}
         </Button>
       </DialogFooter>
     </>
