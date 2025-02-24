@@ -1,10 +1,12 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useToast } from '@/hooks/use-toast'
 import { commands, FileInfo } from '@/lib/bindings'
+import { OctagonAlert } from 'lucide-react'
 import { useContext, useState } from 'react'
 
 type Props = {
   id: string
+  hasDependencies: boolean
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
   openSelectUnitypackageDialog: () => void
 }
@@ -19,6 +21,7 @@ type ReturnProps = {
 
 export const useAssetCardOpenButton = ({
   id,
+  hasDependencies,
   setUnitypackageFiles,
   openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
@@ -27,6 +30,15 @@ export const useAssetCardOpenButton = ({
 
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
+
+  const showDependencyWarning = () => {
+    toast({
+      icon: <OctagonAlert className="text-primary" />,
+      title: '前提アセットがあります！',
+      description: '開くボタンの下矢印から前提アセットを確認できます',
+      duration: 5000,
+    })
+  }
 
   const listUnitypackageAndOpen = async (): Promise<boolean> => {
     const result = await commands.listUnitypackageFiles(id)
@@ -47,6 +59,9 @@ export const useAssetCardOpenButton = ({
     const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
+      if (hasDependencies) {
+        showDependencyWarning()
+      }
       return await onOpenManagedDirButtonClick()
     }
 
@@ -66,7 +81,15 @@ export const useAssetCardOpenButton = ({
         return false
       }
 
+      if (hasDependencies) {
+        showDependencyWarning()
+      }
+
       return true
+    }
+
+    if (hasDependencies) {
+      showDependencyWarning()
     }
 
     setUnitypackageFiles(impartialData)

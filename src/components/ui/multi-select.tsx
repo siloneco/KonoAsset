@@ -245,7 +245,7 @@ const MultipleSelector = React.forwardRef<
       window.addEventListener('resize', updateCommandListMaxHeight)
       return () =>
         window.removeEventListener('resize', updateCommandListMaxHeight)
-    })
+    }, [])
 
     React.useImperativeHandle(
       ref,

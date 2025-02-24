@@ -9,6 +9,7 @@ export type AssetFormFields = {
   boothItemId: number | null
   tags: string[]
   memo: string | null
+  dependencies: string[]
   category: string
   supportedAvatars: string[]
   publishedAt: number | null

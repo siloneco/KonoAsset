@@ -73,38 +73,37 @@ const useAddAssetDialog = ({
     boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
     memo: z.string().nullable(),
+    dependencies: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
     publishedAt: z.number().nullable(),
   })
 
+  const defaultValues = {
+    name: '',
+    creator: '',
+    imageFilename: null,
+    boothItemId: null,
+    tags: [],
+    memo: null,
+    dependencies: [],
+    category: '',
+    supportedAvatars: [],
+    publishedAt: null,
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       assetType: 'Avatar',
-      name: '',
-      creator: '',
-      imageFilename: null,
-      boothItemId: null,
-      tags: [],
-      memo: null,
-      category: '',
-      supportedAvatars: [],
-      publishedAt: null,
+      ...defaultValues,
     },
   })
 
   const clearForm = () => {
     form.reset({
       assetType: 'Avatar',
-      name: '',
-      creator: '',
-      imageFilename: null,
-      boothItemId: null,
-      tags: [],
-      category: '',
-      supportedAvatars: [],
-      publishedAt: null,
+      ...defaultValues,
     })
 
     setAssetPaths([])
@@ -233,6 +232,7 @@ const useAddAssetDialog = ({
           imageFilename: form.getValues('imageFilename'),
           tags: form.getValues('tags'),
           memo: form.getValues('memo'),
+          dependencies: form.getValues('dependencies'),
           boothItemId: form.getValues('boothItemId') ?? null,
           createdAt: new Date().getTime(),
           publishedAt: form.getValues('publishedAt') ?? null,

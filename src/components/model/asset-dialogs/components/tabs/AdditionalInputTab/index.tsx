@@ -10,7 +10,8 @@ import { useAdditionalInputTab } from './hook'
 import { AssetFormType } from '@/lib/form'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Textarea } from '@/components/ui/textarea'
+import { MemoInput } from './components/MemoInput'
+import { DependencyInput } from './components/DependencyInput'
 
 type Props = {
   form: AssetFormType
@@ -37,8 +38,14 @@ const AdditionalInputTab = ({
   hideDeleteSourceCheckbox = false,
   submitButtonText = 'アセットを追加',
 }: Props) => {
-  const { memo, setMemo, deleteSourceChecked, setDeleteSourceChecked } =
-    useAdditionalInputTab({ form })
+  const {
+    memo,
+    setMemo,
+    dependencies,
+    setDependencies,
+    deleteSourceChecked,
+    setDeleteSourceChecked,
+  } = useAdditionalInputTab({ form })
 
   return (
     <div>
@@ -51,21 +58,11 @@ const AdditionalInputTab = ({
         </DialogDescription>
       </DialogHeader>
       <div className="mt-4">
-        <div className="w-full flex flex-row space-x-2 mb-4">
-          <div className="w-full space-y-2">
-            <Label>メモ</Label>
-            <Textarea
-              value={memo ?? ''}
-              onChange={(e) => setMemo(e.target.value)}
-              autoComplete="off"
-              className="resize-none h-36"
-              placeholder="アセットに追加するメモを入力..."
-            />
-            <p className="text-card-foreground/60 text-sm">
-              メモは情報整理や検索に利用できます
-            </p>
-          </div>
-        </div>
+        <MemoInput memo={memo ?? ''} setMemo={setMemo} />
+        <DependencyInput
+          dependencies={dependencies}
+          setDependencies={setDependencies}
+        />
 
         <div className="w-full flex justify-between">
           <Button

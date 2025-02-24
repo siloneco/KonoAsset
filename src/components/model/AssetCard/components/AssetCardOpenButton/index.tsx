@@ -8,22 +8,33 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { Check, ChevronDown, Copy, Folder, Loader2 } from 'lucide-react'
+import {
+  Check,
+  ChevronDown,
+  Copy,
+  Folder,
+  FolderTree,
+  Loader2,
+} from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { FileInfo } from '@/lib/bindings'
 
 type Props = {
   className?: string
   id: string
+  hasDependencies: boolean
 
   openSelectUnitypackageDialog: () => void
+  openDependencyDialog: () => void
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
+  hasDependencies,
   openSelectUnitypackageDialog,
+  openDependencyDialog,
   setUnitypackageFiles,
 }: Props) => {
   const {
@@ -34,6 +45,7 @@ const AssetCardOpenButton = ({
     onCopyPathButtonClick,
   } = useAssetCardOpenButton({
     id,
+    hasDependencies,
     openSelectUnitypackageDialog,
     setUnitypackageFiles,
   })
@@ -65,6 +77,13 @@ const AssetCardOpenButton = ({
           <DropdownMenuItem onClick={onOpenManagedDirButtonClick}>
             <Folder className="text-foreground/50" />
             管理フォルダを開く
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={openDependencyDialog}
+            disabled={!hasDependencies}
+          >
+            <FolderTree className="text-foreground/50" />
+            前提アセット
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onCopyPathButtonClick}>

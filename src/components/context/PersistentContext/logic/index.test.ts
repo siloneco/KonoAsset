@@ -10,6 +10,7 @@ const mockSortedAssets: AssetSummary[] = [
     creator: 'creator',
     boothItemId: null,
     hasMemo: false,
+    dependencies: [],
     imageFilename: 'imageFilename',
     publishedAt: 123,
   },

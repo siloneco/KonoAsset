@@ -4,14 +4,18 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeSet, HashSet};
 use uuid::Uuid;
 
-use super::share::LegacyAssetDescriptionV1;
+use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum VersionedAvatarWearables {
     AvatarWearables {
-        version: MustBe!(2u64),
+        version: MustBe!(3u64),
         data: HashSet<AvatarWearable>,
+    },
+    LegacyAvatarWearablesV2 {
+        version: MustBe!(2u64),
+        data: HashSet<LegacyAvatarWearableV2>,
     },
     LegacyAvatarWearablesV1(HashSet<LegacyAvatarWearableV1>),
 }
@@ -22,11 +26,22 @@ impl TryInto<HashSet<AvatarWearable>> for VersionedAvatarWearables {
     fn try_into(self) -> Result<HashSet<AvatarWearable>, Self::Error> {
         match self {
             VersionedAvatarWearables::AvatarWearables { data, .. } => Ok(data),
+            VersionedAvatarWearables::LegacyAvatarWearablesV2 { data, .. } => {
+                let mut avatar_wearables = HashSet::new();
+                for item in data {
+                    let item: AvatarWearable = item.try_into()?;
+
+                    avatar_wearables.insert(item);
+                }
+                Ok(avatar_wearables)
+            }
             VersionedAvatarWearables::LegacyAvatarWearablesV1(legacy_avatar_wearables) => {
                 let mut avatar_wearables = HashSet::new();
-                for legacy_avatar_wearable in legacy_avatar_wearables {
-                    let avatar_wearable = legacy_avatar_wearable.try_into()?;
-                    avatar_wearables.insert(avatar_wearable);
+                for item in legacy_avatar_wearables {
+                    let item: LegacyAvatarWearableV2 = item.try_into()?;
+                    let item: AvatarWearable = item.try_into()?;
+
+                    avatar_wearables.insert(item);
                 }
                 Ok(avatar_wearables)
             }
@@ -39,11 +54,41 @@ impl TryFrom<HashSet<AvatarWearable>> for VersionedAvatarWearables {
 
     fn try_from(value: HashSet<AvatarWearable>) -> Result<VersionedAvatarWearables, Self::Error> {
         Ok(VersionedAvatarWearables::AvatarWearables {
-            version: MustBe!(2u64),
+            version: MustBe!(3u64),
             data: value,
         })
     }
 }
+
+/*
+ * V2
+ */
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct LegacyAvatarWearableV2 {
+    pub id: Uuid,
+    pub description: LegacyAssetDescriptionV2,
+    pub category: String,
+    pub supported_avatars: BTreeSet<String>,
+}
+
+impl TryInto<AvatarWearable> for LegacyAvatarWearableV2 {
+    type Error = String;
+
+    fn try_into(self) -> Result<AvatarWearable, Self::Error> {
+        Ok(AvatarWearable {
+            id: self.id,
+            description: self.description.try_into()?,
+            category: self.category,
+            supported_avatars: self.supported_avatars,
+        })
+    }
+}
+
+/*
+ * V1
+ */
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -54,11 +99,11 @@ pub struct LegacyAvatarWearableV1 {
     pub supported_avatars: BTreeSet<String>,
 }
 
-impl TryInto<AvatarWearable> for LegacyAvatarWearableV1 {
+impl TryInto<LegacyAvatarWearableV2> for LegacyAvatarWearableV1 {
     type Error = String;
 
-    fn try_into(self) -> Result<AvatarWearable, Self::Error> {
-        Ok(AvatarWearable {
+    fn try_into(self) -> Result<LegacyAvatarWearableV2, Self::Error> {
+        Ok(LegacyAvatarWearableV2 {
             id: self.id,
             description: self.description.try_into()?,
             category: self.category,
@@ -95,7 +140,7 @@ mod tests {
             supported_avatars: BTreeSet::new(),
         };
 
-        let latest: AvatarWearable = legacy.try_into().unwrap();
+        let latest: LegacyAvatarWearableV2 = legacy.try_into().unwrap();
 
         assert_eq!(
             latest.description.image_filename,

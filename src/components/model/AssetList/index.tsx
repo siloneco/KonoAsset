@@ -11,6 +11,7 @@ import AssetListBackground from './components/AssetListBackground'
 import DataManagementDialog from '../AssetCard/components/MoreButton/components/DataManagementDialog'
 import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
 import MemoDialog from '../MemoDialog'
+import { DependencyDialog } from '../DependencyDialog'
 
 type Props = {
   className?: string
@@ -52,6 +53,13 @@ const AssetList = ({
   const [memoDialogAssetId, setMemoDialogAssetId] = useState<string | null>(
     null,
   )
+
+  const [dependencyDialogOpen, setDependencyDialogOpen] = useState(false)
+  const [dependencyDialogAssetName, setDependencyDialogAssetName] = useState<
+    string | null
+  >(null)
+  const [dependencyDialogDependencies, setDependencyDialogDependencies] =
+    useState<string[]>([])
 
   const {
     reverseOrder,
@@ -149,6 +157,10 @@ const AssetList = ({
                     setMemoDialogAssetId(assetId)
                     setMemoDialogOpen(true)
                   }}
+                  openDependencyDialog={(assetId) => {
+                    setDependencyDialogAssetName(assetId)
+                    setDependencyDialogOpen(true)
+                  }}
                 />
               ),
           )}
@@ -180,6 +192,11 @@ const AssetList = ({
                       setMemoDialogAssetId(assetId)
                       setMemoDialogOpen(true)
                     }}
+                    openDependencyDialog={(assetName, dependencies) => {
+                      setDependencyDialogAssetName(assetName)
+                      setDependencyDialogDependencies(dependencies)
+                      setDependencyDialogOpen(true)
+                    }}
                   />
                 ),
             )}
@@ -204,6 +221,12 @@ const AssetList = ({
         assetId={memoDialogAssetId}
         dialogOpen={memoDialogOpen}
         setDialogOpen={setMemoDialogOpen}
+      />
+      <DependencyDialog
+        dialogOpen={dependencyDialogOpen}
+        setDialogOpen={setDependencyDialogOpen}
+        assetName={dependencyDialogAssetName}
+        dependencyIds={dependencyDialogDependencies}
       />
       <div className="w-full h-12" />
     </ScrollArea>

@@ -9,6 +9,8 @@ export type Props = {
 type ReturnProps = {
   memo: string | null
   setMemo: (memo: string | null) => void
+  dependencies: string[]
+  setDependencies: (deps: string[]) => void
   deleteSourceChecked: boolean
   setDeleteSourceChecked: (checked: boolean) => void
 }
@@ -16,6 +18,7 @@ type ReturnProps = {
 export const useAdditionalInputTab = ({ form }: Props): ReturnProps => {
   const { preference, setPreference } = useContext(PreferenceContext)
 
+  const memo = form.watch('memo')
   const setMemo = (memo: string | null) => {
     if (memo === null || memo.length === 0) {
       form.setValue('memo', null)
@@ -25,9 +28,16 @@ export const useAdditionalInputTab = ({ form }: Props): ReturnProps => {
     form.setValue('memo', memo)
   }
 
+  const dependencies = form.watch('dependencies')
+  const setDependencies = (deps: string[]) => {
+    form.setValue('dependencies', deps)
+  }
+
   return {
-    memo: form.watch('memo'),
+    memo,
     setMemo,
+    dependencies,
+    setDependencies,
     deleteSourceChecked: preference.deleteOnImport,
     setDeleteSourceChecked: (checked: boolean) =>
       setPreference({ ...preference, deleteOnImport: checked }, true),

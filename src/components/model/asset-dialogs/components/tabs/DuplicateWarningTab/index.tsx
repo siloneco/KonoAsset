@@ -8,7 +8,7 @@ import {
 import { useContext } from 'react'
 import { AddAssetDialogContext } from '../../../AddAssetDialog'
 import { OctagonAlert } from 'lucide-react'
-import SlimAssetDetail from './components/SlimAssetDetail'
+import SlimAssetDetail from '@/components/model/SlimAssetDetail'
 
 type Props = {
   setTab: (tab: string) => void
@@ -48,7 +48,11 @@ const DuplicateWarningTab = ({ setTab, openEditDialog }: Props) => {
       <div>
         {duplicateWarningItems.map((item) => (
           <div key={item.id} className="mb-4">
-            <SlimAssetDetail asset={item} openEditDialog={openEditDialog} />
+            <SlimAssetDetail
+              asset={item}
+              openEditDialog={openEditDialog}
+              className="max-w-[600px]"
+            />
           </div>
         ))}
       </div>
