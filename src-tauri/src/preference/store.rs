@@ -3,7 +3,10 @@ use std::{io, path::PathBuf};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-use crate::{loader::VersionedPreferences, updater::update_handler::UpdateChannel};
+use crate::{
+    language::structs::LanguageCode, loader::VersionedPreferences,
+    updater::update_handler::UpdateChannel,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -13,6 +16,7 @@ pub struct PreferenceStore {
 
     pub data_dir_path: PathBuf,
     pub theme: Theme,
+    pub language: LanguageCode,
 
     pub delete_on_import: bool,
     pub use_unitypackage_selected_open: bool,
@@ -47,6 +51,7 @@ impl PreferenceStore {
 
             data_dir_path,
             theme: Theme::System,
+            language: LanguageCode::EnUs,
 
             delete_on_import: true,
             use_unitypackage_selected_open: true,

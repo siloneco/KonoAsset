@@ -118,7 +118,6 @@ const AvatarWearableLayout = ({ form }: Props) => {
             }
             value={categoryValue}
             onChange={(value) => {
-              console.log(value)
               if (value === null) {
                 form.setValue('category', '')
               } else {

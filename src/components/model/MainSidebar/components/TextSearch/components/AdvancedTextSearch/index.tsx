@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useLocalization } from '@/hooks/use-localization'
 import { X } from 'lucide-react'
 import { FC, RefObject } from 'react'
 
@@ -22,10 +23,12 @@ const AdvancedTextSearch: FC<Props> = ({
   setCreator,
   ref,
 }) => {
+  const { t } = useLocalization()
+
   return (
     <div className="mb-4">
       <div className="flex flex-row">
-        <Label className="text-base">テキストで検索</Label>
+        <Label className="text-base">{t('sidebar:text-search')}</Label>
         <div
           className="w-16 bg-primary text-primary-foreground px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
           onClick={onSwitchModeClicked}
