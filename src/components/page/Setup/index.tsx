@@ -11,14 +11,20 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { commands } from '@/lib/bindings'
 import { useToast } from '@/hooks/use-toast'
 import { OtherPreferenceSelector } from './tabs/OtherPreferenceSelector'
-import { Route as TopPage } from '@/routes'
-import { Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 
 export const SetupPage: FC = () => {
   const [tabIndex, setTabIndex] = useState(1)
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const { preference, setPreference } = useContext(PreferenceContext)
+
+  const onLastButtonClicked = async () => {
+    // preference.json が無い場合フォールバックされてしまうため、セーブする
+    await setPreference(preference, true)
+    navigate({ to: '/' })
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center px-10">
@@ -95,8 +101,8 @@ export const SetupPage: FC = () => {
                 </Button>
               )}
               {tabIndex >= 3 && (
-                <Button className="ml-auto" asChild>
-                  <Link to={TopPage.to}>利用をはじめる！</Link>
+                <Button className="ml-auto" onClick={onLastButtonClicked}>
+                  利用をはじめる！
                 </Button>
               )}
             </div>
