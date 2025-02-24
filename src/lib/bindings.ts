@@ -297,6 +297,9 @@ async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async isPreferenceFileExists() : Promise<boolean> {
+    return await TAURI_INVOKE("is_preference_file_exists");
+},
 async getPreferences() : Promise<Result<PreferenceStore, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_preferences") };

@@ -2,10 +2,16 @@ import DragDropContextProvider from '@/components/context/DragDropContext'
 import LoadErrorPage from '@/components/page/LoadError'
 import TopPage from '@/components/page/Top'
 import { commands } from '@/lib/bindings'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   loader: async () => {
+    if (!(await commands.isPreferenceFileExists())) {
+      throw redirect({
+        to: '/setup',
+      })
+    }
+
     return await commands.getLoadStatus()
   },
   gcTime: 0,

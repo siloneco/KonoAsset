@@ -1,8 +1,15 @@
 use std::sync::Arc;
 
-use tauri::{async_runtime::Mutex, State};
+use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
 
 use crate::preference::store::PreferenceStore;
+
+#[tauri::command]
+#[specta::specta]
+pub fn is_preference_file_exists(handle: State<'_, AppHandle>) -> bool {
+    let app_local_data_dir = handle.path().app_local_data_dir().unwrap();
+    return app_local_data_dir.join("preference.json").exists();
+}
 
 #[tauri::command]
 #[specta::specta]
