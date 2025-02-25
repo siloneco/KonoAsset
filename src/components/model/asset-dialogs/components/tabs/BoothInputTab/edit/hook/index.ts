@@ -3,6 +3,7 @@ import { useState, ChangeEvent, useEffect } from 'react'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
 import { getAndSetAssetInfoFromBoothToForm } from '../../logic'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
@@ -26,6 +27,7 @@ export const useBoothInputTabForEditDialog = ({
   const [boothItemId, setBoothItemId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export const useBoothInputTabForEditDialog = ({
         goToNextTab()
       } else {
         toast({
-          title: '情報取得に失敗しました',
+          title: t('addasset:booth-input:failed-to-get-info'),
           description: result.error,
         })
       }

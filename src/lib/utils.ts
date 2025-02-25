@@ -47,5 +47,6 @@ export const getDefaultPreferences = (): PreferenceStore => {
     useUnitypackageSelectedOpen: true,
     deleteOnImport: true,
     updateChannel: 'Stable',
+    language: 'enUs',
   }
 }

@@ -3,6 +3,7 @@ import { Route as TopPageRoute } from '@/routes'
 import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { getVersion } from '@tauri-apps/api/app'
+import { useLocalization } from '@/hooks/use-localization'
 
 type ReturnProps = {
   version: string
@@ -15,6 +16,7 @@ export const usePreferenceSidebar = (): ReturnProps => {
 
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useLocalization()
 
   const backToTopPage = () => {
     navigate({ to: TopPageRoute.to })
@@ -24,7 +26,7 @@ export const usePreferenceSidebar = (): ReturnProps => {
     navigator.clipboard.writeText(`v${version}`)
 
     toast({
-      title: 'バージョン情報をコピーしました！',
+      title: t('preference:toast-version-copied'),
       duration: 1500,
     })
   }

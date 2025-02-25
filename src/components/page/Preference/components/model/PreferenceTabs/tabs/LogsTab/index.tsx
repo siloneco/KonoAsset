@@ -7,12 +7,14 @@ import { FC } from 'react'
 import LogTray from './components/LogTray'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { useLogsTab } from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: PreferenceTabIDs
 }
 
 const LogsTab: FC<Props> = ({ id }) => {
+  const { t } = useLocalization()
   const { logs, reloadLogs, openLogsFolder } = useLogsTab()
 
   return (
@@ -21,7 +23,7 @@ const LogsTab: FC<Props> = ({ id }) => {
         <div className="space-x-4">
           <Button onClick={openLogsFolder}>
             <Folder />
-            フォルダを開く
+            {t('preference:logs:open-logs-folder')}
           </Button>
           <Button
             variant="secondary"

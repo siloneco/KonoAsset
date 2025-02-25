@@ -11,6 +11,7 @@ import { ChevronRight, Loader2 } from 'lucide-react'
 import { AssetFormType } from '@/lib/form'
 import { useBoothInputTabForEditDialog } from './hook'
 import { isBoothURL } from '@/lib/utils'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
@@ -30,6 +31,7 @@ const BoothInputTabForEditDialog = ({
   tabIndex,
   totalTabs,
 }: Props) => {
+  const { t } = useLocalization()
   const {
     getAssetDescriptionFromBooth,
     onUrlInputChange,
@@ -45,15 +47,18 @@ const BoothInputTabForEditDialog = ({
     <>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) Booth情報の編集
+          ({tabIndex}/{totalTabs}) {t('addasset:booth-edit')}
         </DialogTitle>
         <DialogDescription>
-          Boothのリンクを編集して情報を取得するか、次のタブへ移動してください
+          {t('addasset:booth-edit:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div className="my-8 space-y-6">
         <div>
-          <Label className="text-base ml-1">Boothの情報で上書きする</Label>
+          <Label className="text-base ml-1">
+            {' '}
+            {t('addasset:booth-edit:overwrite')}{' '}
+          </Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
               placeholder="https://booth.pm/ja/items/1234567"
@@ -67,24 +72,24 @@ const BoothInputTabForEditDialog = ({
             >
               {!fetching && <ChevronRight size={16} />}
               {fetching && <Loader2 size={16} className="animate-spin" />}
-              取得
+              {t('addasset:booth-input:button-text')}
             </Button>
           </div>
         </div>
-        <div className="w-full flex justify-center">または</div>
+        <div className="w-full flex justify-center"> {t('general:or')} </div>
         <div className="flex justify-center">
           <Button
             className="block w-48 h-12"
             variant={'outline'}
             onClick={goToNextTab}
           >
-            変更しない
+            {t('addasset:booth-edit:do-not-change')}
           </Button>
         </div>
       </div>
       <DialogFooter>
         <Button variant="outline" className="mr-auto" onClick={closeDialog}>
-          キャンセル
+          {t('general:button:cancel')}
         </Button>
       </DialogFooter>
     </>

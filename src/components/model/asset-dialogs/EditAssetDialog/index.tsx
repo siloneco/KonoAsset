@@ -6,6 +6,7 @@ import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import BoothInputTabForEditDialog from '../components/tabs/BoothInputTab/edit'
 import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: string | null
@@ -28,6 +29,8 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
     dialogOpen,
     setDialogOpen,
   })
+
+  const { t } = useLocalization()
 
   return (
     <DialogWrapper
@@ -78,7 +81,7 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
           tabIndex={3}
           totalTabs={3}
           hideDeleteSourceCheckbox
-          submitButtonText="アセットを更新"
+          submitButtonText={t('addasset:update-asset')}
         />
       </TabsContent>
     </DialogWrapper>

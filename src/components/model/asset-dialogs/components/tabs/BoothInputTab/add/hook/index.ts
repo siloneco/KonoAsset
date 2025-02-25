@@ -5,6 +5,7 @@ import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
 import { getAndSetAssetInfoFromBoothToForm } from '../../logic'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
@@ -32,6 +33,7 @@ export const useBoothInputTabForAddDialog = ({
   const [boothItemId, setBoothItemId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const { assetPaths, setDuplicateWarningItems } = useContext(
@@ -75,7 +77,7 @@ export const useBoothInputTabForAddDialog = ({
         }
       } else {
         toast({
-          title: '情報取得に失敗しました',
+          title: t('addasset:booth-input:failed-to-get-info'),
           description: result.error,
         })
       }
@@ -100,7 +102,7 @@ export const useBoothInputTabForAddDialog = ({
   const representativeImportFilename =
     assetPaths !== undefined && assetPaths.length > 0
       ? (assetPaths[0].split(sep()).pop() as string)
-      : 'ファイルが選択されていません！'
+      : t('addasset:booth-input:no-file-selected')
 
   const importFileCount = assetPaths !== undefined ? assetPaths.length : 0
 

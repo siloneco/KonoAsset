@@ -9,6 +9,7 @@ import ProgressTab from './tabs/ProgressTab'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { commands } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   dataDir: string
@@ -22,6 +23,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
   const [tab, setTab] = useState('destination-select-tab')
   const [taskId, setTaskId] = useState<string | null>(null)
 
+  const { t } = useLocalization()
   const { preference } = useContext(PreferenceContext)
 
   const onOpenButtonClick = async () => {
@@ -46,9 +48,11 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
   return (
     <div className="flex flex-row items-center">
       <div className="space-y-2 flex-grow">
-        <Label className="text-xl">アプリデータの保存先</Label>
+        <Label className="text-xl">
+          {t('preference:settings:application-data')}
+        </Label>
         <p className="text-foreground/60 text-sm">
-          アセットや画像を保存するディレクトリを設定します
+          {t('preference:settings:application-data:explanation-text')}
         </p>
         <div className="flex flex-row w-4/5">
           <Input value={dataDir} className="w-full max-w-[600px]" disabled />
@@ -57,14 +61,14 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
             className="ml-2"
             onClick={onOpenButtonClick}
           >
-            開く
+            {t('general:button:open')}
           </Button>
         </div>
       </div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpenWithDataReset}>
         <DialogTrigger asChild>
           <Button className="ml-2" variant="secondary">
-            変更する
+            {t('preference:settings:application-data:change')}
           </Button>
         </DialogTrigger>
         <DialogContent

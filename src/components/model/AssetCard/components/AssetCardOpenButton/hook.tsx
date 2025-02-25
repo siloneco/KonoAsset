@@ -1,10 +1,13 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useToast } from '@/hooks/use-toast'
 import { commands, FileInfo } from '@/lib/bindings'
+import { OctagonAlert } from 'lucide-react'
 import { useContext, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: string
+  hasDependencies: boolean
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
   openSelectUnitypackageDialog: () => void
 }
@@ -19,21 +22,34 @@ type ReturnProps = {
 
 export const useAssetCardOpenButton = ({
   id,
+  hasDependencies,
   setUnitypackageFiles,
   openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
   const [mainButtonLoading, setMainButtonLoading] = useState(false)
   const [mainButtonChecked, setMainButtonChecked] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
+
+  const showDependencyWarning = () => {
+    toast({
+      icon: <OctagonAlert className="text-primary" />,
+      title: t('assetcard:open-button:show-dependency-warning-toast'),
+      description: t(
+        'assetcard:open-button:show-dependency-warning-toast:description',
+      ),
+      duration: 5000,
+    })
+  }
 
   const listUnitypackageAndOpen = async (): Promise<boolean> => {
     const result = await commands.listUnitypackageFiles(id)
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return false
@@ -47,6 +63,9 @@ export const useAssetCardOpenButton = ({
     const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
+      if (hasDependencies) {
+        showDependencyWarning()
+      }
       return await onOpenManagedDirButtonClick()
     }
 
@@ -60,13 +79,21 @@ export const useAssetCardOpenButton = ({
 
       if (result.status === 'error') {
         toast({
-          title: 'エラー',
+          title: t('general:error'),
           description: result.error,
         })
         return false
       }
 
+      if (hasDependencies) {
+        showDependencyWarning()
+      }
+
       return true
+    }
+
+    if (hasDependencies) {
+      showDependencyWarning()
     }
 
     setUnitypackageFiles(impartialData)
@@ -101,7 +128,7 @@ export const useAssetCardOpenButton = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return false
@@ -115,7 +142,7 @@ export const useAssetCardOpenButton = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return

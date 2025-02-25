@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { useContext, useState } from 'react'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   assetId: string | null
@@ -27,6 +28,7 @@ const SelectUnitypackageDialog = ({
   const [skipDialog, setSkipDialog] = useState(
     !preference.useUnitypackageSelectedOpen,
   )
+  const { t } = useLocalization()
 
   const openManagedDir = async () => {
     if (assetId === null) {
@@ -53,7 +55,9 @@ const SelectUnitypackageDialog = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>どのファイルを利用しますか？</DialogTitle>
+          <DialogTitle>
+            {t('assetcard:select-unitypackage:select-file')}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-96 pr-4">
           <div className="space-y-4 max-w-[446px]">
@@ -74,17 +78,19 @@ const SelectUnitypackageDialog = ({
           onClick={() => setSkipDialogAndSave(!skipDialog)}
         >
           <Checkbox checked={skipDialog} />
-          <Label className="ml-2">次回から表示せず常に管理フォルダを開く</Label>
+          <Label className="ml-2">
+            {t('assetcard:select-unitypackage:always-open-dir')}
+          </Label>
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant={'outline'} className="mr-auto">
-              閉じる
+              {t('general:button:close')}
             </Button>
           </DialogClose>
           <DialogClose asChild>
             <Button variant={'secondary'} onClick={openManagedDir}>
-              管理フォルダを開く
+              {t('assetcard:open-button:open-dir')}
             </Button>
           </DialogClose>
         </DialogFooter>

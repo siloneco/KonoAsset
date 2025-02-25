@@ -14,6 +14,7 @@ import {
 import { FC, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   assetId: string | null
@@ -27,6 +28,8 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { t } = useLocalization()
 
   const fetchAssetInfo = async (id: string) => {
     try {
@@ -67,7 +70,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>メモ</DialogTitle>
+          <DialogTitle>{t('general:memo')}</DialogTitle>
           <DialogDescription className="max-w-[450px] truncate">
             {loading && <Skeleton className="w-52 h-3 rounded-full" />}
             {!loading && name}
@@ -85,11 +88,13 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
           <ScrollArea className="max-h-96 pr-4">
             <pre className="whitespace-pre-wrap text-base break-words max-w-[435px] font-sans">
               {memo.split('\n').map((line) => {
+                let buffer: string[] = []
+
                 return (
-                  <p className="space-x-2">
+                  <p className="space-x-1">
                     {line.split(' ').map((text) => {
                       if (URL_REGEX.test(text)) {
-                        return (
+                        const linkComponent = (
                           <a
                             key={text}
                             href={text}
@@ -100,10 +105,27 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
                             {text}
                           </a>
                         )
+
+                        if (buffer.length <= 0) {
+                          return linkComponent
+                        }
+
+                        const bufferedText = buffer.join(' ')
+                        buffer = []
+
+                        return (
+                          <>
+                            <span>{bufferedText}</span>
+                            {linkComponent}
+                          </>
+                        )
                       }
 
-                      return <span>{text}</span>
+                      buffer = [...buffer, text]
+
+                      return <></>
                     })}
+                    {buffer.length > 0 && <span>{buffer.join(' ')}</span>}
                   </p>
                 )
               })}
@@ -113,7 +135,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
         <DialogFooter>
           <DialogClose asChild>
             <Button variant={'outline'} className="mx-auto">
-              閉じる
+              {t('general:button:close')}
             </Button>
           </DialogClose>
         </DialogFooter>

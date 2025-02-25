@@ -2,6 +2,7 @@ import { useToast } from '@/hooks/use-toast'
 import { commands, events } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { useEffect, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
@@ -23,6 +24,8 @@ export const useProgressTab = ({
   onCancelled,
   onFailed,
 }: Props): ReturnProps => {
+  const { t } = useLocalization()
+
   const [canceling, setCanceling] = useState(false)
   const [percentage, setPercentage] = useState(0)
   const [filename, setFilename] = useState('')
@@ -131,8 +134,8 @@ export const useProgressTab = ({
 
       if (taskId === null) {
         toast({
-          title: 'エラー',
-          description: 'タスク ID が見つかりませんでした。',
+          title: t('general:error'),
+          description: t('addasset:progress-bar:error-toast:task-id-is-null'),
         })
         return
       }
@@ -143,8 +146,10 @@ export const useProgressTab = ({
         console.error('Failed to cancel task:', result.error)
 
         toast({
-          title: 'エラー',
-          description: 'タスクのキャンセルに失敗しました。',
+          title: t('general:error'),
+          description: t(
+            'addasset:progress-bar:error-toast:task-cancel-description',
+          ),
         })
         return
       }

@@ -9,6 +9,7 @@ const mockAssetSummary: AssetSummary = {
   creator: 'creator',
   assetType: 'Avatar',
   hasMemo: false,
+  dependencies: [],
   boothItemId: 123,
   imageFilename: 'imageFilename',
   publishedAt: 123,

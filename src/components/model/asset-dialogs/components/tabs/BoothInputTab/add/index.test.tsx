@@ -11,6 +11,14 @@ vi.mock('./hook', () => {
   }
 })
 
+vi.mock('@/hooks/use-localization', () => {
+  return {
+    useLocalization: () => ({
+      t: (key: string) => key,
+    }),
+  }
+})
+
 describe('BoothInputTab', () => {
   const getAssetDescriptionFromBooth = vi.fn()
   const onUrlInputChange = vi.fn()
@@ -58,11 +66,11 @@ describe('BoothInputTab', () => {
     const { backToPreviousTab, moveToNextTab, onUrlInputChange } = base
 
     // Check back button works correctly
-    fireEvent.click(screen.getByText('戻る'))
+    fireEvent.click(screen.getByText('general:button:back'))
     expect(backToPreviousTab).toHaveBeenCalledOnce()
 
     // Check skip button works correctly
-    fireEvent.click(screen.getByText('自動取得をスキップ'))
+    fireEvent.click(screen.getByText('addasset:booth-input:manual-input'))
     expect(moveToNextTab).toHaveBeenCalledOnce()
 
     const inputTarget = screen.getByPlaceholderText(
@@ -101,7 +109,11 @@ describe('BoothInputTab', () => {
       </Dialog>,
     )
 
-    expect(screen.getByText('取得').hasAttribute('disabled')).toBe(true)
+    expect(
+      screen
+        .getByText('addasset:booth-input:button-text')
+        .hasAttribute('disabled'),
+    ).toBe(true)
   })
 
   it('renders fetch button as enabled when URL is valid', async () => {
@@ -129,7 +141,11 @@ describe('BoothInputTab', () => {
       </Dialog>,
     )
 
-    expect(screen.getByText('取得').hasAttribute('disabled')).toBe(false)
+    expect(
+      screen
+        .getByText('addasset:booth-input:button-text')
+        .hasAttribute('disabled'),
+    ).toBe(false)
   })
 
   it('renders fetch button as disabled and shows spinner while fetching', async () => {
@@ -157,7 +173,7 @@ describe('BoothInputTab', () => {
       </Dialog>,
     )
 
-    const fetchButton = screen.getByText('取得')
+    const fetchButton = screen.getByText('addasset:booth-input:button-text')
 
     // Check button is disabled while fetching
     expect(fetchButton.hasAttribute('disabled')).toBe(true)
@@ -228,7 +244,9 @@ describe('BoothInputTab', () => {
     )
 
     expect(
-      screen.getByText(`と他${importFileCount - 1}アイテム`),
+      screen.getByText(
+        `addasset:booth-input:multi-import:foretext${importFileCount - 1}addasset:booth-input:multi-import:posttext`,
+      ),
     ).not.toBeNull()
   })
 })

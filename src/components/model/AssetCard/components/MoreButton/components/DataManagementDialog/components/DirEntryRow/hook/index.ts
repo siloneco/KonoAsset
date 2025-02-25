@@ -2,6 +2,7 @@ import { useToast } from '@/hooks/use-toast'
 import { commands } from '@/lib/bindings'
 import { sep } from '@tauri-apps/api/path'
 import { useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   assetId: string
@@ -21,6 +22,7 @@ const useDirEntryRow = ({ assetId, absolutePath }: Props): ReturnProps => {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const openInFileManager = async () => {
@@ -34,7 +36,7 @@ const useDirEntryRow = ({ assetId, absolutePath }: Props): ReturnProps => {
       }, 1000)
     } else {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
     }
@@ -54,7 +56,7 @@ const useDirEntryRow = ({ assetId, absolutePath }: Props): ReturnProps => {
         setIsDeleted(true)
       } else {
         toast({
-          title: 'エラー',
+          title: t('general:error'),
           description: result.error,
         })
       }

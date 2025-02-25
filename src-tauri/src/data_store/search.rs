@@ -241,6 +241,7 @@ mod tests {
             tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
             memo: Some("メモ".to_string()),
             booth_item_id: None,
+            dependencies: vec![],
             created_at: chrono::Local::now().timestamp_millis(),
             published_at: Some(chrono::Local::now().timestamp_millis()),
         };

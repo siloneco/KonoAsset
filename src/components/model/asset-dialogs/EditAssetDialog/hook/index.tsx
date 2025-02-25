@@ -1,4 +1,4 @@
-import { AssetType } from '@/lib/bindings'
+import { AssetDescription, AssetType } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useContext, useEffect, useState } from 'react'
@@ -7,6 +7,21 @@ import { z } from 'zod'
 import { fetchAssetInformation, updateAsset } from '../logic'
 import { useToast } from '@/hooks/use-toast'
 import { AssetContext } from '@/components/context/AssetContext'
+import { useLocalization } from '@/hooks/use-localization'
+
+const setDescriptionToForm = (
+  form: AssetFormType,
+  description: AssetDescription,
+) => {
+  form.setValue('name', description.name)
+  form.setValue('creator', description.creator)
+  form.setValue('imageFilename', description.imageFilename)
+  form.setValue('boothItemId', description.boothItemId)
+  form.setValue('tags', description.tags)
+  form.setValue('memo', description.memo)
+  form.setValue('dependencies', description.dependencies)
+  form.setValue('publishedAt', description.publishedAt)
+}
 
 type Props = {
   id: string | null
@@ -37,6 +52,7 @@ const useEditAssetDialog = ({
 
   const { refreshAssets } = useContext(AssetContext)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const assetTypeAvatar: AssetType = 'Avatar'
@@ -55,6 +71,7 @@ const useEditAssetDialog = ({
     boothItemId: z.number().nullable(),
     tags: z.array(z.string()),
     memo: z.string().nullable(),
+    dependencies: z.array(z.string()),
     category: z.string(),
     supportedAvatars: z.array(z.string()),
     publishedAt: z.number().nullable(),
@@ -70,6 +87,7 @@ const useEditAssetDialog = ({
       boothItemId: null,
       tags: [],
       memo: null,
+      dependencies: [],
       category: '',
       supportedAvatars: [],
       publishedAt: null,
@@ -108,7 +126,7 @@ const useEditAssetDialog = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'アセット情報の取得に失敗しました。',
+        title: t('addasset:get:error-toast'),
         description: result.error,
       })
       return
@@ -120,41 +138,24 @@ const useEditAssetDialog = ({
       const avatar = data.avatar!
 
       form.setValue('assetType', 'Avatar')
-      form.setValue('name', avatar.description.name)
-      form.setValue('creator', avatar.description.creator)
-      form.setValue('imageFilename', avatar.description.imageFilename)
-      form.setValue('boothItemId', avatar.description.boothItemId)
-      form.setValue('tags', avatar.description.tags)
-      form.setValue('memo', avatar.description.memo)
-      form.setValue('publishedAt', avatar.description.publishedAt)
+      setDescriptionToForm(form, avatar.description)
     } else if (data.assetType === 'AvatarWearable') {
       const avatarWearable = data.avatarWearable!
 
       form.setValue('assetType', 'AvatarWearable')
-      form.setValue('name', avatarWearable.description.name)
-      form.setValue('creator', avatarWearable.description.creator)
-      form.setValue('imageFilename', avatarWearable.description.imageFilename)
-      form.setValue('boothItemId', avatarWearable.description.boothItemId)
-      form.setValue('tags', avatarWearable.description.tags)
-      form.setValue('memo', avatarWearable.description.memo)
       form.setValue('category', avatarWearable.category)
       form.setValue('supportedAvatars', avatarWearable.supportedAvatars)
-      form.setValue('publishedAt', avatarWearable.description.publishedAt)
+      setDescriptionToForm(form, avatarWearable.description)
     } else if (data.assetType === 'WorldObject') {
       const worldObject = data.worldObject!
 
       form.setValue('assetType', 'WorldObject')
-      form.setValue('name', worldObject.description.name)
-      form.setValue('creator', worldObject.description.creator)
-      form.setValue('imageFilename', worldObject.description.imageFilename)
-      form.setValue('boothItemId', worldObject.description.boothItemId)
-      form.setValue('tags', worldObject.description.tags)
-      form.setValue('memo', worldObject.description.memo)
-      form.setValue('publishedAt', worldObject.description.publishedAt)
+      form.setValue('category', worldObject.category)
+      setDescriptionToForm(form, worldObject.description)
     } else {
       toast({
-        title: 'アセット情報の取得に失敗しました。',
-        description: '不明なアセットタイプです。',
+        title: t('addasset:get:error-toast'),
+        description: t('addasset:get:error-toast:unknown-asset-type'),
       })
 
       setDialogOpen(false)
@@ -186,18 +187,18 @@ const useEditAssetDialog = ({
 
           setDialogOpen(false)
           toast({
-            title: 'アセット情報を変更しました！',
+            title: t('addasset:get:success-toast'),
           })
         } else {
           toast({
-            title: 'アセット情報の変更に失敗しました。',
+            title: t('addasset:get:error-toast'),
           })
         }
         return
       }
 
       toast({
-        title: 'アセット情報の変更に失敗しました。',
+        title: t('addasset:get:error-toast'),
         description: result.error,
       })
 

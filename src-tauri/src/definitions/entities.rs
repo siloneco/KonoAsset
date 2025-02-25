@@ -19,6 +19,7 @@ pub struct AssetSummary {
     pub creator: String,
     pub image_filename: Option<String>,
     pub has_memo: bool,
+    pub dependencies: Vec<Uuid>,
     pub booth_item_id: Option<u64>,
     pub published_at: Option<i64>,
 }
@@ -32,6 +33,7 @@ impl From<&Avatar> for AssetSummary {
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
             has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -47,6 +49,7 @@ impl From<&AvatarWearable> for AssetSummary {
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
             has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -62,6 +65,7 @@ impl From<&WorldObject> for AssetSummary {
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
             has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -77,6 +81,7 @@ pub struct AssetDescription {
     pub tags: Vec<String>,
     pub memo: Option<String>,
     pub booth_item_id: Option<u64>,
+    pub dependencies: Vec<Uuid>,
     pub created_at: i64,
     pub published_at: Option<i64>,
 }
