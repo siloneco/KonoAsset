@@ -104,6 +104,6 @@
     "assetcard:select-unitypackage:select-file": "どのファイルを利用しますか？",
     "assetcard:select-unitypackage:always-open-dir": "次回から表示せず常に管理フォルダを開く",
     "assetcard:success-delete-toast": "正常に削除されました！",
-    "assetcard:fail-delete-toast": "削除に失敗しました",
+    "assetcard:fail-delete-toast": "削除に失敗しました"
   }
 }

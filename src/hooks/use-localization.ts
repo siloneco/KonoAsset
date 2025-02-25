@@ -135,23 +135,29 @@ export const useLocalization = (): ReturnProps => {
       'assetcard:open-button:open-dir': '管理フォルダを開く',
       'assetcard:open-button:dependency': '前提アセット',
       'assetcard:open-button:copy-path': 'パスをコピー',
-      'assetcard:more-button:fail-import-toast': 'ファイルのインポートに失敗しました',
-      'assetcard:more-button:fail-import-toast:description': 'エラーが発生しました',
+      'assetcard:more-button:fail-import-toast':
+        'ファイルのインポートに失敗しました',
+      'assetcard:more-button:fail-import-toast:description':
+        'エラーが発生しました',
       'assetcard:more-button:data-management': 'アセットのデータ管理',
       'assetcard:more-button:data-management:explanation-text':
         'データの追加や削除が行えます。高度な操作はエクスプローラーから行ってください。',
-      'assetcard:more-button:data-management:add-file-or-folder': 'ファイルかフォルダを追加する: ',
+      'assetcard:more-button:data-management:add-file-or-folder':
+        'ファイルかフォルダを追加する: ',
       'assetcard:more-button:data-management:explanation-text-2':
         'ウィンドウにファイルやフォルダをドロップしても新規追加できます',
       'assetcard:more-button:open-booth': 'Boothで開く',
-      'assetcard:more-button:open-booth:error-text': 'Booth URLが設定されていません！',
+      'assetcard:more-button:open-booth:error-text':
+        'Booth URLが設定されていません！',
       'assetcard:more-button:edit-info': '情報を編集',
       'assetcard:more-button:data': 'データ管理',
       'assetcard:more-button:delete-confirm': 'アセットを本当に削除しますか？',
       'assetcard:more-button:delete-confirm:explanation-text':
         'データは完全に削除されます。この操作を取り消すことは出来ません！',
-      'assetcard:select-unitypackage:select-file': 'どのファイルを利用しますか？',
-      'assetcard:select-unitypackage:always-open-dir': '次回から表示せず常に管理フォルダを開く',
+      'assetcard:select-unitypackage:select-file':
+        'どのファイルを利用しますか？',
+      'assetcard:select-unitypackage:always-open-dir':
+        '次回から表示せず常に管理フォルダを開く',
       'assetcard:success-delete-toast': '正常に削除されました！',
       'assetcard:fail-delete-toast': '削除に失敗しました',
     },

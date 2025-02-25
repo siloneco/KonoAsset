@@ -134,7 +134,7 @@ export const useProgressTab = ({
 
       if (taskId === null) {
         toast({
-          title: t('addasset:progress-bar:error-toast'),
+          title: t('general:error'),
           description: t('addasset:progress-bar:error-toast:task-id-is-null'),
         })
         return
@@ -146,7 +146,7 @@ export const useProgressTab = ({
         console.error('Failed to cancel task:', result.error)
 
         toast({
-          title: t('addasset:progress-bar:error-toast'),
+          title: t('general:error'),
           description: t(
             'addasset:progress-bar:error-toast:task-cancel-description',
           ),
