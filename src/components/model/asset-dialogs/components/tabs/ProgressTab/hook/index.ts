@@ -25,7 +25,7 @@ export const useProgressTab = ({
   onFailed,
 }: Props): ReturnProps => {
   const { t } = useLocalization()
-  
+
   const [canceling, setCanceling] = useState(false)
   const [percentage, setPercentage] = useState(0)
   const [filename, setFilename] = useState('')
@@ -147,7 +147,9 @@ export const useProgressTab = ({
 
         toast({
           title: t('addasset:progress-bar:error-toast'),
-          description: t('addasset:progress-bar:error-toast:task-cancel-description'),
+          description: t(
+            'addasset:progress-bar:error-toast:task-cancel-description',
+          ),
         })
         return
       }

@@ -64,8 +64,8 @@ const BoothInputTabForAddDialog = ({
             <span>{representativeImportFilename}</span>
             {importFileCount > 1 && (
               <span className="text-foreground/60">
-                {t('addasset:booth-input:multi-import:foretext')}{' '}
-                {importFileCount - 1}{' '}
+                {t('addasset:booth-input:multi-import:foretext')}
+                {importFileCount - 1}
                 {t('addasset:booth-input:multi-import:posttext')}
               </span>
             )}
