@@ -17,7 +17,7 @@
     "general:toast-error-description": "An error has occurred",
     "general:failed": "Failed",
     "general:select:placeholder": "Select...",
-    "general:count": "assets",
+    "general:count": " assets",
     "general:clear-filter": "Clear filter",
     "general:show-all": "Show all",
     
@@ -145,8 +145,8 @@
     
     "dependencydialog:header": "List of prerequisite assets",
     
-    "mainnavbar:total-asset-count:foretext": "Out of",
-    "mainnavbar:total-asset-count:posttext": "assets,",
+    "mainnavbar:total-asset-count:foretext": "Out of ",
+    "mainnavbar:total-asset-count:posttext": " assets,",
     "mainnavbar:showing": "currently displayed",
     "mainnavbar:sort-settings": "Sort settings",
     "mainnavbar:sort-settings:created-at-desc": "Order added (newest first)",
