@@ -266,6 +266,8 @@ export const useLocalization = (): ReturnProps => {
       //src\components\model\SlimAssetDetail\index.tsx
       'slimassetdetail:edit-info': '情報を編集',
 
+      //src\components\model\SquareImage\hook.ts
+      'squareimage:image': '画像',
 
     },
   }

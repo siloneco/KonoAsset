@@ -36,7 +36,9 @@ export const useSquareImage = ({
       multiple: false,
       directory: false,
       defaultPath: await downloadDir(),
-      filters: [{ name: t('squareimage:image'), extensions: ['png', 'jpg', 'jpeg'] }],
+      filters: [
+        { name: t('squareimage:image'), extensions: ['png', 'jpg', 'jpeg'] },
+      ],
     })
 
     if (path === null) {
