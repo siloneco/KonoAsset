@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { Ban, Check, Loader2 } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string
@@ -14,6 +15,7 @@ type Props = {
 
 const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
   const [status, setStatus] = useState<TaskStatus>('Running')
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const cancelTask = async () => {
@@ -38,8 +40,10 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
         }
 
         toast({
-          title: 'ファイルのインポートに失敗しました',
-          description: errorResult.data ?? 'エラーが発生しました',
+          title: t('assetcard:more-button:fail-import-toast'),
+          description:
+            errorResult.data ??
+            t('assetcard:more-button:fail-import-toast:description'),
         })
       }
     }
@@ -74,8 +78,10 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
             commands.getTaskError(taskId).then((result) => {
               if (result.status === 'ok') {
                 toast({
-                  title: 'ファイルのインポートに失敗しました',
-                  description: result.data ?? 'エラーが発生しました',
+                  title: t('assetcard:more-button:fail-import-toast'),
+                  description:
+                    result.data ??
+                    t('assetcard:more-button:fail-import-toast:description'),
                 })
               }
             })
@@ -120,8 +126,10 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
           }
 
           toast({
-            title: 'ファイルのインポートに失敗しました',
-            description: errorResult.data ?? 'エラーが発生しました',
+            title: t('assetcard:more-button:fail-import-toast'),
+            description:
+              errorResult.data ??
+              t('assetcard:more-button:fail-import-toast:description'),
           })
         }
       } catch (error) {
@@ -152,11 +160,13 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
       <p className="w-96 truncate">
         {status === 'Cancelled' && (
           <span className="text-foreground/60 mr-2">
-            (キャンセルされました)
+            ({t('general:cancelled')})
           </span>
         )}
         {status === 'Failed' && (
-          <span className="text-foreground/60 mr-2">(失敗しました)</span>
+          <span className="text-foreground/60 mr-2">
+            ({t('general:failed')})
+          </span>
         )}
         <span
           className={cn(

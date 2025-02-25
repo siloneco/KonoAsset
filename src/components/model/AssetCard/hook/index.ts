@@ -2,6 +2,7 @@ import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
 import { AssetSummary, commands } from '@/lib/bindings'
 import { useContext } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   asset: AssetSummary
@@ -13,6 +14,7 @@ type ReturnProps = {
 
 export const useAssetCard = ({ asset }: Props): ReturnProps => {
   const { deleteAssetById } = useContext(AssetContext)
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const deleteAsset = async () => {
@@ -23,11 +25,11 @@ export const useAssetCard = ({ asset }: Props): ReturnProps => {
       deleteAssetById(asset.id)
 
       toast({
-        title: '正常に削除されました！',
+        title: t('assetcard:success-delete-toast'),
       })
     } else {
       toast({
-        title: '削除に失敗しました',
+        title: t('assetcard:fail-delete-toast'),
         description: result.error,
       })
     }

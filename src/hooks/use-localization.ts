@@ -35,6 +35,11 @@ export const useLocalization = (): ReturnProps => {
       'general:button:delete': '削除',
       'general:button:save': '保存',
       'general:or': 'または',
+      'general:error': 'エラー',
+      'general:open': '開く',
+      'general:complete': '完了',
+      'general:cancelled': 'キャンセルされました',
+      'general:failed': '失敗しました',
       'sidebar:text-search': 'テキストで検索',
       'addasset:success-toast': 'アセットが追加されました！',
       'addasset:cancel-toast': 'キャンセルされました',
@@ -112,7 +117,6 @@ export const useLocalization = (): ReturnProps => {
       'addasset:manual-input:asset-name:placeholder': 'アセットの名前を入力...',
       'addasset:manual-input:shop-name': 'ショップ名',
       'addasset:manual-input:shop-name:placeholder': 'ショップの名前を入力...',
-      'addasset:progress-bar:error-toast': 'エラー',
       'addasset:progress-bar:error-toast:task-id-is-null':
         'タスク ID が見つかりませんでした。',
       'addasset:progress-bar:error-toast:task-cancel-description':
@@ -124,6 +128,32 @@ export const useLocalization = (): ReturnProps => {
         '不明なアセットタイプです。',
       'addasset:get:success-toast': 'アセット情報を変更しました！',
       'addasset:update-asset': 'アセットを更新',
+      'assetcard:open-button:show-dependency-warning-toast':
+        '前提アセットがあります！',
+      'assetcard:open-button:show-dependency-warning-toast:description':
+        '開くボタンの下矢印から前提アセットを確認できます',
+      'assetcard:open-button:open-dir': '管理フォルダを開く',
+      'assetcard:open-button:dependency': '前提アセット',
+      'assetcard:open-button:copy-path': 'パスをコピー',
+      'assetcard:more-button:fail-import-toast': 'ファイルのインポートに失敗しました',
+      'assetcard:more-button:fail-import-toast:description': 'エラーが発生しました',
+      'assetcard:more-button:data-management': 'アセットのデータ管理',
+      'assetcard:more-button:data-management:explanation-text':
+        'データの追加や削除が行えます。高度な操作はエクスプローラーから行ってください。',
+      'assetcard:more-button:data-management:add-file-or-folder': 'ファイルかフォルダを追加する: ',
+      'assetcard:more-button:data-management:explanation-text-2':
+        'ウィンドウにファイルやフォルダをドロップしても新規追加できます',
+      'assetcard:more-button:open-booth': 'Boothで開く',
+      'assetcard:more-button:open-booth:error-text': 'Booth URLが設定されていません！',
+      'assetcard:more-button:edit-info': '情報を編集',
+      'assetcard:more-button:data': 'データ管理',
+      'assetcard:more-button:delete-confirm': 'アセットを本当に削除しますか？',
+      'assetcard:more-button:delete-confirm:explanation-text':
+        'データは完全に削除されます。この操作を取り消すことは出来ません！',
+      'assetcard:select-unitypackage:select-file': 'どのファイルを利用しますか？',
+      'assetcard:select-unitypackage:always-open-dir': '次回から表示せず常に管理フォルダを開く',
+      'assetcard:success-delete-toast': '正常に削除されました！',
+      'assetcard:fail-delete-toast': '削除に失敗しました',
     },
   }
 
