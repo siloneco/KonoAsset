@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { fetchAssetInformation, updateAsset } from '../logic'
 import { useToast } from '@/hooks/use-toast'
 import { AssetContext } from '@/components/context/AssetContext'
+import { useLocalization } from '@/hooks/use-localization'
 
 const setDescriptionToForm = (
   form: AssetFormType,
@@ -51,6 +52,7 @@ const useEditAssetDialog = ({
 
   const { refreshAssets } = useContext(AssetContext)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const assetTypeAvatar: AssetType = 'Avatar'
@@ -124,7 +126,7 @@ const useEditAssetDialog = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'アセット情報の取得に失敗しました。',
+        title: t('addasset:get:error-toast'),
         description: result.error,
       })
       return
@@ -152,8 +154,8 @@ const useEditAssetDialog = ({
       setDescriptionToForm(form, worldObject.description)
     } else {
       toast({
-        title: 'アセット情報の取得に失敗しました。',
-        description: '不明なアセットタイプです。',
+        title: t('addasset:get:error-toast'),
+        description: t('addasset:get:error-toast:unknown-asset-type'),
       })
 
       setDialogOpen(false)
@@ -185,18 +187,18 @@ const useEditAssetDialog = ({
 
           setDialogOpen(false)
           toast({
-            title: 'アセット情報を変更しました！',
+            title: t('addasset:get:success-toast'),
           })
         } else {
           toast({
-            title: 'アセット情報の変更に失敗しました。',
+            title: t('addasset:get:error-toast'),
           })
         }
         return
       }
 
       toast({
-        title: 'アセット情報の変更に失敗しました。',
+        title: t('addasset:get:error-toast'),
         description: result.error,
       })
 

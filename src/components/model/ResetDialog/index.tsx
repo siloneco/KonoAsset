@@ -17,6 +17,7 @@ import { useResetDialog } from './hook'
 import { Loader2 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { FC } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
@@ -37,41 +38,45 @@ const ResetDialog: FC<Props> = ({ className }) => {
     submitButtonDisabled,
   } = useResetDialog()
 
+  const { t } = useLocalization()
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" className={className}>
-          初期化する
+          {t('resetdialog:reset')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>本当に初期化しますか？</AlertDialogTitle>
+          <AlertDialogTitle>{t('resetdialog:reset-confirm')}</AlertDialogTitle>
           <AlertDialogDescription>
-            この操作は取り消せないため、慎重に行ってください。
+            {t('resetdialog:reset-confirm:explanation-text-1')}
             <br />
-            削除を実行すると、アプリケーションは自動で再起動します。
+            {t('resetdialog:reset-confirm:explanation-text-2')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-2">
-          <Label className="text-base">削除する項目</Label>
+          <Label className="text-base">
+            {t('resetdialog:reset:select-items')}
+          </Label>
           <CheckboxAndLabel
-            mainText="アプリデータ"
-            subText="設定ファイル"
+            mainText={t('general:appdata')}
+            subText={t('general:appdata:subtext')}
             checked={deleteAppData}
             setChecked={setDeleteAppData}
             disabled={executing}
           />
           <CheckboxAndLabel
-            mainText="メタデータ"
-            subText="アセット情報"
+            mainText={t('general:metadata')}
+            subText={t('general:metadata:subtext')}
             checked={deleteMetadata}
             setChecked={setDeleteMetadata}
             disabled={executing}
           />
           <CheckboxAndLabel
-            mainText="アセットデータ"
-            subText="アセットデータ本体"
+            mainText={t('general:assetdata')}
+            subText={t('general:assetdata:subtext')}
             checked={deleteAssetData}
             setChecked={setDeleteAssetData}
             disabled={executing}
@@ -80,7 +85,7 @@ const ResetDialog: FC<Props> = ({ className }) => {
         <Separator />
         <div className="mx-auto">
           <CheckboxAndLabel
-            mainText="私は削除後のデータが元に戻せないことを理解しています"
+            mainText={t('resetdialog:reset-confirm:checkbox-text')}
             checked={confirm}
             setChecked={setConfirm}
             disabled={executing}
@@ -88,7 +93,7 @@ const ResetDialog: FC<Props> = ({ className }) => {
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel className="mr-auto" disabled={executing}>
-            キャンセル
+            {t('general:button:cancel')}
           </AlertDialogCancel>
           <Button
             variant="destructive"
@@ -96,7 +101,7 @@ const ResetDialog: FC<Props> = ({ className }) => {
             disabled={submitButtonDisabled}
           >
             {executing && <Loader2 className="animate-spin" />}
-            削除する
+            {t('resetdialog:button:delete')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

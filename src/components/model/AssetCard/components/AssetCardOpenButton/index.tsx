@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { FileInfo } from '@/lib/bindings'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
@@ -50,6 +51,8 @@ const AssetCardOpenButton = ({
     setUnitypackageFiles,
   })
 
+  const { t } = useLocalization()
+
   return (
     <div className={cn('flex flex-row ', className)}>
       <Button
@@ -64,7 +67,7 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        <p>開く</p>
+        <p> {t('general:button:open')} </p>
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>
@@ -76,19 +79,19 @@ const AssetCardOpenButton = ({
         <DropdownMenuContent>
           <DropdownMenuItem onClick={onOpenManagedDirButtonClick}>
             <Folder className="text-foreground/50" />
-            管理フォルダを開く
+            {t('assetcard:open-button:open-dir')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={openDependencyDialog}
             disabled={!hasDependencies}
           >
             <FolderTree className="text-foreground/50" />
-            前提アセット
+            {t('general:prerequisite-assets')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onCopyPathButtonClick}>
             <Copy className="text-foreground/50" />
-            パスをコピー
+            {t('assetcard:open-button:copy-path')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

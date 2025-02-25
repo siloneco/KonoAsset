@@ -32,6 +32,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { cn, convertToBoothURL } from '@/lib/utils'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   boothItemID?: number
@@ -59,6 +60,7 @@ export const MoreButton = ({
 
     setDialogOpened(false)
   }
+  const { t } = useLocalization()
 
   const boothUrl =
     boothItemID !== undefined ? convertToBoothURL(boothItemID) : undefined
@@ -82,22 +84,22 @@ export const MoreButton = ({
                   rel="noopener noreferrer"
                 >
                   <ExternalLink size={16} className="text-card-foreground/40" />
-                  Boothで開く
+                  {t('assetcard:more-button:open-booth')}
                 </a>
               </DropdownMenuItem>
             </TooltipTrigger>
             <TooltipContent className={cn(boothUrl !== undefined && 'hidden')}>
-              <p>Booth URLが設定されていません！</p>
+              <p>{t('assetcard:more-button:open-booth:error-text')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <DropdownMenuItem onClick={openEditAssetDialog}>
           <Pencil size={16} className="text-card-foreground/40" />
-          情報を編集
+          {t('assetcard:more-button:edit-info')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={openDataManagementDialog}>
           <Folder size={16} className="text-card-foreground/40" />
-          データ管理
+          {t('assetcard:more-button:data')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <AlertDialog open={dialogOpened} onOpenChange={setDialogOpened}>
@@ -107,21 +109,21 @@ export const MoreButton = ({
               onSelect={(e) => e.preventDefault()}
             >
               <Trash2 size={16} className="text-card-foreground/40" />
-              削除
+              {t('general:button:delete')}
             </DropdownMenuItem>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                アセットを本当に削除しますか？
+                {t('assetcard:more-button:delete-confirm')}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                データは完全に削除されます。この操作を取り消すことは出来ません！
+                {t('assetcard:more-button:delete-confirm:explanation-text')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={deleting}>
-                キャンセル
+                {t('general:button:cancel')}
               </AlertDialogCancel>
               <Button
                 variant={'destructive'}
@@ -129,7 +131,7 @@ export const MoreButton = ({
                 onClick={onClick}
               >
                 {deleting && <Loader2 className="animate-spin" />}
-                削除
+                {t('general:button:delete')}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

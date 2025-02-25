@@ -2231,6 +2231,7 @@ dependencies = [
  "sanitize-filename",
  "serde",
  "serde_json",
+ "serde_with",
  "showfile",
  "specta",
  "specta-typescript",

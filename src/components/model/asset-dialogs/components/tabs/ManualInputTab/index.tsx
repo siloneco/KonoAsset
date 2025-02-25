@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import AvatarLayout from './layout/AvatarLayout'
 import AvatarWearableLayout from './layout/AvatarWearableLayout'
 import WorldObjectLayout from './layout/WorldObjectLayout'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
@@ -33,6 +34,7 @@ const ManualInputTab = ({
   tabIndex,
   totalTabs,
 }: Props) => {
+  const { t } = useLocalization()
   const {
     assetType,
     imageFilename,
@@ -45,10 +47,10 @@ const ManualInputTab = ({
     <>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) アセット情報の入力
+          ({tabIndex}/{totalTabs}) {t('addasset:manual-input')}
         </DialogTitle>
         <DialogDescription>
-          アセットの情報を入力してください！
+          {t('addasset:manual-input:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div className="my-4">
@@ -66,18 +68,18 @@ const ManualInputTab = ({
           </div>
           <div className="w-2/3 space-y-6">
             <div className="space-y-2">
-              <Label>アセット名</Label>
+              <Label> {t('addasset:manual-input:asset-name')} </Label>
               <Input
-                placeholder="アセットの名前を入力..."
+                placeholder={t('addasset:manual-input:asset-name:placeholder')}
                 autoComplete="off"
                 value={form.watch('name')}
                 onChange={(e) => form.setValue('name', e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label>ショップ名</Label>
+              <Label> {t('addasset:manual-input:shop-name')} </Label>
               <Input
-                placeholder="ショップの名前を入力..."
+                placeholder={t('addasset:manual-input:shop-name:placeholder')}
                 autoComplete="off"
                 value={form.watch('creator')}
                 onChange={(e) => form.setValue('creator', e.target.value)}
@@ -92,9 +94,12 @@ const ManualInputTab = ({
 
         <div className="w-full flex justify-between">
           <Button variant="outline" onClick={onBackToPreviousTabClicked}>
-            戻る
+            {t('general:button:back')}
           </Button>
-          <Button onClick={onGoToNextTabClicked}>次へ</Button>
+          <Button onClick={onGoToNextTabClicked}>
+            {' '}
+            {t('general:button:next')}{' '}
+          </Button>
         </div>
       </div>
     </>

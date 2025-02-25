@@ -2,6 +2,7 @@ import { useToast } from '@/hooks/use-toast'
 import { commands } from '@/lib/bindings'
 import { open } from '@tauri-apps/plugin-dialog'
 import { useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   switchToProgressTab: (taskId: string) => void
@@ -28,6 +29,7 @@ export const useDestinationSelectTab = ({
   const [executeButtonDisabled, setExecuteButtonDisabled] = useState(true)
   const [executing, setExecuting] = useState(false)
   const { toast } = useToast()
+  const { t } = useLocalization()
 
   const onOpenButtonClick = async () => {
     const result = await commands.openDataDir()
@@ -62,7 +64,7 @@ export const useDestinationSelectTab = ({
 
       if (result.status === 'error') {
         toast({
-          title: 'データフォルダの移行に失敗しました',
+          title: t('preference:settings:destination-select:error-toast'),
           description: result.error,
         })
         return

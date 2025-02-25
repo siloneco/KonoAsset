@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { X } from 'lucide-react'
 import { FC, RefObject } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   onSwitchModeClicked: () => void
@@ -22,22 +23,26 @@ const AdvancedTextSearch: FC<Props> = ({
   setCreator,
   ref,
 }) => {
+  const { t } = useLocalization()
+
   return (
     <div className="mb-4">
       <div className="flex flex-row">
-        <Label className="text-base">テキストで検索</Label>
+        <Label className="text-base">{t('mainsidebar:text-search')}</Label>
         <div
           className="w-16 bg-primary text-primary-foreground px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
           onClick={onSwitchModeClicked}
         >
-          詳細
+          {t('mainsidebar:advanced-search')}
         </div>
       </div>
       <div className="mt-2">
-        <Label>アセット名</Label>
+        <Label>{t('mainsidebar:advanced-search:asset-name')}</Label>
         <div className="relative w-full max-w-sm">
           <Input
-            placeholder="アセット名を入力..."
+            placeholder={t(
+              'mainsidebar:advanced-search:asset-name:placeholder',
+            )}
             className="mt-1"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -55,10 +60,10 @@ const AdvancedTextSearch: FC<Props> = ({
         </div>
       </div>
       <div className="mt-2">
-        <Label>ショップ名</Label>
+        <Label>{t('mainsidebar:advanced-search:shop-name')}</Label>
         <div className="relative w-full max-w-sm">
           <Input
-            placeholder="ショップ名を入力..."
+            placeholder={t('mainsidebar:advanced-search:shop-name:placeholder')}
             className="mt-1"
             value={creator}
             onChange={(e) => setCreator(e.target.value)}

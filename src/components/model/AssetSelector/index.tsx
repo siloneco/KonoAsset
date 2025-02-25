@@ -7,6 +7,7 @@ import SlimAssetDetail from '../SlimAssetDetail'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAssetSelector } from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
@@ -24,6 +25,7 @@ export const AssetSelector: FC<Props> = ({
   ignoredAssetIds,
   onSelected,
 }) => {
+  const { t } = useLocalization()
   const {
     open,
     onFocus,
@@ -41,7 +43,7 @@ export const AssetSelector: FC<Props> = ({
       <div className="relative">
         <Input
           className="pl-10"
-          placeholder="前提アセットを検索..."
+          placeholder={t('assetselector:search-placeholder')}
           value={searchInput}
           onChange={onSearchInputChange}
           onFocus={onFocus}

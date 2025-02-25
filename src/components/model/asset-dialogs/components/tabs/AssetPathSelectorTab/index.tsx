@@ -13,6 +13,7 @@ import { downloadDir } from '@tauri-apps/api/path'
 import { useContext } from 'react'
 import { FolderArchive, Info } from 'lucide-react'
 import { AddAssetDialogContext } from '../../../AddAssetDialog'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   setTab: (tab: string) => void
@@ -22,6 +23,7 @@ type Props = {
 }
 
 const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
+  const { t } = useLocalization()
   const { setAssetPaths } = useContext(AddAssetDialogContext)
 
   const openFileOrDirSelector = async (dir: boolean) => {
@@ -41,10 +43,10 @@ const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
     <>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) どちらを追加しますか？
+          ({tabIndex}/{totalTabs}) {t('addasset:select-path')}
         </DialogTitle>
         <DialogDescription>
-          フォルダとファイルのどちらを追加するか選択してください！
+          {t('addasset:select-path:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div className="mx-auto flex justify-between w-[550px] my-4">
@@ -62,19 +64,19 @@ const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
       <div className="flex flex-row justify-center text-center mt-6">
         <Info className="text-primary mr-1" />
         <p className="text-card-foreground/70">
-          ウィンドウ上にファイルかフォルダをドロップしても追加できます
+          {t('addasset:select-path:drop-text')}
         </p>
       </div>
       <div className="flex flex-row justify-center text-center mt-4 mb-6">
         <FolderArchive className="text-primary mr-1" />
         <p className="text-card-foreground/70">
-          ZIPファイルは自動で展開されます
+          {t('addasset:select-path:zip-text')}
         </p>
       </div>
       <DialogFooter>
         <DialogClose asChild>
           <Button variant="outline" className="mx-auto">
-            キャンセル
+            {t('general:button:cancel')}
           </Button>
         </DialogClose>
       </DialogFooter>

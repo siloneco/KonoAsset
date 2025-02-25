@@ -6,12 +6,14 @@ import TextInputSelect from '@/components/ui/text-input-select'
 import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { useEffect, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   form: AssetFormType
 }
 
 const AvatarWearableLayout = ({ form }: Props) => {
+  const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -74,16 +76,16 @@ const AvatarWearableLayout = ({ form }: Props) => {
     <div className="mb-4">
       <div className="w-full flex flex-row space-x-2">
         <div className="w-1/2 space-y-2">
-          <Label>対応アバター</Label>
+          <Label> {t('general:supported-avatars')} </Label>
           <MultipleSelector
             options={supportedAvatarCandidates}
-            placeholder="対応アバターを選択..."
+            placeholder={t('addasset:supported-avatars:placeholder')}
             className="max-w-72"
             hidePlaceholderWhenSelected
             creatable
             emptyIndicator={
               <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-                入力して作成
+                {t('addasset:empty-indicator')}
               </p>
             }
             value={form.getValues('supportedAvatars').map((supportedAvatar) => {
@@ -100,25 +102,24 @@ const AvatarWearableLayout = ({ form }: Props) => {
             }}
           />
           <p className="text-foreground/60 text-sm">
-            対応アバターは一覧で絞り込みに利用できます
+            {t('addasset:supported-avatars:explanation-text')}
           </p>
         </div>
         <Separator orientation="vertical" className="h-32 my-auto" />
         <div className="w-1/2 space-y-2">
-          <Label>カテゴリ</Label>
+          <Label> {t('general:category')} </Label>
           <TextInputSelect
             options={categoryCandidates}
-            placeholder="カテゴリを選択..."
+            placeholder={t('addasset:category:placeholder')}
             className="max-w-72"
             creatable
             emptyIndicator={
               <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-                入力して作成
+                {t('addasset:empty-indicator')}
               </p>
             }
             value={categoryValue}
             onChange={(value) => {
-              console.log(value)
               if (value === null) {
                 form.setValue('category', '')
               } else {
@@ -127,21 +128,21 @@ const AvatarWearableLayout = ({ form }: Props) => {
             }}
           />
           <p className="text-foreground/60 text-sm">
-            カテゴリは1つまで選択できます (例: 衣装、髪など)
+            {t('addasset:category:explanation-text')}
           </p>
         </div>
       </div>
       <div className="w-1/2 space-y-2">
-        <Label>タグ</Label>
+        <Label> {t('general:tag')} </Label>
         <MultipleSelector
           options={tagCandidates}
-          placeholder="タグを選択..."
+          placeholder={t('addasset:tag:placeholder')}
           className="max-w-72"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
             <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              入力して作成
+              {t('addasset:empty-indicator')}
             </p>
           }
           value={form.getValues('tags').map((tag) => {
@@ -158,7 +159,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
           }}
         />
         <p className="text-foreground/60 text-sm">
-          タグは複数選択できます (例: Vket、無料、自作など)
+          {t('addasset:tag:explanation-text')}
         </p>
       </div>
     </div>

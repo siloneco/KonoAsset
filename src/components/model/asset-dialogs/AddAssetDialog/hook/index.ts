@@ -12,6 +12,7 @@ import { z } from 'zod'
 import { AddAssetDialogContextType } from '..'
 import { createPreAsset, sendAssetImportRequest } from '../logic'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   dialogOpen: boolean
@@ -46,6 +47,7 @@ const useAddAssetDialog = ({
   const [importTaskId, setImportTaskId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const { toast } = useToast()
+  const { t } = useLocalization()
 
   const { refreshAssets } = useContext(AssetContext)
   const { current, lock } = useContext(DragDropContext)
@@ -185,7 +187,7 @@ const useAddAssetDialog = ({
 
   const onTaskCompleted = () => {
     toast({
-      title: 'アセットが追加されました！',
+      title: t('addasset:success-toast'),
       description: form.getValues('name'),
       duration: 3000,
     })
@@ -197,7 +199,7 @@ const useAddAssetDialog = ({
 
   const onTaskCancelled = () => {
     toast({
-      title: 'キャンセルされました',
+      title: t('addasset:cancel-toast'),
       duration: 2000,
     })
 
@@ -207,8 +209,8 @@ const useAddAssetDialog = ({
 
   const onTaskFailed = (error: string | null) => {
     toast({
-      title: 'エラー: 追加に失敗しました',
-      description: error ?? 'エラー内容はログを参照してください',
+      title: t('addasset:error-toast'),
+      description: error ?? t('addasset:error-toast:description'),
       duration: 3000,
     })
 
@@ -243,7 +245,7 @@ const useAddAssetDialog = ({
 
       if (preAssetResult.status === 'error') {
         toast({
-          title: 'データのインポートに失敗しました',
+          title: t('addasset:import-error-toast'),
           description: preAssetResult.error,
         })
 
@@ -266,7 +268,7 @@ const useAddAssetDialog = ({
       console.error(result.error)
 
       toast({
-        title: 'データのインポートを開始できませんでした',
+        title: t('addasset:import-start-error-toast'),
         description: result.error,
       })
     } finally {

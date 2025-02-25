@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card'
 import { commands, FileInfo } from '@/lib/bindings'
 import { SiUnity } from '@icons-pack/react-simple-icons'
 import { Folder } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   path: string
@@ -20,6 +21,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
     }
   }
 
+  const { t } = useLocalization()
   const displayPath = path.length > 0 ? path : './'
 
   return (
@@ -41,7 +43,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
               className="ml-auto h-8 w-14"
               onClick={() => open(file.absolutePath)}
             >
-              開く
+              {t('general:button:open')}
             </Button>
           </div>
         ))}

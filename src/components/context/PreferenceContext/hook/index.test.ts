@@ -11,6 +11,7 @@ const mockPreference: PreferenceStore = {
   useUnitypackageSelectedOpen: true,
   deleteOnImport: true,
   updateChannel: 'Stable',
+  language: 'enUs',
 }
 
 vi.mock('../logic', () => {

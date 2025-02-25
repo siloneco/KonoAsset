@@ -3,30 +3,39 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import AssetBadge from '.'
 import { cleanup, render, screen } from '@testing-library/react'
 
-afterEach(() => {
-  cleanup()
+vi.mock('@/hooks/use-localization', () => {
+  return {
+    useLocalization: () => ({
+      t: (key: string) => key,
+    }),
+  }
 })
 
 describe('AssetBadge', () => {
+  afterEach(() => {
+    cleanup()
+    vi.clearAllMocks()
+  })
+
   it('renders correctly for the Avatar type', async () => {
     render(<AssetBadge type="Avatar" />)
-    screen.getByText('アバター素体')
+    screen.getByText('general:typeavatar')
   })
 
   it('renders correctly for the AvatarWearable type', async () => {
     render(<AssetBadge type="AvatarWearable" />)
-    screen.getByText('アバター関連')
+    screen.getByText('general:typeavatarwearable')
   })
 
   it('renders correctly for the WorldObject type', async () => {
     render(<AssetBadge type="WorldObject" />)
-    screen.getByText('ワールドアセット')
+    screen.getByText('general:typeworldobject')
   })
 
   it('renders correctly for the Unknown type', async () => {
     // @ts-expect-error Testing for an unknown type
     render(<AssetBadge type="Unknown" />)
-    screen.getByText('不明')
+    screen.getByText('Unknown')
   })
 
   it('calls onClick', async () => {
@@ -35,7 +44,7 @@ describe('AssetBadge', () => {
       <AssetBadge type="Avatar" onClick={onClickMock} />,
     )
 
-    const target = screen.getByText('アバター素体')
+    const target = screen.getByText('general:typeavatar')
 
     await user.click(target)
 
@@ -44,7 +53,7 @@ describe('AssetBadge', () => {
 
   it('applies the className prop', async () => {
     render(<AssetBadge type="Avatar" className="sample-class" />)
-    const target = screen.getByText('アバター素体')
+    const target = screen.getByText('general:typeavatar')
     expect(target.classList.contains('sample-class')).toBe(true)
   })
 })
