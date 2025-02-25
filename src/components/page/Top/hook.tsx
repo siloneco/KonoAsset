@@ -13,6 +13,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary } from '@/lib/bindings'
+import { useLocalization } from '@/hooks/use-localization'
 
 type ReturnProps = {
   assetContextValue: AssetContextType
@@ -27,6 +28,7 @@ export const useTopPage = (): ReturnProps => {
 
   const [isDragAndHover, setDragAndHover] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const assetContextValue: AssetContextType = {
@@ -57,8 +59,8 @@ export const useTopPage = (): ReturnProps => {
 
     if (updateAvailable) {
       toast({
-        title: '新しいアップデートがあります！',
-        description: 'アップデートにはバグ修正、機能追加などが含まれます',
+        title: t('top:new-update-toast'),
+        description: t('top:new-update-toast:description'),
         duration: 30000,
         onSwipeEnd: () => {
           dismissUpdate()
@@ -70,14 +72,14 @@ export const useTopPage = (): ReturnProps => {
               className={buttonVariants({ variant: 'default' })}
               onClick={executeUpdate}
             >
-              アップデートする
+              {t('top:new-update-toast:button')}
             </ToastAction>
             <ToastAction
               altText="Ignore update"
               className={buttonVariants({ variant: 'outline' })}
               onClick={() => dismissUpdate()}
             >
-              今はしない
+              {t('top:new-update-toast:close')}
             </ToastAction>
           </div>
         ),

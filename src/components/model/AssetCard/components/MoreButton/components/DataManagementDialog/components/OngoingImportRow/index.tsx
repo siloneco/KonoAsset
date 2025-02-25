@@ -41,9 +41,7 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
 
         toast({
           title: t('assetcard:more-button:fail-import-toast'),
-          description:
-            errorResult.data ??
-            t('assetcard:more-button:fail-import-toast:description'),
+          description: errorResult.data ?? t('general:toast-error-description'),
         })
       }
     }
@@ -80,8 +78,7 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
                 toast({
                   title: t('assetcard:more-button:fail-import-toast'),
                   description:
-                    result.data ??
-                    t('assetcard:more-button:fail-import-toast:description'),
+                    result.data ?? t('general:toast-error-description'),
                 })
               }
             })
@@ -128,8 +125,7 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
           toast({
             title: t('assetcard:more-button:fail-import-toast'),
             description:
-              errorResult.data ??
-              t('assetcard:more-button:fail-import-toast:description'),
+              errorResult.data ?? t('general:toast-error-description'),
           })
         }
       } catch (error) {

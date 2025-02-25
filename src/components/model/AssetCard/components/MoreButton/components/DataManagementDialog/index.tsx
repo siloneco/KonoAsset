@@ -47,7 +47,7 @@ const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
             </Button>
           </DialogTitle>
           <DialogDescription>
-            {t('assetcard:more-button:data-management:explanation-text')}
+            {t('assetcard:more-button:data-management:explanation-text-1')}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-52 pr-4">

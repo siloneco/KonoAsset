@@ -7,12 +7,14 @@ import { getVersion } from '@tauri-apps/api/app'
 import { SiDiscord, SiGithub } from '@icons-pack/react-simple-icons'
 import { Button } from '@/components/ui/button'
 import { ExternalLink } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: PreferenceTabIDs
 }
 
 const AboutTab: FC<Props> = ({ id }) => {
+  const { t } = useLocalization()
   const [version, setVersion] = useState('X.X.X')
 
   useEffect(() => {
@@ -45,14 +47,15 @@ const AboutTab: FC<Props> = ({ id }) => {
         </div>
         <Separator className="w-[600px] mt-6" />
         <div className="mt-6 text-foreground/80">
-          「このアセットにしよ！」 をもっと簡単にするための VRChat
-          向けアセット管理ツール
+          {t('preference:about:description')}
         </div>
         <div className="w-[600px] flex flex-row mt-6">
           <div className="w-1/2 flex flex-col items-center">
             <div className="flex flex-row items-center space-x-4 mb-4">
               <Separator className="w-16" />
-              <p className="text-foreground/80">関連リンク</p>
+              <p className="text-foreground/80">
+                {t('preference:about:related-links')}
+              </p>
               <Separator className="w-16" />
             </div>
             <div className="flex flex-row space-x-6">
@@ -75,7 +78,9 @@ const AboutTab: FC<Props> = ({ id }) => {
           <div className="w-1/2 flex flex-col items-center">
             <div className="flex flex-row items-center space-x-4 mb-4">
               <Separator className="w-16" />
-              <p className="text-foreground/80">変更履歴</p>
+              <p className="text-foreground/80">
+                {t('preference:about:changes')}
+              </p>
               <Separator className="w-16" />
             </div>
             <div className="flex flex-row space-x-6">
@@ -86,7 +91,7 @@ const AboutTab: FC<Props> = ({ id }) => {
               >
                 <Button variant="secondary">
                   <ExternalLink />
-                  GitHubで見る
+                  {t('preference:about:changes-github')}
                 </Button>
               </a>
             </div>
@@ -95,7 +100,9 @@ const AboutTab: FC<Props> = ({ id }) => {
         <div className="flex flex-col items-center mt-6 space-y-4">
           <div className="flex flex-row items-center space-x-4">
             <Separator className="w-52" />
-            <p className="text-foreground/80">KonoAsset制作メンバー</p>
+            <p className="text-foreground/80">
+              {t('preference:about:members')}
+            </p>
             <Separator className="w-52" />
           </div>
           <div className="flex flex-row space-x-10">
@@ -123,26 +130,23 @@ const AboutTab: FC<Props> = ({ id }) => {
               githubUsername="puk06"
             />
           </div>
-          <p className="text-foreground/60">およびコントリビューターの皆さま</p>
+          <p className="text-foreground/60">
+            {t('preference:about:extra-members-text')}
+          </p>
         </div>
         <div className="flex flex-col items-center mt-6 space-y-4">
           <div className="flex flex-row items-center space-x-4">
             <Separator className="w-52" />
-            <p className="text-foreground/80">支援について</p>
+            <p className="text-foreground/80">
+              {t('preference:about:support')}
+            </p>
             <Separator className="w-52" />
           </div>
           <div className="flex flex-col items-center text-foreground/80">
-            <p>
-              GitHub
-              におけるコントリビューションで、本プロジェクトを支援することができます
-            </p>
-            <p className="mt-6">金銭的な支援は受け付けていません</p>
-            <p>
-              KonoAssetは3Dモデルを制作するクリエイターがいて初めて役割が与えられるソフトウェアです
-            </p>
-            <p>
-              クリエイターの方々への支援を優先していただくことが、我々にとっても励みになります
-            </p>
+            <p>{t('preference:about:support-text-1')}</p>
+            <p className="mt-6">{t('preference:about:support-text-2')}</p>
+            <p>{t('preference:about:support-text-3')}</p>
+            <p>{t('preference:about:support-text-4')}</p>
           </div>
         </div>
       </div>

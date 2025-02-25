@@ -26,7 +26,7 @@ describe('AssetBadge', () => {
   it('renders correctly for the Unknown type', async () => {
     // @ts-expect-error Testing for an unknown type
     render(<AssetBadge type="Unknown" />)
-    screen.getByText('不明')
+    screen.getByText('Unknown')
   })
 
   it('calls onClick', async () => {

@@ -61,22 +61,22 @@ const ResetDialog: FC<Props> = ({ className }) => {
             {t('resetdialog:reset:select-items')}
           </Label>
           <CheckboxAndLabel
-            mainText={t('resetdialog:reset:select-items:appdata')}
-            subText={t('resetdialog:reset:select-items:appdata:subtext')}
+            mainText={t('general:appdata')}
+            subText={t('general:appdata:subtext')}
             checked={deleteAppData}
             setChecked={setDeleteAppData}
             disabled={executing}
           />
           <CheckboxAndLabel
-            mainText={t('resetdialog:reset:select-items:metadata')}
-            subText={t('resetdialog:reset:select-items:metadata:subtext')}
+            mainText={t('general:metadata')}
+            subText={t('general:metadata:subtext')}
             checked={deleteMetadata}
             setChecked={setDeleteMetadata}
             disabled={executing}
           />
           <CheckboxAndLabel
-            mainText={t('resetdialog:reset:select-items:assetdata')}
-            subText={t('resetdialog:reset:select-items:assetdata:subtext')}
+            mainText={t('general:assetdata')}
+            subText={t('general:assetdata:subtext')}
             checked={deleteAssetData}
             setChecked={setDeleteAssetData}
             disabled={executing}
