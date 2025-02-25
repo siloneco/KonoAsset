@@ -43,7 +43,6 @@
     "addasset:error-toast:description": "エラー内容はログを参照してください",
     "addasset:import-error-toast": "データのインポートに失敗しました",
     "addasset:import-start-error-toast": "データのインポートを開始できませんでした",
-    "addasset:prerequisite-assets": "前提アセット",
     "addasset:prerequisite-assets:empty": "選択されていません",
     "addasset:prerequisite-assets:explanation-text": "前提アセットを設定すると、開くボタンの下向き矢印から飛ぶことができるようになります",
     "addasset:supported-avatars:placeholder": "対応アバターを選択...",
@@ -220,9 +219,8 @@
     "preference:settings:delete-source": "インポート後に元ファイル/フォルダを削除する",
     "preference:settings:delete-source:explanation-text": "この設定が有効の場合、アセットをインポートした後に元ファイル/フォルダが自動で削除されます",
 
-    "preference:settings:language": "言語 / Language",
-    "preference:settings:language:explanation-text": "アプリの言語または言語ファイルを選択します",
-    "preference:settings:language:toast:successfully-loaded": "言語ファイルが読み込まれました！",
+    "preference:settings:language": "言語",
+    "preference:settings:language:explanation-text": "アプリの言語を選択します",
 
     "preference:settings:reset": "アプリケーションを初期化する",
     "preference:settings:reset:explanation-text": "アプリケーションに登録されているデータを選択して、それらを初期化します。",

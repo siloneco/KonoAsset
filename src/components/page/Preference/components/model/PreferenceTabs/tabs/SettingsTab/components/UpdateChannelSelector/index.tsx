@@ -33,7 +33,7 @@ const UpdateChannelSelector: FC<Props> = ({
         </p>
       </div>
       <Select value={updateChannel} onValueChange={setUpdateChannel}>
-        <SelectTrigger className="ml-auto w-[200px]">
+        <SelectTrigger className="ml-auto w-[220px]">
           <SelectValue placeholder={t('general:select:placeholder')} />
         </SelectTrigger>
         <SelectContent>

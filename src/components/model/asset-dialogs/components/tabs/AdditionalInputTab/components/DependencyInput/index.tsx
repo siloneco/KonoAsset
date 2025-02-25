@@ -35,7 +35,7 @@ export const DependencyInput: FC<Props> = ({
         <div className="w-full h-40 border-2 border-accent rounded-lg flex flex-col items-center justify-center">
           {dependencies.length <= 0 && (
             <p className="text-card-foreground/70">
-              {t('addasset:prerequisite-assets:empty')}
+              {t('general:prerequisite-assets:empty')}
             </p>
           )}
           {dependencies.length > 0 && (
