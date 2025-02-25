@@ -9,7 +9,7 @@ export const useLocalization = (): ReturnProps => {
   const { data } = useContext(LocalizationContext)
 
   const t = (id: string): string => {
-    const value = data.data[id]
+    const value = data.data[id] ?? ''
 
     if (value === undefined) {
       return ''
