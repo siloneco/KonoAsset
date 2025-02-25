@@ -51,10 +51,10 @@
         "Supported avatars can be used to filter the list",
     "addasset:category:placeholder": "Select category...",
     "addasset:category:explanation-text": 
-        "Only one category can be selected (e.g., outfit, hair, etc.)",
+        "Only one category can be selected (e.g. outfit, hair, etc.)",
     "addasset:tag:placeholder": "Add tags...",
     "addasset:tag:explanation-text": 
-        "Multiple tags can be added (e.g., Vket, free, original, etc.)",
+        "Multiple tags can be added (e.g. Vket, free, original, etc.)",
     "addasset:memo:placeholder": "Enter notes for the asset...",
     "addasset:memo:explanation-text": 
         "Notes can be used for organisation and searching",
@@ -75,7 +75,7 @@
     "addasset:select-type:explanation-text": 
         "Please select the asset type!",
     "addasset:select-type:avatar-wearable": 
-        "Avatar-related (clothes / hair / accessories / gimmicks, etc.)",
+        "Avatar-related (clothes, accessories, gimmicks, etc.)",
     "addasset:booth-input": "Fetch asset information",
     "addasset:booth-input:explanation-text": 
         "Enter a Booth URL to automatically fill in asset details!",
@@ -133,13 +133,13 @@
     "assetcard:more-button:delete-confirm": "Are you sure you want to delete this asset?",
     "assetcard:more-button:delete-confirm:explanation-text": "The data will be permanently deleted. This action cannot be undone!",
     "assetcard:select-unitypackage:select-file": "Which file would you like to use?",
-    "assetcard:select-unitypackage:always-open-dir": "Always open the management folder without showing this next time",
+    "assetcard:select-unitypackage:always-open-dir": "Always open the management folder and do not show this next time",
     "assetcard:success-delete-toast": "Successfully deleted!",
     "assetcard:fail-delete-toast": "Failed to delete.",
     
-    "assetlist:background:no-assets": "No assets have been registered.",
+    "assetlist:background:no-assets": "No assets have been registered",
     "assetlist:background:add-asset": "Add an asset",
-    "assetlist:background:no-results": "No assets match the filter criteria.",
+    "assetlist:background:no-results": "No assets match the filter criteria",
     
     "assetselector:search-placeholder": "Search prerequisite assets...",
     
@@ -149,8 +149,8 @@
     "mainnavbar:total-asset-count:posttext": " assets,",
     "mainnavbar:showing": "currently displayed",
     "mainnavbar:sort-settings": "Sort settings",
-    "mainnavbar:sort-settings:created-at-desc": "Order added (newest first)",
-    "mainnavbar:sort-settings:created-at-asc": "Order added (oldest first)",
+    "mainnavbar:sort-settings:created-at-desc": "Date added (newest first)",
+    "mainnavbar:sort-settings:created-at-asc": "Date added (oldest first)",
     "mainnavbar:sort-settings:asset-name-asc": "Asset name (A-Z)",
     "mainnavbar:sort-settings:asset-name-desc": "Asset name (Z-A)",
     "mainnavbar:sort-settings:shop-name-asc": "Shop name (A-Z)",
@@ -237,7 +237,7 @@
     "preference:settings:delete-source:explanation-text": "If this setting is enabled, the original file/folder will be automatically deleted after importing assets",
     
     "preference:settings:reset": "Initialise application",
-    "preference:settings:reset:explanation-text": "Select and initialise data registered in the application",
+    "preference:settings:reset:explanation-text": "Select and initialise data registered in the application. ",
     "preference:settings:reset:warning-text": "This action cannot be undone!",
     
     "preference:settings:theme": "Theme",
