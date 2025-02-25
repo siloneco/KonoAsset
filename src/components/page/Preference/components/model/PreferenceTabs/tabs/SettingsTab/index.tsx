@@ -2,7 +2,7 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { PreferenceTabIDs } from '@/components/page/Preference/hook'
 
 import { TabsContent } from '@/components/ui/tabs'
-import { Theme, UpdateChannel } from '@/lib/bindings'
+import { LanguageCode, Theme, UpdateChannel } from '@/lib/bindings'
 import { FC, useContext } from 'react'
 import ThemeSelector from './components/ThemeSelector'
 import DataDirSelector from './components/DataDirSelector'
@@ -11,6 +11,7 @@ import UseUnitypackageSelectorToggle from './components/UseUnitypackageSelectorT
 import ResetButton from './components/ResetButton'
 import { Separator } from '@/components/ui/separator'
 import UpdateChannelSelector from './components/UpdateChannelSelector'
+import { LanguageSelector } from './components/LanguageSelector'
 
 type Props = {
   id: PreferenceTabIDs
@@ -59,6 +60,12 @@ const SettingsTab: FC<Props> = ({ id }) => {
           }}
         />
         <Separator />
+        <LanguageSelector
+          language={preference.language}
+          setLanguage={async (language: LanguageCode) => {
+            await setPreference({ ...preference, language }, true)
+          }}
+        />
         <UpdateChannelSelector
           updateChannel={preference.updateChannel}
           setUpdateChannel={async (channel: UpdateChannel) => {

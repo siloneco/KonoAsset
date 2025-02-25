@@ -27,7 +27,7 @@ const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
       </div>
       <Select value={theme} onValueChange={setTheme}>
         <SelectTrigger className="ml-auto w-[180px]">
-          <SelectValue placeholder="選択..." />
+          <SelectValue placeholder={t('general:select:placeholder')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="system">

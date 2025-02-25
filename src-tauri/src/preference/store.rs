@@ -103,6 +103,7 @@ impl PreferenceStore {
         self.delete_on_import = other.delete_on_import;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
         self.update_channel = other.update_channel;
+        self.language = other.language.clone();
     }
 
     pub fn save(&self) -> Result<(), io::Error> {
