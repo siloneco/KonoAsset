@@ -36,7 +36,7 @@ const AvatarLayout = ({ form }: Props) => {
   return (
     <div className="w-full flex flex-row space-x-2 mb-4">
       <div className="w-full space-y-2">
-        <Label> {t('addasset:tag')} </Label>
+        <Label> {t('general:tag')} </Label>
         <MultipleSelector
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}

@@ -16,6 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AssetContext } from '@/components/context/AssetContext'
 import SlimAssetDetail from '../SlimAssetDetail'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   assetName: string | null
@@ -33,6 +34,7 @@ export const DependencyDialog: FC<Props> = ({
   const [dependencies, setDependencies] = useState<AssetSummary[]>([])
   const [loading, setLoading] = useState(false)
 
+  const { t } = useLocalization()
   const { assetDisplaySortedList } = useContext(AssetContext)
 
   const updateDependencies = () => {
@@ -58,7 +60,7 @@ export const DependencyDialog: FC<Props> = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>前提アセット一覧</DialogTitle>
+          <DialogTitle>{t('dependencydialog:header')}</DialogTitle>
           <DialogDescription className="max-w-[450px] truncate">
             {loading && <Skeleton className="w-52 h-3 rounded-full" />}
             {!loading && assetName}
@@ -84,7 +86,7 @@ export const DependencyDialog: FC<Props> = ({
         <DialogFooter>
           <DialogClose asChild>
             <Button variant={'outline'} className="mx-auto">
-              閉じる
+              {t('general:button:close')}
             </Button>
           </DialogClose>
         </DialogFooter>

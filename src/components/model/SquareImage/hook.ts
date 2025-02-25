@@ -2,6 +2,7 @@ import { commands } from '@/lib/bindings'
 import { downloadDir } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
 import { useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   setFilename?: (filename: string) => void
@@ -23,6 +24,7 @@ export const useSquareImage = ({
   urlImageIndex,
   setUrlImageIndex,
 }: Props): ReturnProps => {
+  const { t } = useLocalization()
   const [loading, setLoading] = useState(false)
 
   const openImageSelector = async () => {
@@ -34,7 +36,7 @@ export const useSquareImage = ({
       multiple: false,
       directory: false,
       defaultPath: await downloadDir(),
-      filters: [{ name: '画像', extensions: ['png', 'jpg', 'jpeg'] }],
+      filters: [{ name: t('squareimage:image'), extensions: ['png', 'jpg', 'jpeg'] }],
     })
 
     if (path === null) {

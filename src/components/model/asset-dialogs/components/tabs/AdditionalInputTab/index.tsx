@@ -25,7 +25,7 @@ type Props = {
   hideDeleteSourceCheckbox?: boolean
   submitButtonText?: string
 }
-
+const { t } = useLocalization()
 const AdditionalInputTab = ({
   form,
   onBackToPreviousTabClicked,
@@ -36,7 +36,7 @@ const AdditionalInputTab = ({
   totalTabs,
 
   hideDeleteSourceCheckbox = false,
-  submitButtonText = 'アセットを追加',
+  submitButtonText = t('addasset:add-asset'),
 }: Props) => {
   const {
     memo,
@@ -46,7 +46,6 @@ const AdditionalInputTab = ({
     deleteSourceChecked,
     setDeleteSourceChecked,
   } = useAdditionalInputTab({ form })
-  const { t } = useLocalization()
 
   return (
     <div>

@@ -67,7 +67,7 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        <p> {t('general:open')} </p>
+        <p> {t('general:button:open')} </p>
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>

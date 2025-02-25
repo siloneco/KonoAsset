@@ -56,7 +56,7 @@ const WorldObjectLayout = ({ form }: Props) => {
   return (
     <div className="w-full flex flex-row space-x-2">
       <div className="w-1/2 space-y-2">
-        <Label> {t('addasset:category')} </Label>
+        <Label> {t('general:category')} </Label>
         <TextInputSelect
           options={categoryCandidates}
           placeholder={t('addasset:category:placeholder')}
@@ -78,7 +78,7 @@ const WorldObjectLayout = ({ form }: Props) => {
       </div>
       <Separator orientation="vertical" className="h-32 my-auto" />
       <div className="w-1/2 space-y-2">
-        <Label> {t('addasset:tag')} </Label>
+        <Label> {t('general:tag')} </Label>
         <MultipleSelector
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}

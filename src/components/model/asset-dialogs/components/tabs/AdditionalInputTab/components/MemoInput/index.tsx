@@ -13,7 +13,7 @@ export const MemoInput: FC<Props> = ({ memo, setMemo }) => {
   return (
     <div className="w-full flex flex-row mb-4">
       <div className="w-full space-y-2">
-        <Label>{t('addasset:memo')}</Label>
+        <Label>{t('general:memo')}</Label>
         <Textarea
           value={memo}
           onChange={(e) => setMemo(e.target.value)}

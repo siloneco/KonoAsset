@@ -41,7 +41,7 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
       </DialogHeader>
       <div className="my-8 space-y-6 flex flex-col items-center">
         <SelectTypeButton
-          text={t('addasset:select-type:avatar')}
+          text={t('general:typeavatar')}
           onClick={() => {
             form.setValue('assetType', 'Avatar')
           }}
@@ -55,7 +55,7 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
           selected={assetType === 'AvatarWearable'}
         />
         <SelectTypeButton
-          text={t('addasset:select-type:world-object')}
+          text={t('general:typeworldobject')}
           onClick={() => {
             form.setValue('assetType', 'WorldObject')
           }}

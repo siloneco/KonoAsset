@@ -43,7 +43,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
               className="ml-auto h-8 w-14"
               onClick={() => open(file.absolutePath)}
             >
-              {t('general:open')}
+              {t('general:button:open')}
             </Button>
           </div>
         ))}

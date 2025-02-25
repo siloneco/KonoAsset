@@ -4,12 +4,14 @@ import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { useLocalization } from '@/hooks/use-localization'
 
 const AvatarWearableFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
   >([])
+  const { t } = useLocalization()
 
   const {
     categoryFilter,
@@ -43,8 +45,8 @@ const AvatarWearableFilter = () => {
   return (
     <div className="mt-4 space-y-4">
       <MultiFilterItemSelector
-        label="カテゴリ"
-        placeholder="絞り込むカテゴリを選択..."
+        label={t('general:category')}
+        placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
         value={categoryValues}
         onValueChange={(values) =>
@@ -52,8 +54,10 @@ const AvatarWearableFilter = () => {
         }
       />
       <MultiFilterItemSelector
-        label="対応アバター"
-        placeholder="対応アバターを選択..."
+        label={t('general:supported-avatars')}
+        placeholder={t(
+          'mainsidebar:avatar-wearable-filter:supported-avatars:placeholder',
+        )}
         candidates={supportedAvatarCandidates}
         value={supportedAvatarValues}
         onValueChange={(values) =>
