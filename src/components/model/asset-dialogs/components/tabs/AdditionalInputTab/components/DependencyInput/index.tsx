@@ -23,7 +23,7 @@ export const DependencyInput: FC<Props> = ({
   return (
     <div className="w-full flex flex-row mb-4">
       <div className="w-full space-y-2">
-        <Label>{t('addasset:prerequisite-assets')}</Label>
+        <Label>{t('general:prerequisite-assets')}</Label>
         <AssetSelector
           assets={assetDisplaySortedList}
           slimAssetDetailClassName="max-w-[570px]"

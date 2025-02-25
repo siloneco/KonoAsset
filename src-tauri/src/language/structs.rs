@@ -8,6 +8,7 @@ use serde_with::serde_as;
 pub enum LanguageCode {
     JaJp,
     EnUs,
+    EnGb,
 }
 
 impl LanguageCode {
@@ -15,6 +16,7 @@ impl LanguageCode {
         match self {
             LanguageCode::JaJp => include_str!("../../../locales/ja-JP.json"),
             LanguageCode::EnUs => include_str!("../../../locales/en-US.json"),
+            LanguageCode::EnGb => include_str!("../../../locales/en-GB.json"),
         }
     }
 }

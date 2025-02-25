@@ -37,8 +37,9 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
             <div className="lg:w-28" />
             <div className="my-auto ml-4 lg:mx-auto">
               <span className="text-foreground/70">
+                {t('mainnavbar:total-asset-count:foretext')}
                 {totalAssetCount}
-                {t('mainnavbar:total-asset-count')}
+                {t('mainnavbar:total-asset-count:posttext')}
               </span>
               <span className="text-card-foreground font-bold px-2 rounded-lg">
                 {showingCount}

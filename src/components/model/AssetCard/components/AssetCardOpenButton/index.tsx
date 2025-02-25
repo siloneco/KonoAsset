@@ -86,7 +86,7 @@ const AssetCardOpenButton = ({
             disabled={!hasDependencies}
           >
             <FolderTree className="text-foreground/50" />
-            {t('assetcard:open-button:dependency')}
+            {t('general:prerequisite-assets')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onCopyPathButtonClick}>
