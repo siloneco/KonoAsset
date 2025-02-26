@@ -31,7 +31,7 @@ const CheckboxAndLabel: FC<Props> = ({
       <p>
         {mainText}
         {subText !== undefined && (
-          <span className="ml-2 text-foreground/60">({subText})</span>
+          <span className="ml-2 text-muted-foreground">({subText})</span>
         )}
       </p>
     </div>

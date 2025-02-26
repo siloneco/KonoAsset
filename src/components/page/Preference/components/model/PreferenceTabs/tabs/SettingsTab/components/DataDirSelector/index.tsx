@@ -51,7 +51,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
         <Label className="text-xl">
           {t('preference:settings:application-data')}
         </Label>
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('preference:settings:application-data:explanation-text')}
         </p>
         <div className="flex flex-row w-4/5">

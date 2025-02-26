@@ -21,7 +21,7 @@ export const MemoInput: FC<Props> = ({ memo, setMemo }) => {
           className="resize-none h-28"
           placeholder={t('addasset:memo:placeholder')}
         />
-        <p className="text-card-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('addasset:memo:explanation-text')}
         </p>
       </div>

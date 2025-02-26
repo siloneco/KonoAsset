@@ -297,6 +297,14 @@ async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async requireInitialSetup() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("require_initial_setup") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getPreferences() : Promise<Result<PreferenceStore, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_preferences") };

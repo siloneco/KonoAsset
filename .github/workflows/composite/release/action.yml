@@ -96,11 +96,6 @@ runs:
         mv latest.json ./upload/manifests/${{ inputs.releaseChannel }}.json
         mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
-    - name: Also release to pre-release if it is stable release
-      if: ${{ inputs.releaseChannel == 'stable' }}
-      shell: bash
-      run: cp ./upload/manifests/stable.json ./upload/manifests/pre-release.json
-
     - name: Upload artifacts
       uses: ryand56/r2-upload-action@latest
       with:

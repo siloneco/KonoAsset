@@ -52,7 +52,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="mb-2 text-card-foreground/60">
+          <p className="mb-2 text-muted-foreground">
             {t('loaderror:load-error:errormessage')}
           </p>
           <Separator />
@@ -77,7 +77,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
                 <DropdownMenuItem onClick={openAppDir}>
                   <Folder className="text-foreground/50" />
                   {t('general:appdata')}
-                  <span className="text-foreground/60">
+                  <span className="text-muted-foreground">
                     ({t('general:appdata:subtext')})
                   </span>
                 </DropdownMenuItem>
@@ -90,7 +90,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
                     >
                       <Folder className="text-foreground/50" />
                       {t('general:metadata')}
-                      <span className="text-foreground/60">
+                      <span className="text-muted-foreground">
                         ({t('general:metadata:subtext')})
                       </span>
                     </DropdownMenuItem>
@@ -107,7 +107,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
                     >
                       <Folder className="text-foreground/50" />
                       {t('general:assetdata')}
-                      <span className="text-foreground/60">
+                      <span className="text-muted-foreground">
                         ({t('general:assetdata:subtext')})
                       </span>
                     </DropdownMenuItem>
@@ -121,7 +121,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
           </TooltipProvider>
         </CardFooter>
       </Card>
-      <div className="mt-4 flex flex-row text-foreground/50 space-x-2">
+      <div className="mt-4 flex flex-row text-muted-foreground space-x-2">
         <p>{t('loaderror:report-error')}</p>
         <a
           href="https://go.konoasset.dev/discord"

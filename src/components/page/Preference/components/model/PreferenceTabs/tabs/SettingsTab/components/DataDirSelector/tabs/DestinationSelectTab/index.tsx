@@ -94,7 +94,7 @@ const DestinationSelectTab: FC<Props> = ({
           </Label>
         </div>
         {!migrationEnabled && (
-          <div className="flex flex-row items-center justify-center mt-2 text-sm text-foreground/60">
+          <div className="flex flex-row items-center justify-center mt-2 text-sm text-muted-foreground">
             <Info size={20} className="text-primary" />
             <div className="ml-1">
               <p>{t('preference:settings:destination-select:warn-text-1')}</p>

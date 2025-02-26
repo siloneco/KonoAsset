@@ -26,9 +26,9 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-row items-center mb-1 text-foreground/60">
+      <div className="flex flex-row items-center mb-1 text-muted-foreground">
         <Folder className="mr-2" size={18} />
-        {displayPath}
+        <span className="text-foreground">{displayPath}</span>
       </div>
       <Card className="p-2 pl-4 space-y-2 w-full">
         {files.map((file) => (

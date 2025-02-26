@@ -35,7 +35,7 @@ const ProgressTab: FC<Props> = ({
         <DialogTitle>{t('preference:settings:progress-bar')}</DialogTitle>
       </DialogHeader>
       <div className="mt-4">
-        <p className="text-foreground/70 w-[430px] truncate">{filename}</p>
+        <p className="text-muted-foreground w-[430px] truncate">{filename}</p>
         <Progress className="mt-1" value={percentage} />
       </div>
       <div className="flex justify-center mt-8">

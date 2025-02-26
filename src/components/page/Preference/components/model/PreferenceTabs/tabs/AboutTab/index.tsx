@@ -35,7 +35,7 @@ const AboutTab: FC<Props> = ({ id }) => {
             <img src="/logo.png" className="w-12 h-12" />
             <h1 className="text-4xl ml-2">
               KonoAsset
-              <span className="ml-2 text-base text-foreground/60">
+              <span className="ml-2 text-base text-muted-foreground">
                 v{version}
               </span>
             </h1>
@@ -46,14 +46,14 @@ const AboutTab: FC<Props> = ({ id }) => {
           </div>
         </div>
         <Separator className="w-[600px] mt-6" />
-        <div className="mt-6 text-foreground/80">
+        <div className="mt-6 text-foreground">
           {t('preference:about:description')}
         </div>
         <div className="w-[600px] flex flex-row mt-6">
           <div className="w-1/2 flex flex-col items-center">
             <div className="flex flex-row items-center space-x-4 mb-4">
               <Separator className="w-16" />
-              <p className="text-foreground/80">
+              <p className="text-foreground">
                 {t('preference:about:related-links')}
               </p>
               <Separator className="w-16" />
@@ -78,9 +78,7 @@ const AboutTab: FC<Props> = ({ id }) => {
           <div className="w-1/2 flex flex-col items-center">
             <div className="flex flex-row items-center space-x-4 mb-4">
               <Separator className="w-16" />
-              <p className="text-foreground/80">
-                {t('preference:about:changes')}
-              </p>
+              <p className="text-foreground">{t('preference:about:changes')}</p>
               <Separator className="w-16" />
             </div>
             <div className="flex flex-row space-x-6">
@@ -100,9 +98,7 @@ const AboutTab: FC<Props> = ({ id }) => {
         <div className="flex flex-col items-center mt-6 space-y-4">
           <div className="flex flex-row items-center space-x-4">
             <Separator className="w-52" />
-            <p className="text-foreground/80">
-              {t('preference:about:members')}
-            </p>
+            <p className="text-foreground">{t('preference:about:members')}</p>
             <Separator className="w-52" />
           </div>
           <div className="flex flex-row space-x-10">
@@ -130,19 +126,17 @@ const AboutTab: FC<Props> = ({ id }) => {
               githubUsername="puk06"
             />
           </div>
-          <p className="text-foreground/60">
+          <p className="text-muted-foreground">
             {t('preference:about:extra-members-text')}
           </p>
         </div>
         <div className="flex flex-col items-center mt-6 space-y-4">
           <div className="flex flex-row items-center space-x-4">
             <Separator className="w-52" />
-            <p className="text-foreground/80">
-              {t('preference:about:support')}
-            </p>
+            <p className="text-foreground">{t('preference:about:support')}</p>
             <Separator className="w-52" />
           </div>
-          <div className="flex flex-col items-center text-foreground/80">
+          <div className="flex flex-col items-center text-muted-foreground">
             <p>{t('preference:about:support-text-1')}</p>
             <p className="mt-6">{t('preference:about:support-text-2')}</p>
             <p>{t('preference:about:support-text-3')}</p>

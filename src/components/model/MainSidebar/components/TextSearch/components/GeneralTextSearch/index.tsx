@@ -26,7 +26,7 @@ const GeneralTextSearch: FC<Props> = ({
       <div className="flex flex-row">
         <Label className="text-base">{t('mainsidebar:text-search')}</Label>
         <div
-          className="w-16 bg-background border-2 border-accent text-primary-foreground px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
+          className="w-16 bg-background text-foreground border-2 border-border px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
           onClick={onSwitchModeClicked}
         >
           {t('mainsidebar:advanced-search')}

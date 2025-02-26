@@ -248,6 +248,20 @@
 
     "top:add-text": "ファイルをドロップしてアセットを追加",
 
+    "setup:welcome": "KonoAssetへようこそ！",
+
+    "setup:sidebar:1": "表示の設定",
+    "setup:sidebar:2": "保存場所の設定",
+    "setup:sidebar:3": "その他の設定",
+
+    "setup:tab:2:title": "データの保存場所の選択",
+    "setup:tab:2:description-1": "アセットのデータを保存するディレクトリを選択します",
+    "setup:tab:2:description-2": "このディレクトリは後から設定で変更できます",
+
+    "setup:tab:2:input-label": "現在の保存場所",
+
+    "setup:button:done": "利用をはじめる！",
+
     "ui:multi-select:create-new": "新しく作成",
     "ui:multi-select:select-all": "全て選択"
   }

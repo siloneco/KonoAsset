@@ -8,7 +8,7 @@ const ResetButton = () => {
     <div className="flex flex-row items-center">
       <div className="space-y-2 w-full">
         <Label className="text-lg">{t('preference:settings:reset')}</Label>
-        <p className="text-foreground/60 text-sm w-10/12">
+        <p className="text-muted-foreground text-sm w-10/12">
           {t('preference:settings:reset:explanation-text')}
           <span className="font-bold">
             {t('preference:settings:reset:warning-text')}

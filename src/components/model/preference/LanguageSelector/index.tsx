@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select'
 import { FC } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import { Languages } from 'lucide-react'
 
 type Props = {
   language: LanguageCode
@@ -21,8 +22,11 @@ export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
   return (
     <div className="flex flex-row items-center">
       <div className="space-y-2">
-        <Label className="text-xl">{t('preference:settings:language')}</Label>
-        <p className="text-foreground/60 text-sm">
+        <Label className="text-xl flex flex-row items-center">
+          {t('preference:settings:language')}
+          <Languages className="opacity-70 ml-2" />
+        </Label>
+        <p className="text-muted-foreground text-sm">
           {t('preference:settings:language:explanation-text')}
         </p>
       </div>

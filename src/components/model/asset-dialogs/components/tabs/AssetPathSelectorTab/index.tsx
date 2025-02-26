@@ -63,13 +63,13 @@ const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
       </div>
       <div className="flex flex-row justify-center text-center mt-6">
         <Info className="text-primary mr-1" />
-        <p className="text-card-foreground/70">
+        <p className="text-muted-foreground">
           {t('addasset:select-path:drop-text')}
         </p>
       </div>
       <div className="flex flex-row justify-center text-center mt-4 mb-6">
         <FolderArchive className="text-primary mr-1" />
-        <p className="text-card-foreground/70">
+        <p className="text-muted-foreground">
           {t('addasset:select-path:zip-text')}
         </p>
       </div>

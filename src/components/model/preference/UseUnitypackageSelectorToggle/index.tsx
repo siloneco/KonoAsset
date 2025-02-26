@@ -9,16 +9,16 @@ type Props = {
   setEnable: (enable: boolean) => void
 }
 
-const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
+const UseUnitypackageSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2 w-full">
+      <div className="space-y-2">
         <Label className="text-lg">
-          {t('preference:settings:delete-source')}
+          {t('preference:settings:use-unitypackage-selector')}
         </Label>
-        <p className="text-foreground/60 text-sm w-10/12">
-          {t('preference:settings:delete-source:explanation-text')}
+        <p className="text-muted-foreground text-sm w-10/12">
+          {t('preference:settings:use-unitypackage-selector:explanation-text')}
         </p>
       </div>
       <Switch
@@ -30,4 +30,4 @@ const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
   )
 }
 
-export default DeleteSourceToggle
+export default UseUnitypackageSelectorToggle

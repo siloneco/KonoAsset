@@ -63,7 +63,7 @@ const WorldObjectLayout = ({ form }: Props) => {
           className="max-w-72"
           creatable
           emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+            <p className="text-center text-lg text-muted-foreground">
               {t('addasset:empty-indicator')}
             </p>
           }
@@ -72,7 +72,7 @@ const WorldObjectLayout = ({ form }: Props) => {
             form.setValue('category', value?.value as string)
           }}
         />
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('addasset:category:explanation-text')}
         </p>
       </div>
@@ -86,7 +86,7 @@ const WorldObjectLayout = ({ form }: Props) => {
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
-            <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+            <p className="text-center text-lg text-muted-foreground">
               {t('addasset:empty-indicator')}
             </p>
           }
@@ -97,7 +97,7 @@ const WorldObjectLayout = ({ form }: Props) => {
             )
           }}
         />
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('addasset:tag:explanation-text')}
         </p>
       </div>

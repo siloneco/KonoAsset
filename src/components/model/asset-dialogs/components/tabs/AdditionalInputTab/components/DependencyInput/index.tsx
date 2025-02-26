@@ -34,8 +34,8 @@ export const DependencyInput: FC<Props> = ({
         />
         <div className="w-full h-40 border-2 border-accent rounded-lg flex flex-col items-center justify-center">
           {dependencies.length <= 0 && (
-            <p className="text-card-foreground/70">
-              {t('general:prerequisite-assets:empty')}
+            <p className="text-muted-foreground">
+              {t('addasset:prerequisite-assets:empty')}
             </p>
           )}
           {dependencies.length > 0 && (
@@ -70,7 +70,7 @@ export const DependencyInput: FC<Props> = ({
             </ScrollArea>
           )}
         </div>
-        <p className="text-card-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('addasset:prerequisite-assets:explanation-text')}
         </p>
       </div>
