@@ -3,7 +3,7 @@ use std::{path::PathBuf, sync::Arc};
 use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
-use definitions::entities::{LoadResult, ProgressEvent};
+use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use language::load::load_from_language_code;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
@@ -71,6 +71,13 @@ pub fn run() {
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
             app.manage(app.handle().clone());
+
+            let preference_file_path = app
+                .path()
+                .app_local_data_dir()
+                .unwrap()
+                .join("preference.json");
+            app.manage(arc_mutex(InitialSetup::new(preference_file_path)));
 
             let result = load_preference_store(app.handle());
             if let Err(e) = result {

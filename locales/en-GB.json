@@ -248,6 +248,20 @@
 
     "top:add-text": "Drop files to add assets",
 
+    "setup:welcome": "Welcome to KonoAsset!",
+
+    "setup:sidebar:1": "Display Settings",
+    "setup:sidebar:2": "Save Location Settings",
+    "setup:sidebar:3": "Other Settings",
+
+    "setup:tab:2:title": "Select Where to Save Data",
+    "setup:tab:2:description-1": "Choose a directory to store the asset data",
+    "setup:tab:2:description-2": "This directory can be changed later in the settings tab",
+
+    "setup:tab:2:input-label": "Current Save Location",
+
+    "setup:button:done": "Get Started!",
+
     "ui:multi-select:create-new": "Create new",
     "ui:multi-select:select-all": "Select all"
   }

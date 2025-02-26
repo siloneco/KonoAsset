@@ -4,7 +4,6 @@ import LoadErrorPage from '../LoadError'
 import { Separator } from '@/components/ui/separator'
 import { SetupProgressContent } from './components/SetupProgressContent'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { LanguageTab } from './tabs/LanguageTab'
 import { Button } from '@/components/ui/button'
 import { DataPathSelector } from './tabs/DataPathSelector'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
@@ -12,8 +11,12 @@ import { commands } from '@/lib/bindings'
 import { useToast } from '@/hooks/use-toast'
 import { OtherPreferenceSelector } from './tabs/OtherPreferenceSelector'
 import { useNavigate } from '@tanstack/react-router'
+import { AppAppearanceTab } from './tabs/AppAppearanceTab'
+import { useLocalization } from '@/hooks/use-localization'
 
 export const SetupPage: FC = () => {
+  const { t } = useLocalization()
+
   const [tabIndex, setTabIndex] = useState(1)
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -27,28 +30,28 @@ export const SetupPage: FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center px-10">
+    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background">
       <div className="w-full max-w-[1000px] mx-10 p-6 bg-card rounded-2xl border-2 border-accent">
         <h1 className="flex justify-center items-center text-2xl">
-          KonoAssetへようこそ！ / Welcome to KonoAsset!
+          {t('setup:welcome')}
         </h1>
         <div className="flex flex-row my-4">
           <div className="w-60 h-96 pt-8 space-y-6">
             <SetupProgressContent index={1} currentIndex={tabIndex}>
-              言語 / Language
+              {t('setup:sidebar:1')}
             </SetupProgressContent>
             <SetupProgressContent index={2} currentIndex={tabIndex}>
-              保存場所の選択
+              {t('setup:sidebar:2')}
             </SetupProgressContent>
             <SetupProgressContent index={3} currentIndex={tabIndex}>
-              その他の設定
+              {t('setup:sidebar:3')}
             </SetupProgressContent>
           </div>
           <Separator orientation="vertical" className="h-96" />
           <div className="flex flex-grow flex-col">
-            <Tabs value={tabIndex + ''} className="h-80">
+            <Tabs value={tabIndex + ''} className="h-96">
               <TabsContent value="1">
-                <LanguageTab />
+                <AppAppearanceTab />
               </TabsContent>
               <TabsContent value="2">
                 <DataPathSelector
@@ -60,7 +63,9 @@ export const SetupPage: FC = () => {
                     } else {
                       console.error(result.error)
                       toast({
-                        title: 'エラー: データディレクトリの変更に失敗しました',
+                        title: t(
+                          'preference:settings:destination-select:error-toast',
+                        ),
                         description: result.error,
                       })
                     }
@@ -68,19 +73,7 @@ export const SetupPage: FC = () => {
                 />
               </TabsContent>
               <TabsContent value="3">
-                <OtherPreferenceSelector
-                  theme={preference.theme}
-                  setTheme={async (theme) => {
-                    setPreference({ ...preference, theme: theme }, true)
-                  }}
-                  updateChannel={preference.updateChannel}
-                  setUpdateChannel={async (updateChannel) => {
-                    setPreference(
-                      { ...preference, updateChannel: updateChannel },
-                      true,
-                    )
-                  }}
-                />
+                <OtherPreferenceSelector />
               </TabsContent>
             </Tabs>
             <div className="flex w-full max-w-[600px] px-12 mx-auto">
@@ -89,7 +82,7 @@ export const SetupPage: FC = () => {
                   onClick={() => setTabIndex(tabIndex - 1)}
                   variant="outline"
                 >
-                  戻る
+                  {t('general:button:back')}
                 </Button>
               )}
               {tabIndex < 3 && (
@@ -97,12 +90,12 @@ export const SetupPage: FC = () => {
                   onClick={() => setTabIndex(tabIndex + 1)}
                   className="ml-auto"
                 >
-                  次へ
+                  {t('general:button:next')}
                 </Button>
               )}
               {tabIndex >= 3 && (
                 <Button className="ml-auto" onClick={onLastButtonClicked}>
-                  利用をはじめる！
+                  {t('setup:button:done')}
                 </Button>
               )}
             </div>

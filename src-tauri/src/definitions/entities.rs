@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use tauri_specta::Event;
@@ -328,5 +328,24 @@ impl ProgressEvent {
             percentage,
             filename,
         }
+    }
+}
+
+#[derive(specta::Type)]
+pub struct InitialSetup {
+    pub require_initial_setup: bool,
+    pub preference_file: PathBuf,
+}
+
+impl InitialSetup {
+    pub fn new(preference_file: PathBuf) -> Self {
+        Self {
+            require_initial_setup: !preference_file.exists(),
+            preference_file,
+        }
+    }
+
+    pub fn update(&mut self) {
+        self.require_initial_setup = !self.preference_file.exists();
     }
 }

@@ -1,14 +1,21 @@
 use std::sync::Arc;
 
-use tauri::{async_runtime::Mutex, AppHandle, Manager, State};
+use tauri::{async_runtime::Mutex, State};
 
-use crate::preference::store::PreferenceStore;
+use crate::{definitions::entities::InitialSetup, preference::store::PreferenceStore};
 
 #[tauri::command]
 #[specta::specta]
-pub fn is_preference_file_exists(handle: State<'_, AppHandle>) -> bool {
-    let app_local_data_dir = handle.path().app_local_data_dir().unwrap();
-    return app_local_data_dir.join("preference.json").exists();
+pub async fn require_initial_setup(
+    initial_setup: State<'_, Arc<Mutex<InitialSetup>>>,
+) -> Result<bool, String> {
+    let mut initial_setup = initial_setup.lock().await;
+
+    if initial_setup.require_initial_setup {
+        initial_setup.update();
+    }
+
+    return Ok(initial_setup.require_initial_setup);
 }
 
 #[tauri::command]

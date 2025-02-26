@@ -6,7 +6,8 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   loader: async () => {
-    if (!(await commands.isPreferenceFileExists())) {
+    const result = await commands.requireInitialSetup()
+    if (result.status === 'ok' && result.data) {
       throw redirect({
         to: '/setup',
       })

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands } from '@/lib/bindings'
 import { open } from '@tauri-apps/plugin-dialog'
@@ -12,6 +13,8 @@ type Props = {
 }
 
 export const DataPathSelector: FC<Props> = ({ path, setPath }) => {
+  const { t } = useLocalization()
+
   const { toast } = useToast()
 
   const openDirectory = async () => {
@@ -43,23 +46,23 @@ export const DataPathSelector: FC<Props> = ({ path, setPath }) => {
   }
 
   return (
-    <div className="w-full h-64 flex flex-col justify-center items-center">
-      <h2 className="text-xl font-bold">データの保存場所の選択</h2>
+    <div className="w-full h-80 flex flex-col justify-center items-center">
+      <h2 className="text-xl font-bold">{t('setup:tab:2:title')}</h2>
       <p className="mt-4 text-card-foreground/70">
-        アセットのデータを保存するディレクトリを選択します
+        {t('setup:tab:2:description-1')}
       </p>
       <p className="text-card-foreground/70">
-        このディレクトリは後から設定で変更できます
+        {t('setup:tab:2:description-2')}
       </p>
-      <div className="flex flex-row space-x-2 items-end w-full mt-8 px-8">
+      <div className="flex flex-row space-x-2 items-end w-full mt-8 px-12">
         <div className="w-full">
-          <Label>現在の保存場所</Label>
+          <Label>{t('setup:tab:2:input-label')}</Label>
           <Input value={path} disabled className="mt-1 w-full" />
         </div>
         <Button variant="secondary" onClick={openDirectory}>
-          開く
+          {t('general:button:open')}
         </Button>
-        <Button onClick={selectPath}>選択する</Button>
+        <Button onClick={selectPath}>{t('general:select:placeholder')}</Button>
       </div>
     </div>
   )
