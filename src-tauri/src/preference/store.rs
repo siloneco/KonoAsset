@@ -51,7 +51,7 @@ impl PreferenceStore {
 
             data_dir_path,
             theme: Theme::System,
-            language: LanguageCode::EnUs,
+            language: LanguageCode::JaJp,
 
             delete_on_import: true,
             use_unitypackage_selected_open: true,
