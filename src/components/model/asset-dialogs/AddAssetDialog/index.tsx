@@ -10,6 +10,7 @@ import ProgressTab from '../components/tabs/ProgressTab'
 import useAddAssetDialog from './hook'
 import DialogWrapper from '../components/DialogWrapper'
 import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
+import { useLocalization } from '@/hooks/use-localization'
 
 export type AddAssetDialogContextType = {
   assetPaths?: string[]
@@ -37,6 +38,8 @@ const AddAssetDialog = ({
   setDialogOpen,
   openEditDialog,
 }: Props) => {
+  const { t } = useLocalization()
+
   const {
     tab,
     setTab,
@@ -107,6 +110,7 @@ const AddAssetDialog = ({
             submitting={submitting}
             tabIndex={5}
             totalTabs={5}
+            submitButtonText={t('addasset:add-asset')}
           />
         </TabsContent>
         <TabsContent value="progress">

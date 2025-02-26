@@ -3,6 +3,7 @@ import { useToast } from '@/hooks/use-toast'
 import { commands, FileInfo } from '@/lib/bindings'
 import { OctagonAlert } from 'lucide-react'
 import { useContext, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: string
@@ -28,14 +29,17 @@ export const useAssetCardOpenButton = ({
   const [mainButtonLoading, setMainButtonLoading] = useState(false)
   const [mainButtonChecked, setMainButtonChecked] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
 
   const showDependencyWarning = () => {
     toast({
       icon: <OctagonAlert className="text-primary" />,
-      title: '前提アセットがあります！',
-      description: '開くボタンの下矢印から前提アセットを確認できます',
+      title: t('assetcard:open-button:show-dependency-warning-toast'),
+      description: t(
+        'assetcard:open-button:show-dependency-warning-toast:description',
+      ),
       duration: 5000,
     })
   }
@@ -45,7 +49,7 @@ export const useAssetCardOpenButton = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return false
@@ -75,7 +79,7 @@ export const useAssetCardOpenButton = ({
 
       if (result.status === 'error') {
         toast({
-          title: 'エラー',
+          title: t('general:error'),
           description: result.error,
         })
         return false
@@ -124,7 +128,7 @@ export const useAssetCardOpenButton = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return false
@@ -138,7 +142,7 @@ export const useAssetCardOpenButton = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
       return

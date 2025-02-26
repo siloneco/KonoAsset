@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from '@tanstack/react-router'
 import { Route as PreferenceRoute } from '@/routes/preference'
 import TextSearch from './components/TextSearch'
+import { useLocalization } from '@/hooks/use-localization'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
@@ -48,6 +49,7 @@ const MainSidebar = () => {
   const updateCategoriesAndTags = async () => {
     setTagCandidates(await fetchAllTags())
   }
+  const { t } = useLocalization()
 
   useEffect(() => {
     updateCategoriesAndTags()
@@ -81,7 +83,7 @@ const MainSidebar = () => {
                 creator={queryTextFilterForCreator}
                 setCreator={setQueryTextFilterForCreator}
               />
-              <Label className="text-base">アセットタイプ</Label>
+              <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
               {(assetType === 'All' || assetType === 'AvatarWearable') && (
                 <AvatarWearableFilter />
@@ -89,8 +91,8 @@ const MainSidebar = () => {
               {assetType === 'WorldObject' && <WorldObjectFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
-                  label="タグ"
-                  placeholder="絞り込むタグを選択..."
+                  label={t('general:tag')}
+                  placeholder={t('mainsidebar:filter:tag:placeholder')}
                   candidates={tagCandidates}
                   value={tagValues}
                   onValueChange={(values) =>

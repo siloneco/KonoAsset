@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast'
 import { AssetSummary, commands } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
 import { FC, ReactNode } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
@@ -21,12 +22,13 @@ const SlimAssetDetail: FC<Props> = ({
   openEditDialog,
   actionComponent,
 }) => {
+  const { t } = useLocalization()
   const openInFileManager = async () => {
     const result = await commands.openManagedDir(asset.id)
 
     if (result.status === 'error') {
       toast({
-        title: 'エラー',
+        title: t('general:error'),
         description: result.error,
       })
     }
@@ -47,13 +49,17 @@ const SlimAssetDetail: FC<Props> = ({
         </p>
       </div>
       <div className="space-x-2 flex flex-row items-center">
-        {!hideOpenButton && <Button onClick={openInFileManager}>開く</Button>}
+        {!hideOpenButton && (
+          <Button onClick={openInFileManager}>
+            {t('general:button:open')}
+          </Button>
+        )}
         {openEditDialog && (
           <Button
             variant={'secondary'}
             onClick={() => openEditDialog(asset.id)}
           >
-            情報を編集
+            {t('slimassetdetail:edit-info')}
           </Button>
         )}
         {actionComponent}

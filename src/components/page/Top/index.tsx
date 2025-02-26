@@ -8,6 +8,7 @@ import NavBar from '../../model/MainNavBar'
 import AssetList from '@/components/model/AssetList'
 import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
 import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
+import { useLocalization } from '@/hooks/use-localization'
 
 const TopPage = () => {
   const { assetContextValue, isDragAndHover } = useTopPage()
@@ -24,6 +25,8 @@ const TopPage = () => {
   const displayAssetCount: number | undefined = filterEnforced
     ? matchedAssetIDs.length
     : undefined
+
+  const { t } = useLocalization()
 
   return (
     <div className="flex">
@@ -66,7 +69,7 @@ const TopPage = () => {
       >
         <div className="h-full w-full bg-black/80 flex items-center justify-center">
           <div className="bg-card p-12 rounded-3xl border-2 border-primary border-dashed">
-            <p className="text-2xl">ファイルをドロップしてアセットを追加</p>
+            <p className="text-2xl">{t('top:add-text')}</p>
           </div>
         </div>
       </div>

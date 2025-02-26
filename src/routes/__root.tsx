@@ -5,6 +5,7 @@ import '../index.css'
 import { Toaster } from '@/components/ui/toaster'
 import PersistentContextProvider from '@/components/context/PersistentContext'
 import PreferenceContextProvider from '@/components/context/PreferenceContext'
+import { LocalizationContextProvider } from '@/components/context/LocalizationContext'
 
 export const Route = createRootRoute({
   component: () => (
@@ -16,8 +17,10 @@ export const Route = createRootRoute({
     >
       <PreferenceContextProvider>
         <PersistentContextProvider>
-          <Outlet />
-          <Toaster />
+          <LocalizationContextProvider>
+            <Outlet />
+            <Toaster />
+          </LocalizationContextProvider>
         </PersistentContextProvider>
       </PreferenceContextProvider>
     </ThemeProvider>

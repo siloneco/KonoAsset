@@ -14,6 +14,7 @@ import {
 import { FC, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   assetId: string | null
@@ -27,6 +28,8 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { t } = useLocalization()
 
   const fetchAssetInfo = async (id: string) => {
     try {
@@ -67,7 +70,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>メモ</DialogTitle>
+          <DialogTitle>{t('general:memo')}</DialogTitle>
           <DialogDescription className="max-w-[450px] truncate">
             {loading && <Skeleton className="w-52 h-3 rounded-full" />}
             {!loading && name}
@@ -132,7 +135,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
         <DialogFooter>
           <DialogClose asChild>
             <Button variant={'outline'} className="mx-auto">
-              閉じる
+              {t('general:button:close')}
             </Button>
           </DialogClose>
         </DialogFooter>

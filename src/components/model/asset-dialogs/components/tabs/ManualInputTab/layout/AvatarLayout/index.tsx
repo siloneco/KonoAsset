@@ -2,6 +2,7 @@ import { Label } from '@/components/ui/label'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
+import { useLocalization } from '@/hooks/use-localization'
 
 import { useEffect, useState } from 'react'
 
@@ -10,6 +11,7 @@ type Props = {
 }
 
 const AvatarLayout = ({ form }: Props) => {
+  const { t } = useLocalization()
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {
@@ -34,16 +36,16 @@ const AvatarLayout = ({ form }: Props) => {
   return (
     <div className="w-full flex flex-row space-x-2 mb-4">
       <div className="w-full space-y-2">
-        <Label>タグ</Label>
+        <Label> {t('general:tag')} </Label>
         <MultipleSelector
           options={tagCandidates}
-          placeholder="タグを選択..."
+          placeholder={t('addasset:tag:placeholder')}
           className="max-w-[600px]"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
             <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-              入力して作成
+              {t('addasset:empty-indicator')}
             </p>
           }
           value={form.getValues('tags').map((tag) => {
@@ -60,7 +62,7 @@ const AvatarLayout = ({ form }: Props) => {
           }}
         />
         <p className="text-foreground/60 text-sm">
-          タグは複数選択できます (例: Vket、無料、自作など)
+          {t('addasset:tag:explanation-text')}
         </p>
       </div>
     </div>

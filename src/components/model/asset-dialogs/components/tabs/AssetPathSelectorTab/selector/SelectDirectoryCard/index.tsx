@@ -1,12 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { ChevronRight, Folder } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   onClick: () => void
 }
 
 const SelectDirectoryCard = ({ onClick }: Props) => {
+  const { t } = useLocalization()
   return (
     <Card className="w-[250px]">
       <CardContent>
@@ -20,7 +22,7 @@ const SelectDirectoryCard = ({ onClick }: Props) => {
       <CardFooter>
         <Button className="mx-auto" onClick={onClick}>
           <ChevronRight size={24} />
-          フォルダを選択する
+          {t('addasset:select-directory')}
         </Button>
       </CardFooter>
     </Card>

@@ -2,6 +2,7 @@ import { AssetContext } from '@/components/context/AssetContext'
 import { AssetSelector } from '@/components/model/AssetSelector'
 import SlimAssetDetail from '@/components/model/SlimAssetDetail'
 import { Button } from '@/components/ui/button'
+import { useLocalization } from '@/hooks/use-localization'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { XCircle } from 'lucide-react'
@@ -16,12 +17,13 @@ export const DependencyInput: FC<Props> = ({
   dependencies,
   setDependencies,
 }) => {
+  const { t } = useLocalization()
   const { assetDisplaySortedList } = useContext(AssetContext)
 
   return (
     <div className="w-full flex flex-row mb-4">
       <div className="w-full space-y-2">
-        <Label>前提アセット</Label>
+        <Label>{t('general:prerequisite-assets')}</Label>
         <AssetSelector
           assets={assetDisplaySortedList}
           slimAssetDetailClassName="max-w-[570px]"
@@ -32,7 +34,9 @@ export const DependencyInput: FC<Props> = ({
         />
         <div className="w-full h-40 border-2 border-accent rounded-lg flex flex-col items-center justify-center">
           {dependencies.length <= 0 && (
-            <p className="text-card-foreground/70">選択されていません</p>
+            <p className="text-card-foreground/70">
+              {t('general:prerequisite-assets:empty')}
+            </p>
           )}
           {dependencies.length > 0 && (
             <ScrollArea className="w-full h-full pr-2">
@@ -67,7 +71,7 @@ export const DependencyInput: FC<Props> = ({
           )}
         </div>
         <p className="text-card-foreground/60 text-sm">
-          前提アセットを設定すると、開くボタンの下向き矢印から飛ぶことができるようになります
+          {t('addasset:prerequisite-assets:explanation-text')}
         </p>
       </div>
     </div>

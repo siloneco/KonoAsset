@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress'
 import { truncateFilename } from './logic'
 import { useProgressTab } from './hook'
 import { Loader2 } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
@@ -13,6 +14,7 @@ type Props = {
 }
 
 const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
+  const { t } = useLocalization()
   const { percentage, filename, canceling, onCancelButtonClick } =
     useProgressTab({
       taskId,
@@ -24,7 +26,7 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>アセットをインポートしています...</DialogTitle>
+        <DialogTitle> {t('addasset:progress-bar')} </DialogTitle>
       </DialogHeader>
       <div className="my-8 space-y-2">
         <p className="max-w-[600px] truncate">
@@ -42,7 +44,9 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
           disabled={canceling}
         >
           {canceling && <Loader2 className="animate-spin" />}
-          {canceling ? 'キャンセル中' : 'キャンセル'}
+          {canceling
+            ? t('addasset:progress-bar:canceling')
+            : t('general:button:cancel')}
         </Button>
       </DialogFooter>
     </>

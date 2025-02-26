@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use crate::{
+    language::structs::LanguageCode,
     preference::store::{PreferenceStore, Theme},
     updater::update_handler::UpdateChannel,
 };
@@ -11,8 +12,12 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 pub enum VersionedPreferences {
     Preference {
-        version: MustBe!(3u64),
+        version: MustBe!(4u64),
         data: PreferenceStore,
+    },
+    LegacyPreferenceV3 {
+        version: MustBe!(3u64),
+        data: LegacyPreferenceStoreV3,
     },
     LegacyPreferenceV2 {
         version: MustBe!(2u64),
@@ -31,14 +36,20 @@ impl TryInto<PreferenceStore> for VersionedPreferences {
     fn try_into(self) -> Result<PreferenceStore, Self::Error> {
         match self {
             VersionedPreferences::Preference { data, .. } => Ok(data),
-            VersionedPreferences::LegacyPreferenceV2 { data, .. } => Ok(data.into()),
+            VersionedPreferences::LegacyPreferenceV3 { data, .. } => Ok(data.into()),
+            VersionedPreferences::LegacyPreferenceV2 { data, .. } => {
+                let data: LegacyPreferenceStoreV3 = data.into();
+                Ok(data.into())
+            }
             VersionedPreferences::LegacyPreferenceV1 { data, .. } => {
-                let v2: LegacyPreferenceStoreV2 = data.into();
-                Ok(v2.into())
+                let data: LegacyPreferenceStoreV2 = data.into();
+                let data: LegacyPreferenceStoreV3 = data.into();
+                Ok(data.into())
             }
             VersionedPreferences::LegacyRawPreference(legacy_raw_preference) => {
-                let v2: LegacyPreferenceStoreV2 = legacy_raw_preference.into();
-                Ok(v2.into())
+                let data: LegacyPreferenceStoreV2 = legacy_raw_preference.into();
+                let data: LegacyPreferenceStoreV3 = data.into();
+                Ok(data.into())
             }
         }
     }
@@ -49,9 +60,37 @@ impl TryFrom<PreferenceStore> for VersionedPreferences {
 
     fn try_from(value: PreferenceStore) -> Result<VersionedPreferences, Self::Error> {
         Ok(VersionedPreferences::Preference {
-            version: MustBe!(3u64),
+            version: MustBe!(4u64),
             data: value,
         })
+    }
+}
+
+/*
+ * Version 3
+ */
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct LegacyPreferenceStoreV3 {
+    pub data_dir_path: PathBuf,
+    pub theme: Theme,
+    pub delete_on_import: bool,
+    pub use_unitypackage_selected_open: bool,
+    pub update_channel: UpdateChannel,
+}
+
+impl Into<PreferenceStore> for LegacyPreferenceStoreV3 {
+    fn into(self) -> PreferenceStore {
+        PreferenceStore {
+            file_path: Default::default(),
+            data_dir_path: self.data_dir_path,
+            theme: self.theme,
+            language: LanguageCode::JaJp,
+            delete_on_import: self.delete_on_import,
+            use_unitypackage_selected_open: self.use_unitypackage_selected_open,
+            update_channel: self.update_channel,
+        }
     }
 }
 
@@ -68,10 +107,9 @@ pub struct LegacyPreferenceStoreV2 {
     pub use_unitypackage_selected_open: bool,
 }
 
-impl Into<PreferenceStore> for LegacyPreferenceStoreV2 {
-    fn into(self) -> PreferenceStore {
-        PreferenceStore {
-            file_path: Default::default(),
+impl Into<LegacyPreferenceStoreV3> for LegacyPreferenceStoreV2 {
+    fn into(self) -> LegacyPreferenceStoreV3 {
+        LegacyPreferenceStoreV3 {
             data_dir_path: self.data_dir_path,
             theme: self.theme,
             delete_on_import: self.delete_on_import,
