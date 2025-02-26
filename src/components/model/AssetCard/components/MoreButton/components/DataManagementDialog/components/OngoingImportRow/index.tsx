@@ -147,7 +147,7 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
   return (
     <div className="flex flex-row items-center space-x-2">
       {status === 'Running' && (
-        <Loader2 size={24} className="animate-spin text-foreground/60" />
+        <Loader2 size={24} className="animate-spin text-muted-foreground" />
       )}
       {(status === 'Cancelled' || status === 'Failed') && (
         <Ban size={20} className="text-red-400" />
@@ -155,12 +155,12 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
       {status === 'Completed' && <Check size={24} className="text-green-600" />}
       <p className="w-96 truncate">
         {status === 'Cancelled' && (
-          <span className="text-foreground/60 mr-2">
+          <span className="text-muted-foreground mr-2">
             ({t('general:cancelled')})
           </span>
         )}
         {status === 'Failed' && (
-          <span className="text-foreground/60 mr-2">
+          <span className="text-muted-foreground mr-2">
             ({t('general:failed')})
           </span>
         )}

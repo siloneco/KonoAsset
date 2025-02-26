@@ -44,7 +44,7 @@ const SlimAssetDetail: FC<Props> = ({
       </div>
       <div className="flex-1 min-w-0">
         <p className="truncate text-ellipsis w-full">{asset.name}</p>
-        <p className="text-card-foreground/60 truncate text-ellipsis w-full">
+        <p className="text-muted-foreground truncate text-ellipsis w-full">
           {asset.creator}
         </p>
       </div>

@@ -17,7 +17,7 @@ const UseUnitypackageSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
         <Label className="text-lg">
           {t('preference:settings:use-unitypackage-selector')}
         </Label>
-        <p className="text-foreground/60 text-sm w-10/12">
+        <p className="text-muted-foreground text-sm w-10/12">
           {t('preference:settings:use-unitypackage-selector:explanation-text')}
         </p>
       </div>

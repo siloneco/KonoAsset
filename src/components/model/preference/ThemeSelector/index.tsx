@@ -21,7 +21,7 @@ const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
     <div className="flex flex-row items-center">
       <div className="space-y-2">
         <Label className="text-xl">{t('preference:settings:theme')}</Label>
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('preference:settings:theme:explanation-text')}
         </p>
       </div>

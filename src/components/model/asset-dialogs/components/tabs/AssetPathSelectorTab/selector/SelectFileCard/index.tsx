@@ -15,7 +15,7 @@ const SelectFileCard = ({ onClick }: Props) => {
         <div className="m-8 mb-2">
           <File
             size={80}
-            className="block mx-auto text-yellow-600 dark:text-foreground"
+            className="block mx-auto text-muted-foreground dark:text-foreground"
           />
         </div>
       </CardContent>

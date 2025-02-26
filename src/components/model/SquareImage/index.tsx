@@ -58,7 +58,7 @@ const SquareImage = memo(function SquareImage({
         {loading && <Skeleton className="w-full h-full" />}
         {selectable && (
           <div
-            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-30 dark:hover:opacity-100 dark:hover:bg-opacity-50"
+            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-20 hover:dark:bg-opacity-30 dark:hover:opacity-100 dark:hover:bg-opacity-50"
             onClick={selectImage}
           >
             <ImagePlus size={50} />
@@ -76,7 +76,7 @@ const SquareImage = memo(function SquareImage({
           >
             <ChevronLeft size={16} />
           </Button>
-          <p className="text-foreground/70 flex items-center">
+          <p className="text-muted-foreground flex items-center">
             {imageUrls.length > 0 &&
               urlImageIndex >= 0 &&
               `${urlImageIndex + 1}/${imageUrls.length}`}

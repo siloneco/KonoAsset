@@ -30,7 +30,7 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
       </DialogHeader>
       <div className="my-8 space-y-2">
         <p className="max-w-[600px] truncate">
-          <span className="text-foreground/60 text-ellipsis">
+          <span className="text-muted-foreground text-ellipsis">
             {truncateFilename(filename)}
           </span>
         </p>

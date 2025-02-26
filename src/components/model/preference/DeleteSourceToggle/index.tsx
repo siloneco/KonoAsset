@@ -17,7 +17,7 @@ const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
         <Label className="text-lg">
           {t('preference:settings:delete-source')}
         </Label>
-        <p className="text-foreground/60 text-sm w-10/12">
+        <p className="text-muted-foreground text-sm w-10/12">
           {t('preference:settings:delete-source:explanation-text')}
         </p>
       </div>

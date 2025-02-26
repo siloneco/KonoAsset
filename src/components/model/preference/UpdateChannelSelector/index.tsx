@@ -26,7 +26,7 @@ const UpdateChannelSelector: FC<Props> = ({
         <Label className="text-xl">
           {t('preference:settings:update-channel')}
         </Label>
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('preference:settings:update-channel:explanation-text-1')}
           <br />
           {t('preference:settings:update-channel:explanation-text-2')}

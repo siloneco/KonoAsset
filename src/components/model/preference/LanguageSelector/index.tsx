@@ -26,7 +26,7 @@ export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
           {t('preference:settings:language')}
           <Languages className="opacity-70 ml-2" />
         </Label>
-        <p className="text-foreground/60 text-sm">
+        <p className="text-muted-foreground text-sm">
           {t('preference:settings:language:explanation-text')}
         </p>
       </div>

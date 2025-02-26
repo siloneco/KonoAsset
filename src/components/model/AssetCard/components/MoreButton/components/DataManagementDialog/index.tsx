@@ -97,7 +97,7 @@ const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
         </div>
         <div className="flex flex-row justify-center items-center space-x-2">
           <InfoIcon className="w-6 h-6 text-primary" />
-          <p className="text-card-foreground/60">
+          <p className="text-muted-foreground">
             {t('assetcard:more-button:data-management:explanation-text-2')}
           </p>
         </div>

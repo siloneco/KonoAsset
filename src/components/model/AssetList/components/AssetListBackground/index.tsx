@@ -15,7 +15,7 @@ const AssetListBackground: FC<Props> = ({ type, openDialog }) => {
     return (
       <div className="flex flex-col w-full h-[calc(100vh-150px)] justify-center items-center">
         <Sprout size={150} className="opacity-40" />
-        <p className="text-xl text-foreground/60">
+        <p className="text-xl text-muted-foreground">
           {t('assetlist:background:no-assets')}
         </p>
         <Button className="mt-4" onClick={openDialog}>
@@ -29,7 +29,7 @@ const AssetListBackground: FC<Props> = ({ type, openDialog }) => {
     return (
       <div className="flex flex-col w-full h-[calc(100vh-150px)] justify-center items-center">
         <FolderSearch size={100} className="opacity-40" />
-        <p className="text-xl text-foreground/60">
+        <p className="text-xl text-muted-foreground">
           {t('assetlist:background:no-results')}
         </p>
         <Button className="mt-4" variant="secondary" onClick={clearFilters}>

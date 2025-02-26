@@ -55,7 +55,7 @@ const MultiFilterItemSelector = ({
         placeholder={formattedPlaceholder}
         hidePlaceholderWhenSelected
         emptyIndicator={
-          <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
+          <p className="text-center text-lg text-muted-foreground">
             {t('mainsidebar:multi-filter-item-selector:no-candidates')}
           </p>
         }
