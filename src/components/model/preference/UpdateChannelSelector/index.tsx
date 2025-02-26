@@ -22,7 +22,7 @@ const UpdateChannelSelector: FC<Props> = ({
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2">
+      <div className="space-y-2 mr-2">
         <Label className="text-xl">
           {t('preference:settings:update-channel')}
         </Label>
@@ -38,10 +38,14 @@ const UpdateChannelSelector: FC<Props> = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="Stable">
-            {t('preference:settings:update-channel:stable')}
+            <span className="break-all">
+              {t('preference:settings:update-channel:stable')}
+            </span>
           </SelectItem>
-          <SelectItem value={'PreRelease'}>
-            {t('preference:settings:update-channel:pre-release')}
+          <SelectItem value="PreRelease">
+            <span className="break-all">
+              {t('preference:settings:update-channel:pre-release')}
+            </span>
           </SelectItem>
         </SelectContent>
       </Select>

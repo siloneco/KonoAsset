@@ -54,6 +54,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         file::common::migrate_data_dir,                 // データフォルダ移行
         file::common::get_image_absolute_path,          // 画像の絶対パス取得
         // 設定関連
+        preference::common::require_initial_setup,
         preference::common::get_preferences,
         preference::common::set_preferences,
         preference::reset::reset_application,
