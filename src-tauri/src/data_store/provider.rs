@@ -1,4 +1,8 @@
-use std::{ffi::OsStr, fs, path::PathBuf};
+use std::{
+    ffi::OsStr,
+    fs,
+    path::{Path, PathBuf},
+};
 
 use serde::Serialize;
 use tauri::AppHandle;
@@ -78,11 +82,16 @@ impl StoreProvider {
         self.data_dir.clone()
     }
 
-    pub async fn migrate_data_dir(
+    pub async fn migrate_data_dir<P>(
         &mut self,
         app: &AppHandle,
-        new_path: &PathBuf,
-    ) -> Result<MigrateResult, String> {
+        new_path: P,
+    ) -> Result<MigrateResult, String>
+    where
+        P: AsRef<Path>,
+    {
+        let new_path = new_path.as_ref();
+
         if !new_path.is_dir() {
             return Err("New path is not a directory".into());
         }
@@ -123,7 +132,7 @@ impl StoreProvider {
                 old_metadata_path.clone(),
                 new_metadata_path.clone(),
                 false,
-                FileTransferGuard::both(&old_path, &new_path),
+                FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
                     // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
                     // progress は 0 - 1 の範囲であるため、10倍して % に変換する
@@ -157,7 +166,7 @@ impl StoreProvider {
                 old_data_path.clone(),
                 new_data_path.clone(),
                 false,
-                FileTransferGuard::both(&old_path, &new_path),
+                FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
                     // プログレスバーのうち 8/10 をデータのコピーとして扱う
                     // progress は 0 - 1 の範囲であるため、80倍して % に変換する
@@ -191,7 +200,7 @@ impl StoreProvider {
                 old_images_path.clone(),
                 new_images_path.clone(),
                 false,
-                FileTransferGuard::both(&old_path, &new_path),
+                FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
                     // プログレスバーのうち 1/10 を画像のコピーとして扱う
                     // progress は 0 - 1 の範囲であるため、10倍して % に変換する
@@ -210,15 +219,7 @@ impl StoreProvider {
             }
         }
 
-        self.avatar_store = JsonStore::create(new_path)?;
-        self.avatar_wearable_store = JsonStore::create(new_path)?;
-        self.world_object_store = JsonStore::create(new_path)?;
-
-        self.data_dir = new_path.clone();
-
-        let result = self.load_all_assets_from_files().await;
-
-        if let Err(e) = result {
+        if let Err(e) = self.set_data_dir_and_reload(new_path).await {
             return Err(format!("Failed to load assets: {:?}", e));
         }
 
@@ -246,6 +247,21 @@ impl StoreProvider {
         }
 
         Ok(MigrateResult::Migrated)
+    }
+
+    pub async fn set_data_dir_and_reload<P>(&mut self, new_path: P) -> Result<(), String>
+    where
+        P: AsRef<Path>,
+    {
+        let new_path = new_path.as_ref().to_path_buf();
+
+        self.avatar_store = JsonStore::create(&new_path)?;
+        self.avatar_wearable_store = JsonStore::create(&new_path)?;
+        self.world_object_store = JsonStore::create(&new_path)?;
+
+        self.data_dir = new_path;
+
+        self.load_all_assets_from_files().await
     }
 }
 
