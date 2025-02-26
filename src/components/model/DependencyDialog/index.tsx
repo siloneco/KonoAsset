@@ -61,8 +61,8 @@ export const DependencyDialog: FC<Props> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('dependencydialog:header')}</DialogTitle>
+          {loading && <Skeleton className="w-52 h-3 rounded-full" />}
           <DialogDescription className="max-w-[450px] truncate">
-            {loading && <Skeleton className="w-52 h-3 rounded-full" />}
             {!loading && assetName}
           </DialogDescription>
         </DialogHeader>

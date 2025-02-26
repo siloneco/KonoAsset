@@ -71,8 +71,8 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('general:memo')}</DialogTitle>
+          {loading && <Skeleton className="w-52 h-3 rounded-full" />}
           <DialogDescription className="max-w-[450px] truncate">
-            {loading && <Skeleton className="w-52 h-3 rounded-full" />}
             {!loading && name}
           </DialogDescription>
         </DialogHeader>
@@ -91,7 +91,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
                 let buffer: string[] = []
 
                 return (
-                  <p className="space-x-1">
+                  <p className="space-x-1" key={line}>
                     {line.split(' ').map((text) => {
                       if (URL_REGEX.test(text)) {
                         const linkComponent = (
@@ -114,10 +114,10 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
                         buffer = []
 
                         return (
-                          <>
+                          <span key={bufferedText}>
                             <span>{bufferedText}</span>
                             {linkComponent}
-                          </>
+                          </span>
                         )
                       }
 
@@ -125,7 +125,9 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
 
                       return <></>
                     })}
-                    {buffer.length > 0 && <span>{buffer.join(' ')}</span>}
+                    {buffer.length > 0 && (
+                      <span key={buffer.join(' ')}>{buffer.join(' ')}</span>
+                    )}
                   </p>
                 )
               })}
