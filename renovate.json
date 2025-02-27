@@ -11,19 +11,6 @@
   "schedule": ["after 9:00 before 23:00"],
   "assignees": ["siloneco"],
   "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  },
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchCurrentVersion": "!/^0/",
-      "automerge": true
-    },
-    {
-      "matchPackageNames": ["lucide-react"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
-    }
-  ]
+    "enabled": true
+  }
 }
