@@ -46,6 +46,13 @@ impl PximgResolver {
         self.file_map.insert(url.to_string(), filename.clone());
         Ok(filename)
     }
+
+    pub fn change_images_dir<P>(&mut self, images_dir: P)
+    where
+        P: AsRef<Path>,
+    {
+        self.images_dir = images_dir.as_ref().to_path_buf();
+    }
 }
 
 async fn save_image_from_url<P>(
