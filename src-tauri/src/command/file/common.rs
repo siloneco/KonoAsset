@@ -4,6 +4,7 @@ use tauri::{async_runtime::Mutex, AppHandle, State};
 use uuid::Uuid;
 
 use crate::{
+    booth::image_resolver::PximgResolver,
     data_store::{
         find::find_unitypackage,
         provider::{MigrateResult, StoreProvider},
@@ -52,6 +53,7 @@ pub async fn migrate_data_dir(
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    pximg_resolver: State<'_, Arc<Mutex<PximgResolver>>>,
     handle: State<'_, AppHandle>,
     new_path: PathBuf,
     migrate_data: bool,
@@ -86,6 +88,7 @@ pub async fn migrate_data_dir(
 
     let cloned_basic_store = (*basic_store).clone();
     let cloned_preference = (*preference).clone();
+    let cloned_pximg_resolver = (*pximg_resolver).clone();
     let cloned_app_handle = (*handle).clone();
 
     let task = task_container
@@ -119,6 +122,11 @@ pub async fn migrate_data_dir(
 
             preference.overwrite(&new_preference);
             preference.save().map_err(|e| e.to_string())?;
+
+            cloned_pximg_resolver
+                .lock()
+                .await
+                .change_images_dir(new_path.join("images"));
 
             if !migrate_data {
                 if let Err(e) = basic_store.set_data_dir_and_reload(&new_path).await {
