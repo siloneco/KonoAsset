@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
+import { useLocalization } from '@/hooks/use-localization'
 
 export interface Option {
   value: string
@@ -22,7 +23,7 @@ export interface Option {
 }
 
 interface SingleSelectorProps {
-  value?: Option
+  value?: Option | null
   defaultOptions?: Option[]
   options?: Option[]
   placeholder?: string
@@ -140,6 +141,7 @@ const TextInputSelect = React.forwardRef<
     }: SingleSelectorProps,
     ref: React.Ref<SingleSelectorRef>,
   ) => {
+    const { t } = useLocalization()
     const inputRef = React.useRef<HTMLInputElement>(null)
     const [open, setOpen] = React.useState(false)
     const [onScrollbar, setOnScrollbar] = React.useState(false)
@@ -312,7 +314,7 @@ const TextInputSelect = React.forwardRef<
             onChange?.(newOption)
           }}
         >
-          {`新しく作成: "${inputValue}"`}
+          {`${t('ui:multi-select:create-new')}: "${inputValue}"`}
         </CommandItem>
       )
 

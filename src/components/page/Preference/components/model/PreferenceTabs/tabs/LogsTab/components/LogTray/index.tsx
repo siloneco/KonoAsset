@@ -25,13 +25,13 @@ const LogTray: FC<Props> = ({ log }) => {
       <p
         className={cn(
           logVariants({ variant: log.level }),
-          'text-card-foreground/50',
+          'text-muted-foreground',
         )}
       >
         {log.time}
       </p>
       <p className="w-16">{log.level}: </p>
-      <p className="text-foreground/80">{log.message}</p>
+      <p className="text-foreground">{log.message}</p>
     </div>
   )
 }

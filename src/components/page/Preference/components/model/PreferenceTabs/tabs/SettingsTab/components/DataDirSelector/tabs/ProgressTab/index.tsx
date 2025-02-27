@@ -5,6 +5,7 @@ import { FC } from 'react'
 import useDataDirSelectorProgressTab from './hook'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
@@ -19,6 +20,7 @@ const ProgressTab: FC<Props> = ({
   setDialogOpen,
   updateLocalDataDir,
 }) => {
+  const { t } = useLocalization()
   const { percentage, filename, canceling, onCancelButtonClick } =
     useDataDirSelectorProgressTab({
       taskId,
@@ -30,10 +32,10 @@ const ProgressTab: FC<Props> = ({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>データを移行中...</DialogTitle>
+        <DialogTitle>{t('preference:settings:progress-bar')}</DialogTitle>
       </DialogHeader>
       <div className="mt-4">
-        <p className="text-foreground/70 w-[430px] truncate">{filename}</p>
+        <p className="text-muted-foreground w-[430px] truncate">{filename}</p>
         <Progress className="mt-1" value={percentage} />
       </div>
       <div className="flex justify-center mt-8">
@@ -43,7 +45,7 @@ const ProgressTab: FC<Props> = ({
           disabled={canceling}
         >
           {canceling && <Loader2 className="animate-spin" />}
-          キャンセル
+          {t('general:button:cancel')}
         </Button>
       </div>
     </>

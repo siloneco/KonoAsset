@@ -5,6 +5,7 @@ on:
       - "src-tauri/**"
     branches-ignore:
       - "main"
+      - "pre-release"
   pull_request:
     types:
       - reopened

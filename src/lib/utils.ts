@@ -46,5 +46,7 @@ export const getDefaultPreferences = (): PreferenceStore => {
     theme: 'system',
     useUnitypackageSelectedOpen: true,
     deleteOnImport: true,
+    updateChannel: 'Stable',
+    language: 'enUs',
   }
 }

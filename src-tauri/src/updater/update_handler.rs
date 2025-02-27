@@ -1,4 +1,5 @@
-use tauri::{async_runtime::Mutex, AppHandle};
+use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Url};
 use tauri_plugin_updater::{Update, UpdaterExt};
 
 pub struct UpdateHandler {
@@ -7,7 +8,7 @@ pub struct UpdateHandler {
     update_available: bool,
     update_version: Option<String>,
     update_handler: Option<Update>,
-    show_notification: Mutex<bool>,
+    show_notification: bool,
 }
 
 impl UpdateHandler {
@@ -18,12 +19,28 @@ impl UpdateHandler {
             update_available: false,
             update_version: None,
             update_handler: None,
-            show_notification: Mutex::new(true),
+            show_notification: true,
         }
     }
 
-    pub async fn check_for_update(&mut self) -> tauri_plugin_updater::Result<bool> {
-        let result = self.app_handle.updater()?.check().await?;
+    pub async fn check_for_update(
+        &mut self,
+        channel: &UpdateChannel,
+    ) -> tauri_plugin_updater::Result<bool> {
+        let url = format!(
+            "https://releases.konoasset.dev/manifests/{}.json",
+            channel.as_str()
+        );
+
+        log::info!("checking for update from {}", url);
+
+        let result = self
+            .app_handle
+            .updater_builder()
+            .endpoints(vec![Url::parse(&url).unwrap()])?
+            .build()?
+            .check()
+            .await?;
 
         self.update_handler = result.clone();
 
@@ -78,10 +95,25 @@ impl UpdateHandler {
     // }
 
     pub async fn show_notification(&self) -> bool {
-        *self.show_notification.lock().await
+        self.show_notification
     }
 
-    pub async fn set_show_notification(&self, show_notification: bool) {
-        *self.show_notification.lock().await = show_notification;
+    pub async fn set_show_notification(&mut self, show_notification: bool) {
+        self.show_notification = show_notification;
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, specta::Type)]
+pub enum UpdateChannel {
+    Stable,
+    PreRelease,
+}
+
+impl UpdateChannel {
+    pub fn as_str(&self) -> &str {
+        match self {
+            UpdateChannel::Stable => "stable",
+            UpdateChannel::PreRelease => "pre-release",
+        }
     }
 }

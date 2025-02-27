@@ -26,11 +26,17 @@ describe('PersistentContext Hook', () => {
 
     // Test textFilter works correctly
     const textFilter = 'test'
-    expect(result.current.persistentContextValue.textFilter).not.toEqual(
-      textFilter,
+    expect(
+      result.current.persistentContextValue.generalQueryTextFilter,
+    ).not.toEqual(textFilter)
+    act(() =>
+      result.current.persistentContextValue.setGeneralQueryTextFilter(
+        textFilter,
+      ),
     )
-    act(() => result.current.persistentContextValue.setTextFilter(textFilter))
-    expect(result.current.persistentContextValue.textFilter).toEqual(textFilter)
+    expect(
+      result.current.persistentContextValue.generalQueryTextFilter,
+    ).toEqual(textFilter)
 
     // Test setAssetType works correctly
     const assetType = 'Avatar'
@@ -88,21 +94,11 @@ describe('PersistentContext Hook', () => {
       supportedAvatarFilter,
     )
 
-    // Test setEditingAssetID works correctly
-    const editingAssetID = 'test'
-    expect(result.current.persistentContextValue.editingAssetID).not.toEqual(
-      editingAssetID,
-    )
-    act(() =>
-      result.current.persistentContextValue.setEditingAssetID(editingAssetID),
-    )
-    expect(result.current.persistentContextValue.editingAssetID).toEqual(
-      editingAssetID,
-    )
-
     // Test clearFilters works correctly
     act(() => result.current.persistentContextValue.clearFilters())
-    expect(result.current.persistentContextValue.textFilter).toEqual('')
+    expect(
+      result.current.persistentContextValue.generalQueryTextFilter,
+    ).toEqual('')
     expect(result.current.persistentContextValue.assetType).toEqual('All')
     expect(result.current.persistentContextValue.categoryFilter).toEqual([])
     expect(result.current.persistentContextValue.tagFilter).toEqual([])

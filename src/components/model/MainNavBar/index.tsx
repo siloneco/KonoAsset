@@ -13,6 +13,7 @@ import { useContext } from 'react'
 import { convertToSelectID, handleSortByChange } from './logic'
 import { AssetContext } from '@/components/context/AssetContext'
 import { Button } from '@/components/ui/button'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
@@ -24,6 +25,7 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
     useContext(PersistentContext)
   const { assetDisplaySortedList } = useContext(AssetContext)
 
+  const { t } = useLocalization()
   const totalAssetCount = assetDisplaySortedList.length
   const showingCount = displayAssetCount ?? totalAssetCount
 
@@ -34,13 +36,18 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
           <Card className="min-h-10 flex items-center">
             <div className="lg:w-28" />
             <div className="my-auto ml-4 lg:mx-auto">
-              <span className="text-foreground/70">
-                {totalAssetCount}個のアセットのうち
+              <span className="text-muted-foreground">
+                {t('mainnavbar:total-asset-count:foretext')}
+                {totalAssetCount}
+                {t('mainnavbar:total-asset-count:posttext')}
               </span>
               <span className="text-card-foreground font-bold px-2 rounded-lg">
-                {showingCount}個
+                {showingCount}
+                {t('general:count')}
               </span>
-              <span className="text-foreground/70">を表示中</span>
+              <span className="text-muted-foreground">
+                {t('mainnavbar:showing')}
+              </span>
             </div>
             <div className="w-28 ml-auto mr-2">
               {totalAssetCount !== showingCount && (
@@ -49,7 +56,7 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
                   variant={'outline'}
                   onClick={clearFilters}
                 >
-                  フィルタをクリア
+                  {t('general:clear-filter')}
                 </Button>
               )}
             </div>
@@ -64,25 +71,33 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
             defaultValue="CreatedAtDesc"
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="ソート設定" />
+              <SelectValue placeholder={t('mainnavbar:sort-settings')} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="CreatedAtDesc">
-                  追加順 (新しいものから)
+                  {t('mainnavbar:sort-settings:created-at-desc')}
                 </SelectItem>
                 <SelectItem value="CreatedAtAsc">
-                  追加順 (古いものから)
+                  {t('mainnavbar:sort-settings:created-at-asc')}
                 </SelectItem>
-                <SelectItem value="NameAsc">アセット名 (A-Z順)</SelectItem>
-                <SelectItem value="NameDesc">アセット名 (Z-A順)</SelectItem>
-                <SelectItem value="CreatorAsc">ショップ名 (A-Z順)</SelectItem>
-                <SelectItem value="CreatorDesc">ショップ名 (Z-A順)</SelectItem>
+                <SelectItem value="NameAsc">
+                  {t('mainnavbar:sort-settings:asset-name-asc')}
+                </SelectItem>
+                <SelectItem value="NameDesc">
+                  {t('mainnavbar:sort-settings:asset-name-desc')}
+                </SelectItem>
+                <SelectItem value="CreatorAsc">
+                  {t('mainnavbar:sort-settings:shop-name-asc')}
+                </SelectItem>
+                <SelectItem value="CreatorDesc">
+                  {t('mainnavbar:sort-settings:shop-name-desc')}
+                </SelectItem>
                 <SelectItem value="PublishedAtDesc">
-                  商品公開日 (新しいものから)
+                  {t('mainnavbar:sort-settings:published-at-desc')}
                 </SelectItem>
                 <SelectItem value="PublishedAtAsc">
-                  商品公開日 (古いものから)
+                  {t('mainnavbar:sort-settings:published-at-asc')}
                 </SelectItem>
               </SelectGroup>
             </SelectContent>

@@ -8,8 +8,16 @@ export type PersistentContextType = {
   reverseOrder: boolean
   setReverseOrder: (reverseOrder: boolean) => void
 
-  textFilter: string
-  setTextFilter: (filter: string) => void
+  queryTextMode: 'general' | 'advanced'
+  setQueryTextMode: (mode: 'general' | 'advanced') => void
+
+  generalQueryTextFilter: string
+  setGeneralQueryTextFilter: (filter: string) => void
+
+  queryTextFilterForName: string
+  setQueryTextFilterForName: (filter: string) => void
+  queryTextFilterForCreator: string
+  setQueryTextFilterForCreator: (filter: string) => void
 
   assetType: AssetType | 'All'
   setAssetType: (type: AssetType | 'All') => void
@@ -28,9 +36,6 @@ export type PersistentContextType = {
   setSupportedAvatarFilterMatchType: (matchType: MatchType) => void
 
   clearFilters: () => void
-
-  editingAssetID: string | null
-  setEditingAssetID: (assetID: string | null) => void
 }
 
 export const PersistentContext = createContext<PersistentContextType>({
@@ -39,8 +44,16 @@ export const PersistentContext = createContext<PersistentContextType>({
   reverseOrder: false,
   setReverseOrder: () => {},
 
-  textFilter: '',
-  setTextFilter: () => {},
+  queryTextMode: 'general',
+  setQueryTextMode: () => {},
+
+  generalQueryTextFilter: '',
+  setGeneralQueryTextFilter: () => {},
+
+  queryTextFilterForName: '',
+  setQueryTextFilterForName: () => {},
+  queryTextFilterForCreator: '',
+  setQueryTextFilterForCreator: () => {},
 
   assetType: 'All',
   setAssetType: () => {},
@@ -59,9 +72,6 @@ export const PersistentContext = createContext<PersistentContextType>({
   setSupportedAvatarFilterMatchType: () => {},
 
   clearFilters: () => {},
-
-  editingAssetID: null,
-  setEditingAssetID: () => {},
 })
 
 type Props = {

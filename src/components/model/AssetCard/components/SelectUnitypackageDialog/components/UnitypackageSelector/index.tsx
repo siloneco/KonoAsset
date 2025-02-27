@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card'
 import { commands, FileInfo } from '@/lib/bindings'
 import { SiUnity } from '@icons-pack/react-simple-icons'
 import { Folder } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   path: string
@@ -20,13 +21,14 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
     }
   }
 
+  const { t } = useLocalization()
   const displayPath = path.length > 0 ? path : './'
 
   return (
     <div className="w-full">
-      <div className="flex flex-row items-center mb-1 text-foreground/60">
+      <div className="flex flex-row items-center mb-1 text-muted-foreground">
         <Folder className="mr-2" size={18} />
-        {displayPath}
+        <span className="text-foreground">{displayPath}</span>
       </div>
       <Card className="p-2 pl-4 space-y-2 w-full">
         {files.map((file) => (
@@ -41,7 +43,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
               className="ml-auto h-8 w-14"
               onClick={() => open(file.absolutePath)}
             >
-              開く
+              {t('general:button:open')}
             </Button>
           </div>
         ))}

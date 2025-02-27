@@ -3,7 +3,7 @@ import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
 export const isFilterEnforced = (filterRequest: FilterRequest) => {
   return (
     filterRequest.assetType !== undefined ||
-    filterRequest.text !== undefined ||
+    filterRequest.queryText !== undefined ||
     filterRequest.categories !== undefined ||
     filterRequest.tags !== undefined ||
     filterRequest.supportedAvatars !== undefined
@@ -12,7 +12,10 @@ export const isFilterEnforced = (filterRequest: FilterRequest) => {
 
 type Props = {
   assetType: AssetType | 'All'
-  text: string
+  queryTextMode: 'general' | 'advanced'
+  generalQueryText: string
+  queryTextFilterForName: string
+  queryTextFilterForCreator: string
   categories: string[]
   tags: string[]
   tagMatchType: MatchType
@@ -22,7 +25,10 @@ type Props = {
 
 export const createFilterRequest = ({
   assetType,
-  text: query,
+  queryTextMode,
+  generalQueryText,
+  queryTextFilterForName,
+  queryTextFilterForCreator,
   categories,
   tags,
   tagMatchType,
@@ -41,8 +47,35 @@ export const createFilterRequest = ({
     requestAssetType = null
   }
 
-  if (query.length > 0) {
-    requestQuery = query
+  if (queryTextMode === 'general') {
+    if (queryTextMode.length > 0) {
+      requestQuery = generalQueryText
+    } else {
+      requestQuery = null
+    }
+  } else if (queryTextMode === 'advanced') {
+    if (
+      queryTextFilterForName.length <= 0 &&
+      queryTextFilterForCreator.length <= 0
+    ) {
+      requestQuery = null
+    } else {
+      const queries = []
+
+      for (const splitted of queryTextFilterForName.split(' ')) {
+        if (splitted.length > 0) {
+          queries.push(`name:${splitted}`)
+        }
+      }
+
+      for (const splitted of queryTextFilterForCreator.split(' ')) {
+        if (splitted.length > 0) {
+          queries.push(`creator:${splitted}`)
+        }
+      }
+
+      requestQuery = queries.join(' ')
+    }
   } else {
     requestQuery = null
   }
@@ -69,7 +102,7 @@ export const createFilterRequest = ({
 
   const filterReq: FilterRequest = {
     assetType: requestAssetType,
-    text: requestQuery,
+    queryText: requestQuery,
     categories: requestCategories,
     tags: requestTags,
     tagMatchType: tagMatchType,

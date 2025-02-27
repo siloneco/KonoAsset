@@ -2,6 +2,7 @@ import { useToast } from '@/hooks/use-toast'
 import { commands, events } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { useEffect, useState } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
@@ -28,6 +29,7 @@ const useDataDirSelectorProgressTab = ({
   const [filename, setFilename] = useState('')
   const [canceling, setCanceling] = useState(false)
 
+  const { t } = useLocalization()
   const { toast } = useToast()
 
   const onCompleted = async () => {
@@ -35,7 +37,7 @@ const useDataDirSelectorProgressTab = ({
 
     setDialogOpen(false)
     toast({
-      title: 'データの移行が完了しました！',
+      title: t('preference:settings:progress-bar:success-toast'),
     })
   }
 
@@ -43,14 +45,14 @@ const useDataDirSelectorProgressTab = ({
     setCanceling(false)
     setDialogOpen(false)
     toast({
-      title: 'キャンセルされました',
+      title: t('general:cancelled'),
     })
   }
 
   const onFailed = (error: string | null) => {
     setDialogOpen(false)
     toast({
-      title: 'エラーが発生しました',
+      title: t('general:toast-error-description'),
       description: error,
     })
   }

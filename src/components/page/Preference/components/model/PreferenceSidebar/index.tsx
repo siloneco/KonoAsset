@@ -11,6 +11,7 @@ import { ChevronLeft, Home, Info, Logs, Settings } from 'lucide-react'
 import { PreferenceTabIDs } from '../../../hook'
 import { FC } from 'react'
 import { usePreferenceSidebar } from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   activeTab: PreferenceTabIDs
@@ -18,6 +19,7 @@ type Props = {
 }
 
 const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
+  const { t } = useLocalization()
   const { version, backToTopPage, onVersionClick } = usePreferenceSidebar()
 
   return (
@@ -30,7 +32,7 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
         >
           <ChevronLeft />
           <Home />
-          トップ画面に戻る
+          {t('preference:back-to-top')}
         </Button>
       </SidebarHeader>
       <SidebarContent>
@@ -42,7 +44,7 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
               onClick={() => setActiveTab('settings')}
             >
               <Settings />
-              一般設定
+              {t('preference:settings')}
             </Button>
           </SidebarGroupContent>
           <SidebarGroupContent className="p-2">
@@ -52,7 +54,7 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
               onClick={() => setActiveTab('logs')}
             >
               <Logs />
-              ログの確認
+              {t('preference:logs')}
             </Button>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -65,11 +67,11 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab('about')}
           >
             <Info />
-            このアプリについて
+            {t('preference:about')}
           </Button>
         </div>
         <div
-          className="flex justify-center text-foreground/60 select-none cursor-pointer"
+          className="flex justify-center text-muted-foreground select-none cursor-pointer"
           onClick={onVersionClick}
         >
           KonoAsset v{version}

@@ -67,7 +67,7 @@ pub async fn migrate_data_dir(
         return Err(err);
     }
 
-    if new_path.exists() {
+    if migrate_data && new_path.exists() {
         let read_dir = new_path
             .read_dir()
             .map_err(|e| format!("Failed to read directory: {}", e))?;
@@ -92,9 +92,10 @@ pub async fn migrate_data_dir(
         .lock()
         .await
         .run((*handle).clone(), async move {
+            let mut basic_store = cloned_basic_store.lock().await;
+
             if migrate_data {
                 log::info!("Migrating data to new path: {}", new_path.display());
-                let mut basic_store = cloned_basic_store.lock().await;
 
                 let result = basic_store
                     .migrate_data_dir(&cloned_app_handle, &new_path)
@@ -118,6 +119,13 @@ pub async fn migrate_data_dir(
 
             preference.overwrite(&new_preference);
             preference.save().map_err(|e| e.to_string())?;
+
+            if !migrate_data {
+                if let Err(e) = basic_store.set_data_dir_and_reload(&new_path).await {
+                    log::error!("Failed to load all assets from files: {}", e);
+                    return Err(e);
+                }
+            }
 
             log::info!(
                 "Successfully changed data directory to: {}",

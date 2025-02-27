@@ -4,14 +4,18 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use uuid::Uuid;
 
-use super::share::LegacyAssetDescriptionV1;
+use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum VersionedWorldObjects {
     WorldObjects {
-        version: MustBe!(2u64),
+        version: MustBe!(3u64),
         data: HashSet<WorldObject>,
+    },
+    LegacyWorldObjectV2 {
+        version: MustBe!(2u64),
+        data: HashSet<LegacyWorldObjectV2>,
     },
     LegacyWorldObjectsV1(HashSet<LegacyWorldObjectV1>),
 }
@@ -22,11 +26,22 @@ impl TryInto<HashSet<WorldObject>> for VersionedWorldObjects {
     fn try_into(self) -> Result<HashSet<WorldObject>, Self::Error> {
         match self {
             VersionedWorldObjects::WorldObjects { data, .. } => Ok(data),
+            VersionedWorldObjects::LegacyWorldObjectV2 { data, .. } => {
+                let mut world_objects = HashSet::new();
+                for item in data {
+                    let item: WorldObject = item.try_into()?;
+
+                    world_objects.insert(item);
+                }
+                Ok(world_objects)
+            }
             VersionedWorldObjects::LegacyWorldObjectsV1(legacy_world_objects) => {
                 let mut world_objects = HashSet::new();
-                for legacy_world_object in legacy_world_objects {
-                    let world_object = legacy_world_object.try_into()?;
-                    world_objects.insert(world_object);
+                for item in legacy_world_objects {
+                    let item: LegacyWorldObjectV2 = item.try_into()?;
+                    let item: WorldObject = item.try_into()?;
+
+                    world_objects.insert(item);
                 }
                 Ok(world_objects)
             }
@@ -39,11 +54,39 @@ impl TryFrom<HashSet<WorldObject>> for VersionedWorldObjects {
 
     fn try_from(value: HashSet<WorldObject>) -> Result<VersionedWorldObjects, Self::Error> {
         Ok(VersionedWorldObjects::WorldObjects {
-            version: MustBe!(2u64),
+            version: MustBe!(3u64),
             data: value,
         })
     }
 }
+
+/*
+ * V2
+ */
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct LegacyWorldObjectV2 {
+    pub id: Uuid,
+    pub description: LegacyAssetDescriptionV2,
+    pub category: String,
+}
+
+impl TryInto<WorldObject> for LegacyWorldObjectV2 {
+    type Error = String;
+
+    fn try_into(self) -> Result<WorldObject, Self::Error> {
+        Ok(WorldObject {
+            id: self.id,
+            description: self.description.try_into()?,
+            category: self.category,
+        })
+    }
+}
+
+/*
+ * V1
+ */
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -53,11 +96,11 @@ pub struct LegacyWorldObjectV1 {
     pub category: String,
 }
 
-impl TryInto<WorldObject> for LegacyWorldObjectV1 {
+impl TryInto<LegacyWorldObjectV2> for LegacyWorldObjectV1 {
     type Error = String;
 
-    fn try_into(self) -> Result<WorldObject, Self::Error> {
-        Ok(WorldObject {
+    fn try_into(self) -> Result<LegacyWorldObjectV2, Self::Error> {
+        Ok(LegacyWorldObjectV2 {
             id: self.id,
             description: self.description.try_into()?,
             category: self.category,
@@ -92,7 +135,7 @@ mod tests {
             category: "category".to_string(),
         };
 
-        let latest: WorldObject = legacy.try_into().unwrap();
+        let latest: LegacyWorldObjectV2 = legacy.try_into().unwrap();
 
         assert_eq!(
             latest.description.image_filename,

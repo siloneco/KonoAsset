@@ -1,78 +1,30 @@
 # KonoAsset
 
-VRChat 向けのアバターアセットやワールドアセットを管理するデスクトップアプリ
+![GitHub deployments](https://img.shields.io/github/deployments/siloneco/KonoAsset/release?style=flat)
+![GitHub Release](https://img.shields.io/github/v/release/siloneco/KonoAsset?label=Stable)
+![GitHub Release](https://img.shields.io/github/v/release/siloneco/KonoAsset?include_prereleases&label=Pre-Release)
 
-## 開発環境セットアップ
+「このアセットにしよ！」 をもっと簡単にするための VRChat 向けアセット管理ツール
 
-以下をインストールすると良いです
+散らかりやすいアセットの整頓を最大限サポートします
 
-- [VS Code](https://code.visualstudio.com/)
-- [Rust (v1.83.0)](https://www.rust-lang.org/tools/install)
-- [Node.js (v23.4.0)](https://nodejs.org/en/download/package-manager)
+## インストール
 
-## pnpm のインストール
+[Releases](https://github.com/siloneco/KonoAsset/releases/latest) を開き、`KonoAsset_X.X.X_x64-setup.exe` をクリックしてインストーラーをダウンロードして実行してください  
+X.X.X はバージョン情報になっています
 
-npm が入っている場合は以下のコマンドで pnpm をインストールします
+> [!WARNING]
+> 有料のソフトウェア署名を行っていないため、インストーラー起動時に警告が出ることがあります  
+> 続行する場合は「詳細情報」から「実行」を押してください
 
-```
-npm i -g pnpm
-```
+## 機能
+- [x] アセット等を追加して管理
+- [x] 追加したアセットのテキスト検索
+- [x] Boothから商品情報の取得
+- [x] アバター素体、アバター関連アセット、ワールドアセットを分けて管理
+- [x] アセットにカテゴリ、タグ、メモ、依存関係などを設定可能
+- [x] ファイルをドラッグ&ドロップして追加
+- [x] zipファイルの自動展開
 
-もしくは以下のドキュメントを参考にしてインストールしてください
-
-- https://pnpm.io/ja/installation
-
-### 推奨のVSCode拡張機能
-
-以下は推奨のVSCode拡張機能です。上の方が優先度高めです。
-
-- [rust](https://marketplace.visualstudio.com/items?itemName=1YiB.rust-bundle) - Rust開発向け拡張機能パック
-- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) - Tauri用拡張機能
-- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) = Tailwindの自動補完
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - コードフォーマット
-- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) - コードフォーマット
-- [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) - エラーのエディタ内表示
-- [Pretty TypeScript Errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors) - TypeScriptのエラー解析
-- [Dependi](https://marketplace.visualstudio.com/items?itemName=fill-labs.dependi) - 依存関係のアップデート確認
-- [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag) - HTMLタグの自動補完
-- [Auto Rename Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag) - HTML閉じタグの自動名前変更
-- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) - スペルチェック
-
-## パッケージインストール
-
-以下のコマンドで Node.js のパッケージをインストールします
-
-```
-pnpm i
-```
-
-Rust のパッケージは Tauri を実行した時にインストールされます
-
-## Devモードでの実行
-
-`pnpm tauri dev` を実行することによりアプリケーションを起動できます。  
-Viteのソースコードを変更した場合は自動で更新されます。場合によってはアプリケーションで `Ctrl-R` が必要なことがあります。  
-Rustのコードを変更した場合はアプリケーションが再起動されます。
-
-## コードのフォーマット等
-
-以下のコマンドでコードのフォーマットが行えます
-
-```bash
-# フォーマット実行
-pnpm run fmt
-
-# Lintエラーの確認
-pnpm run lint
-
-# TypeScriptのタイプテスト
-pnpm run type-check
-```
-
-## ビルド
-
-以下のコマンドでリリースビルドの作成(インストーラーの作成)が可能です。
-
-```
-pnpm run build
-```
+## ライセンス
+本アプリケーションは [MIT License](./LICENSE) で提供されています

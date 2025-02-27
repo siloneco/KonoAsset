@@ -26,7 +26,8 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { useLoadErrorPage } from './hook'
-import ResetDialog from './components/ResetDialog'
+import ResetDialog from '../../model/ResetDialog'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   preferenceLoaded: boolean
@@ -36,20 +37,24 @@ type Props = {
 const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
   const { openAppDir, openAssetDir, openMetadataDir } = useLoadErrorPage()
 
+  const { t } = useLocalization()
+
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center">
       <Card className="w-[600px] p-6">
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-center">
             <FileWarning className="text-primary mr-2" size={30} />
-            読み込みに失敗しました
+            {t('loaderror:load-error')}
           </CardTitle>
           <CardDescription className="flex justify-center">
-            KonoAssetは正常にデータをロードできませんでした
+            {t('loaderror:load-error:description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="mb-2 text-card-foreground/60">エラーメッセージ: </p>
+          <p className="mb-2 text-muted-foreground">
+            {t('loaderror:load-error:errormessage')}
+          </p>
           <Separator />
           <div className="my-4">
             <ScrollArea>
@@ -58,7 +63,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
           </div>
           <Separator />
           <div className="flex justify-center mt-6">
-            続行するにはデータを修復するか、初期化する必要があります
+            {t('loaderror:load-error:explanation-text')}
           </div>
         </CardContent>
         <CardFooter className="mt-2 flex justify-between">
@@ -66,30 +71,17 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
           <TooltipProvider>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button>データフォルダを開く</Button>
+                <Button>{t('loaderror:button:open-data-dir')}</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={openAppDir}>
                   <Folder className="text-foreground/50" />
-                  アプリデータ
-                  <span className="text-foreground/60">(設定情報)</span>
+                  {t('general:appdata')}
+                  <span className="text-muted-foreground">
+                    ({t('general:appdata:subtext')})
+                  </span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <Tooltip>
-                  <TooltipTrigger className="block cursor-default">
-                    <DropdownMenuItem
-                      disabled={!preferenceLoaded}
-                      onClick={openAssetDir}
-                    >
-                      <Folder className="text-foreground/50" />
-                      アセットデータ
-                      <span className="text-foreground/60">(アセット本体)</span>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent className={cn(preferenceLoaded && 'hidden')}>
-                    <p>設定ファイルが読み込めていないため、パスが不明です</p>
-                  </TooltipContent>
-                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger className="block cursor-default">
                     <DropdownMenuItem
@@ -97,12 +89,31 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
                       onClick={openMetadataDir}
                     >
                       <Folder className="text-foreground/50" />
-                      メタデータ
-                      <span className="text-foreground/60">(アセット情報)</span>
+                      {t('general:metadata')}
+                      <span className="text-muted-foreground">
+                        ({t('general:metadata:subtext')})
+                      </span>
                     </DropdownMenuItem>
                   </TooltipTrigger>
                   <TooltipContent className={cn(preferenceLoaded && 'hidden')}>
-                    <p>設定ファイルが読み込めていないため、パスが不明です</p>
+                    <p>{t('loaderror:appdata-not-found-text')}</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger className="block cursor-default">
+                    <DropdownMenuItem
+                      disabled={!preferenceLoaded}
+                      onClick={openAssetDir}
+                    >
+                      <Folder className="text-foreground/50" />
+                      {t('general:assetdata')}
+                      <span className="text-muted-foreground">
+                        ({t('general:assetdata:subtext')})
+                      </span>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent className={cn(preferenceLoaded && 'hidden')}>
+                    <p>{t('loaderror:appdata-not-found-text')}</p>
                   </TooltipContent>
                 </Tooltip>
               </DropdownMenuContent>
@@ -110,8 +121,8 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
           </TooltipProvider>
         </CardFooter>
       </Card>
-      <div className="mt-4 flex flex-row text-foreground/50 space-x-2">
-        <p>問題を報告する:</p>
+      <div className="mt-4 flex flex-row text-muted-foreground space-x-2">
+        <p>{t('loaderror:report-error')}</p>
         <a
           href="https://go.konoasset.dev/discord"
           rel="noopener noreferrer"

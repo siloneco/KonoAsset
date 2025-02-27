@@ -3,6 +3,7 @@ use tauri_specta::{collect_commands, Builder};
 mod asset;
 mod external;
 mod file;
+mod language;
 mod preference;
 mod suggest;
 mod task;
@@ -53,6 +54,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         file::common::migrate_data_dir,                 // データフォルダ移行
         file::common::get_image_absolute_path,          // 画像の絶対パス取得
         // 設定関連
+        preference::common::require_initial_setup,
         preference::common::get_preferences,
         preference::common::set_preferences,
         preference::reset::reset_application,
@@ -61,5 +63,9 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         task::status::get_task_status,
         task::status::cancel_task_request,
         task::status::get_task_error,
+        // 言語関係
+        language::common::set_language_code,
+        language::common::get_current_language_data,
+        language::common::load_language_file,
     ])
 }

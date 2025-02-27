@@ -2,7 +2,21 @@ use std::sync::Arc;
 
 use tauri::{async_runtime::Mutex, State};
 
-use crate::preference::store::PreferenceStore;
+use crate::{definitions::entities::InitialSetup, preference::store::PreferenceStore};
+
+#[tauri::command]
+#[specta::specta]
+pub async fn require_initial_setup(
+    initial_setup: State<'_, Arc<Mutex<InitialSetup>>>,
+) -> Result<bool, String> {
+    let mut initial_setup = initial_setup.lock().await;
+
+    if initial_setup.require_initial_setup {
+        initial_setup.update();
+    }
+
+    return Ok(initial_setup.require_initial_setup);
+}
 
 #[tauri::command]
 #[specta::specta]

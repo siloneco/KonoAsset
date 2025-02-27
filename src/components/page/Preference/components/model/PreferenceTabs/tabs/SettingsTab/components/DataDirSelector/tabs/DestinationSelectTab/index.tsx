@@ -7,6 +7,7 @@ import { DialogHeader, DialogFooter, DialogClose } from '@/components/ui/dialog'
 import { DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Info, Loader2 } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   currentDataDir: string
@@ -37,18 +38,23 @@ const DestinationSelectTab: FC<Props> = ({
     migrationEnabled,
     switchToProgressTab,
   })
+  const { t } = useLocalization()
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>アプリデータの保存先を変更する</DialogTitle>
+        <DialogTitle>
+          {t('preference:settings:destination-select:change-data-dir')}
+        </DialogTitle>
         <DialogDescription>
-          アセットや画像データを保存するディレクトリを変更する場合は以下の入力を行い移行してください
+          {t('preference:settings:destination-select:explanation-text')}
         </DialogDescription>
       </DialogHeader>
       <div>
         <div className="mt-4">
-          <Label>元の保存先</Label>
+          <Label>
+            {t('preference:settings:destination-select:original-data-dir')}
+          </Label>
           <div className="mt-1 flex flex-row items-center">
             <Input value={currentDataDir} disabled />
             <Button
@@ -56,12 +62,14 @@ const DestinationSelectTab: FC<Props> = ({
               className="ml-2"
               onClick={onOpenButtonClick}
             >
-              開く
+              {t('general:button:open')}
             </Button>
           </div>
         </div>
         <div className="mt-4">
-          <Label>新しい保存先</Label>
+          <Label>
+            {t('preference:settings:destination-select:destination-data-dir')}
+          </Label>
           <div className="mt-1 flex flex-row items-center">
             <Input value={destinationPath} disabled />
             <Button
@@ -69,7 +77,7 @@ const DestinationSelectTab: FC<Props> = ({
               className="ml-2"
               onClick={onSelectDestinationPathClick}
             >
-              選択
+              {t('preference:settings:destination-select:select-destination')}
             </Button>
           </div>
         </div>
@@ -82,15 +90,15 @@ const DestinationSelectTab: FC<Props> = ({
             className="ml-2"
             onClick={() => setMigrationEnabled(!migrationEnabled)}
           >
-            データ移行を自動で行う
+            {t('preference:settings:destination-select:checkbox-text')}
           </Label>
         </div>
         {!migrationEnabled && (
-          <div className="flex flex-row items-center justify-center mt-2 text-sm text-foreground/60">
+          <div className="flex flex-row items-center justify-center mt-2 text-sm text-muted-foreground">
             <Info size={20} className="text-primary" />
             <div className="ml-1">
-              <p>手動でのデータ移行はデータ破損の危険があるため</p>
-              <p>十分に理解している場合のみ行ってください</p>
+              <p>{t('preference:settings:destination-select:warn-text-1')}</p>
+              <p>{t('preference:settings:destination-select:warn-text-2')}</p>
             </div>
           </div>
         )}
@@ -98,7 +106,7 @@ const DestinationSelectTab: FC<Props> = ({
       <DialogFooter>
         <DialogClose asChild>
           <Button variant="secondary" className="mr-auto" disabled={executing}>
-            キャンセル
+            {t('general:button:cancel')}
           </Button>
         </DialogClose>
         <Button
@@ -106,7 +114,9 @@ const DestinationSelectTab: FC<Props> = ({
           onClick={onExecuteButtonClick}
         >
           {executing && <Loader2 className="animate-spin" />}
-          {migrationEnabled ? '移行' : '変更'}
+          {migrationEnabled
+            ? t('preference:settings:destination-select:move')
+            : t('preference:settings:destination-select:change')}
         </Button>
       </DialogFooter>
     </>

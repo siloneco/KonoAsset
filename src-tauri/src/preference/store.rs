@@ -3,7 +3,10 @@ use std::{io, path::PathBuf};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-use crate::loader::VersionedPreferences;
+use crate::{
+    language::structs::LanguageCode, loader::VersionedPreferences,
+    updater::update_handler::UpdateChannel,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -13,9 +16,12 @@ pub struct PreferenceStore {
 
     pub data_dir_path: PathBuf,
     pub theme: Theme,
+    pub language: LanguageCode,
 
     pub delete_on_import: bool,
     pub use_unitypackage_selected_open: bool,
+
+    pub update_channel: UpdateChannel,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, specta::Type)]
@@ -34,22 +40,23 @@ impl PreferenceStore {
         if let Err(e) = app_local_data_dir {
             return Err(format!("Failed to get app local data dir: {}", e));
         }
-        let app_local_data_dir = app_local_data_dir.unwrap();
 
+        let app_local_data_dir = app_local_data_dir.unwrap();
         let preference_file_path = app_local_data_dir.join("preference.json");
 
-        // // 将来的にはこれをデフォルトにする
-        // let mut data_dir_path = app.path().document_dir().unwrap();
-        // data_dir_path.push("KonoAsset");
+        let data_dir_path = app.path().document_dir().unwrap().join("KonoAsset");
 
         Ok(Self {
             file_path: preference_file_path,
 
-            data_dir_path: app_local_data_dir,
+            data_dir_path,
             theme: Theme::System,
+            language: LanguageCode::JaJp,
 
             delete_on_import: true,
             use_unitypackage_selected_open: true,
+
+            update_channel: UpdateChannel::Stable,
         })
     }
 
@@ -95,6 +102,8 @@ impl PreferenceStore {
         self.theme = other.theme;
         self.delete_on_import = other.delete_on_import;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
+        self.update_channel = other.update_channel;
+        self.language = other.language.clone();
     }
 
     pub fn save(&self) -> Result<(), io::Error> {

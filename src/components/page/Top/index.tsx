@@ -6,7 +6,9 @@ import { useTopPage } from './hook'
 import { useState } from 'react'
 import NavBar from '../../model/MainNavBar'
 import AssetList from '@/components/model/AssetList'
-import AddAssetModal from '@/components/model/AddAssetModal'
+import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
+import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
+import { useLocalization } from '@/hooks/use-localization'
 
 const TopPage = () => {
   const { assetContextValue, isDragAndHover } = useTopPage()
@@ -15,9 +17,16 @@ const TopPage = () => {
   const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
 
+  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
+  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
+    string | null
+  >(null)
+
   const displayAssetCount: number | undefined = filterEnforced
     ? matchedAssetIDs.length
     : undefined
+
+  const { t } = useLocalization()
 
   return (
     <div className="flex">
@@ -34,9 +43,20 @@ const TopPage = () => {
               setFilterEnforced={setFilterEnforced}
               openAddAssetDialog={() => setDialogOpen(true)}
             />
-            <AddAssetModal
+            <AddAssetDialog
               dialogOpen={dialogOpen}
               setDialogOpen={setDialogOpen}
+              openEditDialog={(assetId) => {
+                setDialogOpen(false)
+
+                setEditAssetDialogAssetId(assetId)
+                setEditAssetDialogOpen(true)
+              }}
+            />
+            <EditAssetDialog
+              id={editAssetDialogAssetId}
+              dialogOpen={editAssetDialogOpen}
+              setDialogOpen={setEditAssetDialogOpen}
             />
           </main>
         </SidebarProvider>
@@ -49,7 +69,7 @@ const TopPage = () => {
       >
         <div className="h-full w-full bg-black/80 flex items-center justify-center">
           <div className="bg-card p-12 rounded-3xl border-2 border-primary border-dashed">
-            <p className="text-2xl">ファイルをドロップしてアセットを追加</p>
+            <p className="text-2xl">{t('top:add-text')}</p>
           </div>
         </div>
       </div>

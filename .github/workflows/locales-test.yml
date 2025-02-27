@@ -1,0 +1,31 @@
+name: Locales Test
+on:
+  push:
+    paths:
+      - "locales/**"
+    branches-ignore:
+      - "main"
+      - "pre-release"
+  pull_request:
+    types:
+      - reopened
+      - opened
+      - synchronize
+    paths:
+      - "locales/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    name: Run Localization File Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { default: checkLocaleKeys } = await import('${{ github.workspace }}/.github/workflows/scripts/locales-test.js')
+            return checkLocaleKeys()

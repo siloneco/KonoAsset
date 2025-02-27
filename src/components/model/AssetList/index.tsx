@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
 import { createFilterRequest, isFilterEnforced } from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
@@ -9,6 +9,9 @@ import { commands, FileInfo, FilterRequest } from '@/lib/bindings'
 import SelectUnitypackageDialog from '../AssetCard/components/SelectUnitypackageDialog'
 import AssetListBackground from './components/AssetListBackground'
 import DataManagementDialog from '../AssetCard/components/MoreButton/components/DataManagementDialog'
+import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
+import MemoDialog from '../MemoDialog'
+import { DependencyDialog } from '../DependencyDialog'
 
 type Props = {
   className?: string
@@ -41,12 +44,30 @@ const AssetList = ({
   const [dataManagementDialogAssetId, setDataManagementDialogAssetId] =
     useState<string | null>(null)
 
-  const { editingAssetID, setEditingAssetID } = useContext(PersistentContext)
+  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
+  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
+    string | null
+  >(null)
+
+  const [memoDialogOpen, setMemoDialogOpen] = useState(false)
+  const [memoDialogAssetId, setMemoDialogAssetId] = useState<string | null>(
+    null,
+  )
+
+  const [dependencyDialogOpen, setDependencyDialogOpen] = useState(false)
+  const [dependencyDialogAssetName, setDependencyDialogAssetName] = useState<
+    string | null
+  >(null)
+  const [dependencyDialogDependencies, setDependencyDialogDependencies] =
+    useState<string[]>([])
 
   const {
     reverseOrder,
     assetType,
-    textFilter,
+    queryTextMode,
+    generalQueryTextFilter,
+    queryTextFilterForName,
+    queryTextFilterForCreator,
     categoryFilter,
     tagFilter,
     tagFilterMatchType,
@@ -58,7 +79,10 @@ const AssetList = ({
   const updateMatchedAssetIDs = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
-      text: textFilter,
+      queryTextMode: queryTextMode,
+      generalQueryText: generalQueryTextFilter,
+      queryTextFilterForName: queryTextFilterForName,
+      queryTextFilterForCreator: queryTextFilterForCreator,
       categories: categoryFilter,
       tags: tagFilter,
       tagMatchType: tagFilterMatchType,
@@ -88,26 +112,16 @@ const AssetList = ({
   }, [
     assetDisplaySortedList,
     assetType,
-    textFilter,
+    queryTextMode,
+    generalQueryTextFilter,
+    queryTextFilterForName,
+    queryTextFilterForCreator,
     categoryFilter,
     tagFilter,
-    supportedAvatarFilter,
     tagFilterMatchType,
+    supportedAvatarFilter,
     supportedAvatarFilterMatchType,
   ])
-
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (scrollRef.current !== null) {
-      scrollRef.current.scrollIntoView({
-        behavior: 'instant',
-        block: 'center',
-      })
-
-      setEditingAssetID(null)
-    }
-  }, [assetDisplaySortedList])
 
   return (
     <ScrollArea className={className}>
@@ -126,7 +140,6 @@ const AssetList = ({
                 <AssetCard
                   key={asset.id}
                   asset={asset}
-                  ref={asset.id === editingAssetID ? scrollRef : undefined}
                   openSelectUnitypackageDialog={() =>
                     setSelectUnitypackageDialogOpen(true)
                   }
@@ -135,6 +148,18 @@ const AssetList = ({
                   openDataManagementDialog={(assetId) => {
                     setDataManagementDialogAssetId(assetId)
                     setDataManagementDialogOpen(true)
+                  }}
+                  openEditAssetDialog={(assetId) => {
+                    setEditAssetDialogAssetId(assetId)
+                    setEditAssetDialogOpen(true)
+                  }}
+                  openMemoDialog={(assetId) => {
+                    setMemoDialogAssetId(assetId)
+                    setMemoDialogOpen(true)
+                  }}
+                  openDependencyDialog={(assetId) => {
+                    setDependencyDialogAssetName(assetId)
+                    setDependencyDialogOpen(true)
                   }}
                 />
               ),
@@ -150,7 +175,6 @@ const AssetList = ({
                   <AssetCard
                     key={asset.id}
                     asset={asset}
-                    ref={asset.id === editingAssetID ? scrollRef : undefined}
                     openSelectUnitypackageDialog={() =>
                       setSelectUnitypackageDialogOpen(true)
                     }
@@ -159,6 +183,19 @@ const AssetList = ({
                     openDataManagementDialog={(assetId) => {
                       setDataManagementDialogAssetId(assetId)
                       setDataManagementDialogOpen(true)
+                    }}
+                    openEditAssetDialog={(assetId) => {
+                      setEditAssetDialogAssetId(assetId)
+                      setEditAssetDialogOpen(true)
+                    }}
+                    openMemoDialog={(assetId) => {
+                      setMemoDialogAssetId(assetId)
+                      setMemoDialogOpen(true)
+                    }}
+                    openDependencyDialog={(assetName, dependencies) => {
+                      setDependencyDialogAssetName(assetName)
+                      setDependencyDialogDependencies(dependencies)
+                      setDependencyDialogOpen(true)
                     }}
                   />
                 ),
@@ -174,6 +211,22 @@ const AssetList = ({
         assetId={dataManagementDialogAssetId}
         open={dataManagementDialogOpen}
         onOpenChange={setDataManagementDialogOpen}
+      />
+      <EditAssetDialog
+        id={editAssetDialogAssetId}
+        dialogOpen={editAssetDialogOpen}
+        setDialogOpen={setEditAssetDialogOpen}
+      />
+      <MemoDialog
+        assetId={memoDialogAssetId}
+        dialogOpen={memoDialogOpen}
+        setDialogOpen={setMemoDialogOpen}
+      />
+      <DependencyDialog
+        dialogOpen={dependencyDialogOpen}
+        setDialogOpen={setDependencyDialogOpen}
+        assetName={dependencyDialogAssetName}
+        dependencyIds={dependencyDialogDependencies}
       />
       <div className="w-full h-12" />
     </ScrollArea>

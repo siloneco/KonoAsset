@@ -11,11 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SetupImport } from './routes/setup'
 import { Route as PreferenceImport } from './routes/preference'
 import { Route as IndexImport } from './routes/index'
-import { Route as EditIdImport } from './routes/edit.$id'
 
 // Create/Update Routes
+
+const SetupRoute = SetupImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const PreferenceRoute = PreferenceImport.update({
   id: '/preference',
@@ -26,12 +32,6 @@ const PreferenceRoute = PreferenceImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EditIdRoute = EditIdImport.update({
-  id: '/edit/$id',
-  path: '/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,11 +53,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreferenceImport
       parentRoute: typeof rootRoute
     }
-    '/edit/$id': {
-      id: '/edit/$id'
-      path: '/edit/$id'
-      fullPath: '/edit/$id'
-      preLoaderRoute: typeof EditIdImport
+    '/setup': {
+      id: '/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof SetupImport
       parentRoute: typeof rootRoute
     }
   }
@@ -68,41 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
+  '/setup': typeof SetupRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
+  '/setup': typeof SetupRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
-  '/edit/$id': typeof EditIdRoute
+  '/setup': typeof SetupRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/preference' | '/edit/$id'
+  fullPaths: '/' | '/preference' | '/setup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/preference' | '/edit/$id'
-  id: '__root__' | '/' | '/preference' | '/edit/$id'
+  to: '/' | '/preference' | '/setup'
+  id: '__root__' | '/' | '/preference' | '/setup'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PreferenceRoute: typeof PreferenceRoute
-  EditIdRoute: typeof EditIdRoute
+  SetupRoute: typeof SetupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PreferenceRoute: PreferenceRoute,
-  EditIdRoute: EditIdRoute,
+  SetupRoute: SetupRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +117,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/preference",
-        "/edit/$id"
+        "/setup"
       ]
     },
     "/": {
@@ -126,8 +126,8 @@ export const routeTree = rootRoute
     "/preference": {
       "filePath": "preference.tsx"
     },
-    "/edit/$id": {
-      "filePath": "edit.$id.tsx"
+    "/setup": {
+      "filePath": "setup.tsx"
     }
   }
 }

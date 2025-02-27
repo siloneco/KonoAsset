@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use tauri_specta::Event;
@@ -18,6 +18,8 @@ pub struct AssetSummary {
     pub name: String,
     pub creator: String,
     pub image_filename: Option<String>,
+    pub has_memo: bool,
+    pub dependencies: Vec<Uuid>,
     pub booth_item_id: Option<u64>,
     pub published_at: Option<i64>,
 }
@@ -30,6 +32,8 @@ impl From<&Avatar> for AssetSummary {
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
+            has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -44,6 +48,8 @@ impl From<&AvatarWearable> for AssetSummary {
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
+            has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -58,6 +64,8 @@ impl From<&WorldObject> for AssetSummary {
             name: asset.description.name.clone(),
             creator: asset.description.creator.clone(),
             image_filename: asset.description.image_filename.clone(),
+            has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
             booth_item_id: asset.description.booth_item_id,
             published_at: asset.description.published_at,
         }
@@ -71,7 +79,9 @@ pub struct AssetDescription {
     pub creator: String,
     pub image_filename: Option<String>,
     pub tags: Vec<String>,
+    pub memo: Option<String>,
     pub booth_item_id: Option<u64>,
+    pub dependencies: Vec<Uuid>,
     pub created_at: i64,
     pub published_at: Option<i64>,
 }
@@ -255,7 +265,7 @@ pub enum MatchType {
 #[serde(rename_all = "camelCase")]
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
-    pub text: Option<String>,
+    pub query_text: Option<String>,
     pub categories: Option<Vec<String>>,
     pub tags: Option<Vec<String>>,
     pub tag_match_type: MatchType,
@@ -318,5 +328,24 @@ impl ProgressEvent {
             percentage,
             filename,
         }
+    }
+}
+
+#[derive(specta::Type)]
+pub struct InitialSetup {
+    pub require_initial_setup: bool,
+    pub preference_file: PathBuf,
+}
+
+impl InitialSetup {
+    pub fn new(preference_file: PathBuf) -> Self {
+        Self {
+            require_initial_setup: !preference_file.exists(),
+            preference_file,
+        }
+    }
+
+    pub fn update(&mut self) {
+        self.require_initial_setup = !self.preference_file.exists();
     }
 }

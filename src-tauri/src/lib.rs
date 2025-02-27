@@ -3,12 +3,13 @@ use std::{path::PathBuf, sync::Arc};
 use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
-use definitions::entities::{LoadResult, ProgressEvent};
+use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
+use language::load::load_from_language_code;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_specta::collect_events;
-use updater::update_handler::UpdateHandler;
+use updater::update_handler::{UpdateChannel, UpdateHandler};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
@@ -19,6 +20,7 @@ mod data_store;
 mod definitions;
 mod file;
 mod importer;
+mod language;
 mod loader;
 mod logging;
 mod preference;
@@ -68,8 +70,14 @@ pub fn run() {
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
-            app.manage(get_update_handler(app.handle().clone()));
             app.manage(app.handle().clone());
+
+            let preference_file_path = app
+                .path()
+                .app_local_data_dir()
+                .unwrap()
+                .join("preference.json");
+            app.manage(arc_mutex(InitialSetup::new(preference_file_path)));
 
             let result = load_preference_store(app.handle());
             if let Err(e) = result {
@@ -82,11 +90,28 @@ pub fn run() {
 
             let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
+            let update_channel = pref_store.update_channel.clone();
+            let language_code = pref_store.language.clone();
 
             let pximg_resolver = PximgResolver::new(data_dir.join("images"));
 
             app.manage(arc_mutex(pref_store));
             app.manage(arc_mutex(pximg_resolver));
+            app.manage(arc_mutex(get_update_handler(
+                app.handle().clone(),
+                &update_channel,
+            )));
+
+            let language_data = load_from_language_code(language_code);
+            if let Err(err) = language_data {
+                log::error!("{}", err);
+                app.manage(LoadResult::error(false, err));
+
+                // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                return Ok(());
+            }
+
+            app.manage(arc_mutex(language_data.unwrap()));
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {
@@ -123,10 +148,10 @@ where
     }
 }
 
-fn get_update_handler(app: AppHandle) -> UpdateHandler {
+fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler {
     tauri::async_runtime::block_on(async move {
         let mut update_handler = UpdateHandler::new(app);
-        let result = update_handler.check_for_update().await;
+        let result = update_handler.check_for_update(channel).await;
 
         if result.is_err() {
             log::error!("Failed to check for update: {}", result.unwrap_err());

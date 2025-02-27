@@ -8,22 +8,34 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { Check, ChevronDown, Copy, Folder, Loader2 } from 'lucide-react'
+import {
+  Check,
+  ChevronDown,
+  Copy,
+  Folder,
+  FolderTree,
+  Loader2,
+} from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { FileInfo } from '@/lib/bindings'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   className?: string
   id: string
+  hasDependencies: boolean
 
   openSelectUnitypackageDialog: () => void
+  openDependencyDialog: () => void
   setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
+  hasDependencies,
   openSelectUnitypackageDialog,
+  openDependencyDialog,
   setUnitypackageFiles,
 }: Props) => {
   const {
@@ -34,9 +46,12 @@ const AssetCardOpenButton = ({
     onCopyPathButtonClick,
   } = useAssetCardOpenButton({
     id,
+    hasDependencies,
     openSelectUnitypackageDialog,
     setUnitypackageFiles,
   })
+
+  const { t } = useLocalization()
 
   return (
     <div className={cn('flex flex-row ', className)}>
@@ -52,7 +67,7 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        <p>開く</p>
+        <p> {t('general:button:open')} </p>
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>
@@ -64,12 +79,19 @@ const AssetCardOpenButton = ({
         <DropdownMenuContent>
           <DropdownMenuItem onClick={onOpenManagedDirButtonClick}>
             <Folder className="text-foreground/50" />
-            管理フォルダを開く
+            {t('assetcard:open-button:open-dir')}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={openDependencyDialog}
+            disabled={!hasDependencies}
+          >
+            <FolderTree className="text-foreground/50" />
+            {t('general:prerequisite-assets')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onCopyPathButtonClick}>
             <Copy className="text-foreground/50" />
-            パスをコピー
+            {t('assetcard:open-button:copy-path')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

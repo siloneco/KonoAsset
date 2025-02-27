@@ -2,6 +2,7 @@ import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { Label } from '@/components/ui/label'
 import { useMultiFilterItemSelector } from './hook'
 import { MatchType } from '@/lib/bindings'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   label: string
@@ -26,9 +27,12 @@ const MultiFilterItemSelector = ({
     matchType,
     setMatchType,
   })
+  const { t } = useLocalization()
 
   const formattedPlaceholder =
-    placeholder === undefined ? 'アイテムを選択...' : placeholder
+    placeholder === undefined
+      ? t('mainsidebar:multi-filter-item-selector:placeholder')
+      : placeholder
 
   return (
     <div>
@@ -51,8 +55,8 @@ const MultiFilterItemSelector = ({
         placeholder={formattedPlaceholder}
         hidePlaceholderWhenSelected
         emptyIndicator={
-          <p className="text-center text-lg text-foreground/70 dark:text-foreground/60">
-            候補がありません
+          <p className="text-center text-lg text-muted-foreground">
+            {t('mainsidebar:multi-filter-item-selector:no-candidates')}
           </p>
         }
       />

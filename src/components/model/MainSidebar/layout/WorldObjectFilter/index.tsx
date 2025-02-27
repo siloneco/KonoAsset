@@ -4,10 +4,12 @@ import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories } from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
+import { useLocalization } from '@/hooks/use-localization'
 
 const WorldObjectFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
+  const { t } = useLocalization()
 
   const categoryValues: Option[] = categoryFilter.map((category) => ({
     value: category,
@@ -25,8 +27,8 @@ const WorldObjectFilter = () => {
   return (
     <div className="mt-4 space-y-4">
       <MultiFilterItemSelector
-        label="カテゴリ"
-        placeholder="絞り込むカテゴリを選択..."
+        label={t('general:category')}
+        placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
         value={categoryValues}
         onValueChange={(values) =>
