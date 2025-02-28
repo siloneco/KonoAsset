@@ -53,7 +53,7 @@ impl PreferenceStore {
             theme: Theme::System,
             language: LanguageCode::JaJp,
 
-            delete_on_import: true,
+            delete_on_import: false,
             use_unitypackage_selected_open: true,
 
             update_channel: UpdateChannel::Stable,
