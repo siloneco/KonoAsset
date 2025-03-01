@@ -1,15 +1,12 @@
 import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
-import {
-  fetchAllSupportedAvatars,
-  fetchAvatarWearableCategories,
-} from './logic'
+import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
 
-const AvatarWearableFilter = () => {
+const AllTypeFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -38,7 +35,7 @@ const AvatarWearableFilter = () => {
 
   const updateCandidates = async () => {
     setSupportedAvatarCandidates(await fetchAllSupportedAvatars())
-    setCategoryCandidates(await fetchAvatarWearableCategories())
+    setCategoryCandidates(await fetchAllCategories())
   }
 
   useEffect(() => {
@@ -73,4 +70,4 @@ const AvatarWearableFilter = () => {
   )
 }
 
-export default AvatarWearableFilter
+export default AllTypeFilter
