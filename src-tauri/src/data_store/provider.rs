@@ -249,6 +249,20 @@ impl StoreProvider {
         Ok(MigrateResult::Migrated)
     }
 
+    pub async fn merge_from(&mut self, external: &mut StoreProvider) -> Result<(), String> {
+        self.avatar_store
+            .merge_from(&mut external.avatar_store)
+            .await?;
+        self.avatar_wearable_store
+            .merge_from(&mut external.avatar_wearable_store)
+            .await?;
+        self.world_object_store
+            .merge_from(&mut external.world_object_store)
+            .await?;
+
+        Ok(())
+    }
+
     pub async fn set_data_dir_and_reload<P>(&mut self, new_path: P) -> Result<(), String>
     where
         P: AsRef<Path>,

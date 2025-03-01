@@ -147,10 +147,21 @@ impl<
         Ok(true)
     }
 
+    pub async fn merge_from(&self, other: &mut JsonStore<T>) -> Result<(), String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let other_assets = other.assets.lock().await.clone();
+
+            for asset in other_assets {
+                assets.insert(asset);
+            }
+        }
+
+        self.save().await
+    }
+
     async fn save(&self) -> Result<(), String> {
-        let mut path = self.data_dir.clone();
-        path.push("metadata");
-        path.push(T::filename());
+        let path = self.data_dir.join("metadata").join(T::filename());
 
         let file = File::create(&path)
             .map_err(|e| format!("Failed to create file at {}: {}", path.display(), e))?;

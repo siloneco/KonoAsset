@@ -14,6 +14,7 @@ use updater::update_handler::{UpdateChannel, UpdateHandler};
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
 
+mod adapter;
 mod booth;
 mod command;
 mod data_store;

@@ -97,6 +97,14 @@ async getFilteredAssetIds(request: FilterRequest) : Promise<Result<string[], str
 async getLoadStatus() : Promise<LoadResult> {
     return await TAURI_INVOKE("get_load_status");
 },
+async importFromOtherDataStore(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("import_from_other_data_store", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getAllAssetTags() : Promise<Result<string[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };

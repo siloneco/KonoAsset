@@ -7,7 +7,7 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, Home, Info, Logs, Settings } from 'lucide-react'
+import { ChevronLeft, Home, Import, Info, Logs, Settings } from 'lucide-react'
 import { PreferenceTabIDs } from '../../../hook'
 import { FC } from 'react'
 import { usePreferenceSidebar } from './hook'
@@ -18,7 +18,7 @@ type Props = {
   setActiveTab: (tab: PreferenceTabIDs) => void
 }
 
-const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
+export const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
   const { t } = useLocalization()
   const { version, backToTopPage, onVersionClick } = usePreferenceSidebar()
 
@@ -38,37 +38,47 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="p-2">
-            <Button
-              className="w-full rounded-full"
-              variant={activeTab === 'settings' ? 'default' : 'secondary'}
-              onClick={() => setActiveTab('settings')}
+            <PreferenceSidebarButton
+              id="settings"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
             >
               <Settings />
               {t('preference:settings')}
-            </Button>
+            </PreferenceSidebarButton>
           </SidebarGroupContent>
           <SidebarGroupContent className="p-2">
-            <Button
-              className="w-full rounded-full"
-              variant={activeTab === 'logs' ? 'default' : 'secondary'}
-              onClick={() => setActiveTab('logs')}
+            <PreferenceSidebarButton
+              id="adapter"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            >
+              <Import />
+              データの移行
+            </PreferenceSidebarButton>
+          </SidebarGroupContent>
+          <SidebarGroupContent className="p-2">
+            <PreferenceSidebarButton
+              id="logs"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
             >
               <Logs />
               {t('preference:logs')}
-            </Button>
+            </PreferenceSidebarButton>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-2">
         <div className="p-2">
-          <Button
-            className="w-full rounded-full"
-            variant={activeTab === 'about' ? 'default' : 'secondary'}
-            onClick={() => setActiveTab('about')}
+          <PreferenceSidebarButton
+            id="about"
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           >
             <Info />
             {t('preference:about')}
-          </Button>
+          </PreferenceSidebarButton>
         </div>
         <div
           className="flex justify-center text-muted-foreground select-none cursor-pointer"
@@ -81,4 +91,26 @@ const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
   )
 }
 
-export default PreferenceSidebar
+type SidebarButtonProps = {
+  id: PreferenceTabIDs
+  activeTab: PreferenceTabIDs
+  setActiveTab: (tab: PreferenceTabIDs) => void
+  children: React.ReactNode
+}
+
+const PreferenceSidebarButton: FC<SidebarButtonProps> = ({
+  id,
+  activeTab,
+  setActiveTab,
+  children,
+}) => {
+  return (
+    <Button
+      className="w-full rounded-full"
+      variant={activeTab === id ? 'default' : 'secondary'}
+      onClick={() => setActiveTab(id)}
+    >
+      {children}
+    </Button>
+  )
+}
