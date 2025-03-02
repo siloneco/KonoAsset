@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { FolderInput, Info } from 'lucide-react'
+import { FolderInput, Info, Loader2 } from 'lucide-react'
 import { useImportSection } from './hook'
 import {
   Dialog,
@@ -14,7 +14,14 @@ import {
 import { Progress } from '@/components/ui/progress'
 
 export const ImportSection = () => {
-  const { dialogOpen, startImport, progress, filename } = useImportSection()
+  const {
+    dialogOpen,
+    startImport,
+    progress,
+    filename,
+    onCancelButtonClick,
+    canceling,
+  } = useImportSection()
 
   return (
     <div>
@@ -57,7 +64,13 @@ export const ImportSection = () => {
             <Progress value={progress} />
           </div>
           <DialogFooter className="mt-4">
-            <Button variant="secondary" className="mx-auto">
+            <Button
+              variant="secondary"
+              className="mx-auto"
+              onClick={onCancelButtonClick}
+              disabled={canceling}
+            >
+              {canceling && <Loader2 className="animate-spin" />}
               キャンセル
             </Button>
           </DialogFooter>

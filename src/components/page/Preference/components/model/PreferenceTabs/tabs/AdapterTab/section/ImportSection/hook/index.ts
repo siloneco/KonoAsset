@@ -9,6 +9,8 @@ type ReturnProps = {
   startImport: () => Promise<void>
   progress: number
   filename: string
+  onCancelButtonClick: () => Promise<void>
+  canceling: boolean
 }
 
 export const useImportSection = (): ReturnProps => {
@@ -17,6 +19,7 @@ export const useImportSection = (): ReturnProps => {
   const [taskId, setTaskId] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [filename, setFilename] = useState('')
+  const [canceling, setCanceling] = useState(false)
 
   const { toast } = useToast()
 
@@ -64,6 +67,26 @@ export const useImportSection = (): ReturnProps => {
       title: 'インポートに失敗しました',
       description: error,
     })
+  }
+
+  const onCancelButtonClick = async () => {
+    if (taskId === null) {
+      return
+    }
+
+    setCanceling(true)
+    setTimeout(() => {
+      setCanceling(false)
+    }, 5000)
+
+    const result = await commands.cancelTaskRequest(taskId)
+
+    if (result.status === 'error') {
+      toast({
+        title: 'キャンセルに失敗しました',
+        description: result.error,
+      })
+    }
   }
 
   useEffect(() => {
@@ -168,5 +191,7 @@ export const useImportSection = (): ReturnProps => {
     startImport,
     progress,
     filename,
+    onCancelButtonClick,
+    canceling,
   }
 }

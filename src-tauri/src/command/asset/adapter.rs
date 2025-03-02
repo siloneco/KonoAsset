@@ -13,6 +13,15 @@ pub async fn import_from_other_data_store(
     handle: State<'_, AppHandle>,
     path: PathBuf,
 ) -> Result<Uuid, String> {
+    let current_data_dir = basic_store.lock().await.data_dir();
+
+    if path.starts_with(&current_data_dir) {
+        return Err(format!(
+            "Cannot import assets from the same data store: {}",
+            path.display()
+        ));
+    }
+
     log::info!("Importing assets from external path: {}", path.display());
 
     let cloned_basic_store = (*basic_store).clone();

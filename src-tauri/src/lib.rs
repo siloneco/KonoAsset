@@ -198,7 +198,7 @@ fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
     let store_provider_ref = &mut store_provider;
 
     let result = tauri::async_runtime::block_on(async move {
-        store_provider_ref.load_all_assets_from_files().await
+        store_provider_ref.load_all_assets_from_files(true).await
     });
 
     if let Err(err) = result {
