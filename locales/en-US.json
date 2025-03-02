@@ -94,7 +94,7 @@
     "addasset:progress-bar:error-toast:task-id-is-null": "Task ID not found.",
     "addasset:progress-bar:error-toast:task-cancel-description": "Failed to cancel task.",
     "addasset:progress-bar": "Importing asset...",
-    "addasset:progress-bar:canceling": "Cancelling",
+    "addasset:progress-bar:canceling": "Canceling",
     "addasset:get:error-toast": "Failed to fetch asset information.",
     "addasset:get:error-toast:unknown-asset-type": "Unknown asset type.",
     "addasset:get:success-toast": "Asset information updated!",
