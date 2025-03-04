@@ -16,7 +16,7 @@ export const ExportTypeButton: FC<BaseProps> = ({
 }) => (
   <div
     className={cn(
-      'border border-muted-foreground/40 rounded-lg p-2 cursor-pointer transition-colors',
+      'border-2 border-muted-foreground/40 rounded-lg p-2 cursor-pointer transition-colors',
       active && 'border-primary',
     )}
     onClick={onClick}
