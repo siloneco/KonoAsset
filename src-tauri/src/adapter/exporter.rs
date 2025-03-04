@@ -4,19 +4,26 @@ use std::sync::Arc;
 
 use async_zip::base::write::ZipFileWriter;
 use async_zip::{Compression, ZipEntryBuilder};
+use tauri::AppHandle;
+use tauri_specta::Event;
 use tokio::fs::File;
 use tokio::sync::Mutex;
 
 use crate::data_store::provider::StoreProvider;
+use crate::definitions::entities::ProgressEvent;
 use crate::definitions::traits::AssetTrait;
+use crate::file::cleanup::DeleteOnDrop;
 
 pub async fn export_as_human_readable_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
     path: P,
+    app: &AppHandle,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
 {
+    let mut cleanup = DeleteOnDrop::new(path.as_ref().to_path_buf());
+
     let mut file = File::create(path.as_ref())
         .await
         .map_err(|e| e.to_string())?;
@@ -33,6 +40,9 @@ where
 
         (data_dir, avatars, avatar_wearables, world_objects)
     };
+
+    let total_assets = avatars.len() + avatar_wearables.len() + world_objects.len();
+    let mut processed_assets: usize = 0;
 
     let avatar_wearables_by_category =
         avatar_wearables
@@ -57,6 +67,11 @@ where
     new_zip_dir(&mut writer, "Avatars/").await?;
 
     for avatar in avatars {
+        let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
+        if let Err(e) = ProgressEvent::new(percentage, avatar.description.name.clone()).emit(app) {
+            log::error!("Failed to emit progress event: {:?}", e);
+        }
+
         let item_path = format!(
             "Avatars/{}/",
             sanitize_filename::sanitize(&avatar.description.name)
@@ -80,6 +95,8 @@ where
         let asset_data_path = data_dir.join(avatar.id.to_string());
 
         write_asset_data(&mut writer, item_path, asset_data_path).await?;
+
+        processed_assets += 1;
     }
 
     new_zip_dir(&mut writer, "AvatarWearables/").await?;
@@ -96,6 +113,14 @@ where
             avatar_wearables_by_category.get(key).unwrap(),
             &data_dir,
             "AvatarWearables/",
+            |name| {
+                let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
+                if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
+                    log::error!("Failed to emit progress event: {:?}", e);
+                }
+
+                processed_assets += 1;
+            },
         )
         .await?;
     }
@@ -114,11 +139,21 @@ where
             world_objects_by_category.get(key).unwrap(),
             &data_dir,
             "WorldObjects/",
+            |name| {
+                let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
+                if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
+                    log::error!("Failed to emit progress event: {:?}", e);
+                }
+
+                processed_assets += 1;
+            },
         )
         .await?;
     }
 
     writer.close().await.map_err(|e| e.to_string())?;
+
+    cleanup.mark_as_completed();
 
     Ok(())
 }
@@ -129,6 +164,7 @@ async fn write_categorized_assets<A>(
     assets: &Vec<A>,
     data_dir: &Path,
     zip_prefix: &str,
+    mut callback: impl FnMut(String),
 ) -> Result<(), String>
 where
     A: AssetTrait,
@@ -138,6 +174,8 @@ where
     new_zip_dir(writer, &item_path).await?;
 
     for item in assets {
+        callback(item.get_description().name.clone());
+
         let item_path = format!(
             "{}{}/",
             item_path,

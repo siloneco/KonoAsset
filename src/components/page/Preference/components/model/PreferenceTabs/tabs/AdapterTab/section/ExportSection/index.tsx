@@ -9,6 +9,7 @@ import {
   ExportTypeButtonTitle,
 } from '../../components/ExportTypeButton'
 import { useExportSection } from './hook'
+import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
 
 export const ExportSection: FC = () => {
   const {
@@ -17,6 +18,11 @@ export const ExportSection: FC = () => {
     exportDestination,
     selectExportDestination,
     setExportType,
+    startExport,
+    taskId,
+    onCompleted,
+    onCancelled,
+    onFailed,
   } = useExportSection()
 
   return (
@@ -75,13 +81,22 @@ export const ExportSection: FC = () => {
         <div className="mt-8 w-full flex justify-center">
           <Button
             className="w-1/4"
-            onClick={() => {}}
+            onClick={startExport}
             disabled={!exportButtonActivated}
           >
             出力する
           </Button>
         </div>
       </div>
+      <TaskStatusHandler
+        taskId={taskId}
+        title="エクスポート中..."
+        description="データをエクスポートしています..."
+        cancelButtonText="キャンセル"
+        onCompleted={onCompleted}
+        onCancelled={onCancelled}
+        onFailed={onFailed}
+      />
     </div>
   )
 }

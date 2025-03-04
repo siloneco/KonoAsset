@@ -72,7 +72,10 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className={cn(tab === 'progress' && '[&>button]:hidden')}
+          className={cn(
+            'max-w-[550px]',
+            tab === 'progress' && '[&>button]:hidden',
+          )}
           onInteractOutside={(e) => {
             e.preventDefault()
           }}
@@ -91,7 +94,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
                 setMigrationEnabled={setMigrationEnabled}
               />
             </TabsContent>
-            <TabsContent value="progress">
+            <TabsContent value="progress" className="max-w-[500px]">
               <ProgressTab
                 taskId={taskId}
                 destinationPath={destinationPath}

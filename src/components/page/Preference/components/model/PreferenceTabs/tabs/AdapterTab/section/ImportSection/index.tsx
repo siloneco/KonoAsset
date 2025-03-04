@@ -1,27 +1,13 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { FolderInput, Info, Loader2 } from 'lucide-react'
+import { FolderInput, Info } from 'lucide-react'
 import { useImportSection } from './hook'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Progress } from '@/components/ui/progress'
+import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
 
 export const ImportSection = () => {
-  const {
-    dialogOpen,
-    startImport,
-    progress,
-    filename,
-    onCancelButtonClick,
-    canceling,
-  } = useImportSection()
+  const { taskId, startImport, onCompleted, onCancelled, onFailed } =
+    useImportSection()
 
   return (
     <div>
@@ -46,36 +32,15 @@ export const ImportSection = () => {
           フォルダを選んでインポート
         </Button>
       </div>
-      <Dialog open={dialogOpen}>
-        <DialogContent
-          className="max-w-[600px] [&>button]:hidden"
-          onInteractOutside={(e) => {
-            e.preventDefault()
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle>インポート中...</DialogTitle>
-            <DialogDescription>
-              データをインポートしています...
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-1 max-w-[550px]">
-            <p className="text-muted-foreground w-full truncate">{filename}</p>
-            <Progress value={progress} />
-          </div>
-          <DialogFooter className="mt-4">
-            <Button
-              variant="secondary"
-              className="mx-auto"
-              onClick={onCancelButtonClick}
-              disabled={canceling}
-            >
-              {canceling && <Loader2 className="animate-spin" />}
-              キャンセル
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TaskStatusHandler
+        taskId={taskId}
+        title="インポート中..."
+        description="データをインポートしています..."
+        cancelButtonText="キャンセル"
+        onCompleted={onCompleted}
+        onCancelled={onCancelled}
+        onFailed={onFailed}
+      />
     </div>
   )
 }

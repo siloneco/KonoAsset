@@ -25,6 +25,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::filter::get_filtered_asset_ids,
         asset::status::get_load_status,
         asset::adapter::import_from_other_data_store,
+        asset::adapter::export_as_human_readable_zip,
         // サジェストの取得関連
         suggest::get::get_all_asset_tags,
         suggest::get::get_all_supported_avatar_values,
