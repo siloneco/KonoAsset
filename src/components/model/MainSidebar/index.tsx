@@ -21,6 +21,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Route as PreferenceRoute } from '@/routes/preference'
 import TextSearch from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
+import AllTypeFilter from './layout/AllTypeFilter'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
@@ -85,9 +86,8 @@ const MainSidebar = () => {
               />
               <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
-              {(assetType === 'All' || assetType === 'AvatarWearable') && (
-                <AvatarWearableFilter />
-              )}
+              {assetType === 'All' && <AllTypeFilter />}
+              {assetType === 'AvatarWearable' && <AvatarWearableFilter />}
               {assetType === 'WorldObject' && <WorldObjectFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector

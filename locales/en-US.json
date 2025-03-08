@@ -92,6 +92,7 @@
     "addasset:manual-input:shop-name": "Shop name",
     "addasset:manual-input:shop-name:placeholder": "Enter shop name...",
     "addasset:progress-bar": "Importing asset...",
+    "addasset:progress-bar:canceling": "Canceling",
     "addasset:get:error-toast": "Failed to fetch asset information.",
     "addasset:get:error-toast:unknown-asset-type": "Unknown asset type.",
     "addasset:get:success-toast": "Asset information updated!",
