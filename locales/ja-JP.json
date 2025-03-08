@@ -240,7 +240,8 @@
 
     "preference:settings:progress-bar:success-toast": "データの移行が完了しました！",
 
-    "preference:settings:progress-bar": "データを移行中...",
+    "preference:settings:progress-bar:title": "移行中...",
+    "preference:settings:progress-bar:description": "データを移行しています...",
 
     "preference:settings:application-data": "アプリデータの保存先",
     "preference:settings:application-data:explanation-text": "アセットや画像を保存するディレクトリを設定します",

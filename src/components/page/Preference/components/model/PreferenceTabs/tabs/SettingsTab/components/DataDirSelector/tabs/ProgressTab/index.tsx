@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
 import useDataDirSelectorProgressTab from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
@@ -15,6 +16,8 @@ const ProgressTab: FC<Props> = ({
   setDialogOpen,
   updateLocalDataDir,
 }) => {
+  const { t } = useLocalization()
+
   const { onCompleted, onCancelled, onFailed } = useDataDirSelectorProgressTab({
     destinationPath,
     setDialogOpen,
@@ -24,6 +27,8 @@ const ProgressTab: FC<Props> = ({
   return (
     <TaskStatusHandler
       taskId={taskId}
+      title={t('preference:settings:progress-bar:title')}
+      description={t('preference:settings:progress-bar:description')}
       onCompleted={onCompleted}
       onCancelled={onCancelled}
       onFailed={onFailed}
