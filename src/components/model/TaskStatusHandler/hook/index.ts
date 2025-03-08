@@ -154,6 +154,13 @@ export const useTaskStatusHandler = ({
     }
   }, [taskId, onCompleted, onCancelled, onFailed])
 
+  useEffect(() => {
+    if (taskId === null) {
+      setFilename('')
+      setProgress(0)
+    }
+  }, [taskId])
+
   return {
     dialogOpen,
     progress,

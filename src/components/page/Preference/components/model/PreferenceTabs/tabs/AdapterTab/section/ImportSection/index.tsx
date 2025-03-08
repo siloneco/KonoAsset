@@ -1,13 +1,19 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { FolderInput, Info } from 'lucide-react'
+import { Folder, FolderArchive, FolderInput, Info } from 'lucide-react'
 import { useImportSection } from './hook'
 import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
 
 export const ImportSection = () => {
-  const { taskId, startImport, onCompleted, onCancelled, onFailed } =
-    useImportSection()
+  const {
+    taskId,
+    startImportUsingDirectory,
+    startImportUsingZipFile,
+    onCompleted,
+    onCancelled,
+    onFailed,
+  } = useImportSection()
 
   return (
     <div>
@@ -27,9 +33,14 @@ export const ImportSection = () => {
           </AlertDescription>
         </Alert>
       </div>
-      <div className="w-full flex justify-center">
-        <Button className="w-1/4" onClick={startImport}>
-          フォルダを選んでインポート
+      <div className="w-full flex justify-center space-x-4">
+        <Button className="w-1/4" onClick={startImportUsingZipFile}>
+          <FolderArchive />
+          ZIPファイルからインポート
+        </Button>
+        <Button className="w-1/4" onClick={startImportUsingDirectory}>
+          <Folder />
+          フォルダからインポート
         </Button>
       </div>
       <TaskStatusHandler

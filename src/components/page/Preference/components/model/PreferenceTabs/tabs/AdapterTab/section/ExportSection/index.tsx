@@ -43,12 +43,21 @@ export const ExportSection: FC = () => {
               onClick={() => setExportType('KonoAsset')}
             >
               <ExportTypeButtonTitle>
-                KonoAssetや他アプリへのデータ移行のため
+                他デバイスのKonoAssetへ移行するため
               </ExportTypeButtonTitle>
               <ExportTypeButtonDescription>
-                KonoAssetで使用される形式で出力します
-                <br />
-                データはKonoAssetや対応する他アプリにインポートすることができます
+                KonoAssetで使用される形式のZIPファイル(無圧縮)で出力します
+              </ExportTypeButtonDescription>
+            </ExportTypeButton>
+            <ExportTypeButton
+              active={currentExportType === 'AvatarExplorer'}
+              onClick={() => setExportType('AvatarExplorer')}
+            >
+              <ExportTypeButtonTitle>
+                Avatar Explorerへ移行するため
+              </ExportTypeButtonTitle>
+              <ExportTypeButtonDescription>
+                Avatar Explorerで読み込める形式に変換して出力します
               </ExportTypeButtonDescription>
             </ExportTypeButton>
             <ExportTypeButton
@@ -59,7 +68,7 @@ export const ExportSection: FC = () => {
                 エクスプローラー等で表示するため
               </ExportTypeButtonTitle>
               <ExportTypeButtonDescription>
-                フォルダ名などを分かりやすい形式に整理して出力します
+                フォルダ名などを分かりやすい形式に整理してZIPファイルで出力します
               </ExportTypeButtonDescription>
             </ExportTypeButton>
           </div>

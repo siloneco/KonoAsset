@@ -1,9 +1,9 @@
 import { useToast } from '@/hooks/use-toast'
-import { commands } from '@/lib/bindings'
-import { open } from '@tauri-apps/plugin-dialog'
+import { commands, Result } from '@/lib/bindings'
+import { open, save } from '@tauri-apps/plugin-dialog'
 import { useState } from 'react'
 
-type ExportStyle = 'KonoAsset' | 'HumanReadable'
+type ExportStyle = 'KonoAsset' | 'AvatarExplorer' | 'HumanReadable'
 
 type ReturnProps = {
   currentExportType: ExportStyle | null
@@ -24,20 +24,36 @@ export const useExportSection = (): ReturnProps => {
   const [exportDestination, setExportDestination] = useState<string | null>(
     null,
   )
+
   const [taskId, setTaskId] = useState<string | null>(null)
   const { toast } = useToast()
 
-  const selectExportDestination = async () => {
-    const dir = await open({
-      multiple: false,
-      directory: true,
-    })
+  const setExportType = (type: ExportStyle) => {
+    setExportDestination(null)
+    setCurrentExportType(type)
+  }
 
-    if (dir === null) {
+  const selectExportDestination = async () => {
+    const isZip = currentExportType !== 'AvatarExplorer'
+
+    let path: string | null = null
+    if (isZip) {
+      path = await save({
+        defaultPath: 'KonoAsset-exported.zip',
+        filters: [{ name: 'zip', extensions: ['zip'] }],
+      })
+    } else {
+      path = await open({
+        canCreateDirectories: true,
+        directory: true,
+      })
+    }
+
+    if (path === null) {
       return
     }
 
-    setExportDestination(dir)
+    setExportDestination(path)
   }
 
   const startExport = async () => {
@@ -45,19 +61,27 @@ export const useExportSection = (): ReturnProps => {
       return
     }
 
-    if (currentExportType === 'HumanReadable') {
-      const result = await commands.exportAsHumanReadableZip(exportDestination)
-
-      if (result.status === 'error') {
-        toast({
-          title: 'エクスポートに失敗しました',
-          description: result.error,
-        })
-        return
-      }
-
-      setTaskId(result.data)
+    let result: Result<string, string>
+    if (currentExportType === 'KonoAsset') {
+      result = await commands.exportAsKonoassetZip(exportDestination)
+    } else if (currentExportType === 'HumanReadable') {
+      result = await commands.exportAsHumanReadableZip(exportDestination)
+    } else if (currentExportType === 'AvatarExplorer') {
+      result = await commands.exportForAvatarExplorer(exportDestination)
+    } else {
+      console.error('Unsupported export type: ' + currentExportType)
+      return
     }
+
+    if (result.status === 'error') {
+      toast({
+        title: 'エクスポートに失敗しました',
+        description: result.error,
+      })
+      return
+    }
+
+    setTaskId(result.data)
   }
 
   const onCompleted = async () => {
@@ -87,7 +111,7 @@ export const useExportSection = (): ReturnProps => {
 
   return {
     currentExportType,
-    setExportType: setCurrentExportType,
+    setExportType,
     exportDestination,
     selectExportDestination,
     exportButtonActivated,

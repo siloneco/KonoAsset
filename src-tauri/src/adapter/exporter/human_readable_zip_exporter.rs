@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Arc;
 
@@ -13,6 +12,9 @@ use crate::data_store::provider::StoreProvider;
 use crate::definitions::entities::ProgressEvent;
 use crate::definitions::traits::AssetTrait;
 use crate::file::cleanup::DeleteOnDrop;
+
+use super::definitions::AssetExportOverview;
+use super::util::get_category_based_assets;
 
 pub async fn export_as_human_readable_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
@@ -29,57 +31,34 @@ where
         .map_err(|e| e.to_string())?;
     let mut writer = ZipFileWriter::with_tokio(&mut file);
 
-    let (data_dir, avatars, avatar_wearables, world_objects) = {
-        let store_provider = store_provider.lock().await;
+    let category_based_assets = get_category_based_assets(store_provider.clone()).await;
 
-        let data_dir = store_provider.data_dir().join("data");
+    let avatars = category_based_assets.avatars;
+    let avatar_wearables = category_based_assets.avatar_wearables;
+    let world_objects = category_based_assets.world_objects;
 
-        let avatars = store_provider.get_avatar_store().get_all().await;
-        let avatar_wearables = store_provider.get_avatar_wearable_store().get_all().await;
-        let world_objects = store_provider.get_world_object_store().get_all().await;
+    let total_assets = avatars.len()
+        + avatar_wearables.values().flatten().count()
+        + world_objects.values().flatten().count();
 
-        (data_dir, avatars, avatar_wearables, world_objects)
-    };
-
-    let total_assets = avatars.len() + avatar_wearables.len() + world_objects.len();
     let mut processed_assets: usize = 0;
-
-    let avatar_wearables_by_category =
-        avatar_wearables
-            .into_iter()
-            .fold(HashMap::new(), |mut map, item| {
-                map.entry(sanitize_filename::sanitize(&item.category))
-                    .or_insert_with(Vec::new)
-                    .push(item);
-                map
-            });
-
-    let world_objects_by_category =
-        world_objects
-            .into_iter()
-            .fold(HashMap::new(), |mut map, item| {
-                map.entry(sanitize_filename::sanitize(&item.category))
-                    .or_insert_with(Vec::new)
-                    .push(item);
-                map
-            });
 
     new_zip_dir(&mut writer, "Avatars/").await?;
 
     for avatar in avatars {
+        let name = avatar.asset.description.name;
+        let booth_id = avatar.asset.description.booth_item_id;
+
         let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
-        if let Err(e) = ProgressEvent::new(percentage, avatar.description.name.clone()).emit(app) {
+        if let Err(e) = ProgressEvent::new(percentage, name.clone()).emit(app) {
             log::error!("Failed to emit progress event: {:?}", e);
         }
 
-        let item_path = format!(
-            "Avatars/{}/",
-            sanitize_filename::sanitize(&avatar.description.name)
-        );
+        let item_path = format!("Avatars/{}/", sanitize_filename::sanitize(&name));
 
         new_zip_dir(&mut writer, &item_path).await?;
 
-        if let Some(booth_id) = avatar.description.booth_item_id {
+        if let Some(booth_id) = booth_id {
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
@@ -92,15 +71,13 @@ where
                 .map_err(|e| e.to_string())?;
         }
 
-        let asset_data_path = data_dir.join(avatar.id.to_string());
-
-        write_asset_data(&mut writer, item_path, asset_data_path).await?;
+        write_asset_data(&mut writer, item_path, avatar.data_dir).await?;
 
         processed_assets += 1;
     }
 
     new_zip_dir(&mut writer, "AvatarWearables/").await?;
-    for key in avatar_wearables_by_category.keys() {
+    for key in avatar_wearables.keys() {
         let category = if !key.is_empty() {
             key
         } else {
@@ -110,8 +87,7 @@ where
         write_categorized_assets(
             &mut writer,
             category,
-            avatar_wearables_by_category.get(key).unwrap(),
-            &data_dir,
+            avatar_wearables.get(key).unwrap(),
             "AvatarWearables/",
             |name| {
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
@@ -126,7 +102,7 @@ where
     }
 
     new_zip_dir(&mut writer, "WorldObjects/").await?;
-    for key in world_objects_by_category.keys() {
+    for key in world_objects.keys() {
         let category = if !key.is_empty() {
             key
         } else {
@@ -136,8 +112,7 @@ where
         write_categorized_assets(
             &mut writer,
             category,
-            world_objects_by_category.get(key).unwrap(),
-            &data_dir,
+            world_objects.get(key).unwrap(),
             "WorldObjects/",
             |name| {
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
@@ -161,8 +136,7 @@ where
 async fn write_categorized_assets<A>(
     writer: &mut async_zip::tokio::write::ZipFileWriter<&mut File>,
     category: &str,
-    assets: &Vec<A>,
-    data_dir: &Path,
+    assets: &Vec<AssetExportOverview<A>>,
     zip_prefix: &str,
     mut callback: impl FnMut(String),
 ) -> Result<(), String>
@@ -174,17 +148,16 @@ where
     new_zip_dir(writer, &item_path).await?;
 
     for item in assets {
-        callback(item.get_description().name.clone());
+        let name = item.asset.get_description().name.clone();
+        let booth_id = item.asset.get_description().booth_item_id;
 
-        let item_path = format!(
-            "{}{}/",
-            item_path,
-            sanitize_filename::sanitize(&item.get_description().name)
-        );
+        callback(name.clone());
+
+        let item_path = format!("{}{}/", item_path, sanitize_filename::sanitize(&name));
 
         new_zip_dir(writer, &item_path).await?;
 
-        if let Some(booth_id) = item.get_description().booth_item_id {
+        if let Some(booth_id) = booth_id {
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
@@ -197,9 +170,7 @@ where
                 .map_err(|e| e.to_string())?;
         }
 
-        let asset_data_path = data_dir.join(item.get_id().to_string());
-
-        write_asset_data(writer, item_path, asset_data_path).await?;
+        write_asset_data(writer, item_path, &item.data_dir).await?;
     }
 
     Ok(())
