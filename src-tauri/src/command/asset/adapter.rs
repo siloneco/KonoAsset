@@ -33,8 +33,21 @@ pub async fn import_from_other_data_store(
         .run((*handle).clone(), async move {
             let mut basic_store = cloned_basic_store.lock().await;
 
-            adapter::importer::import_data_store(&mut *basic_store, &path, &cloned_app_handle)
+            if path.is_dir() {
+                adapter::importer::import_data_store_from_directory(
+                    &mut *basic_store,
+                    &path,
+                    cloned_app_handle,
+                )
                 .await?;
+            } else {
+                adapter::importer::import_data_store_from_zip(
+                    &mut *basic_store,
+                    &path,
+                    cloned_app_handle,
+                )
+                .await?;
+            }
 
             log::info!(
                 "Successfully imported assets from external path: {}",

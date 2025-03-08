@@ -1,9 +1,5 @@
 use std::{collections::HashMap, path::Path};
 
-// use async_zip::base::read::seek::ZipFileReader;
-// use tokio::{fs::File, io::BufReader};
-// use tokio_util::compat::Compat;
-
 use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
@@ -17,10 +13,29 @@ use crate::{
     },
 };
 
-pub async fn import_data_store<P>(
+pub async fn import_data_store_from_directory<P>(
     data_store_provider: &mut StoreProvider,
     path: P,
-    app_handle: &AppHandle,
+    app_handle: AppHandle,
+) -> Result<(), String>
+where
+    P: AsRef<Path>,
+{
+    let progress_callback = move |progress, filename| {
+        let emit_result = ProgressEvent::new(progress * 100f32, filename).emit(&app_handle);
+
+        if let Err(e) = emit_result {
+            log::error!("Failed to emit progress event: {}", e);
+        }
+    };
+
+    internal_import_data_store_from_directory(data_store_provider, path, progress_callback).await
+}
+
+pub async fn internal_import_data_store_from_directory<P>(
+    data_store_provider: &mut StoreProvider,
+    path: P,
+    progress_callback: impl Fn(f32, String) + Send + Sync + 'static,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
@@ -66,11 +81,8 @@ where
         cleanups.push(DeleteOnDrop::new(to.clone()));
 
         let callback = |progress, filename| {
-            let percentage = ((count as f32 + progress) / total as f32) * 90f32;
-
-            if let Err(e) = ProgressEvent::new(percentage, filename).emit(app_handle) {
-                log::error!("Failed to emit progress event: {:?}", e);
-            }
+            let progress = ((count as f32 + progress) / total as f32) * 0.9f32;
+            progress_callback(progress, filename);
         };
 
         modify_guard::copy_dir(
@@ -94,21 +106,20 @@ where
     let images_dir = data_store_provider.data_dir().join("images");
     let external_images_dir = path.join("images");
 
-    modify_guard::copy_dir(
-        external_images_dir,
-        images_dir,
-        false,
-        FileTransferGuard::none(),
-        |progress, filename| {
-            let percentage = 90f32 + progress * 10f32;
-
-            if let Err(e) = ProgressEvent::new(percentage, filename).emit(app_handle) {
-                log::error!("Failed to emit progress event: {:?}", e);
-            }
-        },
-    )
-    .await
-    .map_err(|e| format!("Failed to merge images directory: {}", e))?;
+    if external_images_dir.exists() {
+        modify_guard::copy_dir(
+            external_images_dir,
+            images_dir,
+            false,
+            FileTransferGuard::none(),
+            |progress, filename| {
+                let progress = 0.9f32 + progress * 0.1f32;
+                progress_callback(progress, filename);
+            },
+        )
+        .await
+        .map_err(|e| format!("Failed to merge images directory: {}", e))?;
+    }
 
     data_store_provider
         .merge_from(&external_data_store_provider, &reassign_map)
@@ -120,12 +131,6 @@ where
 
     Ok(())
 }
-
-// pub async fn read_zip_as_data_store_provider(
-//     zip: ZipFileReader<Compat<BufReader<File>>>,
-// ) -> Result<StoreProvider, Box<dyn Error>> {
-
-// }
 
 pub async fn read_dir_as_data_store_provider<P>(path: P) -> Result<StoreProvider, String>
 where
