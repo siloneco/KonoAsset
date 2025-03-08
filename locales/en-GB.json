@@ -232,7 +232,6 @@
     "preference:settings:destination-select:explanation-text": "If you want to change the directory where assets and image data are stored, enter the new location below to proceed with migration",
     "preference:settings:destination-select:original-data-dir": "Original location",
     "preference:settings:destination-select:destination-data-dir": "New location",
-    "preference:settings:destination-select:select-destination": "Select",
     "preference:settings:destination-select:checkbox-text": "Automatically migrate data",
     "preference:settings:destination-select:warn-text-1": "Manual data migration has risks of data corruption",
     "preference:settings:destination-select:warn-text-2": "Only do so if you fully understand the data structure",
@@ -241,7 +240,8 @@
 
     "preference:settings:progress-bar:success-toast": "Data migration completed!",
 
-    "preference:settings:progress-bar": "Migrating data...",
+    "preference:settings:progress-bar:title": "Migrating data...",
+    "preference:settings:progress-bar:description": "Data migration in progress...",
 
     "preference:settings:application-data": "Application data storage location",
     "preference:settings:application-data:explanation-text": "Set the directory where assets and images are stored",
