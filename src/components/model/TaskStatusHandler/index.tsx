@@ -11,12 +11,12 @@ import { Progress } from '@/components/ui/progress'
 import { Loader2 } from 'lucide-react'
 import { FC } from 'react'
 import { useTaskStatusHandler } from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
-  title?: string
-  description?: string
-  cancelButtonText?: string
+  title: string
+  description: string
   onCompleted: () => Promise<void>
   onCancelled: () => Promise<void>
   onFailed: (error: string | null) => Promise<void>
@@ -25,14 +25,15 @@ type Props = {
 
 export const TaskStatusHandler: FC<Props> = ({
   taskId,
-  title = 'タスク実行中...',
-  description = 'タスクを実行しています...',
-  cancelButtonText = 'キャンセル',
+  title,
+  description,
   onCompleted,
   onCancelled,
   onFailed,
   noDialogWrap = false,
 }) => {
+  const { t } = useLocalization()
+
   const { dialogOpen, progress, filename, onCancelButtonClick, canceling } =
     useTaskStatusHandler({
       taskId,
@@ -61,7 +62,7 @@ export const TaskStatusHandler: FC<Props> = ({
           disabled={canceling}
         >
           {canceling && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
-          {cancelButtonText}
+          {t('general:button:cancel')}
         </Button>
       </DialogFooter>
     </>

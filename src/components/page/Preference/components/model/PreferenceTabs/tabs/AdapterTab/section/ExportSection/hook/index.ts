@@ -1,3 +1,4 @@
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands, Result } from '@/lib/bindings'
 import { open, save } from '@tauri-apps/plugin-dialog'
@@ -19,6 +20,8 @@ type ReturnProps = {
 }
 
 export const useExportSection = (): ReturnProps => {
+  const { t } = useLocalization()
+
   const [currentExportType, setCurrentExportType] =
     useState<ExportStyle | null>(null)
   const [exportDestination, setExportDestination] = useState<string | null>(
@@ -75,7 +78,7 @@ export const useExportSection = (): ReturnProps => {
 
     if (result.status === 'error') {
       toast({
-        title: 'エクスポートに失敗しました',
+        title: t('preference:adapter:export:failed'),
         description: result.error,
       })
       return
@@ -87,21 +90,21 @@ export const useExportSection = (): ReturnProps => {
   const onCompleted = async () => {
     setTaskId(null)
     toast({
-      title: 'エクスポートが完了しました！',
+      title: t('preference:adapter:export:completed'),
     })
   }
 
   const onCancelled = async () => {
     setTaskId(null)
     toast({
-      title: 'エクスポートがキャンセルされました',
+      title: t('preference:adapter:export:cancelled'),
     })
   }
 
   const onFailed = async (error: string | null) => {
     setTaskId(null)
     toast({
-      title: 'エクスポートに失敗しました',
+      title: t('preference:adapter:export:failed'),
       description: error,
     })
   }

@@ -1,3 +1,4 @@
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands, events } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
@@ -24,6 +25,8 @@ export const useTaskStatusHandler = ({
   onCancelled,
   onFailed,
 }: Props): ReturnProps => {
+  const { t } = useLocalization()
+
   const [dialogOpen, setDialogOpen] = useState(false)
   const [progress, setProgress] = useState(0)
   const [filename, setFilename] = useState('')
@@ -45,7 +48,7 @@ export const useTaskStatusHandler = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'キャンセルに失敗しました',
+        title: t('taskstatushandler:failed-to-cancel-task'),
         description: result.error,
       })
     }

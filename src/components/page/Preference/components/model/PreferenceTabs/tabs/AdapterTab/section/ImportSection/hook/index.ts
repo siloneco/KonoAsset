@@ -1,3 +1,4 @@
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands } from '@/lib/bindings'
 import { open } from '@tauri-apps/plugin-dialog'
@@ -13,6 +14,8 @@ type ReturnProps = {
 }
 
 export const useImportSection = (): ReturnProps => {
+  const { t } = useLocalization()
+
   const [taskId, setTaskId] = useState<string | null>(null)
   const { toast } = useToast()
 
@@ -21,7 +24,7 @@ export const useImportSection = (): ReturnProps => {
 
     if (result.status === 'error') {
       toast({
-        title: 'インポートに失敗しました',
+        title: t('preference:adapter:import:failed'),
         description: result.error,
       })
       return
@@ -60,21 +63,21 @@ export const useImportSection = (): ReturnProps => {
   const onCompleted = async () => {
     setTaskId(null)
     toast({
-      title: 'インポートが完了しました！',
+      title: t('preference:adapter:import:completed'),
     })
   }
 
   const onCancelled = async () => {
     setTaskId(null)
     toast({
-      title: 'インポートがキャンセルされました',
+      title: t('preference:adapter:import:cancelled'),
     })
   }
 
   const onFailed = async (error: string | null) => {
     setTaskId(null)
     toast({
-      title: 'インポートに失敗しました',
+      title: t('preference:adapter:import:failed'),
       description: error,
     })
   }

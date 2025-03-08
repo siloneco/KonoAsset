@@ -77,7 +77,7 @@ const DestinationSelectTab: FC<Props> = ({
               className="ml-2"
               onClick={onSelectDestinationPathClick}
             >
-              {t('preference:settings:destination-select:select-destination')}
+              {t('general:button:select')}
             </Button>
           </div>
         </div>

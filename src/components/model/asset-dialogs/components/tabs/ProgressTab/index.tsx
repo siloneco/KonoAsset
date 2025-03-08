@@ -15,7 +15,7 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
     <TaskStatusHandler
       taskId={taskId}
       title={t('addasset:progress-bar')}
-      cancelButtonText={t('general:button:cancel')}
+      description=""
       onCompleted={async () => onCompleted()}
       onCancelled={async () => onCancelled()}
       onFailed={async (error) => onFailed(error)}

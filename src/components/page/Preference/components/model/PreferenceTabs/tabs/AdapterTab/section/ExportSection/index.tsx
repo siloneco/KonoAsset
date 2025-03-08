@@ -10,8 +10,11 @@ import {
 } from '../../components/ExportTypeButton'
 import { useExportSection } from './hook'
 import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
+import { useLocalization } from '@/hooks/use-localization'
 
 export const ExportSection: FC = () => {
+  const { t } = useLocalization()
+
   const {
     currentExportType,
     exportButtonActivated,
@@ -28,25 +31,27 @@ export const ExportSection: FC = () => {
   return (
     <div className="pb-12">
       <Label className="text-xl flex flex-row items-center">
-        エクスポート
+        {t('preference:adapter:export')}
         <FolderOutput className="text-foreground/50 ml-2" />
       </Label>
       <p className="mt-1 text-sm text-muted-foreground">
-        登録されているデータを形式を指定して出力します
+        {t('preference:adapter:export:description')}
       </p>
       <div className="mt-6 w-full flex flex-col items-center">
         <div className="w-4/5 max-w-[800px] space-y-6">
           <div className="space-y-2">
-            <Label className="text-base">出力形式を選択</Label>
+            <Label className="text-base">
+              {t('preference:adapter:export:select-type')}
+            </Label>
             <ExportTypeButton
               active={currentExportType === 'KonoAsset'}
               onClick={() => setExportType('KonoAsset')}
             >
               <ExportTypeButtonTitle>
-                他デバイスのKonoAssetへ移行するため
+                {t('preference:adapter:export:type:konoasset:title')}
               </ExportTypeButtonTitle>
               <ExportTypeButtonDescription>
-                KonoAssetで使用される形式のZIPファイル(無圧縮)で出力します
+                {t('preference:adapter:export:type:konoasset:description')}
               </ExportTypeButtonDescription>
             </ExportTypeButton>
             <ExportTypeButton
@@ -54,10 +59,12 @@ export const ExportSection: FC = () => {
               onClick={() => setExportType('AvatarExplorer')}
             >
               <ExportTypeButtonTitle>
-                Avatar Explorerへ移行するため
+                {t('preference:adapter:export:type:avatar-explorer:title')}
               </ExportTypeButtonTitle>
               <ExportTypeButtonDescription>
-                Avatar Explorerで読み込める形式に変換して出力します
+                {t(
+                  'preference:adapter:export:type:avatar-explorer:description',
+                )}
               </ExportTypeButtonDescription>
             </ExportTypeButton>
             <ExportTypeButton
@@ -65,24 +72,30 @@ export const ExportSection: FC = () => {
               onClick={() => setExportType('HumanReadable')}
             >
               <ExportTypeButtonTitle>
-                エクスプローラー等で表示するため
+                {t('preference:adapter:export:type:human-readable-zip:title')}
               </ExportTypeButtonTitle>
               <ExportTypeButtonDescription>
-                フォルダ名などを分かりやすい形式に整理してZIPファイルで出力します
+                {t(
+                  'preference:adapter:export:type:human-readable-zip:description',
+                )}
               </ExportTypeButtonDescription>
             </ExportTypeButton>
           </div>
           <div className="space-y-2">
-            <Label className="text-base">出力先を選択</Label>
+            <Label className="text-base">
+              {t('preference:adapter:export:select-destination')}
+            </Label>
             <div className="flex flex-row">
               <Input
                 className="mr-2"
-                placeholder="出力先を選択してください"
+                placeholder={t(
+                  'preference:adapter:export:select-destination:placeholder',
+                )}
                 value={exportDestination ?? ''}
                 disabled
               />
               <Button variant="secondary" onClick={selectExportDestination}>
-                選択
+                {t('general:button:select')}
               </Button>
             </div>
           </div>
@@ -93,15 +106,14 @@ export const ExportSection: FC = () => {
             onClick={startExport}
             disabled={!exportButtonActivated}
           >
-            出力する
+            {t('preference:adapter:export:button')}
           </Button>
         </div>
       </div>
       <TaskStatusHandler
         taskId={taskId}
-        title="エクスポート中..."
-        description="データをエクスポートしています..."
-        cancelButtonText="キャンセル"
+        title={t('preference:adapter:export:progress:title')}
+        description={t('preference:adapter:export:progress:description')}
         onCompleted={onCompleted}
         onCancelled={onCancelled}
         onFailed={onFailed}

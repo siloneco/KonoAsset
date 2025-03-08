@@ -54,7 +54,7 @@ export const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
               setActiveTab={setActiveTab}
             >
               <Import />
-              データの移行
+              {t('preference:adapter')}
             </PreferenceSidebarButton>
           </SidebarGroupContent>
           <SidebarGroupContent className="p-2">

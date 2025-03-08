@@ -4,8 +4,10 @@ import { Label } from '@/components/ui/label'
 import { Folder, FolderArchive, FolderInput, Info } from 'lucide-react'
 import { useImportSection } from './hook'
 import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
+import { useLocalization } from '@/hooks/use-localization'
 
 export const ImportSection = () => {
+  const { t } = useLocalization()
   const {
     taskId,
     startImportUsingDirectory,
@@ -18,36 +20,35 @@ export const ImportSection = () => {
   return (
     <div>
       <Label className="text-xl flex flex-row items-center">
-        インポート
+        {t('preference:adapter:import')}
         <FolderInput className="text-foreground/50 ml-2" />
       </Label>
       <p className="mt-1 text-sm text-muted-foreground">
-        KonoAsset互換のデータを選択して、既存のデータに追加します
+        {t('preference:adapter:import:description')}
       </p>
       <div className="w-full flex justify-center my-6">
         <Alert className="w-full mx-8 max-w-[800px] border-primary">
           <Info className="h-4 w-4" />
-          <AlertTitle>注意</AlertTitle>
+          <AlertTitle>{t('preference:adapter:import:alert')}</AlertTitle>
           <AlertDescription>
-            インポートを実行する前に、データをバックアップすることをオススメします！
+            {t('preference:adapter:import:alert:description')}
           </AlertDescription>
         </Alert>
       </div>
       <div className="w-full flex justify-center space-x-4">
         <Button className="w-1/4" onClick={startImportUsingZipFile}>
           <FolderArchive />
-          ZIPファイルからインポート
+          {t('preference:adapter:import:button:zip')}
         </Button>
         <Button className="w-1/4" onClick={startImportUsingDirectory}>
           <Folder />
-          フォルダからインポート
+          {t('preference:adapter:import:button:directory')}
         </Button>
       </div>
       <TaskStatusHandler
         taskId={taskId}
-        title="インポート中..."
-        description="データをインポートしています..."
-        cancelButtonText="キャンセル"
+        title={t('preference:adapter:import:progress:title')}
+        description={t('preference:adapter:import:progress:description')}
         onCompleted={onCompleted}
         onCancelled={onCancelled}
         onFailed={onFailed}
