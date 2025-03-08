@@ -226,8 +226,6 @@ pub async fn export_as_avatar_explorer_compatible_structure<P>(
 where
     P: AsRef<Path>,
 {
-    let mut cleanup = DeleteOnDrop::new(path.as_ref().to_path_buf());
-
     let path = path.as_ref();
 
     if !path.exists() {
@@ -249,6 +247,8 @@ where
             return Err(format!("Directory is not empty: {}", path.display()));
         }
     }
+
+    let mut cleanup = DeleteOnDrop::new(path.to_path_buf());
 
     let mut avatar_explorer_items = Vec::new();
 
