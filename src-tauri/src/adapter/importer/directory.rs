@@ -6,7 +6,10 @@ use uuid::Uuid;
 
 use crate::{
     data_store::provider::StoreProvider,
-    definitions::entities::ProgressEvent,
+    definitions::{
+        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
+        traits::AssetTrait,
+    },
     file::{
         cleanup::DeleteOnDrop,
         modify_guard::{self, FileTransferGuard},
@@ -136,6 +139,8 @@ pub async fn read_dir_as_data_store_provider<P>(path: P) -> Result<StoreProvider
 where
     P: AsRef<Path>,
 {
+    validate_data_store_directory(&path).await?;
+
     let path = path.as_ref();
 
     if !path.is_dir() {
@@ -145,8 +150,46 @@ where
         ));
     }
 
-    let mut provider = StoreProvider::create(&path.to_path_buf()).unwrap();
+    let mut provider = StoreProvider::create(&path.to_path_buf())?;
     provider.load_all_assets_from_files(false).await?;
 
     Ok(provider)
+}
+
+pub async fn validate_data_store_directory<P>(path: P) -> Result<(), String>
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
+
+    if !path.is_dir() {
+        return Err(format!(
+            "Invalid path. Expected a directory: {}",
+            path.display()
+        ));
+    }
+
+    let metadata_dir = path.join("metadata");
+
+    let avatar_file = metadata_dir.join(Avatar::filename());
+    let avatar_wearable_file = metadata_dir.join(AvatarWearable::filename());
+    let world_object_file = metadata_dir.join(WorldObject::filename());
+
+    if !avatar_file.exists() && !avatar_wearable_file.exists() && !world_object_file.exists() {
+        return Err(format!(
+            "Invalid data store directory. Missing metadata files: {}",
+            metadata_dir.display()
+        ));
+    }
+
+    let data_dir = path.join("data");
+
+    if !data_dir.is_dir() {
+        return Err(format!(
+            "Invalid data store directory. Missing data directory: {}",
+            data_dir.display()
+        ));
+    }
+
+    return Ok(());
 }
