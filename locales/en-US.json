@@ -7,6 +7,7 @@
     "general:button:close": "Close",
     "general:button:cancel": "Cancel",
     "general:button:delete": "Delete",
+    "general:button:select": "Select",
     "general:button:save": "Save",
     "general:button:open": "Open",
 
@@ -35,7 +36,7 @@
     "general:metadata:subtext": "Asset information",
     "general:assetdata": "Asset data",
     "general:assetdata:subtext": "Main asset data",
-    "general:prerequisite-assets": "前提アセット",
+    "general:prerequisite-assets": "Prerequisite assets",
 
     "addasset:success-toast": "Asset added successfully!",
     "addasset:cancel-toast": "Cancelled",
@@ -91,10 +92,7 @@
     "addasset:manual-input:asset-name:placeholder": "Enter asset name...",
     "addasset:manual-input:shop-name": "Shop name",
     "addasset:manual-input:shop-name:placeholder": "Enter shop name...",
-    "addasset:progress-bar:error-toast:task-id-is-null": "Task ID not found.",
-    "addasset:progress-bar:error-toast:task-cancel-description": "Failed to cancel task.",
     "addasset:progress-bar": "Importing asset...",
-    "addasset:progress-bar:canceling": "Canceling",
     "addasset:get:error-toast": "Failed to fetch asset information.",
     "addasset:get:error-toast:unknown-asset-type": "Unknown asset type.",
     "addasset:get:success-toast": "Asset information updated!",
@@ -167,6 +165,8 @@
 
     "squareimage:image": "Image",
 
+    "taskstatushandler:failed-to-cancel-task": "Failed to cancel the task",
+
     "loaderror:load-error": "Failed to load",
     "loaderror:load-error:description": "KonoAsset could not successfully load the data",
     "loaderror:load-error:errormessage": "Error message: ",
@@ -178,6 +178,7 @@
     "preference:toast-version-copied": "Version information copied!",
     "preference:back-to-top": "Return to top screen",
     "preference:settings": "General settings",
+    "preference:adapter": "Data migration",
     "preference:logs": "View logs",
     "preference:about": "About this app",
 
@@ -193,6 +194,36 @@
     "preference:about:support-text-3": "KonoAsset finds its purpose through creators making 3D models",
     "preference:about:support-text-4": "Prioritizing support for creators serves as encouragement for us as well",
 
+    "preference:adapter:import": "Import",
+    "preference:adapter:import:description": "Select a KonoAsset-compatible dataset to add to the existing data",
+    "preference:adapter:import:alert": "Attention",
+    "preference:adapter:import:alert:description": "We recommend backing up your data before importing!",
+    "preference:adapter:import:button:zip": "Import from ZIP file",
+    "preference:adapter:import:button:directory": "Import from folder",
+    "preference:adapter:import:progress:title": "Importing...",
+    "preference:adapter:import:progress:description": "Importing data...",
+    "preference:adapter:import:completed": "Import completed!",
+    "preference:adapter:import:failed": "Import failed",
+    "preference:adapter:import:cancelled": "Import was cancelled",
+
+    "preference:adapter:export": "Export",
+    "preference:adapter:export:description": "Export asset data in the specified format",
+    "preference:adapter:export:select-type": "Select output format",
+    "preference:adapter:export:type:konoasset:title": "For migrating to KonoAsset on another device",
+    "preference:adapter:export:type:konoasset:description": "Export as an uncompressed ZIP file in the format used by KonoAsset",
+    "preference:adapter:export:type:avatar-explorer:title": "For migrating to Avatar Explorer",
+    "preference:adapter:export:type:avatar-explorer:description": "Convert and export in a format that can be read by Avatar Explorer",
+    "preference:adapter:export:type:human-readable-zip:title": "For displaying files in File Explorer or equivalent.",
+    "preference:adapter:export:type:human-readable-zip:description": "Organize folder names and other details into an easy-to-understand format and export as a ZIP file",
+    "preference:adapter:export:select-destination": "Select destination",
+    "preference:adapter:export:select-destination:placeholder": "Select destination",
+    "preference:adapter:export:button": "Export",
+    "preference:adapter:export:progress:title": "Exporting...",
+    "preference:adapter:export:progress:description": "Exporting data...",
+    "preference:adapter:export:completed": "Export completed!",
+    "preference:adapter:export:failed": "Export failed",
+    "preference:adapter:export:cancelled": "Export was cancelled",
+
     "preference:logs:open-logs-folder": "Open folder",
 
     "preference:settings:destination-select:error-toast": "Failed to migrate data folder",
@@ -201,7 +232,6 @@
     "preference:settings:destination-select:explanation-text": "If you want to change the directory where assets and image data are stored, enter the new location below to proceed with migration",
     "preference:settings:destination-select:original-data-dir": "Original location",
     "preference:settings:destination-select:destination-data-dir": "New location",
-    "preference:settings:destination-select:select-destination": "Select",
     "preference:settings:destination-select:checkbox-text": "Automatically migrate data",
     "preference:settings:destination-select:warn-text-1": "Manual data migration has risks of data corruption",
     "preference:settings:destination-select:warn-text-2": "Only do so if you fully understand the data structure",
@@ -210,7 +240,8 @@
 
     "preference:settings:progress-bar:success-toast": "Data migration completed!",
 
-    "preference:settings:progress-bar": "Migrating data...",
+    "preference:settings:progress-bar:title": "Migrating data...",
+    "preference:settings:progress-bar:description": "Data migration in progress...",
 
     "preference:settings:application-data": "Application data storage location",
     "preference:settings:application-data:explanation-text": "Set the directory where assets and images are stored",
