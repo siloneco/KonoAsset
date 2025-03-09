@@ -1,6 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
-use tokio::sync::Mutex;
+use async_zip::{tokio::write::ZipFileWriter, Compression, ZipEntryBuilder};
+use tokio::{fs::File, sync::Mutex};
 
 use crate::{
     data_store::provider::StoreProvider,
@@ -54,4 +55,20 @@ pub async fn get_category_based_assets(
         avatar_wearables_by_category,
         world_objects_by_category,
     )
+}
+
+pub async fn new_zip_dir<S>(
+    writer: &mut ZipFileWriter<&mut File>,
+    dir_name: S,
+) -> Result<(), String>
+where
+    S: AsRef<str>,
+{
+    writer
+        .write_entry_whole(
+            ZipEntryBuilder::new(dir_name.as_ref().into(), Compression::Stored),
+            b"",
+        )
+        .await
+        .map_err(|e| e.to_string())
 }

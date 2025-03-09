@@ -14,7 +14,7 @@ use crate::definitions::traits::AssetTrait;
 use crate::file::cleanup::DeleteOnDrop;
 
 use super::definitions::AssetExportOverview;
-use super::util::get_category_based_assets;
+use super::util::{get_category_based_assets, new_zip_dir};
 
 pub async fn export_as_human_readable_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
@@ -197,6 +197,7 @@ where
 
             new_zip_dir(writer, &new_relative_path).await?;
 
+            // Box::pin is required to make the recursive call work
             Box::pin(write_asset_data(writer, new_relative_path, entry_path)).await?;
         } else {
             let relative_path = entry_path.strip_prefix(path).map_err(|e| e.to_string())?;
@@ -215,19 +216,6 @@ where
     }
 
     Ok(())
-}
-
-async fn new_zip_dir(
-    writer: &mut async_zip::tokio::write::ZipFileWriter<&mut File>,
-    dir_name: &str,
-) -> Result<(), String> {
-    writer
-        .write_entry_whole(
-            ZipEntryBuilder::new(dir_name.into(), Compression::Stored),
-            b"",
-        )
-        .await
-        .map_err(|e| e.to_string())
 }
 
 fn create_link_file_data(booth_id: u64) -> Vec<u8> {

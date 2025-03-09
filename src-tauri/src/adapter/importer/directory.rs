@@ -42,14 +42,14 @@ where
 {
     let path = path.as_ref();
 
-    let external_data_store_provider = if path.is_dir() {
-        read_dir_as_data_store_provider(path).await?
-    } else {
+    if !path.is_dir() {
         return Err(format!(
             "Invalid path. Expected a directory: {}",
             path.display()
         ));
-    };
+    }
+
+    let external_data_store_provider = read_dir_as_data_store_provider(path).await?;
 
     let currently_used_ids = data_store_provider.get_used_ids().await;
     let external_ids = external_data_store_provider.get_used_ids().await;

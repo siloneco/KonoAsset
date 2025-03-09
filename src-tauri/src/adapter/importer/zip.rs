@@ -48,7 +48,8 @@ where
             log::error!("Failed to emit progress event: {}", e);
         }
     })
-    .await?;
+    .await
+    .map_err(|e| format!("Failed to extract zip: {}", e))?;
 
     let temp_dir_prefix = temp_dir.to_string_lossy().to_string();
     let progress_callback = move |progress: f32, filename: String| {

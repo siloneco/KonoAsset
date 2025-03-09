@@ -12,6 +12,8 @@ use crate::data_store::provider::StoreProvider;
 use crate::definitions::entities::ProgressEvent;
 use crate::file::cleanup::DeleteOnDrop;
 
+use super::util::new_zip_dir;
+
 pub async fn export_as_konoasset_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
     path: P,
@@ -39,16 +41,7 @@ where
         let relative_path_str = relative_path.to_string_lossy().to_string();
 
         if entry.is_dir() {
-            writer
-                .write_entry_whole(
-                    ZipEntryBuilder::new(
-                        format!("{}/", relative_path_str).into(),
-                        Compression::Stored,
-                    ),
-                    b"",
-                )
-                .await
-                .map_err(|e| e.to_string())?
+            new_zip_dir(&mut writer, format!("{}/", relative_path_str)).await?;
         } else {
             let data = tokio::fs::read(entry).await.map_err(|e| e.to_string())?;
             let builder =
