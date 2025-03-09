@@ -5,6 +5,7 @@ import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { AssetContext } from '@/components/context/AssetContext'
 
 const AllTypeFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
@@ -13,6 +14,7 @@ const AllTypeFilter = () => {
   >([])
   const { t } = useLocalization()
 
+  const { assetDisplaySortedList } = useContext(AssetContext)
   const {
     categoryFilter,
     setCategoryFilter,
@@ -40,7 +42,7 @@ const AllTypeFilter = () => {
 
   useEffect(() => {
     updateCandidates()
-  }, [])
+  }, [assetDisplaySortedList])
 
   return (
     <div className="mt-4 space-y-4">

@@ -22,9 +22,11 @@ import { Route as PreferenceRoute } from '@/routes/preference'
 import TextSearch from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
 import AllTypeFilter from './layout/AllTypeFilter'
+import { AssetContext } from '@/components/context/AssetContext'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
+  const { assetDisplaySortedList } = useContext(AssetContext)
   const {
     assetType,
     queryTextMode,
@@ -54,7 +56,7 @@ const MainSidebar = () => {
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [])
+  }, [assetDisplaySortedList])
 
   return (
     <Sidebar collapsible="none" className="w-80 border-r-2">

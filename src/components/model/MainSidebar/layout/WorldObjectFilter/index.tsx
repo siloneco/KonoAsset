@@ -5,11 +5,14 @@ import { fetchAllCategories } from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { AssetContext } from '@/components/context/AssetContext'
 
 const WorldObjectFilter = () => {
-  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
-  const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
   const { t } = useLocalization()
+  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
+
+  const { assetDisplaySortedList } = useContext(AssetContext)
+  const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
   const categoryValues: Option[] = categoryFilter.map((category) => ({
     value: category,
@@ -22,7 +25,7 @@ const WorldObjectFilter = () => {
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [])
+  }, [assetDisplaySortedList])
 
   return (
     <div className="mt-4 space-y-4">
