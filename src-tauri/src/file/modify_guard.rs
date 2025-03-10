@@ -198,6 +198,15 @@ pub async fn move_file_or_dir<P>(
 where
     P: AsRef<Path>,
 {
+    let src = src.as_ref();
+
+    if !src.exists() {
+        return Err(tokio::io::Error::new(
+            tokio::io::ErrorKind::NotFound,
+            "Source path does not exist",
+        ));
+    }
+
     guard.assert(&src, &dest)?;
     tokio::fs::rename(&src, &dest).await
 }
@@ -211,7 +220,16 @@ pub async fn copy_file<P>(
 where
     P: AsRef<Path>,
 {
-    if !src.as_ref().is_file() {
+    let src = src.as_ref();
+
+    if !src.exists() {
+        return Err(tokio::io::Error::new(
+            tokio::io::ErrorKind::NotFound,
+            "Source path does not exist",
+        ));
+    }
+
+    if !src.is_file() {
         return Err(tokio::io::Error::new(
             tokio::io::ErrorKind::InvalidInput,
             "Source path must be a file",
@@ -240,6 +258,13 @@ where
     P: AsRef<Path> + Clone + Send + Sync + 'static,
     Q: AsRef<Path> + Clone + Send + Sync + 'static,
 {
+    if !src.as_ref().exists() {
+        return Err(tokio::io::Error::new(
+            tokio::io::ErrorKind::NotFound,
+            "Source path does not exist",
+        ));
+    }
+
     if !src.as_ref().is_dir() {
         return Err(tokio::io::Error::new(
             tokio::io::ErrorKind::InvalidInput,

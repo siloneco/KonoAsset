@@ -150,14 +150,16 @@ where
             let booth_id = booth_id.unwrap();
             let image_file_path = image_file_path.unwrap();
 
-            modify_guard::copy_file(
-                image_file_path,
-                &thumbnail_dir.join(format!("{}.png", booth_id)),
-                false,
-                FileTransferGuard::dest(path),
-            )
-            .await
-            .map_err(|e| format!("Failed to copy asset image file: {}", e))?;
+            if image_file_path.exists() {
+                modify_guard::copy_file(
+                    image_file_path,
+                    &thumbnail_dir.join(format!("{}.png", booth_id)),
+                    false,
+                    FileTransferGuard::dest(path),
+                )
+                .await
+                .map_err(|e| format!("Failed to copy asset image file: {}", e))?;
+            }
         }
 
         let relative_item_path = dest
@@ -212,20 +214,22 @@ where
             let booth_id = booth_id.unwrap();
             let image_file_path = image_file_path.unwrap();
 
-            modify_guard::copy_file(
-                image_file_path,
-                &thumbnail_dir.join(format!("{}.png", booth_id)),
-                false,
-                FileTransferGuard::dest(path),
-            )
-            .await
-            .map_err(|e| {
-                format!(
-                    "Failed to copy asset image file ({}): {}",
-                    image_file_path.display(),
-                    e
+            if image_file_path.exists() {
+                modify_guard::copy_file(
+                    image_file_path,
+                    &thumbnail_dir.join(format!("{}.png", booth_id)),
+                    false,
+                    FileTransferGuard::dest(path),
                 )
-            })?;
+                .await
+                .map_err(|e| {
+                    format!(
+                        "Failed to copy asset image file ({}): {}",
+                        image_file_path.display(),
+                        e
+                    )
+                })?;
+            }
         }
 
         let relative_item_path = dest
