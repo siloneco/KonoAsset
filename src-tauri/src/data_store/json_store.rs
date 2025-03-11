@@ -152,6 +152,32 @@ impl<
         Ok(true)
     }
 
+    pub async fn delete_dependency(&self, id: Uuid) -> Result<bool, String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let cloned_assets = assets.clone();
+
+            for asset in cloned_assets {
+                let dependencies = &asset.get_description().dependencies;
+
+                if dependencies.contains(&id) {
+                    let mut new_dependencies = dependencies.clone();
+                    new_dependencies.retain(|&x| x != id);
+
+                    let mut new_asset = asset.clone();
+                    new_asset.get_description_as_mut().dependencies = new_dependencies;
+
+                    assets.remove(&asset);
+                    assets.insert(new_asset);
+                }
+            }
+        }
+
+        self.save().await?;
+
+        Ok(true)
+    }
+
     pub async fn merge_from(
         &self,
         other: &JsonStore<T>,
