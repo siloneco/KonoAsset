@@ -50,8 +50,6 @@ async fn delete_asset_from_store<
         return Ok(false);
     }
 
-    //すべて
-
     let path = app_dir.join("data").join(id.to_string());
     let dir_delete_result =
         modify_guard::delete_recursive(&path, &DeletionGuard::new(app_dir)).await;
