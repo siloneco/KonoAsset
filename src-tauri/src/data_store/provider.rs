@@ -307,6 +307,14 @@ impl StoreProvider {
 
         self.load_all_assets_from_files(true).await
     }
+
+    pub async fn remove_all_dependencies(&self, id: Uuid) -> Result<(), String> {
+        self.avatar_store.delete_dependency(id).await?;
+        self.avatar_wearable_store.delete_dependency(id).await?;
+        self.world_object_store.delete_dependency(id).await?;
+
+        return Ok(());
+    }
 }
 
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq, specta::Type)]

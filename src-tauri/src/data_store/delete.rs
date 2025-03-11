@@ -14,19 +14,18 @@ use super::{json_store::JsonStore, provider::StoreProvider};
 pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<(), String> {
     let app_dir = provider.data_dir();
 
-    if delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await? {
-        return Ok(());
+    let deleted = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await?
+        || delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await?
+        || delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await?;
+
+    if !deleted {
+        return Err("Asset not found".into());
     }
 
-    if delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await? {
-        return Ok(());
-    }
+    // すべてのアセットの依存アセットからアイテムを削除
+    provider.remove_all_dependencies(id).await?;
 
-    if delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await? {
-        return Ok(());
-    }
-
-    Err("Asset not found".into())
+    return Ok(());
 }
 
 async fn delete_asset_from_store<
@@ -50,6 +49,8 @@ async fn delete_asset_from_store<
     if !result {
         return Ok(false);
     }
+
+    //すべて
 
     let path = app_dir.join("data").join(id.to_string());
     let dir_delete_result =
