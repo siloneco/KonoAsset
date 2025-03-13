@@ -41,6 +41,34 @@ vi.mock('@/hooks/use-toast', () => {
 })
 
 describe('BoothInputTab Hook', () => {
+  it('correctly maintains the URL input value', () => {
+    const mockForm = {
+      getValues: vi.fn().mockReturnValue(null),
+    }
+    const mockSetTab = vi.fn()
+
+    const { result } = renderHook(() =>
+      useBoothInputTabForAddDialog({
+        // @ts-expect-error mockForm is not a valid AssetFormType but satisfies the required fields
+        form: mockForm,
+        setTab: mockSetTab,
+      }),
+    )
+
+    // Initial state should be empty
+    expect(result.current.boothUrlInput).toBe('')
+
+    // Update URL value
+    const url = 'https://booth.pm/ja/items/12345'
+
+    act(() => {
+      result.current.onUrlInputChange({
+        target: { value: url },
+      } as React.ChangeEvent<HTMLInputElement>)
+    })
+    expect(result.current.boothUrlInput).toBe(url)
+  })
+
   it('executes getAssetDescriptionFromBooth function correctly', async () => {
     const mockForm = {
       getValues: vi.fn().mockReturnValue(null),

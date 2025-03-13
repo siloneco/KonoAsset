@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import BoothInputTab from '.'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useBoothInputTabForAddDialog } from './hook'
+import { setupAndRender } from '@/test/init'
 
 vi.mock('./hook', () => {
   return {
@@ -38,6 +39,49 @@ describe('BoothInputTab', () => {
   afterEach(() => {
     cleanup()
     vi.clearAllMocks()
+  })
+
+  it('handles button clicks and keyboard input correctly', async () => {
+    const mockForm = {
+      watch: vi.fn().mockReturnValue('Avatar'),
+      setValue: vi.fn(),
+    }
+    const mockSetTab = vi.fn()
+
+    const mockUseBoothInputTab = useBoothInputTabForAddDialog as Mock
+    mockUseBoothInputTab.mockReturnValueOnce(base)
+
+    const { user } = setupAndRender(
+      <Dialog open={true}>
+        <DialogContent>
+          <BoothInputTab
+            // @ts-expect-error type check fails but it satisfies the required fields
+            form={mockForm}
+            setTab={mockSetTab}
+          />
+        </DialogContent>
+      </Dialog>,
+    )
+
+    const { backToPreviousTab, moveToNextTab, onUrlInputChange } = base
+
+    // Check back button works correctly
+    fireEvent.click(screen.getByText('general:button:back'))
+    expect(backToPreviousTab).toHaveBeenCalledOnce()
+
+    // Check skip button works correctly
+    fireEvent.click(screen.getByText('addasset:booth-input:manual-input'))
+    expect(moveToNextTab).toHaveBeenCalledOnce()
+
+    const inputTarget = screen.getByPlaceholderText(
+      'https://booth.pm/ja/items/1234567',
+    )
+
+    // Check input change works correctly
+    const inputText = 'https://booth.pm/ja/items/1234567'
+    await user.type(inputTarget, inputText)
+
+    expect(onUrlInputChange).toHaveBeenCalledTimes(inputText.length)
   })
 
   it('renders fetch button as disabled when URL is invalid', async () => {
