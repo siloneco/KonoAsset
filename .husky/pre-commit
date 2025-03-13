@@ -1,4 +1,5 @@
 pnpm type-check
 pnpm lint
-pnpm fmt
-pnpm test:run
+
+# # Following check(s) are disabled due to long execution times and because they're covered by CI
+# pnpm test:run
