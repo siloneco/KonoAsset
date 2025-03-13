@@ -1,3 +1,4 @@
+pub mod adapter;
 pub mod create;
 pub mod delete;
 pub mod filter;

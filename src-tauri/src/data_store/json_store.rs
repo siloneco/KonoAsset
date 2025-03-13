@@ -1,4 +1,9 @@
-use std::{collections::HashSet, fs::File, hash::Hash, path::PathBuf};
+use std::{
+    collections::{HashMap, HashSet},
+    fs::File,
+    hash::Hash,
+    path::PathBuf,
+};
 
 use serde::{de::DeserializeOwned, Serialize};
 use tauri::async_runtime::Mutex;
@@ -147,10 +152,55 @@ impl<
         Ok(true)
     }
 
+    pub async fn delete_dependency(&self, id: Uuid) -> Result<bool, String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let cloned_assets = assets.clone();
+
+            for asset in cloned_assets {
+                let dependencies = &asset.get_description().dependencies;
+
+                if dependencies.contains(&id) {
+                    let mut new_dependencies = dependencies.clone();
+                    new_dependencies.retain(|&x| x != id);
+
+                    let mut new_asset = asset.clone();
+                    new_asset.get_description_as_mut().dependencies = new_dependencies;
+
+                    assets.remove(&asset);
+                    assets.insert(new_asset);
+                }
+            }
+        }
+
+        self.save().await?;
+
+        Ok(true)
+    }
+
+    pub async fn merge_from(
+        &self,
+        other: &JsonStore<T>,
+        reassign_map: &HashMap<Uuid, Uuid>,
+    ) -> Result<(), String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let other_assets = other.assets.lock().await.clone();
+
+            for mut asset in other_assets {
+                if let Some(new_id) = reassign_map.get(&asset.get_id()) {
+                    asset.set_id(new_id.clone());
+                }
+
+                assets.insert(asset);
+            }
+        }
+
+        self.save().await
+    }
+
     async fn save(&self) -> Result<(), String> {
-        let mut path = self.data_dir.clone();
-        path.push("metadata");
-        path.push(T::filename());
+        let path = self.data_dir.join("metadata").join(T::filename());
 
         let file = File::create(&path)
             .map_err(|e| format!("Failed to create file at {}: {}", path.display(), e))?;

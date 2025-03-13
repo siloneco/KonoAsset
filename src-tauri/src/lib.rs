@@ -3,20 +3,27 @@ use std::{path::PathBuf, sync::Arc};
 use booth::{fetcher::BoothFetcher, image_resolver::PximgResolver};
 use command::generate_tauri_specta_builder;
 use data_store::{delete::delete_temporary_images, provider::StoreProvider};
+use deep_link::{
+    definitions::{AddAssetDeepLink, StartupDeepLinkStore},
+    execute_deep_links, parse_args_to_deep_links,
+};
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use language::load::load_from_language_code;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
+use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_specta::collect_events;
 use updater::update_handler::{UpdateChannel, UpdateHandler};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
 
+mod adapter;
 mod booth;
 mod command;
 mod data_store;
+mod deep_link;
 mod definitions;
 mod file;
 mod importer;
@@ -32,8 +39,11 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder =
-        generate_tauri_specta_builder().events(collect_events![ProgressEvent, TaskStatusChanged,]);
+    let builder = generate_tauri_specta_builder().events(collect_events![
+        ProgressEvent,
+        TaskStatusChanged,
+        AddAssetDeepLink
+    ]);
 
     #[cfg(debug_assertions)]
     builder
@@ -49,11 +59,14 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
-        tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, _, _| {
+        tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, args, _| {
             let _ = app
                 .get_webview_window("main")
                 .expect("no main window")
                 .set_focus();
+
+            let deep_links = parse_args_to_deep_links(&args);
+            execute_deep_links(&app, &deep_links);
         }));
     }
 
@@ -61,6 +74,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
         .manage(Arc::new(Mutex::new(TaskContainer::new())))
@@ -71,6 +85,19 @@ pub fn run() {
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
             app.manage(app.handle().clone());
+
+            #[cfg(any(windows, target_os = "linux"))]
+            {
+                if let Err(e) = app.deep_link().register_all() {
+                    log::error!("Failed to register deep links: {}", e);
+                }
+            }
+
+            let args = std::env::args().collect::<Vec<_>>();
+            let deep_links = parse_args_to_deep_links(&args);
+            let deep_links = StartupDeepLinkStore::new(deep_links);
+
+            app.manage(arc_mutex(deep_links));
 
             let preference_file_path = app
                 .path()
@@ -197,7 +224,7 @@ fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
     let store_provider_ref = &mut store_provider;
 
     let result = tauri::async_runtime::block_on(async move {
-        store_provider_ref.load_all_assets_from_files().await
+        store_provider_ref.load_all_assets_from_files(true).await
     });
 
     if let Err(err) = result {

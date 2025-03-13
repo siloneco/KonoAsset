@@ -118,6 +118,10 @@ impl AssetTrait for Avatar {
         self.id
     }
 
+    fn set_id(&mut self, id: Uuid) {
+        self.id = id;
+    }
+
     fn get_description(&self) -> &AssetDescription {
         &self.description
     }
@@ -178,6 +182,10 @@ impl AssetTrait for AvatarWearable {
         self.id
     }
 
+    fn set_id(&mut self, id: Uuid) {
+        self.id = id;
+    }
+
     fn get_description(&self) -> &AssetDescription {
         &self.description
     }
@@ -225,6 +233,10 @@ impl AssetTrait for WorldObject {
 
     fn get_id(&self) -> Uuid {
         self.id
+    }
+
+    fn set_id(&mut self, id: Uuid) {
+        self.id = id;
     }
 
     fn get_description(&self) -> &AssetDescription {

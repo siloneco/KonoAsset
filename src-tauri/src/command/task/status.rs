@@ -20,7 +20,11 @@ pub async fn get_task_status(
             let status = task.get_status().await;
             Ok(status)
         }
-        None => Err("Task not found.".into()),
+        None => {
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
+        },
     }
 }
 
@@ -39,7 +43,11 @@ pub async fn cancel_task_request(
             let status = task.abort().await?;
             Ok(status)
         }
-        None => Err("Task not found.".into()),
+        None => {
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
+        },
     }
 }
 
@@ -58,6 +66,10 @@ pub async fn get_task_error(
             let error = task.get_error().await;
             Ok(error)
         }
-        None => Err("Task not found.".into()),
+        None => {
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
+        },
     }
 }

@@ -1,7 +1,7 @@
 import { Option } from '@/components/ui/multi-select'
 import { commands } from '@/lib/bindings'
 
-export const fetchAllCategories = async (): Promise<Option[]> => {
+export const fetchAvatarWearableCategories = async (): Promise<Option[]> => {
   const result = await commands.getAvatarWearableCategories()
 
   if (result.status === 'error') {

@@ -1,1 +1,2 @@
-cd src-tauri && cargo test --all-features
+# # Following check(s) are disabled due to long execution times and because they're covered by CI
+# cd src-tauri && cargo test --all-features

@@ -1,24 +1,25 @@
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands, events } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { useEffect, useState } from 'react'
-import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   taskId: string | null
-  onCompleted: () => void
-  onCancelled: () => void
-  onFailed: (error: string | null) => void
+  onCompleted: () => Promise<void>
+  onCancelled: () => Promise<void>
+  onFailed: (error: string | null) => Promise<void>
 }
 
 type ReturnProps = {
-  percentage: number
+  dialogOpen: boolean
+  progress: number
   filename: string
-  canceling: boolean
   onCancelButtonClick: () => Promise<void>
+  canceling: boolean
 }
 
-export const useProgressTab = ({
+export const useTaskStatusHandler = ({
   taskId,
   onCompleted,
   onCancelled,
@@ -26,12 +27,40 @@ export const useProgressTab = ({
 }: Props): ReturnProps => {
   const { t } = useLocalization()
 
-  const [canceling, setCanceling] = useState(false)
-  const [percentage, setPercentage] = useState(0)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [filename, setFilename] = useState('')
+  const [canceling, setCanceling] = useState(false)
+
   const { toast } = useToast()
 
+  const onCancelButtonClick = async () => {
+    if (taskId === null) {
+      return
+    }
+
+    setCanceling(true)
+    setTimeout(() => {
+      setCanceling(false)
+    }, 5000)
+
+    const result = await commands.cancelTaskRequest(taskId)
+
+    if (result.status === 'error') {
+      toast({
+        title: t('taskstatushandler:failed-to-cancel-task'),
+        description: result.error,
+      })
+    }
+  }
+
   useEffect(() => {
+    if (taskId === null) {
+      setDialogOpen(false)
+      return
+    }
+
+    setDialogOpen(true)
     let isCancelled = false
     let callbackExecuted = false
     let unlistenProgressFn: UnlistenFn | undefined = undefined
@@ -54,7 +83,7 @@ export const useProgressTab = ({
           }
 
           callbackExecuted = true
-          if (status == 'Completed') {
+          if (status === 'Completed') {
             onCompleted()
           } else if (status === 'Cancelled') {
             onCancelled()
@@ -77,7 +106,7 @@ export const useProgressTab = ({
         unlistenProgressFn = await events.progressEvent.listen((e) => {
           if (isCancelled) return
 
-          setPercentage(e.payload.percentage)
+          setProgress(e.payload.percentage)
           setFilename(e.payload.filename)
         })
 
@@ -126,45 +155,20 @@ export const useProgressTab = ({
       unlistenProgressFn?.()
       unlistenCompleteFn?.()
     }
-  }, [taskId, onCompleted, onFailed, onCancelled])
+  }, [taskId, onCompleted, onCancelled, onFailed])
 
-  const onCancelButtonClick = async () => {
-    try {
-      setCanceling(true)
-
-      if (taskId === null) {
-        toast({
-          title: t('general:error'),
-          description: t('addasset:progress-bar:error-toast:task-id-is-null'),
-        })
-        return
-      }
-
-      const result = await commands.cancelTaskRequest(taskId)
-
-      if (result.status === 'error') {
-        console.error('Failed to cancel task:', result.error)
-
-        toast({
-          title: t('general:error'),
-          description: t(
-            'addasset:progress-bar:error-toast:task-cancel-description',
-          ),
-        })
-        return
-      }
-    } finally {
-      // It takes a few moments to cancel the task, so delay activation of the button
-      setTimeout(() => {
-        setCanceling(false)
-      }, 10000)
+  useEffect(() => {
+    if (taskId === null) {
+      setFilename('')
+      setProgress(0)
     }
-  }
+  }, [taskId])
 
   return {
-    percentage,
+    dialogOpen,
+    progress,
     filename,
-    canceling,
     onCancelButtonClick,
+    canceling,
   }
 }

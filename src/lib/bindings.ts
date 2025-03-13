@@ -97,6 +97,38 @@ async getFilteredAssetIds(request: FilterRequest) : Promise<Result<string[], str
 async getLoadStatus() : Promise<LoadResult> {
     return await TAURI_INVOKE("get_load_status");
 },
+async importFromOtherDataStore(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("import_from_other_data_store", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async exportAsKonoassetZip(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("export_as_konoasset_zip", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async exportAsHumanReadableZip(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("export_as_human_readable_zip", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async exportForAvatarExplorer(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("export_for_avatar_explorer", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getAllAssetTags() : Promise<Result<string[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
@@ -379,6 +411,14 @@ async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>>
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async requestStartupDeepLinkExecution() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("request_startup_deep_link_execution") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -386,9 +426,11 @@ async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>>
 
 
 export const events = __makeEvents__<{
+addAssetDeepLink: AddAssetDeepLink,
 progressEvent: ProgressEvent,
 taskStatusChanged: TaskStatusChanged
 }>({
+addAssetDeepLink: "add-asset-deep-link",
 progressEvent: "progress-event",
 taskStatusChanged: "task-status-changed"
 })
@@ -399,6 +441,7 @@ taskStatusChanged: "task-status-changed"
 
 /** user-defined types **/
 
+export type AddAssetDeepLink = { path: string; boothItemId: number | null }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }

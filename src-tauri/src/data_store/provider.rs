@@ -1,4 +1,5 @@
 use std::{
+    collections::{HashMap, HashSet},
     ffi::OsStr,
     fs,
     path::{Path, PathBuf},
@@ -7,6 +8,7 @@ use std::{
 use serde::Serialize;
 use tauri::AppHandle;
 use tauri_specta::Event;
+use uuid::Uuid;
 
 use crate::{
     definitions::{
@@ -44,9 +46,11 @@ impl StoreProvider {
         })
     }
 
-    pub async fn load_all_assets_from_files(&mut self) -> Result<(), String> {
-        backup_metadata(&self.data_dir).await?;
-        prune_old_backup(&self.data_dir).await?;
+    pub async fn load_all_assets_from_files(&mut self, backup: bool) -> Result<(), String> {
+        if backup {
+            backup_metadata(&self.data_dir).await?;
+            prune_old_backup(&self.data_dir).await?;
+        }
 
         match self.avatar_store.load().await {
             Ok(_) => {}
@@ -80,6 +84,28 @@ impl StoreProvider {
 
     pub fn data_dir(&self) -> PathBuf {
         self.data_dir.clone()
+    }
+
+    pub async fn get_used_ids(&self) -> HashSet<Uuid> {
+        let mut ids = HashSet::new();
+
+        ids.extend(self.avatar_store.get_all().await.iter().map(|a| a.get_id()));
+        ids.extend(
+            self.avatar_wearable_store
+                .get_all()
+                .await
+                .iter()
+                .map(|a| a.get_id()),
+        );
+        ids.extend(
+            self.world_object_store
+                .get_all()
+                .await
+                .iter()
+                .map(|a| a.get_id()),
+        );
+
+        ids
     }
 
     pub async fn migrate_data_dir<P>(
@@ -249,6 +275,24 @@ impl StoreProvider {
         Ok(MigrateResult::Migrated)
     }
 
+    pub async fn merge_from(
+        &mut self,
+        external: &StoreProvider,
+        reassign_map: &HashMap<Uuid, Uuid>,
+    ) -> Result<(), String> {
+        self.avatar_store
+            .merge_from(&external.avatar_store, reassign_map)
+            .await?;
+        self.avatar_wearable_store
+            .merge_from(&external.avatar_wearable_store, reassign_map)
+            .await?;
+        self.world_object_store
+            .merge_from(&external.world_object_store, reassign_map)
+            .await?;
+
+        Ok(())
+    }
+
     pub async fn set_data_dir_and_reload<P>(&mut self, new_path: P) -> Result<(), String>
     where
         P: AsRef<Path>,
@@ -261,7 +305,15 @@ impl StoreProvider {
 
         self.data_dir = new_path;
 
-        self.load_all_assets_from_files().await
+        self.load_all_assets_from_files(true).await
+    }
+
+    pub async fn remove_all_dependencies(&self, id: Uuid) -> Result<(), String> {
+        self.avatar_store.delete_dependency(id).await?;
+        self.avatar_wearable_store.delete_dependency(id).await?;
+        self.world_object_store.delete_dependency(id).await?;
+
+        return Ok(());
     }
 }
 

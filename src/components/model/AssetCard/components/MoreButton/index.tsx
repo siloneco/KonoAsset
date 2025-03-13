@@ -117,8 +117,13 @@ export const MoreButton = ({
               <AlertDialogTitle>
                 {t('assetcard:more-button:delete-confirm')}
               </AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('assetcard:more-button:delete-confirm:explanation-text')}
+              <AlertDialogDescription className="space-y-2">
+                <p>
+                  {t('assetcard:more-button:delete-confirm:explanation-text-1')}
+                </p>
+                <p className="font-bold">
+                  {t('assetcard:more-button:delete-confirm:explanation-text-2')}
+                </p>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

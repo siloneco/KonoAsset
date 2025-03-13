@@ -1,10 +1,14 @@
 import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
-import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
+import {
+  fetchAllSupportedAvatars,
+  fetchAvatarWearableCategories,
+} from './logic'
 import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { AssetContext } from '@/components/context/AssetContext'
 
 const AvatarWearableFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
@@ -13,6 +17,7 @@ const AvatarWearableFilter = () => {
   >([])
   const { t } = useLocalization()
 
+  const { assetDisplaySortedList } = useContext(AssetContext)
   const {
     categoryFilter,
     setCategoryFilter,
@@ -35,12 +40,12 @@ const AvatarWearableFilter = () => {
 
   const updateCandidates = async () => {
     setSupportedAvatarCandidates(await fetchAllSupportedAvatars())
-    setCategoryCandidates(await fetchAllCategories())
+    setCategoryCandidates(await fetchAvatarWearableCategories())
   }
 
   useEffect(() => {
     updateCandidates()
-  }, [])
+  }, [assetDisplaySortedList])
 
   return (
     <div className="mt-4 space-y-4">
