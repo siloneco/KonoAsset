@@ -36,9 +36,13 @@ pub async fn set_preferences(
     let mut preference = preference.lock().await;
 
     if preference.get_data_dir() != new_preference.get_data_dir() {
+        log::error!("Data directory cannot be changed via set_preferences function");
         return Err("Data directory cannot be changed via set_preferences function".into());
     }
 
     preference.overwrite(&new_preference);
-    preference.save().map_err(|e| e.to_string())
+    preference.save().map_err(|e| {
+        log::error!("Failed to save preferences: {}", e);
+        e.to_string()
+    })
 }

@@ -23,18 +23,26 @@ pub async fn delete_entry_from_asset_data_dir(
     };
 
     if !path.exists() {
+        log::error!("File or directory does not exist: {:?}", path);
         return Err(format!("File or directory does not exist: {:?}", path));
     }
 
     if path.is_file() {
         tokio::fs::remove_file(&path)
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| {
+                log::error!("Failed to delete file: {:?}", e);
+                e.to_string()
+            })?;
     } else if path.is_dir() {
         tokio::fs::remove_dir_all(&path)
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| {
+                log::error!("Failed to delete directory: {:?}", e);
+                e.to_string()
+            })?;
     } else {
+        log::error!("Path is not a file or directory: {:?}", path);
         return Err(format!("Path is not a file or directory: {:?}", path));
     }
 

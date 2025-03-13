@@ -34,6 +34,7 @@ pub async fn get_asset(
         return Ok(GetAssetResult::world_object(asset));
     }
 
+    log::error!("Asset not found: {:?}", id);
     Err("Asset not found".into())
 }
 

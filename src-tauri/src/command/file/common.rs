@@ -26,7 +26,10 @@ pub async fn get_directory_path(
 
     match app_dir.to_str() {
         Some(ans) => Ok(ans.to_string()),
-        None => return Err(format!("Failed to convert path to string (id = {:?})", id)),
+        None => {
+            log::error!("Failed to convert path to string (id = {:?})", id);
+            return Err(format!("Failed to convert path to string (id = {:?})", id))
+        },
     }
 }
 
@@ -41,6 +44,7 @@ pub async fn list_unitypackage_files(
     dir.push(id.to_string());
 
     if !dir.exists() {
+        log::error!("Directory does not exist: {}", dir.display());
         return Err("Directory does not exist".into());
     }
 
