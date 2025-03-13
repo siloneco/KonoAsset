@@ -2163,7 +2163,7 @@ dependencies = [
 
 [[package]]
 name = "konoasset"
-version = "1.0.2"
+version = "1.1.0-rc.0"
 dependencies = [
  "async_zip",
  "chrono",
