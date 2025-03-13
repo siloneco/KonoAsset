@@ -33,13 +33,15 @@ pub async fn execute_update(
     let handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        log::error!("Update handler is not initialized yet.");
-        return Err("Update handler is not initialized yet.".into());
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     if !handler.update_available() {
-        log::error!("No update available.");
-        return Err("No update available.".into());
+        let err = "No update available.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     log::info!("Executing update. This will restart the application.");
@@ -48,8 +50,9 @@ pub async fn execute_update(
     match result {
         Ok(_) => Ok(true),
         Err(e) => {
-            log::error!("Failed to execute update: {:?}", e);
-            Err(e.to_string())
+            let err = format!("Failed to execute update: {:?}", e);
+            log::error!("{}", err);
+            Err(err)
         },
     }
 }
@@ -62,8 +65,9 @@ pub async fn do_not_notify_update(
     let mut handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        log::error!("Update handler is not initialized yet.");
-        return Err("Update handler is not initialized yet.".into());
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     handler.set_show_notification(false).await;

@@ -21,8 +21,9 @@ pub async fn get_task_status(
             Ok(status)
         }
         None => {
-            log::error!("Task not found: {:?}", id);
-            Err("Task not found.".into())
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
         },
     }
 }
@@ -43,8 +44,9 @@ pub async fn cancel_task_request(
             Ok(status)
         }
         None => {
-            log::error!("Task not found: {:?}", id);
-            Err("Task not found.".into())
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
         },
     }
 }
@@ -65,8 +67,9 @@ pub async fn get_task_error(
             Ok(error)
         }
         None => {
-            log::error!("Task not found: {:?}", id);
-            Err("Task not found.".into())
+            let err = format!("Task not found: {:?}", id);
+            log::error!("{}", err);
+            Err(err)
         },
     }
 }

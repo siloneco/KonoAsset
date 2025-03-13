@@ -16,11 +16,9 @@ pub async fn import_from_other_data_store(
     let current_data_dir = basic_store.lock().await.data_dir();
 
     if path.starts_with(&current_data_dir) {
-        log::error!("Cannot import assets from the same data store: {}", path.display());
-        return Err(format!(
-            "Cannot import assets from the same data store: {}",
-            path.display()
-        ));
+        let err = format!("Cannot import assets from the same data store: {}", path.display());
+        log::error!("{}", err);
+        return Err(err);
     }
 
     log::info!("Importing assets from external path: {}", path.display());
@@ -72,11 +70,9 @@ pub async fn export_as_konoasset_zip(
     let current_data_dir = basic_store.lock().await.data_dir();
 
     if path.starts_with(&current_data_dir) {
-        log::error!("Export path cannot be inside the data store: {}", path.display());
-        return Err(format!(
-            "Export path cannot be inside the data store: {}",
-            path.display()
-        ));
+        let err = format!("Export path cannot be inside the data store: {}", path.display());
+        log::error!("{}", err);
+        return Err(err);
     }
 
     log::info!("Exporting assets as KonoAsset zip to: {}", path.display());
@@ -117,11 +113,9 @@ pub async fn export_for_avatar_explorer(
     let current_data_dir = basic_store.lock().await.data_dir();
 
     if path.starts_with(&current_data_dir) {
-        log::error!("Export path cannot be inside the data store: {}", path.display());
-        return Err(format!(
-            "Export path cannot be inside the data store: {}",
-            path.display()
-        ));
+        let err = format!("Export path cannot be inside the data store: {}", path.display());
+        log::error!("{}", err);
+        return Err(err);
     }
 
     log::info!(
@@ -165,11 +159,9 @@ pub async fn export_as_human_readable_zip(
     let current_data_dir = basic_store.lock().await.data_dir();
 
     if path.starts_with(&current_data_dir) {
-        log::error!("Export path cannot be inside the data store: {}", path.display());
-        return Err(format!(
-            "Export path cannot be inside the data store: {}",
-            path.display()
-        ));
+        let err = format!("Export path cannot be inside the data store: {}", path.display());
+        log::error!("{}", err);
+        return Err(err);
     }
 
     log::info!(

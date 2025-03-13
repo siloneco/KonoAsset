@@ -21,8 +21,9 @@ pub async fn reset_application(
             .path()
             .app_local_data_dir()
             .map_err(|e| {
-                log::error!("Unable to get app dir: {}", e);
-                format!("Unable to get app dir: {}", e)
+                let err = format!("Unable to get app dir: {}", e);
+                log::error!("{}", err);
+                err
             })?;
         let preference_path = app_local_data_dir.join("preference.json");
 

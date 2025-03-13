@@ -21,7 +21,8 @@ pub async fn list_asset_dir_entry(
     let result = list_top_files_and_directories(&dir).await;
 
     result.map_err(|e| {
-        log::error!("Failed to list directory: {:?}", e);
-        e.to_string()
+        let err = format!("Failed to list directory: {:?}", e);
+        log::error!("{}", err);
+        err
     })
 }
