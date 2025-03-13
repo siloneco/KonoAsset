@@ -42,7 +42,9 @@ vi.mock('@/hooks/use-toast', () => {
 
 describe('BoothInputTab Hook', () => {
   it('executes getAssetDescriptionFromBooth function correctly', async () => {
-    const mockForm = {}
+    const mockForm = {
+      getValues: vi.fn().mockReturnValue(null),
+    }
     const mockSetTab = vi.fn()
     const mockToast = useToast().toast as Mock
 
@@ -98,7 +100,9 @@ describe('BoothInputTab Hook', () => {
   })
 
   it('executes backToPreviousTab function correctly', async () => {
-    const mockForm = {}
+    const mockForm = {
+      getValues: vi.fn().mockReturnValue(null),
+    }
     const mockSetTab = vi.fn()
 
     const { result } = renderHook(() =>
