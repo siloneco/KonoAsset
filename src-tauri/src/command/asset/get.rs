@@ -34,8 +34,9 @@ pub async fn get_asset(
         return Ok(GetAssetResult::world_object(asset));
     }
 
-    log::error!("Asset not found: {:?}", id);
-    Err("Asset not found".into())
+    let err = format!("Asset not found: {:?}", id);
+    log::error!("{}", err);
+    Err(err)
 }
 
 #[tauri::command]

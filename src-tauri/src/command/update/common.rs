@@ -13,8 +13,9 @@ pub async fn check_for_update(
     let handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        log::error!("Update handler is not initialized yet.");
-        return Err(format!("Update handler is not initialized yet."));
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     if !handler.show_notification().await {
