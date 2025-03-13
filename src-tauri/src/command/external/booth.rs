@@ -44,5 +44,8 @@ pub async fn resolve_pximg_filename(
         resolver.resolve(&url).await
     };
 
-    result.map_err(|e| e.to_string())
+    result.map_err(|e| {
+        log::error!("Failed to resolve pximg filename: {}", e);
+        e.to_string()
+    })
 }
