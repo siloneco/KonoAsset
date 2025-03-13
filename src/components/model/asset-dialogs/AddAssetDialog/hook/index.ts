@@ -46,7 +46,9 @@ const useAddAssetDialog = ({
   >([])
   const [importTaskId, setImportTaskId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [ignoreFormClearCount, setIgnoreFormClearCount] = useState(0)
+
+  // 1以上の場合、その回数だけフォームのリセットを行わずにダイアログを開く
+  const [formClearSuppressionCount, setFormClearSuppressionCount] = useState(0)
 
   const { toast } = useToast()
   const { t } = useLocalization()
@@ -119,7 +121,7 @@ const useAddAssetDialog = ({
       return
     }
 
-    setIgnoreFormClearCount((prev) => prev + 1)
+    setFormClearSuppressionCount((prev) => prev + 1)
     setDialogOpen(true)
   }
 
@@ -183,8 +185,8 @@ const useAddAssetDialog = ({
   }, [])
 
   useEffect(() => {
-    if (ignoreFormClearCount > 0) {
-      setIgnoreFormClearCount((prev) => prev - 1)
+    if (formClearSuppressionCount > 0) {
+      setFormClearSuppressionCount((prev) => prev - 1)
       return
     }
 
