@@ -59,7 +59,11 @@ fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
                 let id = value.parse::<u64>();
 
                 if let Err(e) = id {
-                    log::error!("Unable to parse booth item id: {}", e);
+                    log::error!(
+                        "Unable to parse {} into booth item id: {}",
+                        value.as_ref(),
+                        e
+                    );
                     continue;
                 }
 
