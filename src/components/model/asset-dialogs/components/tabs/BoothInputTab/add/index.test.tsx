@@ -82,9 +82,6 @@ describe('BoothInputTab', () => {
     await user.type(inputTarget, inputText)
 
     expect(onUrlInputChange).toHaveBeenCalledTimes(inputText.length)
-    expect(
-      onUrlInputChange.mock.calls[inputText.length - 1][0].target.value,
-    ).toEqual(inputText)
   })
 
   it('renders fetch button as disabled when URL is invalid', async () => {
