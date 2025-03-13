@@ -1,6 +1,7 @@
 use tauri_specta::{collect_commands, Builder};
 
 mod asset;
+mod deep_link;
 mod external;
 mod file;
 mod language;
@@ -71,5 +72,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         language::common::set_language_code,
         language::common::get_current_language_data,
         language::common::load_language_file,
+        // DeepLink関係
+        deep_link::execute::request_startup_deep_link_execution,
     ])
 }

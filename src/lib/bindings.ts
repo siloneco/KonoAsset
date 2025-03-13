@@ -411,6 +411,14 @@ async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>>
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async requestStartupDeepLinkExecution() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("request_startup_deep_link_execution") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -418,9 +426,11 @@ async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>>
 
 
 export const events = __makeEvents__<{
+addAssetDeepLink: AddAssetDeepLink,
 progressEvent: ProgressEvent,
 taskStatusChanged: TaskStatusChanged
 }>({
+addAssetDeepLink: "add-asset-deep-link",
 progressEvent: "progress-event",
 taskStatusChanged: "task-status-changed"
 })
@@ -431,6 +441,7 @@ taskStatusChanged: "task-status-changed"
 
 /** user-defined types **/
 
+export type AddAssetDeepLink = { path: string; boothItemId: number | null }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }

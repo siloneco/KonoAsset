@@ -41,6 +41,7 @@
     "@tanstack/react-router": "^1.86.1",
     "@tanstack/router-devtools": "^1.86.1",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-deep-link": "~2",
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-shell": "^2",
     "@tauri-apps/plugin-updater": "~2.5.0",

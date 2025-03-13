@@ -1,7 +1,7 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { DragDropContext } from '@/components/context/DragDropContext'
 import { useToast } from '@/hooks/use-toast'
-import { AssetSummary, AssetType } from '@/lib/bindings'
+import { AssetSummary, AssetType, commands, events } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UnlistenFn } from '@tauri-apps/api/event'
@@ -46,6 +46,8 @@ const useAddAssetDialog = ({
   >([])
   const [importTaskId, setImportTaskId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [ignoreFormClearCount, setIgnoreFormClearCount] = useState(0)
+
   const { toast } = useToast()
   const { t } = useLocalization()
 
@@ -112,6 +114,15 @@ const useAddAssetDialog = ({
     setImageUrls([])
   }
 
+  const openDialogWithoutClearForm = () => {
+    if (dialogOpen) {
+      return
+    }
+
+    setIgnoreFormClearCount((prev) => prev + 1)
+    setDialogOpen(true)
+  }
+
   useEffect(() => {
     const unlockFn = lock('AddAssetDialog')
 
@@ -135,9 +146,12 @@ const useAddAssetDialog = ({
             return
           }
 
+          clearForm()
+
           setAssetPaths(event.payload.paths)
-          setDialogOpen(true)
           setTab('booth-input')
+
+          openDialogWithoutClearForm()
         }
       })
 
@@ -169,12 +183,14 @@ const useAddAssetDialog = ({
   }, [])
 
   useEffect(() => {
-    if (!dialogOpen) {
-      // 閉じるときにタブが変わってしまうのが見えるため遅延を入れる
-      setTimeout(() => {
-        clearForm()
-        setTab('selector')
-      }, 500)
+    if (ignoreFormClearCount > 0) {
+      setIgnoreFormClearCount((prev) => prev - 1)
+      return
+    }
+
+    if (dialogOpen) {
+      clearForm()
+      setTab('selector')
     }
   }, [dialogOpen])
 
@@ -275,6 +291,47 @@ const useAddAssetDialog = ({
       setSubmitting(false)
     }
   }
+
+  useEffect(() => {
+    let isCancelled = false
+    let unlistenCompleteFn: UnlistenFn | undefined = undefined
+
+    const setupListener = async () => {
+      try {
+        unlistenCompleteFn = await events.addAssetDeepLink.listen((e) => {
+          if (isCancelled) return
+
+          const path = e.payload.path
+          const boothItemId = e.payload.boothItemId
+
+          clearForm()
+
+          setAssetPaths([path])
+          form.setValue('boothItemId', boothItemId)
+
+          setTab('booth-input')
+
+          openDialogWithoutClearForm()
+        })
+
+        if (isCancelled) {
+          unlistenCompleteFn()
+          return
+        }
+
+        await commands.requestStartupDeepLinkExecution()
+      } catch (error) {
+        console.error('Failed to listen to add asset deep link event:', error)
+      }
+    }
+
+    setupListener()
+
+    return () => {
+      isCancelled = true
+      unlistenCompleteFn?.()
+    }
+  }, [])
 
   return {
     form,
