@@ -1,21 +1,23 @@
-name: Code Style Test
+name: Frontend Code Style Test
 on:
   push:
-    paths-ignore:
-      - "**.md"
-      - "renovate.json"
-    branches-ignore:
+    paths:
+      - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+    branches:
       - "main"
       - "pre-release"
+      - "develop"
   pull_request:
-    paths-ignore:
-      - "**.md"
-      - "renovate.json"
+    paths:
+      - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
 jobs:
-  build-test:
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
-    name: Code Style Test
+  frontend-code-style-test:
+    name: Frontend Code Style Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
