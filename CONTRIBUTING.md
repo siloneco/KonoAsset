@@ -1,9 +1,13 @@
+For the English guide, please refer to [CONTRIBUTING-en.md](CONTRIBUTING-en.md)
+
+---
 # Contribution Guide for KonoAsset
 
 KonoAssetへのコントリビューションに興味を持っていただきありがとうございます。
 
 このドキュメントでは、安定した開発体験を維持するために守って欲しいことについて記述しています。  
 また、コントリビューションを行う場合必ず [Code of Conduct](CODE_OF_CONDUCT.md) を遵守してください。
+
 
 ## 使用言語について
 
@@ -12,6 +16,7 @@ KonoAssetへのコントリビューションに興味を持っていただき�
 
 あなたは母国語を使用して Issue や PR を書くことができ、日本語のコメントに対しても日本語で返信する必要はありません。  
 これにより読み手は自由な翻訳ツールを利用し、最大限あなたの正確な意図を読みとることができます。
+
 
 ## コントリビューションの方法
 
@@ -24,6 +29,7 @@ KonoAssetへのコントリビューションを行う時、必ずしもコー�
 - [Discussions](https://github.com/siloneco/KonoAsset/discussions) に寄せられた質問等に回答する
 
 など、様々なコントリビューションの形があります。
+
 
 ### Issues
 
@@ -56,7 +62,7 @@ PR 作成後に、その言語に長けた人へ翻訳ファイルの作成を�
 もし脆弱性やそれに関係したバグを発見した場合、[GitHub Security Advisories](https://github.com/siloneco/KonoAsset/security/advisories/new) から問題を報告してください。  
 また、修正のコミットを自身で作成する場合、状況に応じて以下の対応を行ってください。
 
-- 修正配信前に PoC が公開されることが危険だと考えられる場合
+- 修正配信前に PoC (Proof of Concept) が公開されることが危険だと考えられる場合
   - [Private Fork](https://docs.github.com/ja/code-security/security-advisories/working-with-repository-security-advisories/collaborating-in-a-temporary-private-fork-to-resolve-a-repository-security-vulnerability) 等で修正のコミットを作成し、コントリビューターへ共有してください
 - 修正配信前に PoC を公開しても問題ないと考えられる軽度な脆弱性の場合
   - 通常の PR 作成の手順に従ってください
@@ -68,6 +74,7 @@ PR 作成後に、その言語に長けた人へ翻訳ファイルの作成を�
 
 あなたのコントリビューションはプロジェクトと同じライセンスの下で公開されます。  
 詳細については [LICENSE](LICENSE) ファイルを参照してください。
+
 
 ## 開発環境のセットアップ
 
@@ -90,6 +97,7 @@ pnpm i
 
 Rust のパッケージは Tauri を実行した時にインストールされます
 
+
 ### Devモードでの実行
 
 `pnpm tauri dev` を実行することによりアプリケーションを起動できます。
@@ -101,6 +109,7 @@ Rust のパッケージは Tauri を実行した時にインストールされ�
 
 > [!NOTE]
 > バックエンドのコードを変更する場合、セーブするたびに dev ビルドが走り開発体験が悪いため、テストしたい時のみ実行することをおすすめします。
+
 
 ### コードの解析 (フロントエンド)
 
@@ -116,6 +125,7 @@ pnpm run lint
 # TypeScriptのタイプテスト
 pnpm run type-check
 ```
+
 
 ### ビルド
 
