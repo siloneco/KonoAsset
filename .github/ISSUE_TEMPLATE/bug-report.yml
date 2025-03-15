@@ -1,0 +1,52 @@
+name: バグ報告 / Bug Report
+description: Create a report to help us improve KonoAsset
+labels: ["kind/bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        バグ報告をありがとうございます！
+        Thank you for reporting a bug!
+
+        新しい Issue を作成する前に、重複する Issue が無いか確認してください。
+        Please check if there are any duplicate issues before creating a new issue.
+
+  - type: textarea
+    attributes:
+      label: 概要 (Summary)
+      description: |
+        どのようなバグなのか、簡単な説明を記述してください。
+        Describe the bug briefly.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 想定される動作 (Expected Behavior)
+      description: |
+        どのような動作が期待されるかを記述してください。
+        Describe what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 実際の動作 (Actual Behavior)
+      description: |
+        実際にどのような動作が発生したかを記述してください。
+        Describe what actually happened.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 再現手順 (Steps to Reproduce)
+      description: |
+        バグを再現するための手順を記述してください。
+        Describe the steps to reproduce the bug.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: false
