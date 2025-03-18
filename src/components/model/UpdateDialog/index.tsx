@@ -69,15 +69,13 @@ export const UpdateDialog: FC<Props> = ({
             >
               {t('general:button:cancel')}
             </Button>
-            <div className="relative">
-              <Button
-                className="ml-auto"
-                disabled={progress < 100}
-                onClick={onUpdateButtonClick}
-              >
-                {t('top:update-dialog:execute')}
-              </Button>
-            </div>
+            <Button
+              className="ml-auto"
+              disabled={progress < 100}
+              onClick={onUpdateButtonClick}
+            >
+              {t('top:update-dialog:execute')}
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>
