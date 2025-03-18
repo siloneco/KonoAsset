@@ -278,6 +278,13 @@
     "top:new-update-toast:button": "アップデートする",
     "top:new-update-toast:close": "今はしない",
 
+    "top:update-dialog:title": "アップデートを準備中",
+    "top:update-dialog:description": "アップデートをダウンロードしています...",
+    "top:update-dialog:downloading:foretext": "ダウンロード中 (",
+    "top:update-dialog:downloading:posttext": "%)",
+    "top:update-dialog:download-complete": "アップデートをダウンロード済み",
+    "top:update-dialog:execute": "アップデート",
+
     "top:add-text": "ファイルをドロップしてアセットを追加",
 
     "setup:welcome": "KonoAssetへようこそ！",

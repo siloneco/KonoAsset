@@ -40,15 +40,23 @@ export const UpdateDialog: FC<Props> = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle>アップデートを準備中</DialogTitle>
+          <DialogTitle>{t('top:update-dialog:title')}</DialogTitle>
           <DialogDescription>
-            アップデートをダウンロードしています...
+            {t('top:update-dialog:description')}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-1 w-full overflow-hidden">
           <p className="text-muted-foreground">
-            {progress >= 100 && <span>アップデートをダウンロード済み</span>}
-            {progress < 100 && <span>"ダウンロード中 ({progress}%)"</span>}
+            {progress >= 100 && (
+              <span>{t('top:update-dialog:download-complete')}</span>
+            )}
+            {progress < 100 && (
+              <span>
+                {t('top:update-dialog:downloading:foretext')}
+                {progress}
+                {t('top:update-dialog:downloading:posttext')}
+              </span>
+            )}
           </p>
           <Progress value={progress} />
         </div>
@@ -67,7 +75,7 @@ export const UpdateDialog: FC<Props> = ({
                 disabled={progress < 100}
                 onClick={onUpdateButtonClick}
               >
-                アップデート
+                {t('top:update-dialog:execute')}
               </Button>
             </div>
           </div>
