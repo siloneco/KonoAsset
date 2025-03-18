@@ -53,7 +53,7 @@ export const UpdateDialog: FC<Props> = ({
             {progress < 100 && (
               <span>
                 {t('top:update-dialog:downloading:foretext')}
-                {progress}
+                {Math.round(progress * 100) / 100}
                 {t('top:update-dialog:downloading:posttext')}
               </span>
             )}
