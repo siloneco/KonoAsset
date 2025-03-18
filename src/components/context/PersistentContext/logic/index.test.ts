@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
-import { checkForUpdate, dismissUpdate, executeUpdate, refreshAssets } from '.'
+import { refreshAssets } from '.'
 import { AssetSummary, commands, SortBy } from '@/lib/bindings'
 
 const mockSortedAssets: AssetSummary[] = [
@@ -78,35 +78,5 @@ describe('PersistentContext Logic', () => {
     expect(mockedCommand.mock.calls[0][0]).toEqual(sortBy)
 
     expect(setAssetDisplaySortedList).not.toHaveBeenCalled()
-  })
-
-  it('executes checkForUpdate function correctly', async () => {
-    const mockedCommand = commands.checkForUpdate as Mock
-
-    const result1 = await checkForUpdate()
-    expect(mockedCommand).toHaveBeenCalledTimes(1)
-    expect(result1).toEqual(true)
-
-    const result2 = await checkForUpdate()
-    expect(mockedCommand).toHaveBeenCalledTimes(2)
-    expect(result2).toEqual(false)
-
-    const result3 = await checkForUpdate()
-    expect(mockedCommand).toHaveBeenCalledTimes(3)
-    expect(result3).toEqual(false)
-  })
-
-  it('executes executeUpdate function correctly', async () => {
-    await executeUpdate()
-
-    const mockedCommand = commands.executeUpdate as Mock
-    expect(mockedCommand).toHaveBeenCalledOnce()
-  })
-
-  it('executes dismissUpdate function correctly', async () => {
-    await dismissUpdate()
-
-    const mockedCommand = commands.doNotNotifyUpdate as Mock
-    expect(mockedCommand).toHaveBeenCalledOnce()
   })
 })

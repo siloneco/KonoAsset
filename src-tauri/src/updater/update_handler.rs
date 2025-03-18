@@ -1,14 +1,27 @@
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Url};
 use tauri_plugin_updater::{Update, UpdaterExt};
+use tauri_specta::Event;
 
 pub struct UpdateHandler {
     app_handle: AppHandle,
     initialized: bool,
     update_available: bool,
+    downloaded_update_data: Option<Vec<u8>>,
     update_version: Option<String>,
     update_handler: Option<Update>,
     show_notification: bool,
+}
+
+#[derive(Serialize, Debug, Clone, Copy, specta::Type, tauri_specta::Event)]
+pub struct UpdateProgress {
+    pub progress: f32,
+}
+
+impl UpdateProgress {
+    pub fn new(progress: f32) -> Self {
+        Self { progress }
+    }
 }
 
 impl UpdateHandler {
@@ -17,6 +30,7 @@ impl UpdateHandler {
             app_handle,
             initialized: false,
             update_available: false,
+            downloaded_update_data: None,
             update_version: None,
             update_handler: None,
             show_notification: true,
@@ -59,25 +73,56 @@ impl UpdateHandler {
         }
     }
 
-    pub async fn execute_update(&self) -> tauri_plugin_updater::Result<()> {
+    pub async fn download_update(&mut self) -> tauri_plugin_updater::Result<()> {
         if let Some(update) = &self.update_handler {
             let mut downloaded = 0;
 
-            update
-                .download_and_install(
+            let downloaded_data = update
+                .download(
                     |chunk_length, content_length| {
                         downloaded += chunk_length;
-                        log::debug!("downloaded {downloaded} from {content_length:?}");
+
+                        let progress = if let Some(len) = content_length {
+                            downloaded as f32 / len as f32
+                        } else {
+                            0f32
+                        };
+
+                        log::debug!("downloaded {downloaded} bytes ({:.1}%)", progress * 100.0);
+
+                        if let Err(e) = UpdateProgress::new(progress).emit(&self.app_handle) {
+                            log::error!("failed to emit update progress: {:?}", e);
+                        }
                     },
                     || {
-                        log::info!("download finished");
+                        log::info!("update download completed");
+                        if let Err(e) = UpdateProgress::new(100f32).emit(&self.app_handle) {
+                            log::error!("failed to emit update progress: {:?}", e);
+                        }
                     },
                 )
                 .await?;
 
-            log::info!("update installed");
-            self.app_handle.restart();
+            self.downloaded_update_data = Some(downloaded_data);
         }
+
+        Ok(())
+    }
+
+    pub fn install_update(&self) -> Result<(), String> {
+        if self.update_handler.is_none() {
+            return Err("No update available".to_string());
+        }
+        if self.downloaded_update_data.is_none() {
+            return Err("No update downloaded".to_string());
+        }
+
+        let update = self.update_handler.as_ref().unwrap();
+        let data = self.downloaded_update_data.as_ref().unwrap();
+
+        update
+            .install(&data)
+            .map_err(|e| format!("Failed to install update: {:?}", e))?;
 
         Ok(())
     }

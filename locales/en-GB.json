@@ -278,6 +278,13 @@
     "top:new-update-toast:button": "Update now",
     "top:new-update-toast:close": "Not now",
 
+    "top:update-dialog:title": "Preparing update",
+    "top:update-dialog:description": "Downloading update...",
+    "top:update-dialog:downloading:foretext": "Downloading (",
+    "top:update-dialog:downloading:posttext": "%)",
+    "top:update-dialog:download-complete": "Update downloaded",
+    "top:update-dialog:execute": "Update",
+  
     "top:add-text": "Drop files to add assets",
 
     "setup:welcome": "Welcome to KonoAsset!",
