@@ -12,16 +12,3 @@ export const refreshAssets = async (
     console.error(result.error)
   }
 }
-
-export const checkForUpdate = async (): Promise<boolean> => {
-  const result = await commands.checkForUpdate()
-  return result.status === 'ok' && result.data
-}
-
-export const executeUpdate = async () => {
-  await commands.executeUpdate()
-}
-
-export const dismissUpdate = async () => {
-  await commands.doNotNotifyUpdate()
-}

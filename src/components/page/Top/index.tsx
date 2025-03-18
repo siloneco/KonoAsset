@@ -3,28 +3,32 @@ import MainSidebar from '@/components/model/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { useTopPage } from './hook'
-import { useState } from 'react'
 import NavBar from '../../model/MainNavBar'
 import AssetList from '@/components/model/AssetList'
 import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
 import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
+import { UpdateDialog } from '@/components/model/UpdateDialog'
 
 const TopPage = () => {
-  const { assetContextValue, isDragAndHover } = useTopPage()
-
-  const [filterEnforced, setFilterEnforced] = useState(false)
-  const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
-  const [dialogOpen, setDialogOpen] = useState(false)
-
-  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
-  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
-    string | null
-  >(null)
-
-  const displayAssetCount: number | undefined = filterEnforced
-    ? matchedAssetIDs.length
-    : undefined
+  const {
+    assetContextValue,
+    isDragAndHover,
+    displayAssetCount,
+    matchedAssetIDs,
+    setMatchedAssetIDs,
+    filterEnforced,
+    setFilterEnforced,
+    addAssetDialogOpen,
+    setAddAssetDialogOpen,
+    setEditAssetDialogAssetId,
+    setEditAssetDialogOpen,
+    editAssetDialogAssetId,
+    editAssetDialogOpen,
+    updateDialogOpen,
+    setUpdateDialogOpen,
+    updateDownloadTaskId,
+  } = useTopPage()
 
   const { t } = useLocalization()
 
@@ -41,13 +45,13 @@ const TopPage = () => {
               setMatchedAssetIDs={setMatchedAssetIDs}
               filterEnforced={filterEnforced}
               setFilterEnforced={setFilterEnforced}
-              openAddAssetDialog={() => setDialogOpen(true)}
+              openAddAssetDialog={() => setAddAssetDialogOpen(true)}
             />
             <AddAssetDialog
-              dialogOpen={dialogOpen}
-              setDialogOpen={setDialogOpen}
+              dialogOpen={addAssetDialogOpen}
+              setDialogOpen={setAddAssetDialogOpen}
               openEditDialog={(assetId) => {
-                setDialogOpen(false)
+                setAddAssetDialogOpen(false)
 
                 setEditAssetDialogAssetId(assetId)
                 setEditAssetDialogOpen(true)
@@ -61,6 +65,11 @@ const TopPage = () => {
           </main>
         </SidebarProvider>
       </AssetContext.Provider>
+      <UpdateDialog
+        dialogOpen={updateDialogOpen}
+        setDialogOpen={setUpdateDialogOpen}
+        taskId={updateDownloadTaskId}
+      />
       <div
         className={cn(
           'fixed h-full w-full opacity-0 z-[60] pointer-events-none transition-opacity',

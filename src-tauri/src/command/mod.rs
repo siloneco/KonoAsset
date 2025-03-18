@@ -40,7 +40,8 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         external::booth::resolve_pximg_filename,
         // アップデート関連
         update::common::check_for_update,
-        update::common::execute_update,
+        update::common::download_update,
+        update::common::install_update,
         update::common::do_not_notify_update,
         // ファイル関連
         file::open::open_file_in_file_manager,

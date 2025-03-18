@@ -193,9 +193,17 @@ async checkForUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async executeUpdate() : Promise<Result<boolean, string>> {
+async downloadUpdate() : Promise<Result<string, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("execute_update") };
+    return { status: "ok", data: await TAURI_INVOKE("download_update") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async installUpdate() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("install_update") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -428,11 +436,13 @@ async requestStartupDeepLinkExecution() : Promise<Result<null, string>> {
 export const events = __makeEvents__<{
 addAssetDeepLink: AddAssetDeepLink,
 progressEvent: ProgressEvent,
-taskStatusChanged: TaskStatusChanged
+taskStatusChanged: TaskStatusChanged,
+updateProgress: UpdateProgress
 }>({
 addAssetDeepLink: "add-asset-deep-link",
 progressEvent: "progress-event",
-taskStatusChanged: "task-status-changed"
+taskStatusChanged: "task-status-changed",
+updateProgress: "update-progress"
 })
 
 /** user-defined constants **/
@@ -471,6 +481,7 @@ export type TaskStatus = "Running" | "Completed" | "Cancelled" | "Failed"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type UpdateChannel = "Stable" | "PreRelease"
+export type UpdateProgress = { progress: number }
 export type WorldObject = { id: string; description: AssetDescription; category: string }
 
 /** tauri-specta globals **/

@@ -14,7 +14,7 @@ use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_specta::collect_events;
-use updater::update_handler::{UpdateChannel, UpdateHandler};
+use updater::update_handler::{UpdateChannel, UpdateHandler, UpdateProgress};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
@@ -42,7 +42,8 @@ pub fn run() {
     let builder = generate_tauri_specta_builder().events(collect_events![
         ProgressEvent,
         TaskStatusChanged,
-        AddAssetDeepLink
+        AddAssetDeepLink,
+        UpdateProgress,
     ]);
 
     #[cfg(debug_assertions)]
