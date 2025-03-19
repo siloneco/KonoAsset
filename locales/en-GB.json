@@ -40,7 +40,7 @@
 
     "addasset:success-toast": "Asset added successfully!",
     "addasset:cancel-toast": "Cancelled",
-    "addasset:error-toast": "Error: Failed to add asset",
+    "addasset:error-toast": "Failed to add asset",
     "addasset:error-toast:description": "Check the log for error details",
     "addasset:import-error-toast": "Failed to import data",
     "addasset:import-start-error-toast": "Failed to start data import",
