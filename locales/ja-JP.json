@@ -296,6 +296,7 @@
     "setup:tab:2:title": "データの保存場所の選択",
     "setup:tab:2:description-1": "アセットのデータを保存するディレクトリを選択します",
     "setup:tab:2:description-2": "このディレクトリは後から設定で変更できます",
+    "setup:tab:2:directory-open-error-toast": "ディレクトリを開けませんでした",
 
     "setup:tab:2:input-label": "現在の保存場所",
 

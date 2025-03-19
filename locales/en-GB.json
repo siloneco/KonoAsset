@@ -284,7 +284,7 @@
     "top:update-dialog:downloading:posttext": "%)",
     "top:update-dialog:download-complete": "Update downloaded",
     "top:update-dialog:execute": "Update",
-  
+
     "top:add-text": "Drop files to add assets",
 
     "setup:welcome": "Welcome to KonoAsset!",
@@ -296,6 +296,7 @@
     "setup:tab:2:title": "Select storage location",
     "setup:tab:2:description-1": "Choose a directory to store the asset data",
     "setup:tab:2:description-2": "This directory can be changed later in the settings tab",
+    "setup:tab:2:directory-open-error-toast": "Failed to open the directory",
 
     "setup:tab:2:input-label": "Current storage location",
 
