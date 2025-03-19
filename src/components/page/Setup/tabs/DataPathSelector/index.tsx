@@ -25,7 +25,7 @@ export const DataPathSelector: FC<Props> = ({ path, setPath }) => {
     }
 
     toast({
-      title: 'エラー: ディレクトリを開けませんでした',
+      title: t('setup:tab:2:directory-open-error-toast'),
       description: result.error,
     })
   }
