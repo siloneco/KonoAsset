@@ -40,7 +40,7 @@
 
     "addasset:success-toast": "アセットが追加されました！",
     "addasset:cancel-toast": "キャンセルされました",
-    "addasset:error-toast": "エラー: 追加に失敗しました",
+    "addasset:error-toast": "追加に失敗しました",
     "addasset:error-toast:description": "エラー内容はログを参照してください",
     "addasset:import-error-toast": "データのインポートに失敗しました",
     "addasset:import-start-error-toast": "データのインポートを開始できませんでした",
