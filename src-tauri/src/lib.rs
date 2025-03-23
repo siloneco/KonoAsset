@@ -116,19 +116,6 @@ pub fn run() {
                 }
             };
 
-            let default_language_data = load_from_language_code(LanguageCode::EnUs);
-            if let Err(e) = default_language_data {
-                log::error!("{}", e);
-                app.manage(LoadResult::error(false, e));
-
-                // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                return Ok(());
-            }
-            let default_language_data = default_language_data.unwrap();
-            let lang_state = arc_mutex(default_language_data);
-
-            app.manage(lang_state.clone());
-
             let preference_file_path = app
                 .path()
                 .app_local_data_dir()
