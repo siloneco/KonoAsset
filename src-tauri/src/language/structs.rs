@@ -6,8 +6,11 @@ use serde_with::serde_as;
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub enum LanguageCode {
+    #[serde(rename = "ja-JP", alias = "jaJp")] // alias is for legacy support
     JaJp,
+    #[serde(rename = "en-US", alias = "enUs")] // alias is for legacy support
     EnUs,
+    #[serde(rename = "en-GB", alias = "enGb")] // alias is for legacy support
     EnGb,
 }
 
@@ -26,7 +29,5 @@ impl LanguageCode {
 #[serde(rename_all = "camelCase")]
 pub struct LocalizationData {
     pub language: LanguageCode,
-
-    // #[serde_as(as = "HashMap<String, _>")]
     pub data: HashMap<String, String>,
 }

@@ -36,9 +36,9 @@ export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
             <SelectValue placeholder={t('general:select:placeholder')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="jaJp">日本語</SelectItem>
-            <SelectItem value="enUs">English (US)</SelectItem>
-            <SelectItem value="enGb">English (UK)</SelectItem>
+            <SelectItem value="ja-JP">日本語</SelectItem>
+            <SelectItem value="en-US">English (US)</SelectItem>
+            <SelectItem value="en-GB">English (UK)</SelectItem>
           </SelectContent>
         </Select>
       </div>
