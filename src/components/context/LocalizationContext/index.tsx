@@ -9,7 +9,7 @@ export type LocalizationContextType = {
 
 export const LocalizationContext = createContext<LocalizationContextType>({
   data: {
-    language: 'ja-JP',
+    language: 'en-US',
     data: {},
   },
   loadLanguageFile: async () => {},

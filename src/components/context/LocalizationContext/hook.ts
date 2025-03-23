@@ -27,10 +27,6 @@ export const useLocalizationContext = (): LocalizationContextType => {
 
   useEffect(() => {
     setLanguage(preference.language)
-  }, [])
-
-  useEffect(() => {
-    setLanguage(preference.language)
   }, [preference.language])
 
   const loadLanguageFile = async (file: string) => {
