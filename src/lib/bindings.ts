@@ -217,7 +217,7 @@ async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getChangelog() : Promise<Result<LocalizedChanges, string>> {
+async getChangelog() : Promise<Result<LocalizedChanges[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_changelog") };
 } catch (e) {
