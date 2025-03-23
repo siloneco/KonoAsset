@@ -5,7 +5,7 @@ import { PreferenceContext } from '../PreferenceContext'
 
 export const useLocalizationContext = (): LocalizationContextType => {
   const [localizationData, setLocalizationData] = useState<LocalizationData>({
-    language: 'enUs',
+    language: 'en-US',
     data: {},
   })
 
