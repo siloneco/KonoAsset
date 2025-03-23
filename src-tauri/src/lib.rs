@@ -100,6 +100,22 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
+            let language_state = match load_from_language_code(LanguageCode::EnUs) {
+                Ok(data) => {
+                    let language_state = arc_mutex(data);
+                    app.manage(language_state.clone());
+
+                    language_state
+                }
+                Err(err) => {
+                    log::error!("failed to load language data: {}", err);
+                    app.manage(LoadResult::error(false, err));
+
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
+            };
+
             let default_language_data = load_from_language_code(LanguageCode::EnUs);
             if let Err(e) = default_language_data {
                 log::error!("{}", e);
@@ -143,16 +159,16 @@ pub fn run() {
                 &update_channel,
             )));
 
-            let language_data = load_from_language_code(language_code);
-            if let Err(err) = language_data {
-                log::error!("{}", err);
-                app.manage(LoadResult::error(false, err));
+            match load_from_language_code(language_code) {
+                Ok(data) => *language_state.blocking_lock() = data,
+                Err(err) => {
+                    log::error!("failed to load language data: {}", err);
+                    app.manage(LoadResult::error(false, err));
 
-                // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                return Ok(());
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
             }
-
-            *lang_state.blocking_lock() = language_data.unwrap();
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {
