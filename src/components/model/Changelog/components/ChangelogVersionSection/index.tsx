@@ -20,7 +20,7 @@ export const ChangelogVersionSection: FC<Props> = ({ change }) => {
               icon={<Rocket />}
               title="新機能"
               text={feature}
-              titleClassName="bg-blue-950 text-blue-400"
+              titleClassName="bg-blue-200 text-blue-800 dark:bg-blue-950 dark:text-blue-400"
             />
           ))}
         {change.fixes !== null &&
@@ -30,7 +30,7 @@ export const ChangelogVersionSection: FC<Props> = ({ change }) => {
               icon={<Bug />}
               title="バグ修正"
               text={fix}
-              titleClassName="bg-red-950 text-red-400"
+              titleClassName="bg-red-200 text-red-800 dark:bg-red-950 dark:text-red-400"
             />
           ))}
 
@@ -41,7 +41,7 @@ export const ChangelogVersionSection: FC<Props> = ({ change }) => {
               icon={<Cog />}
               title="その他"
               text={other}
-              titleClassName="bg-yellow-950 text-yellow-400"
+              titleClassName="bg-yellow-200 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400"
             />
           ))}
       </div>
