@@ -217,6 +217,14 @@ async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getChangelog() : Promise<Result<LocalizedChanges, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_changelog") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async openFileInFileManager(path: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_file_in_file_manager", { path }) };
@@ -466,6 +474,7 @@ export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avat
 export type LanguageCode = "jaJp" | "enUs" | "enGb"
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
+export type LocalizedChanges = { target_version: string; features: string[] | null; fixes: string[] | null; others: string[] | null }
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
