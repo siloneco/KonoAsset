@@ -9,6 +9,6 @@ use crate::{changelog::LocalizedChanges, updater::update_handler::UpdateHandler}
 #[specta::specta]
 pub async fn get_changelog(
     update_handler: State<'_, Arc<Mutex<UpdateHandler>>>,
-) -> Result<LocalizedChanges, String> {
+) -> Result<Vec<LocalizedChanges>, String> {
     unimplemented!()
 }

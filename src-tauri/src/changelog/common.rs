@@ -10,7 +10,7 @@ pub async fn extract_changes<T, P>(
     changelog: Vec<ChangelogVersion>,
     target_version: T,
     preferred_language: P,
-) -> Result<LocalizedChanges, String>
+) -> Result<Vec<LocalizedChanges>, String>
 where
     T: AsRef<str>,
     P: AsRef<str>,
