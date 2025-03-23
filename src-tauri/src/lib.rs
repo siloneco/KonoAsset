@@ -8,7 +8,7 @@ use deep_link::{
     execute_deep_links, parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
-use language::load::load_from_language_code;
+use language::{load::load_from_language_code, structs::LanguageCode};
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
@@ -100,6 +100,19 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
+            let default_language_data = load_from_language_code(LanguageCode::EnUs);
+            if let Err(e) = default_language_data {
+                log::error!("{}", e);
+                app.manage(LoadResult::error(false, e));
+
+                // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                return Ok(());
+            }
+            let default_language_data = default_language_data.unwrap();
+            let lang_state = arc_mutex(default_language_data);
+
+            app.manage(lang_state.clone());
+
             let preference_file_path = app
                 .path()
                 .app_local_data_dir()
@@ -139,7 +152,7 @@ pub fn run() {
                 return Ok(());
             }
 
-            app.manage(arc_mutex(language_data.unwrap()));
+            *lang_state.blocking_lock() = language_data.unwrap();
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {
