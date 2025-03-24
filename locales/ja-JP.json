@@ -285,6 +285,13 @@
     "top:update-dialog:download-complete": "アップデートをダウンロード済み",
     "top:update-dialog:execute": "アップデート",
 
+    "top:update-dialog:changelog:title": "変更履歴",
+    "top:update-dialog:changelog:not-found": "変更履歴はありません",
+    "top:update-dialog:changelog:github": "GitHubで変更履歴を見る",
+    "top:update-dialog:changelog:prefix:new-feature": "新機能",
+    "top:update-dialog:changelog:prefix:bug-fixes": "バグ修正",
+    "top:update-dialog:changelog:prefix:others": "その他",
+
     "top:add-text": "ファイルをドロップしてアセットを追加",
 
     "setup:welcome": "KonoAssetへようこそ！",
