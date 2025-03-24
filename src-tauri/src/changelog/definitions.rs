@@ -47,6 +47,7 @@ pub struct ChangelogTranslatedEntry {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+#[serde(untagged)]
 pub enum ChangelogTranslatedEntryLang {
     Single(String),
     Multiple(Vec<String>),
