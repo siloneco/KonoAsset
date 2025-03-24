@@ -20,7 +20,7 @@ export const Changelog: FC<Props> = ({ changes }) => {
         <Separator className="flex w-32 flex-grow" />
       </div>
       <ScrollArea className="px-2">
-        <div className="pb-2 pr-2 max-h-96">
+        <div className="pb-2 pr-2 max-h-72">
           {changes === null && (
             <div className="space-y-1">
               <Skeleton className="w-32 h-6 mb-2" />
@@ -39,7 +39,7 @@ export const Changelog: FC<Props> = ({ changes }) => {
             </div>
           )}
           {changes !== null && changes.length === 0 && (
-            <div className="text-muted-foreground text-center my-4">
+            <div className="text-muted-foreground text-center mt-4">
               変更履歴はありません
             </div>
           )}
@@ -50,20 +50,20 @@ export const Changelog: FC<Props> = ({ changes }) => {
                 <ChangelogVersionSection key={index} change={change} />
               </div>
             ))}
-          <div className="flex justify-center pb-4">
-            <a
-              href={`https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="secondary">
-                <ExternalLink />
-                GitHubで変更履歴を見る
-              </Button>
-            </a>
-          </div>
         </div>
       </ScrollArea>
+      <div className="flex justify-center p-4">
+        <a
+          href={`https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="secondary">
+            <ExternalLink />
+            GitHubで変更履歴を見る
+          </Button>
+        </a>
+      </div>
       <Separator className="mt-2" />
     </div>
   )
