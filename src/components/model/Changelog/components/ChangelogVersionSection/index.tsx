@@ -14,7 +14,14 @@ export const ChangelogVersionSection: FC<Props> = ({ change }) => {
 
   return (
     <div>
-      <Label className="text-2xl">{change.version}</Label>
+      <Label className="text-2xl flex flex-row items-end">
+        {change.version}
+        {change.pre_release && (
+          <div className="border-2 border-primary text-foreground rounded-full text-sm px-3 ml-2">
+            Pre-Release
+          </div>
+        )}
+      </Label>
       <div className="mt-2 space-y-1">
         {change.features !== null &&
           change.features.map((feature, index) => (

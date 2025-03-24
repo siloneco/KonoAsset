@@ -1,6 +1,7 @@
 [
   {
     "version": "1.1.0-rc.0",
+    "preRelease": true,
     "features": [
       {
         "text": "アセットデータのインポート/エクスポート機能を追加"

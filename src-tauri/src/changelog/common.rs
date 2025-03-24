@@ -87,13 +87,15 @@ where
             continue;
         }
 
+        let pre_release = item.pre_release;
+
         let features = localize_entries(&item.features, &preferred_language);
         let fixes = localize_entries(&item.fixes, &preferred_language);
         let others = localize_entries(&item.others, &preferred_language);
 
         changes.insert(
             0,
-            LocalizedChanges::new(item.version.clone(), features, fixes, others),
+            LocalizedChanges::new(item.version.clone(), pre_release, features, fixes, others),
         );
     }
 
@@ -101,31 +103,21 @@ where
 }
 
 fn localize_entries(
-    entries: &Option<Vec<ChangelogEntry>>,
+    entries: &Vec<ChangelogEntry>,
     preferred_language: &LanguageCode,
-) -> Option<Vec<String>> {
-    if entries.is_none() {
-        return None;
-    }
-
-    let entries = entries.as_ref().unwrap();
-
-    let result = entries
+) -> Vec<String> {
+    entries
         .iter()
         .map(|entry| {
-            let localized = match &entry.langs {
-                Some(langs) => langs
-                    .iter()
-                    .find(|lang| lang.lang.is_language_supported(&preferred_language))
-                    .map(|lang| lang.text.clone()),
-                None => None,
-            };
+            let localized = entry
+                .langs
+                .iter()
+                .find(|lang| lang.lang.is_language_supported(&preferred_language))
+                .map(|lang| lang.text.clone());
 
             localized.unwrap_or_else(|| entry.text.clone())
         })
-        .collect();
-
-    Some(result)
+        .collect()
 }
 
 fn get_reqwest_client() -> Result<reqwest::Client, String> {

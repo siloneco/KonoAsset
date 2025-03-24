@@ -5,20 +5,23 @@ use crate::language::structs::LanguageCode;
 #[derive(Serialize, Debug, Clone, specta::Type)]
 pub struct LocalizedChanges {
     pub version: String,
-    pub features: Option<Vec<String>>,
-    pub fixes: Option<Vec<String>>,
-    pub others: Option<Vec<String>>,
+    pub pre_release: bool,
+    pub features: Vec<String>,
+    pub fixes: Vec<String>,
+    pub others: Vec<String>,
 }
 
 impl LocalizedChanges {
     pub fn new(
         version: String,
-        features: Option<Vec<String>>,
-        fixes: Option<Vec<String>>,
-        others: Option<Vec<String>>,
+        pre_release: bool,
+        features: Vec<String>,
+        fixes: Vec<String>,
+        others: Vec<String>,
     ) -> Self {
         Self {
             version,
+            pre_release,
             features,
             fixes,
             others,
@@ -27,17 +30,26 @@ impl LocalizedChanges {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct ChangelogVersion {
     pub version: String,
-    pub features: Option<Vec<ChangelogEntry>>,
-    pub fixes: Option<Vec<ChangelogEntry>>,
-    pub others: Option<Vec<ChangelogEntry>>,
+    #[serde(default)] // default = false
+    pub pre_release: bool,
+
+    #[serde(default)] // default = empty array
+    pub features: Vec<ChangelogEntry>,
+    #[serde(default)] // default = empty array
+    pub fixes: Vec<ChangelogEntry>,
+    #[serde(default)] // default = empty array
+    pub others: Vec<ChangelogEntry>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ChangelogEntry {
     pub text: String,
-    pub langs: Option<Vec<ChangelogTranslatedEntry>>,
+
+    #[serde(default)] // default = empty array
+    pub langs: Vec<ChangelogTranslatedEntry>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
