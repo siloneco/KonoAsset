@@ -1,6 +1,6 @@
 import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
-import { events, commands, LocalizedChanges, Result } from '@/lib/bindings'
+import { events, commands, LocalizedChanges } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { useEffect, useState } from 'react'
 
@@ -53,24 +53,15 @@ export const useUpdateDialog = ({
   }
 
   const getLocalizedChanges = async () => {
-    // const result = await commands.getChangelog()
-    const result: Result<LocalizedChanges[], string> = {
-      status: 'ok',
-      data: [
-        {
-          target_version: 'v1.1.0',
-          features: ['新機能1', '新機能2'],
-          fixes: ['バグ修正1', 'バグ修正2'],
-          others: ['その他の変更1', 'その他の変更2'],
-        },
-      ],
-    }
+    const result = await commands.getChangelog()
 
     if (result.status === 'error') {
       console.error('Failed to get localized changes:', result.error)
       setLocalizedChanges([])
       return
     }
+
+    console.log(result.data)
 
     setLocalizedChanges(result.data)
   }

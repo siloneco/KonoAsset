@@ -11,7 +11,7 @@ type Props = {
 export const ChangelogVersionSection: FC<Props> = ({ change }) => {
   return (
     <div>
-      <Label className="text-2xl">{change.target_version}</Label>
+      <Label className="text-2xl">{change.version}</Label>
       <div className="mt-2 space-y-1">
         {change.features !== null &&
           change.features.map((feature, index) => (
