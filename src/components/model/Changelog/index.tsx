@@ -48,20 +48,20 @@ export const Changelog: FC<Props> = ({ changes }) => {
             changes.map((change, index) => (
               <div className="pb-4">
                 <ChangelogVersionSection key={index} change={change} />
-                <div className="flex justify-center mt-4">
-                  <a
-                    href={`https://github.com/siloneco/KonoAsset/releases`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="secondary">
-                      <ExternalLink />
-                      GitHubで変更履歴を見る
-                    </Button>
-                  </a>
-                </div>
               </div>
             ))}
+          <div className="flex justify-center pb-4">
+            <a
+              href={`https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="secondary">
+                <ExternalLink />
+                GitHubで変更履歴を見る
+              </Button>
+            </a>
+          </div>
         </div>
       </ScrollArea>
       <Separator className="mt-2" />
