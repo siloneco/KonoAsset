@@ -39,7 +39,7 @@ export const Changelog: FC<Props> = ({ changes }) => {
             </div>
           )}
           {changes !== null && changes.length === 0 && (
-            <div className="text-muted-foreground text-center">
+            <div className="text-muted-foreground text-center my-4">
               変更履歴はありません
             </div>
           )}
