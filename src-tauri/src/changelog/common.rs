@@ -83,11 +83,11 @@ where
             break;
         }
 
-        if skip_pre_releases && !cursor_version.pre.is_empty() {
+        let pre_release = item.pre_release;
+
+        if skip_pre_releases && pre_release {
             continue;
         }
-
-        let pre_release = item.pre_release;
 
         let features = localize_entries(&item.features, &preferred_language);
         let fixes = localize_entries(&item.fixes, &preferred_language);
