@@ -67,10 +67,9 @@ export const useUpdateDialog = ({
   }
 
   useEffect(() => {
-    // // This if statement is disabled due to debugging purposes
-    // if (dialogOpen === true) {
-    getLocalizedChanges()
-    // }
+    if (dialogOpen === true) {
+      getLocalizedChanges()
+    }
   }, [dialogOpen])
 
   useEffect(() => {

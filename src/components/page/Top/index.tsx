@@ -66,7 +66,7 @@ const TopPage = () => {
         </SidebarProvider>
       </AssetContext.Provider>
       <UpdateDialog
-        dialogOpen={true} // For Debugging
+        dialogOpen={updateDialogOpen}
         setDialogOpen={setUpdateDialogOpen}
         taskId={updateDownloadTaskId}
       />
