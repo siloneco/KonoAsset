@@ -1,11 +1,29 @@
 use serde::{Deserialize, Serialize};
 
+use crate::language::structs::LanguageCode;
+
 #[derive(Serialize, Debug, Clone, specta::Type)]
 pub struct LocalizedChanges {
-    pub target_version: String,
+    pub version: String,
     pub features: Option<Vec<String>>,
     pub fixes: Option<Vec<String>>,
     pub others: Option<Vec<String>>,
+}
+
+impl LocalizedChanges {
+    pub fn new(
+        version: String,
+        features: Option<Vec<String>>,
+        fixes: Option<Vec<String>>,
+        others: Option<Vec<String>>,
+    ) -> Self {
+        Self {
+            version,
+            features,
+            fixes,
+            others,
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -32,4 +50,13 @@ pub struct ChangelogTranslatedEntry {
 pub enum ChangelogTranslatedEntryLang {
     Single(String),
     Multiple(Vec<String>),
+}
+
+impl ChangelogTranslatedEntryLang {
+    pub fn is_language_supported(&self, language: &LanguageCode) -> bool {
+        match self {
+            Self::Single(lang) => lang == language.code(),
+            Self::Multiple(langs) => langs.iter().any(|lang| lang == &language.code()),
+        }
+    }
 }
