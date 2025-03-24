@@ -6,7 +6,7 @@ use tokio::sync::Mutex;
 use crate::{
     changelog::{generate_changelog, LocalizedChanges},
     preference::store::PreferenceStore,
-    updater::update_handler::UpdateHandler,
+    updater::update_handler::{UpdateChannel, UpdateHandler},
 };
 
 #[tauri::command]
@@ -36,9 +36,16 @@ pub async fn get_changelog(
         return Ok(changelog.clone());
     }
 
-    let preferred_language = &preference.lock().await.language;
+    let (preferred_language, skip_pre_releases) = {
+        let preference = preference.lock().await;
 
-    let changelog = generate_changelog(version, preferred_language)
+        (
+            preference.language.clone(),
+            preference.update_channel == UpdateChannel::Stable,
+        )
+    };
+
+    let changelog = generate_changelog(version, &preferred_language, skip_pre_releases)
         .await
         .map_err(|e| {
             let err = format!("Failed to generate changelog: {}", e);

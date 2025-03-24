@@ -12,12 +12,19 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub async fn generate_changelog<S>(
     target_version: S,
     preferred_language: &LanguageCode,
+    skip_pre_releases: bool,
 ) -> Result<Vec<LocalizedChanges>, String>
 where
     S: AsRef<str>,
 {
     let changelog = fetch_changelogs().await?;
-    let changelog = extract_changes(changelog, target_version, &preferred_language).await?;
+    let changelog = extract_changes(
+        changelog,
+        target_version,
+        &preferred_language,
+        skip_pre_releases,
+    )
+    .await?;
 
     Ok(changelog)
 }
@@ -45,6 +52,7 @@ async fn extract_changes<S>(
     changelog: Vec<ChangelogVersion>,
     target_version: S,
     preferred_language: &LanguageCode,
+    skip_pre_releases: bool,
 ) -> Result<Vec<LocalizedChanges>, String>
 where
     S: AsRef<str>,
@@ -73,6 +81,10 @@ where
         }
         if target_version < cursor_version {
             break;
+        }
+
+        if skip_pre_releases && !cursor_version.pre.is_empty() {
+            continue;
         }
 
         let features = localize_entries(&item.features, &preferred_language);
