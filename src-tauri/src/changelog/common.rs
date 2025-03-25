@@ -9,24 +9,9 @@ use super::definitions::{ChangelogEntry, ChangelogVersion, LocalizedChanges};
 const URL: &str = "https://releases.konoasset.dev/manifests/changelog.json";
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub async fn generate_changelog<S>(
-    target_version: S,
-    preferred_language: &LanguageCode,
-    skip_pre_releases: bool,
-) -> Result<Vec<LocalizedChanges>, String>
-where
-    S: AsRef<str>,
-{
+pub async fn fetch_and_parse_changelog() -> Result<Vec<ChangelogVersion>, String> {
     let changelog_body = fetch_changelogs().await?;
-    let raw_changelog = parse_changelog(changelog_body).await?;
-
-    let changelog = extract_changes(
-        raw_changelog,
-        target_version,
-        &preferred_language,
-        skip_pre_releases,
-    )
-    .await?;
+    let changelog = parse_changelog(changelog_body).await?;
 
     Ok(changelog)
 }
@@ -60,7 +45,7 @@ where
     Ok(changelog)
 }
 
-async fn extract_changes<S>(
+pub async fn pick_changes_in_preferred_lang<S>(
     changelog: Vec<ChangelogVersion>,
     target_version: S,
     preferred_language: &LanguageCode,

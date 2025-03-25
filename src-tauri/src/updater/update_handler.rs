@@ -3,7 +3,7 @@ use tauri::{AppHandle, Url};
 use tauri_plugin_updater::{Update, UpdaterExt};
 use tauri_specta::Event;
 
-use crate::changelog::LocalizedChanges;
+use crate::changelog::ChangelogVersion;
 
 pub struct UpdateHandler {
     app_handle: AppHandle,
@@ -14,7 +14,7 @@ pub struct UpdateHandler {
     update_handler: Option<Update>,
 
     downloaded_update_data: Option<Vec<u8>>,
-    changelog: Option<Vec<LocalizedChanges>>,
+    changelog: Option<Vec<ChangelogVersion>>,
 
     show_notification: bool,
 }
@@ -149,11 +149,11 @@ impl UpdateHandler {
         self.update_version.as_deref()
     }
 
-    pub fn get_changelog(&self) -> Option<&Vec<LocalizedChanges>> {
+    pub fn get_changelog(&self) -> Option<&Vec<ChangelogVersion>> {
         self.changelog.as_ref()
     }
 
-    pub fn set_changelog(&mut self, changelog: Vec<LocalizedChanges>) {
+    pub fn set_changelog(&mut self, changelog: Vec<ChangelogVersion>) {
         self.changelog = Some(changelog);
     }
 

@@ -4,7 +4,7 @@ use tauri::State;
 use tokio::sync::Mutex;
 
 use crate::{
-    changelog::{generate_changelog, LocalizedChanges},
+    changelog::{fetch_and_parse_changelog, pick_changes_in_preferred_lang, LocalizedChanges},
     preference::store::PreferenceStore,
     updater::update_handler::{UpdateChannel, UpdateHandler},
 };
@@ -23,6 +23,20 @@ pub async fn get_changelog(
         return Err(err);
     }
 
+    let raw_changelog = if let Some(changelog) = handler.get_changelog() {
+        changelog.clone()
+    } else {
+        let changelog = fetch_and_parse_changelog().await.map_err(|e| {
+            let err = format!("Failed to fetch and parse changelog: {}", e);
+            log::error!("{}", err);
+            err
+        })?;
+
+        handler.set_changelog(changelog.clone());
+
+        changelog
+    };
+
     let version = match handler.update_version() {
         Some(v) => v,
         None => {
@@ -31,10 +45,6 @@ pub async fn get_changelog(
             return Err(err);
         }
     };
-
-    if let Some(changelog) = handler.get_changelog() {
-        return Ok(changelog.clone());
-    }
 
     let (preferred_language, skip_pre_releases) = {
         let preference = preference.lock().await;
@@ -45,15 +55,18 @@ pub async fn get_changelog(
         )
     };
 
-    let changelog = generate_changelog(version, &preferred_language, skip_pre_releases)
-        .await
-        .map_err(|e| {
-            let err = format!("Failed to generate changelog: {}", e);
-            log::error!("{}", err);
-            err
-        })?;
-
-    handler.set_changelog(changelog.clone());
+    let changelog = pick_changes_in_preferred_lang(
+        raw_changelog,
+        version,
+        &preferred_language,
+        skip_pre_releases,
+    )
+    .await
+    .map_err(|e| {
+        let err = format!("Failed to pick changes in preferred language: {}", e);
+        log::error!("{}", err);
+        err
+    })?;
 
     Ok(changelog)
 }
