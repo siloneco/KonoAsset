@@ -51,8 +51,8 @@ export const Changelog: FC<Props> = ({ changes }) => {
           {changes !== null &&
             changes.length > 0 &&
             changes.map((change) => (
-              <div className="pb-4">
-                <ChangelogVersionSection key={change.version} change={change} />
+              <div key={change.version} className="pb-4">
+                <ChangelogVersionSection change={change} />
               </div>
             ))}
         </div>
