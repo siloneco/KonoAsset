@@ -1,25 +1,31 @@
 import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
-import { events, commands } from '@/lib/bindings'
+import { events, commands, LocalizedChanges } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
 import { useEffect, useState } from 'react'
 
 type Props = {
+  dialogOpen: boolean
   setDialogOpen: (open: boolean) => void
   taskId: string | null
 }
 
 type ReturnProps = {
   progress: number
+  localizedChanges: LocalizedChanges[] | null
   onCancelButtonClick: () => Promise<void>
   onUpdateButtonClick: () => Promise<void>
 }
 
 export const useUpdateDialog = ({
+  dialogOpen,
   setDialogOpen,
   taskId,
 }: Props): ReturnProps => {
   const [progress, setProgress] = useState(0)
+  const [localizedChanges, setLocalizedChanges] = useState<
+    LocalizedChanges[] | null
+  >(null)
 
   const { toast } = useToast()
   const { t } = useLocalization()
@@ -45,6 +51,24 @@ export const useUpdateDialog = ({
       console.error('Failed to install update:', result.error)
     }
   }
+
+  const getLocalizedChanges = async () => {
+    const result = await commands.getChangelog()
+
+    if (result.status === 'error') {
+      console.error('Failed to get localized changes:', result.error)
+      setLocalizedChanges([])
+      return
+    }
+
+    setLocalizedChanges(result.data)
+  }
+
+  useEffect(() => {
+    if (dialogOpen === true) {
+      getLocalizedChanges()
+    }
+  }, [dialogOpen])
 
   useEffect(() => {
     let isCancelled = false
@@ -150,6 +174,7 @@ export const useUpdateDialog = ({
 
   return {
     progress,
+    localizedChanges,
     onCancelButtonClick,
     onUpdateButtonClick,
   }

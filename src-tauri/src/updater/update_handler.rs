@@ -3,13 +3,19 @@ use tauri::{AppHandle, Url};
 use tauri_plugin_updater::{Update, UpdaterExt};
 use tauri_specta::Event;
 
+use crate::changelog::ChangelogVersion;
+
 pub struct UpdateHandler {
     app_handle: AppHandle,
     initialized: bool,
+
     update_available: bool,
-    downloaded_update_data: Option<Vec<u8>>,
     update_version: Option<String>,
     update_handler: Option<Update>,
+
+    downloaded_update_data: Option<Vec<u8>>,
+    changelog: Option<Vec<ChangelogVersion>>,
+
     show_notification: bool,
 }
 
@@ -29,10 +35,14 @@ impl UpdateHandler {
         Self {
             app_handle,
             initialized: false,
+
             update_available: false,
-            downloaded_update_data: None,
             update_version: None,
             update_handler: None,
+
+            downloaded_update_data: None,
+            changelog: None,
+
             show_notification: true,
         }
     }
@@ -135,9 +145,17 @@ impl UpdateHandler {
         self.update_available
     }
 
-    // pub fn update_version(&self) -> Option<&str> {
-    //     self.update_version.as_deref()
-    // }
+    pub fn update_version(&self) -> Option<&str> {
+        self.update_version.as_deref()
+    }
+
+    pub fn get_changelog(&self) -> Option<&Vec<ChangelogVersion>> {
+        self.changelog.as_ref()
+    }
+
+    pub fn set_changelog(&mut self, changelog: Vec<ChangelogVersion>) {
+        self.changelog = Some(changelog);
+    }
 
     pub async fn show_notification(&self) -> bool {
         self.show_notification

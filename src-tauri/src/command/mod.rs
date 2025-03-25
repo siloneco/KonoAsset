@@ -43,6 +43,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         update::common::download_update,
         update::common::install_update,
         update::common::do_not_notify_update,
+        update::changelog::get_changelog,
         // ファイル関連
         file::open::open_file_in_file_manager,
         file::open::open_app_dir,

@@ -1,0 +1,124 @@
+[
+  {
+    "version": "1.1.0-rc.0",
+    "preRelease": true,
+    "features": [
+      {
+        "text": "アセットデータのインポート/エクスポート機能を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Import/export function for asset data"
+          }
+        ]
+      },
+      {
+        "text": "アセット追加ダイアログを開くための Deep Link を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Deep Link to open the asset add dialog"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "アセット削除時に前提アセットの紐づけが解除されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Association of prerequisite assets was not removed when an asset was deleted"
+          }
+        ]
+      },
+      {
+        "text": "アセットタイプの表示が改行されることがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Asset type display was sometimes wrapped"
+          }
+        ]
+      },
+      {
+        "text": "全てのアセットタイプを表示しているときにワールドカテゴリが候補として表示されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "World categories were not displayed as candidates when displaying all asset types"
+          }
+        ]
+      },
+      {
+        "text": "画面をリロードするまでカテゴリ等の候補が更新されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Candidates for categories etc. were not updated until the screen was reloaded"
+          }
+        ]
+      },
+      {
+        "text": "en-US の翻訳の一部を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Incorrect translation in en-US"
+          }
+        ]
+      },
+      {
+        "text": "エラーがログファイルに記録されないことがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Errors were not recorded in the log file"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.2",
+    "others": [
+      {
+        "text": "インポート後の削除機能をデフォルトでOFFに変更",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Default setting of the delete function after import to OFF"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.1",
+    "fixes": [
+      {
+        "text": "場合によってBoothの画像が保存できないバグを修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Booth images could not be saved in some cases"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "features": [
+      {
+        "text": "初回リリース",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Initial release"
+          }
+        ]
+      }
+    ]
+  }
+]

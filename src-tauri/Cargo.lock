@@ -2176,6 +2176,7 @@ dependencies = [
  "reqwest",
  "ringbuffer",
  "sanitize-filename",
+ "semver",
  "serde",
  "serde_json",
  "serde_with",

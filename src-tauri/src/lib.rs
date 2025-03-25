@@ -21,6 +21,7 @@ use specta_typescript::{BigIntExportBehavior, Typescript};
 
 mod adapter;
 mod booth;
+mod changelog;
 mod command;
 mod data_store;
 mod deep_link;

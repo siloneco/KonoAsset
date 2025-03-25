@@ -22,6 +22,14 @@ impl LanguageCode {
             LanguageCode::EnGb => include_str!("../../../locales/en-GB.json"),
         }
     }
+
+    pub fn code(&self) -> &str {
+        match self {
+            LanguageCode::JaJp => "ja-JP",
+            LanguageCode::EnUs => "en-US",
+            LanguageCode::EnGb => "en-GB",
+        }
+    }
 }
 
 #[serde_as]
