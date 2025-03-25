@@ -17,9 +17,11 @@ pub async fn generate_changelog<S>(
 where
     S: AsRef<str>,
 {
-    let changelog = fetch_changelogs().await?;
+    let changelog_body = fetch_changelogs().await?;
+    let raw_changelog = parse_changelog(changelog_body).await?;
+
     let changelog = extract_changes(
-        changelog,
+        raw_changelog,
         target_version,
         &preferred_language,
         skip_pre_releases,
@@ -29,7 +31,7 @@ where
     Ok(changelog)
 }
 
-async fn fetch_changelogs() -> Result<Vec<ChangelogVersion>, String> {
+async fn fetch_changelogs() -> Result<String, String> {
     let client = get_reqwest_client()?;
 
     let response = client
@@ -43,9 +45,19 @@ async fn fetch_changelogs() -> Result<Vec<ChangelogVersion>, String> {
     }
 
     response
-        .json::<Vec<ChangelogVersion>>()
+        .text()
         .await
-        .map_err(|e| format!("Failed to parse changelogs: {}", e))
+        .map_err(|e| format!("Failed to fetch changelogs: {}", e))
+}
+
+async fn parse_changelog<S>(text: S) -> Result<Vec<ChangelogVersion>, String>
+where
+    S: AsRef<str>,
+{
+    let changelog = serde_json::from_str(text.as_ref())
+        .map_err(|e| format!("Failed to parse changelog: {}", e))?;
+
+    Ok(changelog)
 }
 
 async fn extract_changes<S>(
@@ -126,4 +138,15 @@ fn get_reqwest_client() -> Result<reqwest::Client, String> {
         .timeout(Duration::from_secs(5))
         .build()
         .map_err(|e| format!("Failed to create reqwest client: {}", e))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_parse_changelog() {
+        let text_changelog = include_str!("../../../changelog.json");
+        parse_changelog(text_changelog).await.unwrap();
+    }
 }

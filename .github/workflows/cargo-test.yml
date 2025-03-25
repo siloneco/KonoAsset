@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "src-tauri/**"
+      - "changelog.json"
     branches:
       - "main"
       - "pre-release"
@@ -14,6 +15,7 @@ on:
       - synchronize
     paths:
       - "src-tauri/**"
+      - "changelog.json"
 
 permissions:
   contents: read
