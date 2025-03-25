@@ -90,11 +90,16 @@ where
         let fixes = localize_entries(&item.fixes, &preferred_language);
         let others = localize_entries(&item.others, &preferred_language);
 
-        changes.insert(
-            0,
-            LocalizedChanges::new(item.version.clone(), pre_release, features, fixes, others),
-        );
+        changes.push(LocalizedChanges::new(
+            item.version.clone(),
+            pre_release,
+            features,
+            fixes,
+            others,
+        ));
     }
+
+    changes.reverse();
 
     Ok(changes)
 }
