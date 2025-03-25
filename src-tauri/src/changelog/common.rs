@@ -104,10 +104,7 @@ where
     Ok(changes)
 }
 
-fn localize_entries(
-    entries: &Vec<ChangelogEntry>,
-    preferred_language: &LanguageCode,
-) -> Vec<String> {
+fn localize_entries(entries: &[ChangelogEntry], preferred_language: &LanguageCode) -> Vec<String> {
     entries
         .iter()
         .map(|entry| {
