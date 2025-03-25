@@ -285,6 +285,13 @@
     "top:update-dialog:download-complete": "Update downloaded",
     "top:update-dialog:execute": "Update",
 
+    "top:update-dialog:changelog:title": "Changelog",
+    "top:update-dialog:changelog:not-found": "No changelog available",
+    "top:update-dialog:changelog:github": "View changes on GitHub",
+    "top:update-dialog:changelog:prefix:new-feature": "New features",
+    "top:update-dialog:changelog:prefix:bug-fixes": "Bug fixes",
+    "top:update-dialog:changelog:prefix:others": "Others",
+
     "top:add-text": "Drop files to add assets",
 
     "setup:welcome": "Welcome to KonoAsset!",
