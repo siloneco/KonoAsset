@@ -61,8 +61,6 @@ export const useUpdateDialog = ({
       return
     }
 
-    console.log(result.data)
-
     setLocalizedChanges(result.data)
   }
 
