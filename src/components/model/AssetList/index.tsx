@@ -12,6 +12,7 @@ import DataManagementDialog from '../AssetCard/components/MoreButton/components/
 import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
 import MemoDialog from '../MemoDialog'
 import { DependencyDialog } from '../DependencyDialog'
+import { cn } from '@/lib/utils'
 
 type Props = {
   className?: string
@@ -63,6 +64,7 @@ const AssetList = ({
 
   const {
     reverseOrder,
+    assetCardSize,
     assetType,
     queryTextMode,
     generalQueryTextFilter,
@@ -123,6 +125,15 @@ const AssetList = ({
     supportedAvatarFilterMatchType,
   ])
 
+  const gridColClassName = cn(
+    assetCardSize === 'Small' &&
+      'grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 3xl:grid-cols-10 4xl:grid-cols-12 5xl:grid-cols-16',
+    assetCardSize === 'Medium' &&
+      ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-8 4xl:grid-cols-10 5xl:grid-cols-12',
+    assetCardSize === 'Large' &&
+      'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-8 5xl:grid-cols-10',
+  )
+
   return (
     <ScrollArea className={className}>
       {assetDisplaySortedList.length === 0 && (
@@ -131,7 +142,7 @@ const AssetList = ({
       {assetDisplaySortedList.length > 0 && matchedAssetIDs.length === 0 && (
         <AssetListBackground type="NoResults" openDialog={openAddAssetDialog} />
       )}
-      <div className="grid grid-cols-2 gap-4 m-6 mt-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-8 4xl:grid-cols-10 5xl:grid-cols-12">
+      <div className={cn('grid grid-cols-2 gap-4 m-6 mt-0', gridColClassName)}>
         {assetDisplaySortedList &&
           !reverseOrder &&
           assetDisplaySortedList.map(
