@@ -8,7 +8,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Added import/export function for asset data"
+            "text": "Import/export function for asset data"
           }
         ]
       },
@@ -17,7 +17,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Added a Deep Link to open the asset add dialog"
+            "text": "Deep Link to open the asset add dialog"
           }
         ]
       }
