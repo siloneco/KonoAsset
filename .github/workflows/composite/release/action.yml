@@ -93,6 +93,7 @@ runs:
       shell: bash
       run: |
         mkdir -p upload/manifests upload/installer
+        cp changelog.json ./upload/manifests/changelog.json
         mv latest.json ./upload/manifests/${{ inputs.releaseChannel }}.json
         mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
