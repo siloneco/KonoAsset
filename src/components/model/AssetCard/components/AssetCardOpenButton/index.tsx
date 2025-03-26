@@ -44,6 +44,7 @@ const AssetCardOpenButton = ({
     mainButtonLoading,
     onOpenManagedDirButtonClick,
     onCopyPathButtonClick,
+    displayOpenButtonText,
   } = useAssetCardOpenButton({
     id,
     hasDependencies,
@@ -56,7 +57,7 @@ const AssetCardOpenButton = ({
   return (
     <div className={cn('flex flex-row ', className)}>
       <Button
-        className={cn('w-full rounded-r-none')}
+        className={cn('w-full rounded-r-none px-0')}
         onClick={onMainButtonClick}
       >
         {!mainButtonLoading && !mainButtonChecked && <Folder size={24} />}
@@ -67,7 +68,7 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        <p> {t('general:button:open')} </p>
+        {displayOpenButtonText && <p>{t('general:button:open')}</p>}
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>

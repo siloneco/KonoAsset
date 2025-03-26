@@ -32,7 +32,7 @@ export const LayoutPopover: FC = () => {
 
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button
           variant="outline"
           className="flex flex-row text-muted-foreground"

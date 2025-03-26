@@ -10,6 +10,7 @@ import { AssetSummary, FileInfo } from '@/lib/bindings'
 import AssetCardOpenButton from '@/components/model/AssetCard/components/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Props = {
   asset: AssetSummary
@@ -37,8 +38,12 @@ const AssetCard = ({
   openDependencyDialog,
 }: Props) => {
   const { deleteAsset } = useAssetCard({ asset })
-  const { setAssetType, setQueryTextMode, setQueryTextFilterForCreator } =
-    useContext(PersistentContext)
+  const {
+    assetCardSize,
+    setAssetType,
+    setQueryTextMode,
+    setQueryTextFilterForCreator,
+  } = useContext(PersistentContext)
 
   const onShopNameClicked = () => {
     setQueryTextMode('advanced')
@@ -69,7 +74,12 @@ const AssetCard = ({
               </Button>
             )}
           </div>
-          <CardTitle className="text-lg mt-2 break-words whitespace-pre-wrap">
+          <CardTitle
+            className={cn(
+              'text-lg mt-2 break-words whitespace-pre-wrap',
+              assetCardSize === 'Small' && 'text-base',
+            )}
+          >
             {asset.name}
           </CardTitle>
           <Label className="text-sm cursor-pointer" onClick={onShopNameClicked}>

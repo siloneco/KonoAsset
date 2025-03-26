@@ -1,6 +1,10 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AssetContext } from '@/components/context/AssetContext'
-import { createFilterRequest, isFilterEnforced } from './logic'
+import {
+  calculateColumnCount,
+  createFilterRequest,
+  isFilterEnforced,
+} from './logic'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import AssetCard from '../AssetCard'
@@ -13,6 +17,7 @@ import EditAssetDialog from '../asset-dialogs/EditAssetDialog'
 import MemoDialog from '../MemoDialog'
 import { DependencyDialog } from '../DependencyDialog'
 import { cn } from '@/lib/utils'
+import { useGetElementProperty } from '@/hooks/use-get-element-property'
 
 type Props = {
   className?: string
@@ -125,27 +130,45 @@ const AssetList = ({
     supportedAvatarFilterMatchType,
   ])
 
-  const gridColClassName = cn(
-    assetCardSize === 'Small' &&
-      'grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 3xl:grid-cols-10 4xl:grid-cols-12 5xl:grid-cols-16',
-    assetCardSize === 'Medium' &&
-      ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-8 4xl:grid-cols-10 5xl:grid-cols-12',
-    assetCardSize === 'Large' &&
-      'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-8 5xl:grid-cols-10',
-  )
+  const divRef = useRef<HTMLDivElement>(null)
+  const [columns, setColumns] = useState(1)
+
+  const { getElementProperty } = useGetElementProperty(divRef)
+
+  const updateColumns = () => {
+    setColumns(
+      assetCardSize !== 'List'
+        ? calculateColumnCount(getElementProperty('width'), assetCardSize)
+        : 1,
+    )
+  }
+
+  useEffect(() => {
+    updateColumns()
+
+    window.addEventListener('resize', updateColumns)
+    return () => window.removeEventListener('resize', updateColumns)
+  }, [assetCardSize])
 
   return (
-    <ScrollArea className={className}>
+    <ScrollArea className={className} ref={divRef}>
       {assetDisplaySortedList.length === 0 && (
         <AssetListBackground type="NoAssets" openDialog={openAddAssetDialog} />
       )}
       {assetDisplaySortedList.length > 0 && matchedAssetIDs.length === 0 && (
         <AssetListBackground type="NoResults" openDialog={openAddAssetDialog} />
       )}
-      <div className={cn('grid grid-cols-2 gap-4 m-6 mt-0', gridColClassName)}>
+      <div
+        className={cn(`grid gap-4 m-6 mt-0`)}
+        style={{
+          gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        }}
+      >
         {assetDisplaySortedList &&
-          !reverseOrder &&
-          assetDisplaySortedList.map(
+          (reverseOrder
+            ? assetDisplaySortedList.slice(0).reverse()
+            : assetDisplaySortedList
+          ).map(
             (asset) =>
               (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
                 <AssetCard
@@ -168,49 +191,14 @@ const AssetList = ({
                     setMemoDialogAssetId(assetId)
                     setMemoDialogOpen(true)
                   }}
-                  openDependencyDialog={(assetId) => {
+                  openDependencyDialog={(assetId, dependencies) => {
                     setDependencyDialogAssetName(assetId)
+                    setDependencyDialogDependencies(dependencies)
                     setDependencyDialogOpen(true)
                   }}
                 />
               ),
           )}
-        {assetDisplaySortedList &&
-          reverseOrder &&
-          assetDisplaySortedList
-            .slice(0)
-            .reverse()
-            .map(
-              (asset) =>
-                (!filterEnforced || matchedAssetIDs.includes(asset.id)) && (
-                  <AssetCard
-                    key={asset.id}
-                    asset={asset}
-                    openSelectUnitypackageDialog={() =>
-                      setSelectUnitypackageDialogOpen(true)
-                    }
-                    setUnitypackageFiles={setUnityPackages}
-                    setDialogAssetId={setSelectUnitypackageDialogAssetId}
-                    openDataManagementDialog={(assetId) => {
-                      setDataManagementDialogAssetId(assetId)
-                      setDataManagementDialogOpen(true)
-                    }}
-                    openEditAssetDialog={(assetId) => {
-                      setEditAssetDialogAssetId(assetId)
-                      setEditAssetDialogOpen(true)
-                    }}
-                    openMemoDialog={(assetId) => {
-                      setMemoDialogAssetId(assetId)
-                      setMemoDialogOpen(true)
-                    }}
-                    openDependencyDialog={(assetName, dependencies) => {
-                      setDependencyDialogAssetName(assetName)
-                      setDependencyDialogDependencies(dependencies)
-                      setDependencyDialogOpen(true)
-                    }}
-                  />
-                ),
-            )}
       </div>
       <SelectUnitypackageDialog
         dialogOpen={selectUnitypackageDialogOpen}
