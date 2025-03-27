@@ -55,7 +55,7 @@ const DuplicateWarningTab = ({
     <>
       <DialogHeader>
         <DialogTitle>
-          ({tabIndex}/{totalTabs}) {t('addasset:duplicate-warning')}{' '}
+          ({tabIndex}/{totalTabs}) {t('addasset:duplicate-warning')}
         </DialogTitle>
         <DialogDescription>
           {t('addasset:duplicate-warning:explanation-text')}
