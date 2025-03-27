@@ -22,10 +22,22 @@
         ]
       },
       {
-        "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装"
+        "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Display progress bar and change history when updating"
+          }
+        ]
       },
       {
-        "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装"
+        "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Change the display size of assets and display in list format"
+          }
+        ]
       }
     ],
     "fixes": [
@@ -84,19 +96,49 @@
         ]
       },
       {
-        "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正"
+        "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Some toast text was not translated on the initial settings page"
+          }
+        ]
       },
       {
-        "text": "トーストのタイトルの一貫性を向上"
+        "text": "トーストのタイトルの一貫性を向上",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Improved consistency of toast titles"
+          }
+        ]
       },
       {
-        "text": "フィルタの候補が見づらく選択しづらい問題を修正"
+        "text": "フィルタの候補が見づらく選択しづらい問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Fixed an issue where the filter candidates were difficult to see and select"
+          }
+        ]
       },
       {
-        "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正"
+        "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Language file was not loaded when the setting file failed to load"
+          }
+        ]
       },
       {
-        "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正"
+        "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Changed \"Booth\" notation to \"BOOTH\" notation"
+          }
+        ]
       }
     ]
   },
