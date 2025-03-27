@@ -16,7 +16,7 @@ export const OrderSelector: FC<Props> = ({ current, setValue }) => {
     <div>
       <Label className="px-4 py-2 flex flex-row items-center text-base">
         <ArrowDownAz className="text-muted-foreground mr-2" size={20} />
-        表示順
+        {t('mainnavbar:sort-settings:title')}
       </Label>
       <ButtonWithCheckMark
         value="CreatedAtDesc"
