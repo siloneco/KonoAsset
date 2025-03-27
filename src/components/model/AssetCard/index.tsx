@@ -86,7 +86,7 @@ const AssetCard = ({
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
-            displayOpenButtonText
+            displayOpenButtonText={assetCardSize !== 'Small'}
             openDependencyDialog={() =>
               openDependencyDialog(asset.name, asset.dependencies)
             }
