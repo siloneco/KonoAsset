@@ -97,11 +97,11 @@
     "version": "1.0.1",
     "fixes": [
       {
-        "text": "場合によってBoothの画像が保存できないバグを修正",
+        "text": "場合によってBOOTHの画像が保存できないバグを修正",
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Booth images could not be saved in some cases"
+            "text": "BOOTH images could not be saved in some cases"
           }
         ]
       }
