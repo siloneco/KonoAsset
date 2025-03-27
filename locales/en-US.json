@@ -130,7 +130,6 @@
     "mainnavbar:total-asset-count:foretext": "Out of ",
     "mainnavbar:total-asset-count:posttext": " assets,",
     "mainnavbar:showing": "currently displayed",
-    "mainnavbar:sort-settings": "Sort settings",
     "mainnavbar:sort-settings:created-at-desc": "Date added (newest first)",
     "mainnavbar:sort-settings:created-at-asc": "Date added (oldest first)",
     "mainnavbar:sort-settings:asset-name-asc": "Asset name (A-Z)",
