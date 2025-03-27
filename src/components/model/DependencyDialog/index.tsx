@@ -4,7 +4,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { AssetSummary } from '@/lib/bindings'
+import { AssetSummary, FileInfo } from '@/lib/bindings'
 import {
   Dialog,
   DialogContent,
@@ -17,12 +17,18 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { AssetContext } from '@/components/context/AssetContext'
 import SlimAssetDetail from '../SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
+import AssetCardOpenButton from '../action-buttons/AssetCardOpenButton'
 
 type Props = {
   assetName: string | null
   dependencyIds: string[]
   dialogOpen: boolean
   setDialogOpen: (dialogOpen: boolean) => void
+  openDependencyDialog: (assetName: string, dependencies: string[]) => void
+  openSelectUnitypackageDialog: (
+    assetId: string,
+    data: { [x: string]: FileInfo[] },
+  ) => void
 }
 
 export const DependencyDialog: FC<Props> = ({
@@ -30,6 +36,8 @@ export const DependencyDialog: FC<Props> = ({
   dependencyIds,
   dialogOpen,
   setDialogOpen,
+  openDependencyDialog,
+  openSelectUnitypackageDialog,
 }) => {
   const [dependencies, setDependencies] = useState<AssetSummary[]>([])
   const [loading, setLoading] = useState(false)
@@ -78,7 +86,17 @@ export const DependencyDialog: FC<Props> = ({
           <ScrollArea className="max-h-96 pr-2">
             <div className="space-y-1">
               {dependencies.map((item) => (
-                <SlimAssetDetail asset={item} className="max-w-[450px]" />
+                <SlimAssetDetail asset={item} className="max-w-[450px]">
+                  <AssetCardOpenButton
+                    id={item.id}
+                    displayOpenButtonText
+                    hasDependencies={item.dependencies.length > 0}
+                    openDependencyDialog={() =>
+                      openDependencyDialog(item.name, item.dependencies)
+                    }
+                    openSelectUnitypackageDialog={openSelectUnitypackageDialog}
+                  />
+                </SlimAssetDetail>
               ))}
             </div>
           </ScrollArea>

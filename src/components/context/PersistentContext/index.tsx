@@ -2,11 +2,16 @@ import { createContext, FC } from 'react'
 import { usePersistentContext } from './hook'
 import { AssetType, MatchType, SortBy } from '@/lib/bindings'
 
+export type AssetCardSize = 'Small' | 'Medium' | 'Large' | 'List'
+
 export type PersistentContextType = {
   sortBy: SortBy
   setSortBy: (sortBy: SortBy) => void
   reverseOrder: boolean
   setReverseOrder: (reverseOrder: boolean) => void
+
+  assetCardSize: AssetCardSize
+  setAssetCardSize: (size: AssetCardSize) => void
 
   queryTextMode: 'general' | 'advanced'
   setQueryTextMode: (mode: 'general' | 'advanced') => void
@@ -43,6 +48,9 @@ export const PersistentContext = createContext<PersistentContextType>({
   setSortBy: () => {},
   reverseOrder: false,
   setReverseOrder: () => {},
+
+  assetCardSize: 'Medium',
+  setAssetCardSize: () => {},
 
   queryTextMode: 'general',
   setQueryTextMode: () => {},

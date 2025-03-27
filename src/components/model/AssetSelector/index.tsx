@@ -79,16 +79,14 @@ export const AssetSelector: FC<Props> = ({
                     'w-full bg-background rounded-none border-x-0',
                     slimAssetDetailClassName,
                   )}
-                  hideOpenButton
-                  actionComponent={
-                    <Button
-                      className="h-10 w-10"
-                      onClick={() => addAndClose(item.id)}
-                    >
-                      <PlusCircle />
-                    </Button>
-                  }
-                />
+                >
+                  <Button
+                    className="h-10 w-10"
+                    onClick={() => addAndClose(item.id)}
+                  >
+                    <PlusCircle />
+                  </Button>
+                </SlimAssetDetail>
               )
             })}
           </ScrollArea>
