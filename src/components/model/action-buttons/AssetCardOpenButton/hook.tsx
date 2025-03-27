@@ -64,9 +64,6 @@ export const useAssetCardOpenButton = ({
     const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
-      if (hasDependencies) {
-        showDependencyWarning()
-      }
       return await onOpenManagedDirButtonClick()
     }
 
@@ -134,6 +131,7 @@ export const useAssetCardOpenButton = ({
       return false
     }
 
+    showDependencyWarning()
     return true
   }
 
