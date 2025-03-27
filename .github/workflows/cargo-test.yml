@@ -3,9 +3,11 @@ on:
   push:
     paths:
       - "src-tauri/**"
-    branches-ignore:
+      - "changelog.json"
+    branches:
       - "main"
       - "pre-release"
+      - "develop"
   pull_request:
     types:
       - reopened
@@ -13,13 +15,13 @@ on:
       - synchronize
     paths:
       - "src-tauri/**"
+      - "changelog.json"
 
 permissions:
   contents: read
 
 jobs:
   test:
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
     name: Run cargo test
     runs-on: ubuntu-latest
     steps:

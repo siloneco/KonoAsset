@@ -36,12 +36,14 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         suggest::get::get_avatar_wearable_supported_avatars,
         suggest::get::get_world_object_categories,
         // 外部API関連
-        external::booth::get_asset_info_from_booth, // Boothからアセット情報を取得する
+        external::booth::get_asset_info_from_booth, // BOOTHからアセット情報を取得する
         external::booth::resolve_pximg_filename,
         // アップデート関連
         update::common::check_for_update,
-        update::common::execute_update,
+        update::common::download_update,
+        update::common::install_update,
         update::common::do_not_notify_update,
+        update::changelog::get_changelog,
         // ファイル関連
         file::open::open_file_in_file_manager,
         file::open::open_app_dir,

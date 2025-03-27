@@ -1,0 +1,29 @@
+name: 機能リクエスト / Feature Request
+description: Create a request to suggest an idea for KonoAsset
+labels: ["kind/feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能リクエストをありがとうございます！
+        Thank you for requesting a feature!
+
+        新しい Issue を作成する前に、重複する Issue が無いか確認してください。
+        Please check if there are any duplicate issues before creating a new issue.
+
+  - type: textarea
+    attributes:
+      label: 概要 (Summary)
+      description: |
+        どのような機能なのか、簡単な説明を記述してください。
+        Describe the feature briefly.
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: 変更箇所 (Changes)
+      options:
+        - label: Frontend (UI)
+        - label: Backend (Rust)
+        - label: Localization (i18n)

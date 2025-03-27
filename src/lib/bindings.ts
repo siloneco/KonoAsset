@@ -193,9 +193,17 @@ async checkForUpdate() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async executeUpdate() : Promise<Result<boolean, string>> {
+async downloadUpdate() : Promise<Result<string, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("execute_update") };
+    return { status: "ok", data: await TAURI_INVOKE("download_update") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async installUpdate() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("install_update") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -204,6 +212,14 @@ async executeUpdate() : Promise<Result<boolean, string>> {
 async doNotNotifyUpdate() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("do_not_notify_update") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getChangelog() : Promise<Result<LocalizedChanges[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_changelog") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -428,11 +444,13 @@ async requestStartupDeepLinkExecution() : Promise<Result<null, string>> {
 export const events = __makeEvents__<{
 addAssetDeepLink: AddAssetDeepLink,
 progressEvent: ProgressEvent,
-taskStatusChanged: TaskStatusChanged
+taskStatusChanged: TaskStatusChanged,
+updateProgress: UpdateProgress
 }>({
 addAssetDeepLink: "add-asset-deep-link",
 progressEvent: "progress-event",
-taskStatusChanged: "task-status-changed"
+taskStatusChanged: "task-status-changed",
+updateProgress: "update-progress"
 })
 
 /** user-defined constants **/
@@ -453,9 +471,10 @@ export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type LanguageCode = "jaJp" | "enUs" | "enGb"
+export type LanguageCode = "ja-JP" | "en-US" | "en-GB"
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
+export type LocalizedChanges = { version: string; pre_release: boolean; features: string[]; fixes: string[]; others: string[] }
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
@@ -471,6 +490,7 @@ export type TaskStatus = "Running" | "Completed" | "Cancelled" | "Failed"
 export type TaskStatusChanged = { id: string; status: TaskStatus }
 export type Theme = "light" | "dark" | "system"
 export type UpdateChannel = "Stable" | "PreRelease"
+export type UpdateProgress = { progress: number }
 export type WorldObject = { id: string; description: AssetDescription; category: string }
 
 /** tauri-specta globals **/

@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { FileWarning, Folder } from 'lucide-react'
+import { FileWarning, Folder, Languages } from 'lucide-react'
 import { FC } from 'react'
 import { cn } from '@/lib/utils'
 import {
@@ -35,13 +35,34 @@ type Props = {
 }
 
 const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
-  const { openAppDir, openAssetDir, openMetadataDir } = useLoadErrorPage()
+  const { openAppDir, openAssetDir, openMetadataDir, onLanguageChanged } =
+    useLoadErrorPage()
 
   const { t } = useLocalization()
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center">
-      <Card className="w-[600px] p-6">
+      <Card className="w-[600px] p-6 relative">
+        <div className="absolute top-5 right-5">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon">
+                <Languages />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onLanguageChanged('ja-JP')}>
+                日本語
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onLanguageChanged('en-US')}>
+                English (US)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onLanguageChanged('en-GB')}>
+                English (UK)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-center">
             <FileWarning className="text-primary mr-2" size={30} />

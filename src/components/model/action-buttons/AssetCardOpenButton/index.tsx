@@ -17,26 +17,28 @@ import {
   Loader2,
 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
-import { FileInfo } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import { FileInfo } from '@/lib/bindings'
 
 type Props = {
   className?: string
   id: string
   hasDependencies: boolean
-
-  openSelectUnitypackageDialog: () => void
+  displayOpenButtonText: boolean
   openDependencyDialog: () => void
-  setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
+  openSelectUnitypackageDialog: (
+    assetId: string,
+    data: { [x: string]: FileInfo[] },
+  ) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
   hasDependencies,
-  openSelectUnitypackageDialog,
+  displayOpenButtonText,
   openDependencyDialog,
-  setUnitypackageFiles,
+  openSelectUnitypackageDialog,
 }: Props) => {
   const {
     onMainButtonClick,
@@ -48,15 +50,17 @@ const AssetCardOpenButton = ({
     id,
     hasDependencies,
     openSelectUnitypackageDialog,
-    setUnitypackageFiles,
   })
 
   const { t } = useLocalization()
 
   return (
-    <div className={cn('flex flex-row ', className)}>
+    <div className={cn('flex flex-row w-full mr-2', className)}>
       <Button
-        className={cn('w-full rounded-r-none')}
+        className={cn(
+          'w-full rounded-r-none',
+          !displayOpenButtonText && 'px-0',
+        )}
         onClick={onMainButtonClick}
       >
         {!mainButtonLoading && !mainButtonChecked && <Folder size={24} />}
@@ -67,7 +71,7 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        <p> {t('general:button:open')} </p>
+        {displayOpenButtonText && <p>{t('general:button:open')}</p>}
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>

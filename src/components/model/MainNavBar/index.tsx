@@ -1,19 +1,13 @@
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { Card } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
 import { cn } from '@/lib/utils'
 import { useContext } from 'react'
-import { convertToSelectID, handleSortByChange } from './logic'
+
 import { AssetContext } from '@/components/context/AssetContext'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
+import { LayoutPopover } from './components/LayoutPopover'
 
 type Props = {
   className?: string
@@ -21,8 +15,7 @@ type Props = {
 }
 
 const NavBar = ({ className, displayAssetCount }: Props) => {
-  const { sortBy, setSortBy, reverseOrder, setReverseOrder, clearFilters } =
-    useContext(PersistentContext)
+  const { clearFilters } = useContext(PersistentContext)
   const { assetDisplaySortedList } = useContext(AssetContext)
 
   const { t } = useLocalization()
@@ -63,45 +56,7 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
           </Card>
         </div>
         <div className="w-fit mx-2 flex items-center">
-          <Select
-            value={convertToSelectID(sortBy, reverseOrder)}
-            onValueChange={(value) =>
-              handleSortByChange({ value, setSortBy, setReverseOrder })
-            }
-            defaultValue="CreatedAtDesc"
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={t('mainnavbar:sort-settings')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="CreatedAtDesc">
-                  {t('mainnavbar:sort-settings:created-at-desc')}
-                </SelectItem>
-                <SelectItem value="CreatedAtAsc">
-                  {t('mainnavbar:sort-settings:created-at-asc')}
-                </SelectItem>
-                <SelectItem value="NameAsc">
-                  {t('mainnavbar:sort-settings:asset-name-asc')}
-                </SelectItem>
-                <SelectItem value="NameDesc">
-                  {t('mainnavbar:sort-settings:asset-name-desc')}
-                </SelectItem>
-                <SelectItem value="CreatorAsc">
-                  {t('mainnavbar:sort-settings:shop-name-asc')}
-                </SelectItem>
-                <SelectItem value="CreatorDesc">
-                  {t('mainnavbar:sort-settings:shop-name-desc')}
-                </SelectItem>
-                <SelectItem value="PublishedAtDesc">
-                  {t('mainnavbar:sort-settings:published-at-desc')}
-                </SelectItem>
-                <SelectItem value="PublishedAtAsc">
-                  {t('mainnavbar:sort-settings:published-at-asc')}
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <LayoutPopover />
         </div>
       </div>
     </div>

@@ -42,8 +42,15 @@ export const checkForUpdate = async (): Promise<boolean> => {
   return result.data
 }
 
-export const executeUpdate = async () => {
-  await commands.executeUpdate()
+export const downloadUpdate = async (setTaskId: (taskId: string) => void) => {
+  const result = await commands.downloadUpdate()
+
+  if (result.status === 'ok') {
+    setTaskId(result.data)
+    return
+  }
+
+  console.error(result.error)
 }
 
 export const dismissUpdate = async () => {

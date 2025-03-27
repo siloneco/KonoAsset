@@ -8,8 +8,10 @@ import { useLocalization } from '@/hooks/use-localization'
 type Props = {
   id: string
   hasDependencies: boolean
-  setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
-  openSelectUnitypackageDialog: () => void
+  openSelectUnitypackageDialog: (
+    assetId: string,
+    data: { [x: string]: FileInfo[] },
+  ) => void
 }
 
 type ReturnProps = {
@@ -23,7 +25,6 @@ type ReturnProps = {
 export const useAssetCardOpenButton = ({
   id,
   hasDependencies,
-  setUnitypackageFiles,
   openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
   const [mainButtonLoading, setMainButtonLoading] = useState(false)
@@ -44,7 +45,7 @@ export const useAssetCardOpenButton = ({
     })
   }
 
-  const listUnitypackageAndOpen = async (): Promise<boolean> => {
+  const openFileManagerOrUnitypackageSelector = async (): Promise<boolean> => {
     const result = await commands.listUnitypackageFiles(id)
 
     if (result.status === 'error') {
@@ -63,9 +64,6 @@ export const useAssetCardOpenButton = ({
     const impartialData = data as { [x: string]: FileInfo[] }
 
     if (Object.keys(data).length === 0) {
-      if (hasDependencies) {
-        showDependencyWarning()
-      }
       return await onOpenManagedDirButtonClick()
     }
 
@@ -96,8 +94,7 @@ export const useAssetCardOpenButton = ({
       showDependencyWarning()
     }
 
-    setUnitypackageFiles(impartialData)
-    openSelectUnitypackageDialog()
+    openSelectUnitypackageDialog(id, impartialData)
     return false
   }
 
@@ -107,7 +104,7 @@ export const useAssetCardOpenButton = ({
     try {
       let result
       if (preference.useUnitypackageSelectedOpen) {
-        result = await listUnitypackageAndOpen()
+        result = await openFileManagerOrUnitypackageSelector()
       } else {
         result = await onOpenManagedDirButtonClick()
       }
@@ -134,6 +131,9 @@ export const useAssetCardOpenButton = ({
       return false
     }
 
+    if (hasDependencies) {
+      showDependencyWarning()
+    }
     return true
   }
 

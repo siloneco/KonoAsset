@@ -8,19 +8,20 @@ use deep_link::{
     execute_deep_links, parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
-use language::load::load_from_language_code;
+use language::{load::load_from_language_code, structs::LanguageCode};
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_specta::collect_events;
-use updater::update_handler::{UpdateChannel, UpdateHandler};
+use updater::update_handler::{UpdateChannel, UpdateHandler, UpdateProgress};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
 
 mod adapter;
 mod booth;
+mod changelog;
 mod command;
 mod data_store;
 mod deep_link;
@@ -42,7 +43,8 @@ pub fn run() {
     let builder = generate_tauri_specta_builder().events(collect_events![
         ProgressEvent,
         TaskStatusChanged,
-        AddAssetDeepLink
+        AddAssetDeepLink,
+        UpdateProgress,
     ]);
 
     #[cfg(debug_assertions)]
@@ -99,6 +101,22 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
+            let language_state = match load_from_language_code(LanguageCode::EnUs) {
+                Ok(data) => {
+                    let language_state = arc_mutex(data);
+                    app.manage(language_state.clone());
+
+                    language_state
+                }
+                Err(err) => {
+                    log::error!("failed to load language data: {}", err);
+                    app.manage(LoadResult::error(false, err));
+
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
+            };
+
             let preference_file_path = app
                 .path()
                 .app_local_data_dir()
@@ -129,16 +147,16 @@ pub fn run() {
                 &update_channel,
             )));
 
-            let language_data = load_from_language_code(language_code);
-            if let Err(err) = language_data {
-                log::error!("{}", err);
-                app.manage(LoadResult::error(false, err));
+            match load_from_language_code(language_code) {
+                Ok(data) => *language_state.blocking_lock() = data,
+                Err(err) => {
+                    log::error!("failed to load language data: {}", err);
+                    app.manage(LoadResult::error(false, err));
 
-                // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                return Ok(());
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
             }
-
-            app.manage(arc_mutex(language_data.unwrap()));
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {

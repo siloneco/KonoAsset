@@ -5,7 +5,7 @@ import { PreferenceContext } from '../PreferenceContext'
 
 export const useLocalizationContext = (): LocalizationContextType => {
   const [localizationData, setLocalizationData] = useState<LocalizationData>({
-    language: 'enUs',
+    language: 'en-US',
     data: {},
   })
 
@@ -24,10 +24,6 @@ export const useLocalizationContext = (): LocalizationContextType => {
       console.error('Failed to set language:', result.error)
     }
   }
-
-  useEffect(() => {
-    setLanguage(preference.language)
-  }, [])
 
   useEffect(() => {
     setLanguage(preference.language)
