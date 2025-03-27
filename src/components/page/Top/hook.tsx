@@ -18,11 +18,8 @@ import { useLocalization } from '@/hooks/use-localization'
 type ReturnProps = {
   assetContextValue: AssetContextType
   isDragAndHover: boolean
-  displayAssetCount: number | undefined
-  matchedAssetIDs: string[]
-  setMatchedAssetIDs: (uuidList: string[]) => void
-  filterEnforced: boolean
-  setFilterEnforced: (filterEnforced: boolean) => void
+  showingAssetCount: number
+  setShowingAssetCount: (count: number) => void
   addAssetDialogOpen: boolean
   setAddAssetDialogOpen: (open: boolean) => void
   setEditAssetDialogAssetId: (assetId: string | null) => void
@@ -39,8 +36,6 @@ export const useTopPage = (): ReturnProps => {
   const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
     AssetSummary[]
   >([])
-  const [filterEnforced, setFilterEnforced] = useState(false)
-  const [matchedAssetIDs, setMatchedAssetIDs] = useState<string[]>([])
   const [addAssetDialogOpen, setAddAssetDialogOpen] = useState(false)
 
   const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
@@ -53,14 +48,12 @@ export const useTopPage = (): ReturnProps => {
     string | null
   >(null)
 
+  const [showingAssetCount, setShowingAssetCount] = useState(0)
+
   const [isDragAndHover, setDragAndHover] = useState(false)
 
   const { t } = useLocalization()
   const { toast } = useToast()
-
-  const displayAssetCount: number | undefined = filterEnforced
-    ? matchedAssetIDs.length
-    : undefined
 
   const assetContextValue: AssetContextType = {
     assetDisplaySortedList: assetDisplaySortedList,
@@ -132,11 +125,8 @@ export const useTopPage = (): ReturnProps => {
   return {
     assetContextValue,
     isDragAndHover,
-    displayAssetCount,
-    matchedAssetIDs,
-    setMatchedAssetIDs,
-    filterEnforced,
-    setFilterEnforced,
+    showingAssetCount,
+    setShowingAssetCount,
     addAssetDialogOpen,
     setAddAssetDialogOpen,
     setEditAssetDialogAssetId,

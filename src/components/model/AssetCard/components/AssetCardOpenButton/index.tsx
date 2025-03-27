@@ -17,26 +17,26 @@ import {
   Loader2,
 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
-import { FileInfo } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import { FileInfo } from '@/lib/bindings'
 
 type Props = {
   className?: string
   id: string
   hasDependencies: boolean
-
-  openSelectUnitypackageDialog: () => void
   openDependencyDialog: () => void
-  setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
+  openSelectUnitypackageDialog: (
+    assetId: string,
+    data: { [x: string]: FileInfo[] },
+  ) => void
 }
 
 const AssetCardOpenButton = ({
   className,
   id,
   hasDependencies,
-  openSelectUnitypackageDialog,
   openDependencyDialog,
-  setUnitypackageFiles,
+  openSelectUnitypackageDialog,
 }: Props) => {
   const {
     onMainButtonClick,
@@ -49,7 +49,6 @@ const AssetCardOpenButton = ({
     id,
     hasDependencies,
     openSelectUnitypackageDialog,
-    setUnitypackageFiles,
   })
 
   const { t } = useLocalization()

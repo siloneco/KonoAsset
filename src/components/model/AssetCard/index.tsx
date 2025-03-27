@@ -16,10 +16,10 @@ type Props = {
   asset: AssetSummary
   ref?: RefObject<HTMLDivElement | null>
 
-  openSelectUnitypackageDialog: () => void
-  setUnitypackageFiles: (data: { [x: string]: FileInfo[] }) => void
-  setDialogAssetId: (assetId: string | null) => void
-
+  openSelectUnitypackageDialog: (
+    assetId: string,
+    data: { [x: string]: FileInfo[] },
+  ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
   openMemoDialog: (assetId: string) => void
@@ -30,8 +30,6 @@ const AssetCard = ({
   asset,
   ref,
   openSelectUnitypackageDialog,
-  setUnitypackageFiles,
-  setDialogAssetId,
   openDataManagementDialog,
   openEditAssetDialog,
   openMemoDialog,
@@ -91,14 +89,10 @@ const AssetCard = ({
             className="w-full mr-2"
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
-            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-            setUnitypackageFiles={(obj) => {
-              setUnitypackageFiles(obj)
-              setDialogAssetId(asset.id)
-            }}
             openDependencyDialog={() =>
               openDependencyDialog(asset.name, asset.dependencies)
             }
+            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           />
           <MoreButton
             executeAssetDeletion={deleteAsset}

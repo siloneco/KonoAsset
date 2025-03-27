@@ -4,21 +4,18 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { useTopPage } from './hook'
 import NavBar from '../../model/MainNavBar'
-import AssetList from '@/components/model/AssetList'
 import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
 import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { UpdateDialog } from '@/components/model/UpdateDialog'
+import { AssetList } from '@/components/model/asset-list/AssetList'
 
 const TopPage = () => {
   const {
     assetContextValue,
     isDragAndHover,
-    displayAssetCount,
-    matchedAssetIDs,
-    setMatchedAssetIDs,
-    filterEnforced,
-    setFilterEnforced,
+    showingAssetCount,
+    setShowingAssetCount,
     addAssetDialogOpen,
     setAddAssetDialogOpen,
     setEditAssetDialogAssetId,
@@ -38,14 +35,10 @@ const TopPage = () => {
         <SidebarProvider>
           <MainSidebar />
           <main className="w-full h-screen flex flex-col">
-            <NavBar displayAssetCount={displayAssetCount} />
+            <NavBar displayAssetCount={showingAssetCount} />
             <AssetList
-              className="flex-grow"
-              matchedAssetIDs={matchedAssetIDs}
-              setMatchedAssetIDs={setMatchedAssetIDs}
-              filterEnforced={filterEnforced}
-              setFilterEnforced={setFilterEnforced}
               openAddAssetDialog={() => setAddAssetDialogOpen(true)}
+              setShowingAssetCount={setShowingAssetCount}
             />
             <AddAssetDialog
               dialogOpen={addAssetDialogOpen}
