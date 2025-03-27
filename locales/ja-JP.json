@@ -119,9 +119,9 @@
     "assetcard:success-delete-toast": "正常に削除されました！",
     "assetcard:fail-delete-toast": "削除に失敗しました",
 
-    "assetlist:background:no-assets": "アセットが1つも登録されていません",
-    "assetlist:background:add-asset": "アセットを追加する",
-    "assetlist:background:no-results": "フィルタ条件を満たすアセットがありません",
+    "assetview:background:no-assets": "アセットが1つも登録されていません",
+    "assetview:background:add-asset": "アセットを追加する",
+    "assetview:background:no-results": "フィルタ条件を満たすアセットがありません",
 
     "assetselector:search-placeholder": "前提アセットを検索...",
 

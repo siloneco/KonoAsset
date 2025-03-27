@@ -1,13 +1,14 @@
 import { FC } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import SelectUnitypackageDialog from '../../AssetCard/components/SelectUnitypackageDialog'
-import DataManagementDialog from '../../AssetCard/components/MoreButton/components/DataManagementDialog'
+import SelectUnitypackageDialog from '../../SelectUnitypackageDialog'
+import DataManagementDialog from '../../action-buttons/MoreButton/components/DataManagementDialog'
 import EditAssetDialog from '../../asset-dialogs/EditAssetDialog'
 import MemoDialog from '../../MemoDialog'
 import { DependencyDialog } from '../../DependencyDialog'
 import { useAssetView } from './hook'
 import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetGridView } from '../AssetGridView'
+import { AssetListView } from '../AssetListView'
 
 type Props = {
   openAddAssetDialog: () => void
@@ -22,6 +23,7 @@ export const AssetView: FC<Props> = ({
     sortedAssetSummary,
     layoutDivRef,
     gridColumnCount,
+    displayStyle,
     background,
 
     openSelectUnitypackageDialog,
@@ -61,15 +63,27 @@ export const AssetView: FC<Props> = ({
         />
       )}
       <div>
-        <AssetGridView
-          sortedAssetSummary={sortedAssetSummary}
-          columnCount={gridColumnCount}
-          openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-          openDataManagementDialog={openDataManagementDialog}
-          openEditAssetDialog={openEditAssetDialog}
-          openMemoDialog={openMemoDialog}
-          openDependencyDialog={openDependencyDialog}
-        />
+        {displayStyle === 'Grid' && (
+          <AssetGridView
+            sortedAssetSummary={sortedAssetSummary}
+            columnCount={gridColumnCount}
+            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
+            openDataManagementDialog={openDataManagementDialog}
+            openEditAssetDialog={openEditAssetDialog}
+            openMemoDialog={openMemoDialog}
+            openDependencyDialog={openDependencyDialog}
+          />
+        )}
+        {displayStyle === 'List' && (
+          <AssetListView
+            sortedAssetSummary={sortedAssetSummary}
+            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
+            openDataManagementDialog={openDataManagementDialog}
+            openEditAssetDialog={openEditAssetDialog}
+            openMemoDialog={openMemoDialog}
+            openDependencyDialog={openDependencyDialog}
+          />
+        )}
       </div>
       <SelectUnitypackageDialog
         dialogOpen={selectUnitypackageDialogOpen}

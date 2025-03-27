@@ -119,9 +119,9 @@
     "assetcard:success-delete-toast": "Successfully deleted!",
     "assetcard:fail-delete-toast": "Failed to delete.",
 
-    "assetlist:background:no-assets": "No assets have been registered",
-    "assetlist:background:add-asset": "Add an asset",
-    "assetlist:background:no-results": "No assets match the filter criteria",
+    "assetview:background:no-assets": "No assets have been registered",
+    "assetview:background:add-asset": "Add an asset",
+    "assetview:background:no-results": "No assets match the filter criteria",
 
     "assetselector:search-placeholder": "Search prerequisite assets...",
 

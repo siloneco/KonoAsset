@@ -29,7 +29,7 @@ export const AssetGridView = ({
 }: Props) => {
   return (
     <div
-      className={cn(`grid gap-4 m-6 mt-0`)}
+      className={cn(`grid gap-4 mx-6 pb-24`)}
       style={{
         gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
       }}

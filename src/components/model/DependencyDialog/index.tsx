@@ -78,7 +78,10 @@ export const DependencyDialog: FC<Props> = ({
           <ScrollArea className="max-h-96 pr-2">
             <div className="space-y-1">
               {dependencies.map((item) => (
-                <SlimAssetDetail asset={item} className="max-w-[450px]" />
+                <SlimAssetDetail
+                  asset={item}
+                  className="max-w-[450px]"
+                ></SlimAssetDetail>
               ))}
             </div>
           </ScrollArea>

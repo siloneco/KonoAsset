@@ -4,7 +4,6 @@ import { commands, FileInfo } from '@/lib/bindings'
 import { OctagonAlert } from 'lucide-react'
 import { useContext, useState } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
-import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
   id: string
@@ -21,7 +20,6 @@ type ReturnProps = {
   mainButtonChecked: boolean
   onOpenManagedDirButtonClick: () => Promise<void>
   onCopyPathButtonClick: () => Promise<void>
-  displayOpenButtonText: boolean
 }
 
 export const useAssetCardOpenButton = ({
@@ -35,8 +33,6 @@ export const useAssetCardOpenButton = ({
   const { t } = useLocalization()
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
-
-  const { assetCardSize } = useContext(PersistentContext)
 
   const showDependencyWarning = () => {
     toast({
@@ -163,6 +159,5 @@ export const useAssetCardOpenButton = ({
       await onOpenManagedDirButtonClick()
     },
     onCopyPathButtonClick,
-    displayOpenButtonText: assetCardSize !== 'Small',
   }
 }

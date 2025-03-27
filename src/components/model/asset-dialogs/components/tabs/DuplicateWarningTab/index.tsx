@@ -10,6 +10,8 @@ import { AddAssetDialogContext } from '../../../AddAssetDialog'
 import { OctagonAlert } from 'lucide-react'
 import SlimAssetDetail from '@/components/model/SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
+import { commands } from '@/lib/bindings'
+import { useToast } from '@/hooks/use-toast'
 type Props = {
   setTab: (tab: string) => void
   openEditDialog: (assetId: string) => void
@@ -18,9 +20,28 @@ type Props = {
   totalTabs: number
 }
 
-const DuplicateWarningTab = ({ setTab, openEditDialog }: Props) => {
+const DuplicateWarningTab = ({
+  setTab,
+  openEditDialog,
+  tabIndex,
+  totalTabs,
+}: Props) => {
   const { t } = useLocalization()
+  const { toast } = useToast()
   const { duplicateWarningItems } = useContext(AddAssetDialogContext)
+
+  const openAsset = async (assetId: string) => {
+    const result = await commands.openManagedDir(assetId)
+
+    if (result.status === 'ok') {
+      return
+    }
+
+    toast({
+      title: t('general:failed'),
+      description: result.error,
+    })
+  }
 
   const moveToPreviousTab = () => {
     setTab('booth-input')
@@ -33,7 +54,9 @@ const DuplicateWarningTab = ({ setTab, openEditDialog }: Props) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>(2.5/4) {t('addasset:duplicate-warning')} </DialogTitle>
+        <DialogTitle>
+          ({tabIndex}/{totalTabs}) {t('addasset:duplicate-warning')}{' '}
+        </DialogTitle>
         <DialogDescription>
           {t('addasset:duplicate-warning:explanation-text')}
         </DialogDescription>
@@ -49,11 +72,17 @@ const DuplicateWarningTab = ({ setTab, openEditDialog }: Props) => {
       <div>
         {duplicateWarningItems.map((item) => (
           <div key={item.id} className="mb-4">
-            <SlimAssetDetail
-              asset={item}
-              openEditDialog={openEditDialog}
-              className="max-w-[600px]"
-            />
+            <SlimAssetDetail asset={item} className="max-w-[600px]">
+              <Button onClick={() => openAsset(item.id)}>
+                {t('general:button:open')}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => openEditDialog(item.id)}
+              >
+                {t('slimassetdetail:edit-info')}
+              </Button>
+            </SlimAssetDetail>
           </div>
         ))}
       </div>

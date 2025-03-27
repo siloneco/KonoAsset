@@ -17,6 +17,7 @@ type ReturnProps = {
   sortedAssetSummary: AssetSummary[]
   layoutDivRef: RefObject<HTMLDivElement | null>
   gridColumnCount: number
+  displayStyle: 'Grid' | 'List'
   background: 'NoAssets' | 'NoResults'
 
   openSelectUnitypackageDialog: (
@@ -214,6 +215,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     sortedAssetSummary,
     layoutDivRef,
     gridColumnCount,
+    displayStyle: assetCardSize === 'List' ? 'List' : 'Grid',
     background: assetDisplaySortedList.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,

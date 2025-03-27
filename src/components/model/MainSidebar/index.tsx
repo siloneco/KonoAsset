@@ -59,8 +59,8 @@ const MainSidebar = () => {
   }, [assetDisplaySortedList])
 
   return (
-    <Sidebar collapsible="none" className="w-80 border-r-2">
-      <SidebarContent>
+    <Sidebar collapsible="none" className="w-64 border-r-2">
+      <SidebarContent className="w-64">
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center m-4 mr-0">
             <img src="/logo.png" alt="logo" className="w-10 h-10" />

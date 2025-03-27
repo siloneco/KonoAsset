@@ -24,6 +24,7 @@ type Props = {
   className?: string
   id: string
   hasDependencies: boolean
+  displayOpenButtonText: boolean
   openDependencyDialog: () => void
   openSelectUnitypackageDialog: (
     assetId: string,
@@ -35,6 +36,7 @@ const AssetCardOpenButton = ({
   className,
   id,
   hasDependencies,
+  displayOpenButtonText,
   openDependencyDialog,
   openSelectUnitypackageDialog,
 }: Props) => {
@@ -44,7 +46,6 @@ const AssetCardOpenButton = ({
     mainButtonLoading,
     onOpenManagedDirButtonClick,
     onCopyPathButtonClick,
-    displayOpenButtonText,
   } = useAssetCardOpenButton({
     id,
     hasDependencies,
@@ -54,9 +55,12 @@ const AssetCardOpenButton = ({
   const { t } = useLocalization()
 
   return (
-    <div className={cn('flex flex-row ', className)}>
+    <div className={cn('flex flex-row w-full mr-2', className)}>
       <Button
-        className={cn('w-full rounded-r-none px-0')}
+        className={cn(
+          'w-full rounded-r-none',
+          !displayOpenButtonText && 'px-0',
+        )}
         onClick={onMainButtonClick}
       >
         {!mainButtonLoading && !mainButtonChecked && <Folder size={24} />}

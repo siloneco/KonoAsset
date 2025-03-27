@@ -24,7 +24,7 @@ import {
   Folder,
   Trash2,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import {
   TooltipProvider,
   Tooltip,
@@ -33,27 +33,50 @@ import {
 } from '@/components/ui/tooltip'
 import { cn, convertToBoothURL } from '@/lib/utils'
 import { useLocalization } from '@/hooks/use-localization'
+import { commands } from '@/lib/bindings'
+import { AssetContext } from '@/components/context/AssetContext'
+import { useToast } from '@/hooks/use-toast'
 
 type Props = {
+  id: string
   boothItemID?: number
-  executeAssetDeletion: () => Promise<void>
   openDataManagementDialog: () => void
   openEditAssetDialog: () => void
 }
 
 export const MoreButton = ({
+  id,
   boothItemID,
-  executeAssetDeletion,
   openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
 
+  const { toast } = useToast()
+  const { deleteAssetById } = useContext(AssetContext)
+
+  const deleteAsset = async () => {
+    const result = await commands.requestAssetDeletion(id)
+
+    if (result.status === 'ok') {
+      deleteAssetById(id)
+
+      toast({
+        title: t('assetcard:success-delete-toast'),
+      })
+    } else {
+      toast({
+        title: t('assetcard:fail-delete-toast'),
+        description: result.error,
+      })
+    }
+  }
+
   const onClick = async () => {
     setDeleting(true)
     try {
-      await executeAssetDeletion()
+      await deleteAsset()
     } finally {
       setDeleting(false)
     }
