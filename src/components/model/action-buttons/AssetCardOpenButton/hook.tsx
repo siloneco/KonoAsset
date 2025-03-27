@@ -131,7 +131,9 @@ export const useAssetCardOpenButton = ({
       return false
     }
 
-    showDependencyWarning()
+    if (hasDependencies) {
+      showDependencyWarning()
+    }
     return true
   }
 
