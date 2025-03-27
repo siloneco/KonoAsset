@@ -114,10 +114,10 @@
     "assetcard:more-button:delete-confirm": "アセットを本当に削除しますか？",
     "assetcard:more-button:delete-confirm:explanation-text-1": "データは完全に削除され、前提アセットの紐づけも解除されます",
     "assetcard:more-button:delete-confirm:explanation-text-2": "この操作を取り消すことは出来ません！",
+    "assetcard:more-button:success-delete-toast": "正常に削除されました！",
+    "assetcard:more-button:fail-delete-toast": "削除に失敗しました",
     "assetcard:select-unitypackage:select-file": "どのファイルを利用しますか？",
     "assetcard:select-unitypackage:always-open-dir": "次回から表示せず常に管理フォルダを開く",
-    "assetcard:success-delete-toast": "正常に削除されました！",
-    "assetcard:fail-delete-toast": "削除に失敗しました",
 
     "assetview:background:no-assets": "アセットが1つも登録されていません",
     "assetview:background:add-asset": "アセットを追加する",

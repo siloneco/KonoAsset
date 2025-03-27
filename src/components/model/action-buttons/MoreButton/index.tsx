@@ -63,11 +63,11 @@ export const MoreButton = ({
       deleteAssetById(id)
 
       toast({
-        title: t('assetcard:success-delete-toast'),
+        title: t('assetcard:more-button:success-delete-toast'),
       })
     } else {
       toast({
-        title: t('assetcard:fail-delete-toast'),
+        title: t('assetcard:more-button:fail-delete-toast'),
         description: result.error,
       })
     }
