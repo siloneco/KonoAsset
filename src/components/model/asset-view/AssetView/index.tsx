@@ -111,6 +111,8 @@ export const AssetView: FC<Props> = ({
         setDialogOpen={setDependencyDialogOpen}
         assetName={dependencyDialogAssetName}
         dependencyIds={dependencyDialogDependencies}
+        openDependencyDialog={openDependencyDialog}
+        openSelectUnitypackageDialog={openSelectUnitypackageDialog}
       />
     </ScrollArea>
   )
