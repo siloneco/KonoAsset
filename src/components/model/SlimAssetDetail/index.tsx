@@ -15,7 +15,7 @@ const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
     <Card className={cn('w-full flex flex-row p-2 space-x-4', className)}>
       <div
         className={cn(
-          'w-2 h-full bg-primary rounded-full',
+          'w-2 h-full rounded-full',
           asset.assetType === 'Avatar' && 'bg-primary',
           asset.assetType === 'AvatarWearable' &&
             'bg-yellow-400 dark:bg-yellow-600',
