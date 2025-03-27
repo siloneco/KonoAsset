@@ -1,5 +1,106 @@
 [
   {
+    "version": "1.1.0-rc.1",
+    "preRelease": true,
+    "features": [
+      {
+        "text": "アセットデータのインポート/エクスポート機能を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Import/export function for asset data"
+          }
+        ]
+      },
+      {
+        "text": "アセット追加ダイアログを開くための Deep Link をサポート",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Deep Link to open the asset add dialog"
+          }
+        ]
+      },
+      {
+        "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装"
+      },
+      {
+        "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装"
+      }
+    ],
+    "fixes": [
+      {
+        "text": "アセット削除時に前提アセットの紐づけが解除されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Association of prerequisite assets was not removed when an asset was deleted"
+          }
+        ]
+      },
+      {
+        "text": "アセットタイプの表示が改行されることがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Asset type display was sometimes wrapped"
+          }
+        ]
+      },
+      {
+        "text": "全てのアセットタイプを表示しているときにワールドカテゴリが候補として表示されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "World categories were not displayed as candidates when displaying all asset types"
+          }
+        ]
+      },
+      {
+        "text": "画面をリロードするまでカテゴリ等の候補が更新されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Candidates for categories etc. were not updated until the screen was reloaded"
+          }
+        ]
+      },
+      {
+        "text": "en-US の翻訳の一部を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Incorrect translation in en-US"
+          }
+        ]
+      },
+      {
+        "text": "エラーがログファイルに記録されないことがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Errors were not recorded in the log file"
+          }
+        ]
+      },
+      {
+        "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正"
+      },
+      {
+        "text": "トーストのタイトルの一貫性を向上"
+      },
+      {
+        "text": "フィルタの候補が見づらく選択しづらい問題を修正"
+      },
+      {
+        "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正"
+      },
+      {
+        "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正"
+      }
+    ]
+  },
+  {
     "version": "1.1.0-rc.0",
     "preRelease": true,
     "features": [
