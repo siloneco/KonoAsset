@@ -8,7 +8,7 @@ import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
 import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { UpdateDialog } from '@/components/model/UpdateDialog'
-import { AssetList } from '@/components/model/asset-list/AssetList'
+import { AssetView } from '@/components/model/asset-view/AssetView'
 
 const TopPage = () => {
   const {
@@ -36,7 +36,7 @@ const TopPage = () => {
           <MainSidebar />
           <main className="w-full h-screen flex flex-col">
             <NavBar displayAssetCount={showingAssetCount} />
-            <AssetList
+            <AssetView
               openAddAssetDialog={() => setAddAssetDialogOpen(true)}
               setShowingAssetCount={setShowingAssetCount}
             />

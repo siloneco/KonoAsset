@@ -18,7 +18,7 @@ type Props = {
   openDependencyDialog: (assetName: string, dependencies: string[]) => void
 }
 
-export const AssetListGridLayout = ({
+export const AssetListView = ({
   sortedAssetSummary,
   columnCount,
   openSelectUnitypackageDialog,

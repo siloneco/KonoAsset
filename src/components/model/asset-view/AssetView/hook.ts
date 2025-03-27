@@ -48,7 +48,7 @@ type ReturnProps = {
   dependencyDialogDependencies: string[]
 }
 
-export const useAssetList = ({ setShowingAssetCount }: Props): ReturnProps => {
+export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const [selectUnitypackageDialogOpen, setSelectUnitypackageDialogOpen] =
     useState(false)
   const [unitypackages, setUnityPackages] = useState<{
