@@ -14,6 +14,7 @@
     "test:run": "vitest run",
     "test:with-coverage": "vitest run --coverage",
     "fmt": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
+    "fmt:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
     "prepare": "husky"
   },
   "dependencies": {
