@@ -83,7 +83,7 @@ const AboutTab: FC<Props> = ({ id }) => {
             </div>
             <div className="flex flex-row space-x-6">
               <a
-                href={`https://github.com/siloneco/KonoAsset/releases`}
+                href={`https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
