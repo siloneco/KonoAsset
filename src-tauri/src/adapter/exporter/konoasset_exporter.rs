@@ -49,14 +49,18 @@ where
         if entry.is_dir() {
             new_zip_dir(&mut writer, format!("{}/", relative_path_str)).await?;
         } else {
-            let data = tokio::fs::read(entry).await.map_err(|e| e.to_string())?;
-            let builder =
-                ZipEntryBuilder::new(relative_path_str.clone().into(), Compression::Stored);
+            let file_name = entry.file_name().unwrap_or_default().to_string_lossy().to_string();
 
-            writer
-                .write_entry_whole(builder, &data)
-                .await
-                .map_err(|e| e.to_string())?;
+            if !(file_name.starts_with("temp_") && relative_path_str.starts_with("images")) {
+                let data = tokio::fs::read(entry).await.map_err(|e| e.to_string())?;
+                let builder =
+                    ZipEntryBuilder::new(relative_path_str.clone().into(), Compression::Stored);
+    
+                writer
+                    .write_entry_whole(builder, &data)
+                    .await
+                    .map_err(|e| e.to_string())?;
+            }
         }
 
         let emit_result = ProgressEvent::new(
