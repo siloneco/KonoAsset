@@ -21,9 +21,12 @@ import { useNavigate } from '@tanstack/react-router'
 import { Route as PreferenceRoute } from '@/routes/preference'
 import TextSearch from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
+import AllTypeFilter from './layout/AllTypeFilter'
+import { AssetContext } from '@/components/context/AssetContext'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
+  const { assetDisplaySortedList } = useContext(AssetContext)
   const {
     assetType,
     queryTextMode,
@@ -53,11 +56,11 @@ const MainSidebar = () => {
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [])
+  }, [assetDisplaySortedList])
 
   return (
-    <Sidebar collapsible="none" className="w-80 border-r-2">
-      <SidebarContent>
+    <Sidebar collapsible="none" className="w-64 border-r-2">
+      <SidebarContent className="w-64">
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center m-4 mr-0">
             <img src="/logo.png" alt="logo" className="w-10 h-10" />
@@ -85,9 +88,8 @@ const MainSidebar = () => {
               />
               <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
-              {(assetType === 'All' || assetType === 'AvatarWearable') && (
-                <AvatarWearableFilter />
-              )}
+              {assetType === 'All' && <AllTypeFilter />}
+              {assetType === 'AvatarWearable' && <AvatarWearableFilter />}
               {assetType === 'WorldObject' && <WorldObjectFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector

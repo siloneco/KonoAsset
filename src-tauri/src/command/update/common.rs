@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
-use tauri::State;
+use tauri::{AppHandle, State};
 use tokio::sync::Mutex;
+use uuid::Uuid;
 
-use crate::updater::update_handler::UpdateHandler;
+use crate::{task::cancellable_task::TaskContainer, updater::update_handler::UpdateHandler};
 
 #[tauri::command]
 #[specta::specta]
@@ -13,7 +14,9 @@ pub async fn check_for_update(
     let handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        return Err(format!("Update handler is not initialized yet."));
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     if !handler.show_notification().await {
@@ -26,26 +29,65 @@ pub async fn check_for_update(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn execute_update(
+pub async fn download_update(
     update_handler: State<'_, Arc<Mutex<UpdateHandler>>>,
-) -> Result<bool, String> {
+    task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    handle: State<'_, AppHandle>,
+) -> Result<Uuid, String> {
+    {
+        let handler = update_handler.lock().await;
+
+        if !handler.is_initialized() {
+            let err = "Update handler is not initialized yet.".to_string();
+            log::error!("{}", err);
+            return Err(err);
+        }
+
+        if !handler.update_available() {
+            let err = "No update available.".to_string();
+            log::error!("{}", err);
+            return Err(err);
+        }
+    }
+
+    let cloned_update_handler = (*update_handler).clone();
+
+    let task = task_container
+        .lock()
+        .await
+        .run((*handle).clone(), async move {
+            log::info!("Downloading update...");
+
+            let mut handler = cloned_update_handler.lock().await;
+
+            handler
+                .download_update()
+                .await
+                .map_err(|e| format!("Failed to download update: {:?}", e))
+        });
+
+    task
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn install_update(
+    update_handler: State<'_, Arc<Mutex<UpdateHandler>>>,
+) -> Result<(), String> {
     let handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        return Err("Update handler is not initialized yet.".into());
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
-    if !handler.update_available() {
-        return Err("No update available.".into());
+    if let Err(e) = handler.install_update() {
+        log::error!("{}", e);
+        return Err(e);
     }
 
-    log::info!("Executing update. This will restart the application.");
-    let result = handler.execute_update().await;
-
-    match result {
-        Ok(_) => Ok(true),
-        Err(e) => Err(e.to_string()),
-    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -56,7 +98,9 @@ pub async fn do_not_notify_update(
     let mut handler = update_handler.lock().await;
 
     if !handler.is_initialized() {
-        return Err("Update handler is not initialized yet.".into());
+        let err = "Update handler is not initialized yet.".to_string();
+        log::error!("{}", err);
+        return Err(err);
     }
 
     handler.set_show_notification(false).await;

@@ -213,7 +213,10 @@ const MultipleSelector = React.forwardRef<
     const [open, setOpen] = React.useState(false)
     const [onScrollbar, setOnScrollbar] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
-    const dropdownRef = React.useRef<HTMLDivElement>(null) // Added this
+    const dropdownRef = React.useRef<HTMLDivElement>(null)
+    const [dropdownPosition, setDropdownPosition] = React.useState<
+      'top' | 'bottom'
+    >('bottom')
 
     const [selected, setSelected] = React.useState<Option[]>(value || [])
     const [options, setOptions] = React.useState<GroupOption>(
@@ -225,28 +228,46 @@ const MultipleSelector = React.forwardRef<
     const inputDivRef = React.useRef<HTMLDivElement>(null)
     const [commandListMaxHeight, setCommandListMaxHeight] =
       React.useState<number>(300)
+    const [inputHeight, setInputHeight] = React.useState<number>(0)
     const { getElementProperty } = useGetElementProperty(inputDivRef)
 
-    // suggestの高さを適切に設定する
-    const updateCommandListMaxHeight = () => {
+    // suggestの向きと高さを適切に設定する
+    const updateCommandListDirectionAndMaxHeight = () => {
       const windowHeight = window.innerHeight
+      const inputDivTop = getElementProperty('top')
       const inputDivBottom = getElementProperty('bottom')
-      const commandListHeight = Math.min(
-        Math.max(windowHeight - inputDivBottom - 20, 75),
-        300,
-      )
+      const currentInputHeight = getElementProperty('height')
+
+      // 入力欄の高さを保存
+      setInputHeight(currentInputHeight)
+
+      // 下方向に300px以上のスペースがある場合は常に下に表示
+      // それ以外の場合は、スペースが大きい向きに表示
+      const spaceBelow = windowHeight - inputDivBottom
+      const shouldShowAbove =
+        spaceBelow < 300 && inputDivBottom > windowHeight / 2
+
+      setDropdownPosition(shouldShowAbove ? 'top' : 'bottom')
+
+      // 上に表示する場合と下に表示する場合で高さを計算
+      const commandListHeight = shouldShowAbove
+        ? Math.min(Math.max(inputDivTop - 20, 75), 300) // 上に表示する場合
+        : Math.min(Math.max(windowHeight - inputDivBottom - 20, 75), 300) // 下に表示する場合
 
       setCommandListMaxHeight(commandListHeight)
     }
 
     useEffect(() => {
-      updateCommandListMaxHeight()
+      updateCommandListDirectionAndMaxHeight()
     }, [selected])
 
     useEffect(() => {
-      window.addEventListener('resize', updateCommandListMaxHeight)
+      window.addEventListener('resize', updateCommandListDirectionAndMaxHeight)
       return () =>
-        window.removeEventListener('resize', updateCommandListMaxHeight)
+        window.removeEventListener(
+          'resize',
+          updateCommandListDirectionAndMaxHeight,
+        )
     }, [])
 
     React.useImperativeHandle(
@@ -561,6 +582,7 @@ const MultipleSelector = React.forwardRef<
               }}
               onFocus={(event) => {
                 setOpen(true)
+                updateCommandListDirectionAndMaxHeight() // 位置を再計算
                 if (triggerSearchOnFocus) {
                   onSearch?.(debouncedSearchTerm)
                 }
@@ -604,9 +626,17 @@ const MultipleSelector = React.forwardRef<
           {open && (
             <CommandList
               className={cn(
-                'absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in',
+                'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in',
+                dropdownPosition === 'top'
+                  ? 'bottom-full -left-1' // 上に表示する場合
+                  : 'top-full mt-1', // 下に表示する場合
               )}
-              style={{ maxHeight: `${commandListMaxHeight}px` }}
+              style={{
+                maxHeight: `${commandListMaxHeight}px`,
+                ...(dropdownPosition === 'top'
+                  ? { marginBottom: `${inputHeight + 4}px` }
+                  : {}),
+              }}
               onMouseLeave={() => {
                 setOnScrollbar(false)
               }}

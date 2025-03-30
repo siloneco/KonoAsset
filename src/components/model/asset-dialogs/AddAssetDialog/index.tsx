@@ -113,7 +113,7 @@ const AddAssetDialog = ({
             submitButtonText={t('addasset:add-asset')}
           />
         </TabsContent>
-        <TabsContent value="progress">
+        <TabsContent value="progress" className="max-w-[600px]">
           <ProgressTab
             taskId={importTaskId}
             onCompleted={onTaskCompleted}

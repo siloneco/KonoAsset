@@ -158,29 +158,45 @@ const TextInputSelect = React.forwardRef<
     const inputDivRef = React.useRef<HTMLDivElement>(null)
     const [commandListMaxHeight, setCommandListMaxHeight] =
       React.useState<number>(300)
+    const [dropdownPosition, setDropdownPosition] = React.useState<
+      'top' | 'bottom'
+    >('bottom')
     const { getElementProperty } = useGetElementProperty(inputDivRef)
 
-    // suggestの高さを適切に設定する
-    const updateCommandListMaxHeight = () => {
+    // suggestの向きと高さを適切に設定する
+    const updateCommandListDirectionAndMaxHeight = () => {
       const windowHeight = window.innerHeight
+      const inputDivTop = getElementProperty('top')
       const inputDivBottom = getElementProperty('bottom')
-      const commandListHeight = Math.min(
-        Math.max(windowHeight - inputDivBottom - 20, 75),
-        300,
-      )
+
+      // 下方向に300px以上のスペースがある場合は常に下に表示
+      // それ以外の場合は、スペースが大きい向きに表示
+      const spaceBelow = windowHeight - inputDivBottom
+      const shouldShowAbove =
+        spaceBelow < 300 && inputDivBottom > windowHeight / 2
+
+      setDropdownPosition(shouldShowAbove ? 'top' : 'bottom')
+
+      // 上に表示する場合と下に表示する場合で高さを計算
+      const commandListHeight = shouldShowAbove
+        ? Math.min(Math.max(inputDivTop - 20, 75), 300) // 上に表示する場合
+        : Math.min(Math.max(windowHeight - inputDivBottom - 20, 75), 300) // 下に表示する場合
 
       setCommandListMaxHeight(commandListHeight)
     }
 
     useEffect(() => {
-      updateCommandListMaxHeight()
+      updateCommandListDirectionAndMaxHeight()
     }, [selected])
 
     useEffect(() => {
-      window.addEventListener('resize', updateCommandListMaxHeight)
+      window.addEventListener('resize', updateCommandListDirectionAndMaxHeight)
       return () =>
-        window.removeEventListener('resize', updateCommandListMaxHeight)
-    })
+        window.removeEventListener(
+          'resize',
+          updateCommandListDirectionAndMaxHeight,
+        )
+    }, [])
 
     React.useImperativeHandle(
       ref,
@@ -457,6 +473,7 @@ const TextInputSelect = React.forwardRef<
                 }}
                 onFocus={(event) => {
                   setOpen(true)
+                  updateCommandListDirectionAndMaxHeight() // 位置を再計算
                   if (triggerSearchOnFocus && onSearch) {
                     onSearch(debouncedSearchTerm).then((res) =>
                       setOptions(transToGroupOption(res || [], groupBy)),
@@ -479,7 +496,12 @@ const TextInputSelect = React.forwardRef<
           </div>
           {open && (
             <CommandList
-              className="absolute top-full z-10 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className={cn(
+                'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in',
+                dropdownPosition === 'top'
+                  ? 'bottom-full mb-1' // 上に表示する場合
+                  : 'top-full mt-1', // 下に表示する場合
+              )}
               style={{
                 maxHeight: `${commandListMaxHeight}px`,
               }}

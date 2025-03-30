@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PersistentContextType } from '..'
+import { AssetCardSize, PersistentContextType } from '..'
 import { AssetType, MatchType, SortBy } from '@/lib/bindings'
 
 type ReturnProps = {
@@ -9,6 +9,8 @@ type ReturnProps = {
 export const usePersistentContext = (): ReturnProps => {
   const [sortBy, setSortBy] = useState<SortBy>('CreatedAt')
   const [reverseOrder, setReverseOrder] = useState(true)
+
+  const [assetCardSize, setAssetCardSize] = useState<AssetCardSize>('Medium')
 
   const [queryTextMode, setQueryTextMode] = useState<'general' | 'advanced'>(
     'general',
@@ -45,6 +47,9 @@ export const usePersistentContext = (): ReturnProps => {
     setSortBy: setSortBy,
     reverseOrder: reverseOrder,
     setReverseOrder: setReverseOrder,
+
+    assetCardSize: assetCardSize,
+    setAssetCardSize: setAssetCardSize,
 
     queryTextMode: queryTextMode,
     setQueryTextMode: setQueryTextMode,

@@ -49,22 +49,20 @@ export const DependencyInput: FC<Props> = ({
                   <SlimAssetDetail
                     key={asset.id}
                     asset={asset}
-                    hideOpenButton
                     className="w-full bg-background border-0 border-b"
-                    actionComponent={
-                      <Button
-                        className="w-10 h-10"
-                        variant="destructive"
-                        onClick={() => {
-                          setDependencies(
-                            dependencies.filter((dep) => dep !== asset.id),
-                          )
-                        }}
-                      >
-                        <XCircle />
-                      </Button>
-                    }
-                  />
+                  >
+                    <Button
+                      className="w-10 h-10"
+                      variant="destructive"
+                      onClick={() => {
+                        setDependencies(
+                          dependencies.filter((dep) => dep !== asset.id),
+                        )
+                      }}
+                    >
+                      <XCircle />
+                    </Button>
+                  </SlimAssetDetail>
                 )
               })}
             </ScrollArea>

@@ -1,6 +1,7 @@
 use tauri_specta::{collect_commands, Builder};
 
 mod asset;
+mod deep_link;
 mod external;
 mod file;
 mod language;
@@ -24,6 +25,10 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::update::update_world_object,
         asset::filter::get_filtered_asset_ids,
         asset::status::get_load_status,
+        asset::adapter::import_from_other_data_store,
+        asset::adapter::export_as_konoasset_zip,
+        asset::adapter::export_as_human_readable_zip,
+        asset::adapter::export_for_avatar_explorer,
         // サジェストの取得関連
         suggest::get::get_all_asset_tags,
         suggest::get::get_all_supported_avatar_values,
@@ -31,12 +36,14 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         suggest::get::get_avatar_wearable_supported_avatars,
         suggest::get::get_world_object_categories,
         // 外部API関連
-        external::booth::get_asset_info_from_booth, // Boothからアセット情報を取得する
+        external::booth::get_asset_info_from_booth, // BOOTHからアセット情報を取得する
         external::booth::resolve_pximg_filename,
         // アップデート関連
         update::common::check_for_update,
-        update::common::execute_update,
+        update::common::download_update,
+        update::common::install_update,
         update::common::do_not_notify_update,
+        update::changelog::get_changelog,
         // ファイル関連
         file::open::open_file_in_file_manager,
         file::open::open_app_dir,
@@ -67,5 +74,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         language::common::set_language_code,
         language::common::get_current_language_data,
         language::common::load_language_file,
+        // DeepLink関係
+        deep_link::execute::request_startup_deep_link_execution,
     ])
 }

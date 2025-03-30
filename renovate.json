@@ -12,5 +12,19 @@
   "assignees": ["siloneco"],
   "lockFileMaintenance": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "groupName": "[Frontend] Update dependencies",
+      "matchFileNames": ["package.json"]
+    },
+    {
+      "groupName": "[Backend] Update dependencies",
+      "matchFileNames": ["src-tauri/Cargo.toml"]
+    },
+    {
+      "groupName": "[CI/CD] Update dependencies",
+      "matchFileNames": [".github/workflows/**/*.yml"]
+    }
+  ]
 }

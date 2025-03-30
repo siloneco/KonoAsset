@@ -1,0 +1,186 @@
+[
+  {
+    "version": "1.1.0",
+    "features": [
+      {
+        "text": "アセットデータのインポート/エクスポート機能を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Import/export function for asset data"
+          }
+        ]
+      },
+      {
+        "text": "アセット追加ダイアログを開くための Deep Link をサポート",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Deep Link to open the asset add dialog"
+          }
+        ]
+      },
+      {
+        "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Display progress bar and change history when updating"
+          }
+        ]
+      },
+      {
+        "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Change the display size of assets and display in list format"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "アセット削除時に前提アセットの紐づけが解除されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Association of prerequisite assets was not removed when an asset was deleted"
+          }
+        ]
+      },
+      {
+        "text": "アセットタイプの表示が改行されることがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Asset type display was sometimes wrapped"
+          }
+        ]
+      },
+      {
+        "text": "全てのアセットタイプを表示しているときにワールドカテゴリが候補として表示されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "World categories were not displayed as candidates when displaying all asset types"
+          }
+        ]
+      },
+      {
+        "text": "画面をリロードするまでカテゴリ等の候補が更新されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Candidates for categories etc. were not updated until the screen was reloaded"
+          }
+        ]
+      },
+      {
+        "text": "en-US の翻訳の一部を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Incorrect translation in en-US"
+          }
+        ]
+      },
+      {
+        "text": "エラーがログファイルに記録されないことがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Errors were not recorded in the log file"
+          }
+        ]
+      },
+      {
+        "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Some toast text was not translated on the initial settings page"
+          }
+        ]
+      },
+      {
+        "text": "トーストのタイトルの一貫性を向上",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Improved consistency of toast titles"
+          }
+        ]
+      },
+      {
+        "text": "フィルタの候補が見づらく選択しづらい問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Fixed an issue where the filter candidates were difficult to see and select"
+          }
+        ]
+      },
+      {
+        "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Language file was not loaded when the setting file failed to load"
+          }
+        ]
+      },
+      {
+        "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Changed \"Booth\" notation to \"BOOTH\" notation"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.2",
+    "others": [
+      {
+        "text": "インポート後の削除機能をデフォルトでOFFに変更",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Default setting of the delete function after import to OFF"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.1",
+    "fixes": [
+      {
+        "text": "場合によってBOOTHの画像が保存できないバグを修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "BOOTH images could not be saved in some cases"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "features": [
+      {
+        "text": "初回リリース",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Initial release"
+          }
+        ]
+      }
+    ]
+  }
+]
