@@ -3,15 +3,33 @@
     "version": "1.1.1",
     "fixes": [
       {
-        "text": "アセット追加時に画像を選ぶとエラーになることがある問題を修正"
+        "text": "アセット追加時に画像を選ぶとエラーになることがある問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Choosing image when adding assets caused error"
+          }
+        ]
       },
       {
-        "text": "KonoAsset形式でエクスポートしたzipが破損する問題を修正"
+        "text": "KonoAsset形式でエクスポートしたzipが破損する問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Exported zip was corrupted"
+          }
+        ]
       }
     ],
     "others": [
       {
-        "text": "変更履歴のGitHubリンクを CHANGELOG.md に変更"
+        "text": "変更履歴のGitHubリンクを CHANGELOG.md に変更",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Changed GitHub link in change history to CHANGELOG.md"
+          }
+        ]
       }
     ]
   },
