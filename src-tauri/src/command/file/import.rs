@@ -60,6 +60,13 @@ pub async fn copy_image_file_to_images(
         let store = basic_store.lock().await;
         store.data_dir().join("images")
     };
+    
+    if !images_dir.exists() {
+        std::fs::create_dir_all(&images_dir).map_err(|e| {
+            log::error!("Failed to create images directory: {:?}", e);
+            e.to_string()
+        })?;
+    }
 
     let filename = create_dest_filename(&path, temporary);
 
