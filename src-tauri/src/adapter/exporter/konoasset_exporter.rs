@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::{Path, PathBuf, MAIN_SEPARATOR};
 use std::sync::Arc;
 
 use async_zip::base::write::ZipFileWriter;
@@ -39,6 +39,12 @@ where
     for entry in dir_entries {
         let relative_path = entry.strip_prefix(&root_dir).map_err(|e| e.to_string())?;
         let relative_path_str = relative_path.to_string_lossy().to_string();
+
+        let relative_path_str = if MAIN_SEPARATOR == '\\' {
+            relative_path_str.replace(MAIN_SEPARATOR, "/")
+        } else {
+            relative_path_str
+        };
 
         if entry.is_dir() {
             new_zip_dir(&mut writer, format!("{}/", relative_path_str)).await?;
