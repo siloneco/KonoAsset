@@ -1,5 +1,21 @@
 [
   {
+    "version": "1.1.1",
+    "fixes": [
+      {
+        "text": "アセット追加時に画像を選ぶとエラーになることがある問題を修正"
+      },
+      {
+        "text": "KonoAsset形式でエクスポートしたzipが破損する問題を修正"
+      }
+    ],
+    "others": [
+      {
+        "text": "変更履歴のGitHubリンクを CHANGELOG.md に変更"
+      }
+    ]
+  },
+  {
     "version": "1.1.0",
     "features": [
       {
