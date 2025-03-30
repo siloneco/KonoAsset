@@ -7,6 +7,7 @@
 - KonoAsset形式でエクスポートしたzipが破損する問題を修正
 
 ### ⚙️その他
+- 変更履歴のGitHubリンクを CHANGELOG.md に変更
 
 ## 1.1.0
 
