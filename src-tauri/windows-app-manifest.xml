@@ -1,0 +1,17 @@
+<!-- This file is required by build.rs to include the Windows app manifest. -->
+<!-- workaround needed to prevent `STATUS_ENTRYPOINT_NOT_FOUND` error in tests -->
+<!-- see https://github.com/tauri-apps/tauri/pull/4383#issuecomment-1212221864 -->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+        type="win32"
+        name="Microsoft.Windows.Common-Controls"
+        version="6.0.0.0"
+        processorArchitecture="*"
+        publicKeyToken="6595b64144ccf1df"
+        language="*"
+      />
+    </dependentAssembly>
+  </dependency>
+</assembly>
