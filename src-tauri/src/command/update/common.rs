@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use tauri::{AppHandle, State};
+use tauri::State;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
@@ -32,7 +32,6 @@ pub async fn check_for_update(
 pub async fn download_update(
     update_handler: State<'_, Arc<Mutex<UpdateHandler>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
-    handle: State<'_, AppHandle>,
 ) -> Result<Uuid, String> {
     {
         let handler = update_handler.lock().await;
@@ -52,19 +51,16 @@ pub async fn download_update(
 
     let cloned_update_handler = (*update_handler).clone();
 
-    let task = task_container
-        .lock()
-        .await
-        .run((*handle).clone(), async move {
-            log::info!("Downloading update...");
+    let task = task_container.lock().await.run(async move {
+        log::info!("Downloading update...");
 
-            let mut handler = cloned_update_handler.lock().await;
+        let mut handler = cloned_update_handler.lock().await;
 
-            handler
-                .download_update()
-                .await
-                .map_err(|e| format!("Failed to download update: {:?}", e))
-        });
+        handler
+            .download_update()
+            .await
+            .map_err(|e| format!("Failed to download update: {:?}", e))
+    });
 
     task
 }

@@ -79,7 +79,6 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
-        .manage(Arc::new(Mutex::new(TaskContainer::new())))
         .setup(move |app| {
             logging::initialize_logger(&app.handle());
             builder.mount_events(app);
@@ -87,6 +86,7 @@ pub fn run() {
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
             app.manage(app.handle().clone());
+            app.manage(arc_mutex(TaskContainer::new(app.handle().clone())));
 
             #[cfg(any(windows, target_os = "linux"))]
             {
