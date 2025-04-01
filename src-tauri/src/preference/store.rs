@@ -175,18 +175,19 @@ mod tests {
     #[test]
     fn test_load_preference_store() {
         let json_data = r#"
-{
-    "version": 4,
-    "data": {
-        "dataDirPath": "C:\\fake-path\\KonoAsset",
-        "theme": "dark",
-        "language": "ja-JP",
-        "deleteOnImport": true,
-        "useUnitypackageSelectedOpen": true,
-        "updateChannel": "Stable"
-    }
-}
+        {
+            "version": 4,
+            "data": {
+                "dataDirPath": "C:\\fake-path\\KonoAsset",
+                "theme": "dark",
+                "language": "ja-JP",
+                "deleteOnImport": true,
+                "useUnitypackageSelectedOpen": true,
+                "updateChannel": "Stable"
+            }
+        }
         "#;
+
         let path = "test/temp/preference-load.json";
 
         if std::fs::exists(path).unwrap() {
