@@ -32,13 +32,15 @@ pub struct StoreProvider {
 }
 
 impl StoreProvider {
-    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
-        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir)?;
-        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir)?;
-        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir)?;
+    pub fn create<T: AsRef<Path>>(data_dir: T) -> Result<Self, String> {
+        let data_dir = data_dir.as_ref().to_path_buf();
+
+        let avatar_store: JsonStore<Avatar> = JsonStore::create(&data_dir)?;
+        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(&data_dir)?;
+        let world_object_store: JsonStore<WorldObject> = JsonStore::create(&data_dir)?;
 
         Ok(Self {
-            data_dir: data_dir.clone(),
+            data_dir,
 
             avatar_store: avatar_store,
             avatar_wearable_store: avatar_wearable_store,
