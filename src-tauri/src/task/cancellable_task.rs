@@ -132,7 +132,7 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn test() {
+    async fn test_task_container() {
         let mut task_container = TaskContainer::new_without_app_handle();
 
         let task_id = task_container

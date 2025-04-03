@@ -457,3 +457,46 @@ async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use super::*;
+
+    async fn setup_dir<P: AsRef<Path> + 'static>(path: P) {
+        let path = path.as_ref().to_path_buf();
+
+        if path.exists() {
+            std::fs::remove_dir_all(&path).unwrap();
+        }
+
+        modify_guard::copy_dir(
+            "test/example_root_dir",
+            path,
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_store_provider() {
+        let path = "test/temp/store_provider";
+
+        setup_dir(path).await;
+
+        let mut provider = StoreProvider::create(path).unwrap();
+
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        let ids = provider.get_used_ids().await;
+
+        assert_eq!(ids.len(), 3);
+        assert!(ids.contains(&Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap()));
+        assert!(ids.contains(&Uuid::from_str("2bde4d66-1843-4250-b929-157f947f5751").unwrap()));
+        assert!(ids.contains(&Uuid::from_str("c155488e-53bf-4c98-92e5-e5c8f66a1667").unwrap()));
+    }
+}

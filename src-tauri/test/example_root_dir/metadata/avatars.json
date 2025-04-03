@@ -1,0 +1,19 @@
+{
+  "version": 3,
+  "data": [
+    {
+      "id": "72e89e43-2d29-4910-b24e-9550a6ea7152",
+      "description": {
+        "name": "Test Avatar",
+        "creator": "Test Avatar Creator",
+        "imageFilename": "843e178b-6865-4834-a51c-ac5f9eccbdbf.jpg",
+        "tags": ["TestAvatarTag"],
+        "memo": "Test Avatar Memo",
+        "boothItemId": 6641548,
+        "dependencies": [],
+        "createdAt": 1743606000000,
+        "publishedAt": 1735657200000
+      }
+    }
+  ]
+}
