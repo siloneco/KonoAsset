@@ -7,4 +7,5 @@
 /gen/schemas
 
 # Temporary files for executing tests
-/test/temp/
+/test/temp/*
+!/test/temp/.gitkeep

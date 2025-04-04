@@ -28,7 +28,7 @@ use super::fileutils::{self, execute_image_fixation};
 async fn import_asset<T, F>(
     basic_store: &StoreProvider,
     mut request: AssetImportRequest<T>,
-    app_handle: &AppHandle,
+    app_handle: Option<&AppHandle>,
     register_fn: F,
 ) -> Result<T::AssetType, String>
 where
@@ -60,11 +60,13 @@ where
             .join(asset.get_id().to_string());
 
         let progress_callback = |progress, filename| {
-            let percentage = (i as f32 + progress) / file_count as f32 * 100f32;
+            if let Some(handle) = app_handle {
+                let percentage = (i as f32 + progress) / file_count as f32 * 100f32;
 
-            ProgressEvent::new(percentage, filename)
-                .emit(app_handle)
-                .unwrap();
+                ProgressEvent::new(percentage, filename)
+                    .emit(handle)
+                    .unwrap();
+            }
         };
 
         let result = import_files(&src_import_asset_path, &destination, progress_callback).await;
@@ -113,7 +115,7 @@ pub async fn import_avatar(
     import_asset(
         basic_store,
         request,
-        app_handle,
+        Some(app_handle),
         |provider: &'_ StoreProvider, asset: Avatar| {
             Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
         },
@@ -132,7 +134,7 @@ where
     import_asset(
         basic_store,
         request,
-        app_handle,
+        Some(app_handle),
         |provider: &'_ StoreProvider, asset: AvatarWearable| {
             Box::pin(async {
                 provider
@@ -156,7 +158,7 @@ where
     import_asset(
         basic_store,
         request,
-        app_handle,
+        Some(app_handle),
         |provider: &'_ StoreProvider, asset: WorldObject| {
             Box::pin(async {
                 provider
@@ -229,4 +231,96 @@ async fn bind_temp_image(images_path: &PathBuf, temp_path_str: &str) -> Result<S
 
     log::warn!("Image does not need to be fixed: {}", temp_path_str);
     Ok(temp_path_str.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::definitions::entities::AssetDescription;
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_import_avatar() {
+        let test_root_dir = "test/temp/import-test/avatar";
+        let data_dir = format!("{test_root_dir}/provider");
+
+        if std::fs::exists(&data_dir).unwrap() {
+            std::fs::remove_dir_all(test_root_dir).unwrap();
+        }
+
+        let provider = StoreProvider::create(&data_dir).unwrap();
+
+        std::fs::create_dir_all(format!("{data_dir}/images")).unwrap();
+        std::fs::write(format!("{data_dir}/images/temp_image.png"), b"").unwrap();
+
+        let description = AssetDescription {
+            name: "Test Asset".to_string(),
+            creator: "Test Creator".to_string(),
+            image_filename: Some("temp_image.png".to_string()),
+            tags: vec!["Test Tag".to_string()],
+            memo: Some("Test Memo".to_string()),
+            booth_item_id: Some(123456),
+            dependencies: vec![],
+            created_at: 123456,
+            published_at: Some(123456),
+        };
+
+        let pre_avatar = PreAvatar {
+            description: description.clone(),
+        };
+
+        let import_data_path = PathBuf::from(format!("{test_root_dir}/import-data"));
+
+        std::fs::create_dir_all(&import_data_path).unwrap();
+        std::fs::write(import_data_path.join("dummy.txt"), "dummy").unwrap();
+
+        let absolute_path = std::path::absolute(import_data_path)
+            .unwrap()
+            .to_string_lossy()
+            .to_string();
+
+        let request = AssetImportRequest {
+            pre_asset: pre_avatar,
+            absolute_paths: vec![absolute_path],
+            delete_source: false,
+        };
+
+        let avatar = import_asset(
+            &provider,
+            request,
+            None,
+            |provider: &'_ StoreProvider, asset: Avatar| {
+                Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
+            },
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(avatar.description.name, description.name);
+        assert_eq!(avatar.description.creator, description.creator);
+        assert_eq!(avatar.description.image_filename, Some("image.png".into()));
+        assert_eq!(avatar.description.tags, description.tags);
+        assert_eq!(avatar.description.memo, description.memo);
+        assert_eq!(avatar.description.booth_item_id, description.booth_item_id);
+        assert_eq!(avatar.description.dependencies, description.dependencies);
+        assert_eq!(avatar.description.created_at, description.created_at);
+        assert_eq!(avatar.description.published_at, description.published_at);
+
+        let id = avatar.get_id();
+
+        let dummy_file_path = format!("{data_dir}/data/{id}/import-data/dummy.txt");
+
+        assert!(std::fs::exists(&dummy_file_path).unwrap());
+        assert_eq!(std::fs::read_to_string(&dummy_file_path).unwrap(), "dummy");
+
+        let avatar_json_path = format!("{data_dir}/metadata/{}", Avatar::filename());
+        assert!(std::fs::exists(avatar_json_path).unwrap());
+
+        let registered_avatar = provider
+            .get_avatar_store()
+            .get_asset(id.clone())
+            .await
+            .unwrap();
+        assert_eq!(avatar, registered_avatar);
+    }
 }

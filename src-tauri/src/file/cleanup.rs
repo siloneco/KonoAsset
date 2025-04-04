@@ -31,3 +31,34 @@ impl Drop for DeleteOnDrop {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_delete_on_drop() {
+        let path = "test/temp/delete_on_drop";
+
+        if std::fs::exists(&path).unwrap() {
+            std::fs::remove_dir_all(&path).unwrap();
+        }
+
+        {
+            let mut delete_on_drop = DeleteOnDrop::new(PathBuf::from(&path));
+
+            std::fs::create_dir_all(&path).unwrap();
+            std::fs::write(format!("{path}/dummy.txt"), b"dummy").unwrap();
+
+            delete_on_drop.mark_as_completed();
+        }
+
+        assert!(std::fs::exists(&path).unwrap());
+
+        {
+            let _ = DeleteOnDrop::new(PathBuf::from(&path));
+        }
+
+        assert!(!std::fs::exists(&path).unwrap());
+    }
+}

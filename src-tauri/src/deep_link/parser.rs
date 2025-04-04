@@ -80,3 +80,24 @@ fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
 
     Some(AddAssetDeepLink::new(path.unwrap(), booth_item_id))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse() {
+        let parsed = parse(&vec![
+            "konoasset.exe".to_string(),
+            "konoasset://add-asset?path=.%2Ftest.txt&boothItemId=123".to_string(),
+        ]);
+
+        assert_eq!(parsed.len(), 1);
+        assert!(matches!(parsed[0], DeepLinkAction::AddAsset(_)));
+
+        let DeepLinkAction::AddAsset(info) = &parsed[0];
+
+        assert_eq!(info.path, PathBuf::from("./test.txt"));
+        assert_eq!(info.booth_item_id, Some(123));
+    }
+}

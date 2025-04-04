@@ -23,17 +23,36 @@ permissions:
 jobs:
   test:
     name: Run cargo test
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - platform: "macos-latest" # (Arm based macs / M1 and above)
+          #   args: "--target aarch64-apple-darwin"
+
+          # - platform: "macos-latest" # (Intel based macs)
+          #   args: "--target x86_64-apple-darwin"
+
+          # - platform: "ubuntu-22.04"
+          #   args: ""
+
+          - platform: "windows-latest"
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: rui314/setup-mold@v1
-      - uses: dtolnay/rust-toolchain@stable
 
+      - uses: rui314/setup-mold@v1
+        if: matrix.platform == 'ubuntu-22.04'
+
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2
         with:
           workspaces: "./src-tauri -> target"
 
-      - name: install dependencies
+      - name: install dependencies (Ubuntu)
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf

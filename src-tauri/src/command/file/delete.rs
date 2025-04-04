@@ -29,21 +29,17 @@ pub async fn delete_entry_from_asset_data_dir(
     }
 
     if path.is_file() {
-        tokio::fs::remove_file(&path)
-            .await
-            .map_err(|e| {
-                let err = format!("Failed to delete file: {:?}", e);
-                log::error!("{}", err);
-                err
-            })?;
+        tokio::fs::remove_file(&path).await.map_err(|e| {
+            let err = format!("Failed to delete file: {:?}", e);
+            log::error!("{}", err);
+            err
+        })?;
     } else if path.is_dir() {
-        tokio::fs::remove_dir_all(&path)
-            .await
-            .map_err(|e| {
-                let err = format!("Failed to delete directory: {:?}", e);
-                log::error!("{}", err);
-                err
-            })?;
+        tokio::fs::remove_dir_all(&path).await.map_err(|e| {
+            let err = format!("Failed to delete directory: {:?}", e);
+            log::error!("{}", err);
+            err
+        })?;
     } else {
         let err = format!("Path is not a file or directory: {:?}", path);
         log::error!("{}", err);

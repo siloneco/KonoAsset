@@ -156,15 +156,149 @@ where
     Ok(())
 }
 
-fn select_destination_path(base: &Path, prefer_filename: &str) -> PathBuf {
-    if !base.join(prefer_filename).exists() {
-        return base.join(prefer_filename);
+fn select_destination_path<P, S>(base: P, prefer_filename: S) -> PathBuf
+where
+    P: AsRef<Path>,
+    S: AsRef<str>,
+{
+    let base = base.as_ref();
+    let prefer_filename = prefer_filename.as_ref();
+
+    let mut preferred_path = base.join(prefer_filename);
+
+    if !preferred_path.exists() {
+        return preferred_path;
     }
 
+    let file_stem = preferred_path
+        .file_stem()
+        .unwrap_or(OsStr::new("imported"))
+        .to_string_lossy()
+        .to_string();
+    let file_extension = preferred_path
+        .extension()
+        .unwrap_or(OsStr::new(""))
+        .to_string_lossy()
+        .to_string();
+
     let mut i = 1;
-    while base.join(format!("{} ({})", prefer_filename, i)).exists() {
+    while preferred_path.exists() {
+        let new_file_stem = format!("{} ({})", file_stem, i);
+        preferred_path = base.join(format!("{}.{}", new_file_stem, file_extension));
         i += 1;
     }
 
-    base.join(format!("{} ({})", prefer_filename, i))
+    preferred_path
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_image_fixation() {
+        let dir = "test/temp/image_fixation";
+        let filename = "temp_image.png";
+
+        let file_path = PathBuf::from(dir).join(filename);
+
+        if std::fs::exists(dir).unwrap() {
+            std::fs::remove_dir_all(dir).unwrap();
+        }
+
+        std::fs::create_dir_all(dir).unwrap();
+        std::fs::write(&file_path, "dummy").unwrap();
+
+        let result = execute_image_fixation(&file_path).await.unwrap().unwrap();
+
+        assert_eq!(result, "image.png");
+        assert!(file_path.exists());
+        assert!(file_path.with_file_name(&result).exists());
+    }
+
+    #[tokio::test]
+    async fn test_skip_image_fixation() {
+        let dir = "test/temp/skip_image_fixation";
+        let filename = "image.png";
+
+        let file_path = PathBuf::from(dir).join(filename);
+
+        if std::fs::exists(dir).unwrap() {
+            std::fs::remove_dir_all(dir).unwrap();
+        }
+
+        std::fs::create_dir_all(dir).unwrap();
+        std::fs::write(&file_path, "dummy").unwrap();
+
+        let result = execute_image_fixation(&file_path).await.unwrap();
+
+        assert!(result.is_none());
+        assert!(file_path.exists());
+    }
+
+    #[test]
+    fn test_select_destination_path() {
+        let base = PathBuf::from("test/temp/select_destination_path");
+
+        if std::fs::exists(&base).unwrap() {
+            std::fs::remove_dir_all(&base).unwrap();
+        }
+
+        std::fs::create_dir_all(&base).unwrap();
+
+        let result = select_destination_path(&base, "image.png");
+        assert_eq!(result.file_name().unwrap(), OsStr::new("image.png"));
+
+        std::fs::write(&result, "dummy").unwrap();
+
+        let result = select_destination_path(&base, "image.png");
+        assert_eq!(result.file_name().unwrap(), OsStr::new("image (1).png"));
+
+        std::fs::write(&result, "dummy").unwrap();
+
+        let result = select_destination_path(&base, "image.png");
+        assert_eq!(result.file_name().unwrap(), OsStr::new("image (2).png"));
+    }
+
+    #[tokio::test]
+    async fn test_import_assets() {
+        let base = PathBuf::from("test/temp/import_asset");
+
+        if std::fs::exists(&base).unwrap() {
+            std::fs::remove_dir_all(&base).unwrap();
+        }
+
+        let dir_src = base.join("src/dir");
+        let zip_src = base.join("src/zip-file.zip");
+        let normal_file_src = base.join("src/normal-file.txt");
+
+        let dest = base.join("dest");
+
+        std::fs::create_dir_all(&dir_src).unwrap();
+        std::fs::create_dir_all(&dest).unwrap();
+
+        std::fs::write(dir_src.join("dummy.txt"), b"dummy").unwrap();
+        std::fs::copy("test/zip/normal.zip", &zip_src).unwrap();
+        std::fs::write(&normal_file_src, b"dummy").unwrap();
+
+        import_asset(&dir_src, &dest, true, |_, _| {})
+            .await
+            .unwrap();
+        import_asset(&zip_src, &dest, true, |_, _| {})
+            .await
+            .unwrap();
+        import_asset(&normal_file_src, &dest, true, |_, _| {})
+            .await
+            .unwrap();
+
+        let dir_dummy_txt = dest.join("dir/dummy.txt");
+        let extracted_zip_dir = dest.join("zip-file");
+        let normal_file_txt = dest.join("normal-file.txt");
+
+        assert!(dir_dummy_txt.exists());
+        assert_eq!(std::fs::read_to_string(&dir_dummy_txt).unwrap(), "dummy");
+        assert!(extracted_zip_dir.exists());
+        assert!(normal_file_txt.exists());
+        assert_eq!(std::fs::read_to_string(&normal_file_txt).unwrap(), "dummy");
+    }
 }

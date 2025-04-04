@@ -30,7 +30,7 @@ pub async fn get_directory_path(
             let err = format!("Failed to convert path to string (id = {:?})", id);
             log::error!("{}", err);
             return Err(err);
-        },
+        }
     }
 }
 
@@ -97,57 +97,54 @@ pub async fn migrate_data_dir(
     let cloned_pximg_resolver = (*pximg_resolver).clone();
     let cloned_app_handle = (*handle).clone();
 
-    let task = task_container
-        .lock()
-        .await
-        .run((*handle).clone(), async move {
-            let mut basic_store = cloned_basic_store.lock().await;
+    let task = task_container.lock().await.run(async move {
+        let mut basic_store = cloned_basic_store.lock().await;
 
-            if migrate_data {
-                log::info!("Migrating data to new path: {}", new_path.display());
+        if migrate_data {
+            log::info!("Migrating data to new path: {}", new_path.display());
 
-                let result = basic_store
-                    .migrate_data_dir(&cloned_app_handle, &new_path)
-                    .await
-                    .map_err(|e| {
-                        let msg = format!("Failed to migrate data: {:?}", e);
-                        log::error!("{}", msg);
-                        msg
-                    })?;
-
-                if result == MigrateResult::Migrated {
-                    log::info!("Data migration completed");
-                } else if result == MigrateResult::MigratedButFailedToDeleteOldDir {
-                    log::warn!("Data migration completed, but failed to delete old directory");
-                }
-            }
-
-            let mut preference = cloned_preference.lock().await;
-            let mut new_preference = preference.clone();
-            new_preference.set_data_dir(new_path.clone());
-
-            preference.overwrite(&new_preference);
-            preference.save().map_err(|e| e.to_string())?;
-
-            cloned_pximg_resolver
-                .lock()
+            let result = basic_store
+                .migrate_data_dir(&cloned_app_handle, &new_path)
                 .await
-                .change_images_dir(new_path.join("images"));
+                .map_err(|e| {
+                    let msg = format!("Failed to migrate data: {:?}", e);
+                    log::error!("{}", msg);
+                    msg
+                })?;
 
-            if !migrate_data {
-                if let Err(e) = basic_store.set_data_dir_and_reload(&new_path).await {
-                    log::error!("Failed to load all assets from files: {}", e);
-                    return Err(e);
-                }
+            if result == MigrateResult::Migrated {
+                log::info!("Data migration completed");
+            } else if result == MigrateResult::MigratedButFailedToDeleteOldDir {
+                log::warn!("Data migration completed, but failed to delete old directory");
             }
+        }
 
-            log::info!(
-                "Successfully changed data directory to: {}",
-                new_path.display()
-            );
+        let mut preference = cloned_preference.lock().await;
+        let mut new_preference = preference.clone();
+        new_preference.set_data_dir(new_path.clone());
 
-            Ok(())
-        });
+        preference.overwrite(&new_preference);
+        preference.save().map_err(|e| e.to_string())?;
+
+        cloned_pximg_resolver
+            .lock()
+            .await
+            .change_images_dir(new_path.join("images"));
+
+        if !migrate_data {
+            if let Err(e) = basic_store.set_data_dir_and_reload(&new_path).await {
+                log::error!("Failed to load all assets from files: {}", e);
+                return Err(e);
+            }
+        }
+
+        log::info!(
+            "Successfully changed data directory to: {}",
+            new_path.display()
+        );
+
+        Ok(())
+    });
 
     task
 }
