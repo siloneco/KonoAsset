@@ -133,7 +133,7 @@ pub async fn export_for_avatar_explorer(
         adapter::exporter::export_as_avatar_explorer_compatible_structure(
             cloned_basic_store,
             &path,
-            &cloned_app_handle,
+            Some(&cloned_app_handle),
         )
         .await?;
 

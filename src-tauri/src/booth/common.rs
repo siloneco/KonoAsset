@@ -14,7 +14,7 @@ pub fn get_reqwest_client() -> Result<reqwest::Client, String> {
         .map_err(|e| format!("Failed to create reqwest client: {}", e))
 }
 
-#[derive(Serialize, Clone, Debug, specta::Type)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct BoothAssetInfo {
     pub id: u64,
