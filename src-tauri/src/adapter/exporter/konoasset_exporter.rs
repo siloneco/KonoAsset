@@ -17,7 +17,7 @@ use super::util::new_zip_dir;
 pub async fn export_as_konoasset_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
     path: P,
-    app: &AppHandle,
+    app: Option<&AppHandle>,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
@@ -67,14 +67,16 @@ where
             }
         }
 
-        let emit_result = ProgressEvent::new(
-            ((processed_count as f32) / (total_count as f32)) * 100f32,
-            relative_path_str.clone(),
-        )
-        .emit(app);
+        if let Some(app) = app {
+            let emit_result = ProgressEvent::new(
+                ((processed_count as f32) / (total_count as f32)) * 100f32,
+                relative_path_str.clone(),
+            )
+            .emit(app);
 
-        if let Err(e) = emit_result {
-            log::error!("Failed to emit progress event: {:?}", e);
+            if let Err(e) = emit_result {
+                log::error!("Failed to emit progress event: {:?}", e);
+            }
         }
 
         processed_count += 1;
@@ -106,4 +108,82 @@ where
     }
 
     Ok(entries)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        file::modify_guard::{self, FileTransferGuard},
+        zip::extractor,
+    };
+
+    use super::*;
+
+    fn trim_base<B: AsRef<Path>>(path_vec: Vec<PathBuf>, base: B) -> Vec<String> {
+        let base = base.as_ref();
+
+        path_vec
+            .iter()
+            .map(|p| {
+                let relative_path = p.strip_prefix(base).unwrap();
+                let relative_path_str = relative_path.to_string_lossy().to_string();
+
+                if MAIN_SEPARATOR == '\\' {
+                    relative_path_str.replace(MAIN_SEPARATOR, "/")
+                } else {
+                    relative_path_str
+                }
+            })
+            .collect::<Vec<_>>()
+    }
+
+    #[tokio::test]
+    async fn test_konoasset_export_fn() {
+        let dest = "test/temp/export/konoasset";
+        let zip = format!("{dest}/exported.zip");
+        let provider = format!("{dest}/provider");
+        let extracted = format!("{dest}/extracted");
+
+        if std::fs::exists(dest).unwrap() {
+            std::fs::remove_dir_all(dest).unwrap();
+        }
+        std::fs::create_dir_all(&extracted).unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            provider.clone(),
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        let mut store_provider = StoreProvider::create(&provider).unwrap();
+        store_provider
+            .load_all_assets_from_files(false)
+            .await
+            .unwrap();
+
+        let store_provider = Arc::new(Mutex::new(store_provider));
+
+        export_as_konoasset_structured_zip(store_provider, &zip, None)
+            .await
+            .unwrap();
+
+        extractor::extract_zip(&zip, &extracted, |_, _| {})
+            .await
+            .unwrap();
+
+        let src_entries = trim_base(
+            get_flattened_dir_entries(provider.clone()).await.unwrap(),
+            provider.clone(),
+        );
+        let extracted_entries = trim_base(
+            get_flattened_dir_entries(extracted.clone()).await.unwrap(),
+            extracted.clone(),
+        );
+
+        assert_eq!(src_entries, extracted_entries);
+    }
 }

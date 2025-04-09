@@ -87,7 +87,7 @@ pub async fn export_as_konoasset_zip(
         adapter::exporter::export_as_konoasset_structured_zip(
             cloned_basic_store,
             &path,
-            &cloned_app_handle,
+            Some(&cloned_app_handle),
         )
         .await?;
 
@@ -179,7 +179,7 @@ pub async fn export_as_human_readable_zip(
         adapter::exporter::export_as_human_readable_structured_zip(
             cloned_basic_store,
             &path,
-            &cloned_app_handle,
+            Some(&cloned_app_handle),
         )
         .await?;
 
