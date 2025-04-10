@@ -46,7 +46,7 @@ pub fn find_unitypackage<P: AsRef<Path>>(dir: P) -> Result<HashMap<String, Vec<F
             .unwrap_or(OsStr::new(""))
             .to_str()
             .unwrap_or("");
-        if extension != "unitypackage" {
+        if extension.to_ascii_lowercase() != "unitypackage" {
             continue;
         }
 
@@ -115,15 +115,13 @@ mod tests {
         let top = result.get("").unwrap();
         let inside_dir = result.get("test/").unwrap();
 
-        // TODO: Fix the logic and this test. It should find 2 unitypackages, but the function is not case-insensitive.
-        // assert_eq!(top.len(), 2);
-        assert_eq!(top.len(), 1);
+        assert_eq!(top.len(), 2);
 
         assert_eq!(inside_dir.len(), 1);
         assert_eq!(result.get("__MACOSX").is_none(), true);
 
-        assert_eq!(top[0].file_name, normal_filename);
-        // assert_eq!(top[1].file_name, case_insensitive_filename);
+        assert_eq!(top[0].file_name, case_insensitive_filename);
+        assert_eq!(top[1].file_name, normal_filename);
 
         assert_eq!(
             result.get("test/").unwrap()[0].file_name,
