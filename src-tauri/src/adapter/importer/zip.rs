@@ -41,14 +41,19 @@ where
     let _cleanup = DeleteOnDrop::new(temp_dir.clone());
 
     extract_zip(path, temp_dir.clone(), |progress, filename| {
-        if let Some(app) = app_handle.clone() {
-            let emit_result =
-                ProgressEvent::new(progress * 90f32, format!("Extracting: {}", filename))
-                    .emit(&app);
+        let app_handle = app_handle.clone();
 
-            if let Err(e) = emit_result {
-                log::error!("Failed to emit progress event: {}", e);
-            }
+        if app_handle.is_none() {
+            // app_handle will only be None when running in a test environment
+            return;
+        }
+        let app = app_handle.unwrap();
+
+        let emit_result =
+            ProgressEvent::new(progress * 90f32, format!("Extracting: {}", filename)).emit(&app);
+
+        if let Err(e) = emit_result {
+            log::error!("Failed to emit progress event: {}", e);
         }
     })
     .await
@@ -56,18 +61,24 @@ where
 
     let temp_dir_prefix = temp_dir.to_string_lossy().to_string();
     let progress_callback = move |progress: f32, filename: String| {
-        if let Some(app) = app_handle.clone() {
-            let filename = if filename.starts_with(&temp_dir_prefix) {
-                filename[temp_dir_prefix.len()..].to_string()
-            } else {
-                filename
-            };
+        let app_handle = app_handle.clone();
 
-            let emit_result = ProgressEvent::new(90f32 + (progress * 10f32), filename).emit(&app);
+        if app_handle.is_none() {
+            // app_handle will only be None when running in a test environment
+            return;
+        }
+        let app = app_handle.unwrap();
 
-            if let Err(e) = emit_result {
-                log::error!("Failed to emit progress event: {}", e);
-            }
+        let filename = if filename.starts_with(&temp_dir_prefix) {
+            filename[temp_dir_prefix.len()..].to_string()
+        } else {
+            filename
+        };
+
+        let emit_result = ProgressEvent::new(90f32 + (progress * 10f32), filename).emit(&app);
+
+        if let Err(e) = emit_result {
+            log::error!("Failed to emit progress event: {}", e);
         }
     };
 

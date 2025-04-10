@@ -95,9 +95,10 @@ where
                 if app.is_none() {
                     return;
                 }
+                let app = app.unwrap();
 
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
-                if let Err(e) = ProgressEvent::new(percentage, name).emit(app.unwrap()) {
+                if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
                     log::error!("Failed to emit progress event: {:?}", e);
                 }
 
@@ -124,9 +125,10 @@ where
                 if app.is_none() {
                     return;
                 }
+                let app = app.unwrap();
 
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
-                if let Err(e) = ProgressEvent::new(percentage, name).emit(app.unwrap()) {
+                if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
                     log::error!("Failed to emit progress event: {:?}", e);
                 }
 

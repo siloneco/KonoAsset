@@ -25,12 +25,18 @@ where
     P: AsRef<Path>,
 {
     let progress_callback = move |progress, filename| {
-        if let Some(app) = app_handle.clone() {
-            let emit_result = ProgressEvent::new(progress * 100f32, filename).emit(&app);
+        let app_handle = app_handle.clone();
 
-            if let Err(e) = emit_result {
-                log::error!("Failed to emit progress event: {}", e);
-            }
+        if app_handle.is_none() {
+            // app_handle will only be None when running in a test environment
+            return;
+        }
+        let app = app_handle.unwrap();
+
+        let emit_result = ProgressEvent::new(progress * 100f32, filename).emit(&app);
+
+        if let Err(e) = emit_result {
+            log::error!("Failed to emit progress event: {}", e);
         }
     };
 
