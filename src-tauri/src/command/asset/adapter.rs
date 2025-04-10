@@ -36,14 +36,14 @@ pub async fn import_from_other_data_store(
             adapter::importer::import_data_store_from_directory(
                 &mut *basic_store,
                 &path,
-                Some(cloned_app_handle),
+                cloned_app_handle,
             )
             .await?;
         } else {
             adapter::importer::import_data_store_from_zip(
                 &mut *basic_store,
                 &path,
-                Some(cloned_app_handle),
+                cloned_app_handle,
             )
             .await?;
         }
@@ -87,7 +87,7 @@ pub async fn export_as_konoasset_zip(
         adapter::exporter::export_as_konoasset_structured_zip(
             cloned_basic_store,
             &path,
-            Some(&cloned_app_handle),
+            &cloned_app_handle,
         )
         .await?;
 
@@ -133,7 +133,7 @@ pub async fn export_for_avatar_explorer(
         adapter::exporter::export_as_avatar_explorer_compatible_structure(
             cloned_basic_store,
             &path,
-            Some(&cloned_app_handle),
+            &cloned_app_handle,
         )
         .await?;
 
@@ -179,7 +179,7 @@ pub async fn export_as_human_readable_zip(
         adapter::exporter::export_as_human_readable_structured_zip(
             cloned_basic_store,
             &path,
-            Some(&cloned_app_handle),
+            &cloned_app_handle,
         )
         .await?;
 
