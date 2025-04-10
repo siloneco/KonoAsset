@@ -36,14 +36,14 @@ pub async fn import_from_other_data_store(
             adapter::importer::import_data_store_from_directory(
                 &mut *basic_store,
                 &path,
-                cloned_app_handle,
+                Some(cloned_app_handle),
             )
             .await?;
         } else {
             adapter::importer::import_data_store_from_zip(
                 &mut *basic_store,
                 &path,
-                cloned_app_handle,
+                Some(cloned_app_handle),
             )
             .await?;
         }
