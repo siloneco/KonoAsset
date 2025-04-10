@@ -19,13 +19,21 @@ use crate::{
 pub async fn import_data_store_from_directory<P>(
     data_store_provider: &mut StoreProvider,
     path: P,
-    app_handle: AppHandle,
+    app_handle: Option<AppHandle>,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
 {
     let progress_callback = move |progress, filename| {
-        let emit_result = ProgressEvent::new(progress * 100f32, filename).emit(&app_handle);
+        let app_handle = app_handle.clone();
+
+        if app_handle.is_none() {
+            // app_handle will only be None when running in a test environment
+            return;
+        }
+        let app = app_handle.unwrap();
+
+        let emit_result = ProgressEvent::new(progress * 100f32, filename).emit(&app);
 
         if let Err(e) = emit_result {
             log::error!("Failed to emit progress event: {}", e);
@@ -192,4 +200,65 @@ where
     }
 
     return Ok(());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_import_from_directory_fn() {
+        // This test will import sample2 to sample1
+
+        let root = "test/temp/import/directory";
+        let src = "test/temp/import/directory/src";
+        let dest = "test/temp/import/directory/dest";
+
+        if std::fs::exists(root).unwrap() {
+            std::fs::remove_dir_all(root).unwrap();
+        }
+        std::fs::create_dir_all(src).unwrap();
+        std::fs::create_dir_all(dest).unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample2",
+            src,
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            dest,
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        let mut provider = StoreProvider::create(dest).unwrap();
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        assert_eq!(provider.get_avatar_store().get_all().await.len(), 1);
+        assert_eq!(
+            provider.get_avatar_wearable_store().get_all().await.len(),
+            1
+        );
+        assert_eq!(provider.get_world_object_store().get_all().await.len(), 1);
+
+        import_data_store_from_directory(&mut provider, src, None)
+            .await
+            .unwrap();
+
+        assert_eq!(provider.get_avatar_store().get_all().await.len(), 2);
+        assert_eq!(
+            provider.get_avatar_wearable_store().get_all().await.len(),
+            2
+        );
+        assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
+    }
 }

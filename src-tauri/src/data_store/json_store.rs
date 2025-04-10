@@ -2,7 +2,7 @@ use std::{
     collections::{HashMap, HashSet},
     fs::File,
     hash::Hash,
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 use serde::{de::DeserializeOwned, Serialize};
@@ -27,7 +27,9 @@ impl<
         T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
     > JsonStore<T>
 {
-    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
+    pub fn create<P: AsRef<Path>>(data_dir: P) -> Result<Self, String> {
+        let data_dir = data_dir.as_ref();
+
         let path = data_dir.join("metadata");
 
         if !path.exists() {
@@ -36,7 +38,7 @@ impl<
         }
 
         Ok(Self {
-            data_dir: data_dir.clone(),
+            data_dir: data_dir.to_path_buf(),
             assets: Mutex::new(HashSet::new()),
         })
     }
@@ -217,5 +219,133 @@ impl<
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use super::*;
+
+    use crate::{
+        definitions::entities::{AssetDescription, Avatar},
+        file::modify_guard::{self, FileTransferGuard},
+    };
+
+    #[tokio::test]
+    async fn test_json_store_as_avatar() {
+        let data_dir = "test/temp/json_store/avatar";
+
+        if std::fs::exists(data_dir).unwrap() {
+            std::fs::remove_dir_all(data_dir).unwrap();
+        }
+
+        std::fs::create_dir_all(data_dir).unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            data_dir,
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        let store: JsonStore<Avatar> = JsonStore::create(data_dir).unwrap();
+        store.load().await.unwrap();
+
+        let existing_avatar_id = Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap();
+
+        let all_assets = store.get_all().await;
+        assert_eq!(all_assets.len(), 1);
+        assert!(all_assets.iter().any(|a| a.get_id() == existing_avatar_id));
+
+        let avatar = store.get_asset(existing_avatar_id).await.unwrap();
+
+        let expected_avatar = Avatar {
+            id: Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap(),
+            description: AssetDescription {
+                name: "Test Avatar".into(),
+                creator: "Test Avatar Creator".into(),
+                image_filename: Some("843e178b-6865-4834-a51c-ac5f9eccbdbf.jpg".into()),
+                tags: vec!["TestAvatarTag".into()],
+                memo: Some("Test Avatar Memo".into()),
+                booth_item_id: Some(6641548),
+                dependencies: vec![],
+                created_at: 1743606000000,
+                published_at: Some(1735657200000),
+            },
+        };
+
+        assert_eq!(avatar, expected_avatar);
+
+        let new_avatar_uuid = Uuid::new_v4();
+        let new_avatar_dependency_id = Uuid::new_v4();
+        let mut new_avatar = Avatar {
+            id: new_avatar_uuid.clone(),
+            description: AssetDescription {
+                name: "New Test Avatar".into(),
+                creator: "New Test Avatar Creator".into(),
+                image_filename: Some("new_avatar_image.jpg".into()),
+                tags: vec!["NewTestAvatarTag".into()],
+                memo: Some("New Test Avatar Memo".into()),
+                booth_item_id: Some(6641548),
+                dependencies: vec![new_avatar_dependency_id.clone()],
+                created_at: 1234560000000,
+                published_at: Some(1234560000000),
+            },
+        };
+
+        store.add_asset_and_save(new_avatar.clone()).await.unwrap();
+
+        let all_assets = store.get_all().await;
+        assert_eq!(all_assets.len(), 2);
+        assert!(all_assets.iter().any(|a| a.get_id() == new_avatar_uuid));
+        assert_eq!(store.get_asset(new_avatar_uuid).await.unwrap(), new_avatar);
+
+        new_avatar.description.name = "Updated Test Avatar".into();
+
+        store
+            .update_asset_and_save(new_avatar.clone())
+            .await
+            .unwrap();
+
+        let all_assets = store.get_all().await;
+        assert_eq!(all_assets.len(), 2);
+        assert!(all_assets.iter().any(|a| a.get_id() == new_avatar_uuid));
+        assert_eq!(store.get_asset(new_avatar_uuid).await.unwrap(), new_avatar);
+
+        let mut non_existing_avatar = new_avatar.clone();
+        non_existing_avatar.id = Uuid::new_v4();
+
+        assert_eq!(
+            store
+                .update_asset_and_save(non_existing_avatar.clone())
+                .await
+                .unwrap_err(),
+            "Asset not found".to_string()
+        );
+
+        assert_eq!(store.get_all().await.len(), 2);
+
+        store
+            .delete_asset_and_save(existing_avatar_id)
+            .await
+            .unwrap();
+
+        let all_assets = store.get_all().await;
+        assert_eq!(all_assets.len(), 1);
+        assert!(all_assets.iter().any(|a| a.get_id() == new_avatar_uuid));
+        assert!(!all_assets.iter().any(|a| a.get_id() == existing_avatar_id));
+
+        store
+            .delete_dependency(new_avatar_dependency_id)
+            .await
+            .unwrap();
+
+        let fetched_new_avatar = store.get_asset(new_avatar_uuid).await.unwrap();
+        assert_eq!(fetched_new_avatar.description.dependencies.len(), 0);
     }
 }

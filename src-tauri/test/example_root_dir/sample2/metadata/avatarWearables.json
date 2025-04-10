@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "data": [
+    {
+      "id": "bec6ea12-ac07-45a3-8e4e-f597326798c7",
+      "description": {
+        "name": "Test Avatar Wearable",
+        "creator": "Test Avatar Wearable Creator",
+        "imageFilename": "da862928-e988-4cb4-9e4c-fa0d111e55df.jpg",
+        "tags": ["TestAvatarWearableTag"],
+        "memo": "Test Avatar Wearable Memo",
+        "boothItemId": 6641548,
+        "dependencies": [],
+        "createdAt": 1743606000000,
+        "publishedAt": 1735657200000
+      },
+      "category": "TestAvatarWearableCategory",
+      "supportedAvatars": ["Avatar1", "Avatar2", "Avatar3"]
+    }
+  ]
+}

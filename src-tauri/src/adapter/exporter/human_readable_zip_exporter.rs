@@ -19,7 +19,7 @@ use super::util::{get_category_based_assets, new_zip_dir};
 pub async fn export_as_human_readable_structured_zip<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
     path: P,
-    app: &AppHandle,
+    app: Option<&AppHandle>,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
@@ -49,9 +49,11 @@ where
         let name = avatar.asset.description.name;
         let booth_id = avatar.asset.description.booth_item_id;
 
-        let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
-        if let Err(e) = ProgressEvent::new(percentage, name.clone()).emit(app) {
-            log::error!("Failed to emit progress event: {:?}", e);
+        if let Some(app) = app {
+            let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
+            if let Err(e) = ProgressEvent::new(percentage, name.clone()).emit(app) {
+                log::error!("Failed to emit progress event: {:?}", e);
+            }
         }
 
         let item_path = format!("Avatars/{}/", sanitize_filename::sanitize(&name));
@@ -90,6 +92,11 @@ where
             avatar_wearables.get(key).unwrap(),
             "AvatarWearables/",
             |name| {
+                if app.is_none() {
+                    return;
+                }
+                let app = app.unwrap();
+
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
                 if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
                     log::error!("Failed to emit progress event: {:?}", e);
@@ -115,6 +122,11 @@ where
             world_objects.get(key).unwrap(),
             "WorldObjects/",
             |name| {
+                if app.is_none() {
+                    return;
+                }
+                let app = app.unwrap();
+
                 let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
                 if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
                     log::error!("Failed to emit progress event: {:?}", e);
@@ -229,4 +241,81 @@ URL=";
     data.extend_from_slice(format!("https://booth.pm/ja/items/{}/\n", booth_id).as_bytes());
 
     data
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        file::modify_guard::{self, FileTransferGuard},
+        zip::extractor,
+    };
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_human_readable_export_fn() {
+        let dest = "test/temp/export/human_readable";
+        let zip = format!("{dest}/exported.zip");
+        let extracted = format!("{dest}/extracted");
+        let provider = format!("{dest}/provider");
+
+        if std::fs::exists(dest).unwrap() {
+            std::fs::remove_dir_all(dest).unwrap();
+        }
+        std::fs::create_dir_all(&extracted).unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            provider.clone(),
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        let mut provider = StoreProvider::create(&provider).unwrap();
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        let provider = Arc::new(Mutex::new(provider));
+
+        export_as_human_readable_structured_zip(provider, &zip, None)
+            .await
+            .unwrap();
+
+        assert!(std::fs::exists(&zip).unwrap());
+
+        extractor::extract_zip(&zip, &extracted, |_, _| {})
+            .await
+            .unwrap();
+
+        assert_eq!(std::fs::read_dir(&extracted).unwrap().count(), 3);
+
+        let avatar = format!("{extracted}/Avatars/Test Avatar");
+        let avatar_wearable =
+            format!("{extracted}/AvatarWearables/TestAvatarWearableCategory/Test Avatar Wearable");
+        let world_object = format!("{extracted}/WorldObjects/TestCategory/Test World Object");
+
+        assert!(std::fs::exists(format!("{avatar}/Booth.url")).unwrap());
+        assert!(std::fs::exists(format!("{avatar_wearable}/Booth.url")).unwrap());
+        assert!(std::fs::exists(format!("{world_object}/Booth.url")).unwrap());
+
+        assert!(std::fs::exists(format!("{avatar}/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{avatar_wearable}/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{world_object}/dummy.txt")).unwrap());
+
+        assert_eq!(
+            std::fs::read_to_string(format!("{avatar}/Booth.url"))
+                .unwrap()
+                .trim(),
+            r#"
+[{000214A0-0000-0000-C000-000000000046}]
+Prop3=19,11
+[InternetShortcut]
+IDList=
+URL=https://booth.pm/ja/items/6641548/
+"#
+            .trim()
+        );
+    }
 }

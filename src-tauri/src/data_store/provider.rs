@@ -32,13 +32,15 @@ pub struct StoreProvider {
 }
 
 impl StoreProvider {
-    pub fn create(data_dir: &PathBuf) -> Result<Self, String> {
-        let avatar_store: JsonStore<Avatar> = JsonStore::create(data_dir)?;
-        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(data_dir)?;
-        let world_object_store: JsonStore<WorldObject> = JsonStore::create(data_dir)?;
+    pub fn create<T: AsRef<Path>>(data_dir: T) -> Result<Self, String> {
+        let data_dir = data_dir.as_ref().to_path_buf();
+
+        let avatar_store: JsonStore<Avatar> = JsonStore::create(&data_dir)?;
+        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(&data_dir)?;
+        let world_object_store: JsonStore<WorldObject> = JsonStore::create(&data_dir)?;
 
         Ok(Self {
-            data_dir: data_dir.clone(),
+            data_dir,
 
             avatar_store: avatar_store,
             avatar_wearable_store: avatar_wearable_store,
@@ -116,6 +118,17 @@ impl StoreProvider {
     where
         P: AsRef<Path>,
     {
+        self.internal_migrate_data_dir(Some(app), new_path).await
+    }
+
+    async fn internal_migrate_data_dir<P>(
+        &mut self,
+        app: Option<&AppHandle>,
+        new_path: P,
+    ) -> Result<MigrateResult, String>
+    where
+        P: AsRef<Path>,
+    {
         let new_path = new_path.as_ref();
 
         if !new_path.is_dir() {
@@ -160,12 +173,14 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
-                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
-                    let percentage = progress * 10f32;
+                    if let Some(app) = app {
+                        // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
+                        // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                        let percentage = progress * 10f32;
 
-                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                        log::error!("Failed to emit progress event: {:?}", e);
+                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                            log::error!("Failed to emit progress event: {:?}", e);
+                        }
                     }
                 },
             )
@@ -194,12 +209,14 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    // プログレスバーのうち 8/10 をデータのコピーとして扱う
-                    // progress は 0 - 1 の範囲であるため、80倍して % に変換する
-                    let percentage = 10f32 + (progress * 80f32);
+                    if let Some(app) = app {
+                        // プログレスバーのうち 8/10 をデータのコピーとして扱う
+                        // progress は 0 - 1 の範囲であるため、80倍して % に変換する
+                        let percentage = 10f32 + (progress * 80f32);
 
-                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                        log::error!("Failed to emit progress event: {:?}", e);
+                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                            log::error!("Failed to emit progress event: {:?}", e);
+                        }
                     }
                 },
             )
@@ -228,12 +245,14 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    // プログレスバーのうち 1/10 を画像のコピーとして扱う
-                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
-                    let percentage = 90f32 + (progress * 10f32);
+                    if let Some(app) = app {
+                        // プログレスバーのうち 1/10 を画像のコピーとして扱う
+                        // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                        let percentage = 90f32 + (progress * 10f32);
 
-                    if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                        log::error!("Failed to emit progress event: {:?}", e);
+                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
+                            log::error!("Failed to emit progress event: {:?}", e);
+                        }
                     }
                 },
             )
@@ -323,7 +342,9 @@ pub enum MigrateResult {
     MigratedButFailedToDeleteOldDir,
 }
 
-async fn rename_conflict_dir(path: &PathBuf) -> Result<(), std::io::Error> {
+async fn rename_conflict_dir<P: AsRef<Path>>(path: P) -> Result<(), std::io::Error> {
+    let path = path.as_ref();
+
     let filename = path
         .file_name()
         .unwrap_or(OsStr::new("conflicted"))
@@ -454,4 +475,126 @@ async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use super::*;
+
+    async fn setup_dir<P, Q>(from: P, target: Q)
+    where
+        P: AsRef<Path>,
+        Q: AsRef<Path>,
+    {
+        let target = target.as_ref().to_path_buf();
+        let from = from.as_ref().to_path_buf();
+
+        if target.exists() {
+            std::fs::remove_dir_all(&target).unwrap();
+        }
+
+        modify_guard::copy_dir(from, target, false, FileTransferGuard::none(), |_, _| {})
+            .await
+            .unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_store_provider() {
+        let from_one = "test/example_root_dir/sample1";
+        let from_two = "test/example_root_dir/sample2";
+
+        let base_dest = "test/temp/store_provider";
+
+        let target_one = format!("{base_dest}/one");
+        let target_two = format!("{base_dest}/two");
+
+        setup_dir(from_one, &target_one).await;
+        setup_dir(from_two, &target_two).await;
+
+        let mut provider = StoreProvider::create(&target_one).unwrap();
+
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        let ids = provider.get_used_ids().await;
+
+        assert_eq!(ids.len(), 3);
+        assert!(ids.contains(&Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap()));
+        assert!(ids.contains(&Uuid::from_str("2bde4d66-1843-4250-b929-157f947f5751").unwrap()));
+        assert!(ids.contains(&Uuid::from_str("c155488e-53bf-4c98-92e5-e5c8f66a1667").unwrap()));
+
+        let mut external_provider = StoreProvider::create(&target_two).unwrap();
+        external_provider
+            .load_all_assets_from_files(false)
+            .await
+            .unwrap();
+
+        let mut duplicate_ids = HashMap::new();
+        duplicate_ids.insert(
+            Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap(),
+            Uuid::from_str("c4b56003-0a93-405d-a4ed-054cb06fb778").unwrap(),
+        );
+
+        provider
+            .merge_from(&external_provider, &duplicate_ids)
+            .await
+            .unwrap();
+
+        assert_eq!(provider.get_used_ids().await.len(), 6);
+        assert_eq!(provider.get_avatar_store().get_all().await.len(), 2);
+        assert_eq!(
+            provider.get_avatar_wearable_store().get_all().await.len(),
+            2
+        );
+        assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
+
+        let mut avatars = provider.get_avatar_store().get_all().await.into_iter();
+        assert_ne!(
+            avatars.next().unwrap().get_id(),
+            avatars.next().unwrap().get_id()
+        );
+    }
+
+    #[tokio::test]
+    async fn test_store_provider_migration() {
+        let from = "test/example_root_dir/sample1";
+        let current_path = "test/temp/store_provider_migration/current";
+        let new_path = "test/temp/store_provider_migration/new";
+
+        setup_dir(from, current_path).await;
+        std::fs::create_dir_all(new_path).unwrap();
+
+        let mut provider = StoreProvider::create(&current_path).unwrap();
+
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        let result = provider
+            .internal_migrate_data_dir(None, new_path)
+            .await
+            .unwrap();
+
+        assert_eq!(result, MigrateResult::Migrated);
+    }
+
+    #[tokio::test]
+    async fn test_rename_conflict_dir() {
+        let base = "test/temp/rename_conflict_dir";
+
+        if std::fs::exists(base).unwrap() {
+            std::fs::remove_dir_all(base).unwrap();
+        }
+
+        let path = format!("{base}/test_dir");
+
+        std::fs::create_dir_all(&path).unwrap();
+        rename_conflict_dir(&path).await.unwrap();
+
+        assert!(std::fs::exists(format!("{path}_backup")).unwrap());
+
+        std::fs::create_dir_all(&path).unwrap();
+        rename_conflict_dir(&path).await.unwrap();
+
+        assert!(std::fs::exists(format!("{path}_backup_1")).unwrap());
+    }
 }

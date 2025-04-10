@@ -138,3 +138,54 @@ where
 fn decode_as_shift_jis(name: &[u8]) -> String {
     encoding_rs::SHIFT_JIS.decode(name).0.to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_extract_normal_zip() {
+        let src = "test/zip/normal.zip";
+        let dest = "test/temp/extracted-normal-zip";
+
+        if std::fs::exists(dest).unwrap() {
+            tokio::fs::remove_dir_all(dest).await.unwrap();
+        }
+
+        let progress_callback = |_, _| {};
+
+        extract_zip(src, dest, progress_callback).await.unwrap();
+
+        let dummy1_txt_path = format!("{dest}/dummy1.txt");
+        let dummy2_txt_path = format!("{dest}/dummy-dir/dummy2.txt");
+
+        assert!(std::fs::exists(&dummy1_txt_path).unwrap());
+        assert!(std::fs::exists(&dummy2_txt_path).unwrap());
+
+        assert_eq!(std::fs::read_to_string(&dummy1_txt_path).unwrap(), "dummy1");
+        assert_eq!(std::fs::read_to_string(&dummy2_txt_path).unwrap(), "dummy2");
+    }
+
+    #[tokio::test]
+    async fn test_extract_shift_jis_zip() {
+        let src = "test/zip/shift-jis.zip";
+        let dest = "test/temp/extracted-shift-jis-zip";
+
+        if std::fs::exists(dest).unwrap() {
+            tokio::fs::remove_dir_all(dest).await.unwrap();
+        }
+
+        let progress_callback = |_, _| {};
+
+        extract_zip(src, dest, progress_callback).await.unwrap();
+
+        let dummy1_txt_path = format!("{dest}/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル1.txt");
+        let dummy2_txt_path = format!("{dest}/確認用フォルダ/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル2.txt");
+
+        assert!(std::fs::exists(&dummy1_txt_path).unwrap());
+        assert!(std::fs::exists(&dummy2_txt_path).unwrap());
+
+        assert_eq!(std::fs::read_to_string(&dummy1_txt_path).unwrap(), "dummy1");
+        assert_eq!(std::fs::read_to_string(&dummy2_txt_path).unwrap(), "dummy2");
+    }
+}

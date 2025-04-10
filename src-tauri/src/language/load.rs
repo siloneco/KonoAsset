@@ -27,3 +27,20 @@ pub fn load_from_language_code(language: LanguageCode) -> Result<LocalizationDat
 
     Ok(data)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_load_language_files() {
+        let ja_jp = load_from_language_code(LanguageCode::JaJp).unwrap();
+        assert_eq!(ja_jp.language, LanguageCode::JaJp);
+
+        let en_us = load_from_language_code(LanguageCode::EnUs).unwrap();
+        assert_eq!(en_us.language, LanguageCode::EnUs);
+
+        let en_gb = load_from_language_code(LanguageCode::EnGb).unwrap();
+        assert_eq!(en_gb.language, LanguageCode::EnGb);
+    }
+}

@@ -1,6 +1,6 @@
 use std::{path::PathBuf, sync::Arc};
 
-use tauri::{async_runtime::Mutex, AppHandle, State};
+use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
 use crate::{
@@ -15,7 +15,6 @@ use crate::{
 pub async fn import_file_entries_to_asset(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
-    handle: State<'_, AppHandle>,
     asset_id: Uuid,
     paths: Vec<String>,
 ) -> Result<Vec<Uuid>, String> {
@@ -24,19 +23,16 @@ pub async fn import_file_entries_to_asset(
     for path in paths {
         let basic_store = (*basic_store).clone();
 
-        let id = task_container
-            .lock()
-            .await
-            .run((*handle).clone(), async move {
-                let result = import_additional_data(basic_store, asset_id, path).await;
+        let id = task_container.lock().await.run(async move {
+            let result = import_additional_data(basic_store, asset_id, path).await;
 
-                if let Err(e) = result {
-                    log::error!("Failed to import additional data: {:?}", e);
-                    return Err(e);
-                }
+            if let Err(e) = result {
+                log::error!("Failed to import additional data: {:?}", e);
+                return Err(e);
+            }
 
-                Ok(())
-            })?;
+            Ok(())
+        })?;
 
         task_ids.push(id);
     }
@@ -60,7 +56,7 @@ pub async fn copy_image_file_to_images(
         let store = basic_store.lock().await;
         store.data_dir().join("images")
     };
-    
+
     if !images_dir.exists() {
         std::fs::create_dir_all(&images_dir).map_err(|e| {
             log::error!("Failed to create images directory: {:?}", e);
