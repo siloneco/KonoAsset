@@ -62,10 +62,10 @@ pub fn run() {
     #[cfg(desktop)]
     {
         tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, args, _| {
-            let _ = app
-                .get_webview_window("main")
-                .expect("no main window")
-                .set_focus();
+            let window = app.get_webview_window("main").expect("no main window");
+
+            let _ = window.unminimize();
+            let _ = window.set_focus();
 
             let deep_links = parse_args_to_deep_links(&args);
             execute_deep_links(&app, &deep_links);
