@@ -77,7 +77,7 @@ const BoothInputTabForAddDialog = ({
           </Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
-              placeholder="https://booth.pm/ja/items/1234567"
+              placeholder="https://booth.pm/ja/items/6641548"
               value={boothUrlInput}
               onChange={onUrlInputChange}
               disabled={fetching}

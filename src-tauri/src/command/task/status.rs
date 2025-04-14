@@ -11,8 +11,8 @@ pub async fn get_task_status(
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     id: Uuid,
 ) -> Result<TaskStatus, String> {
-    let mut container = task_container.lock().await;
-    let task = container.get(id).await;
+    let container = task_container.lock().await;
+    let task = container.get(&id).await;
 
     match task {
         Some(task) => {
@@ -24,7 +24,7 @@ pub async fn get_task_status(
             let err = format!("Task not found: {:?}", id);
             log::error!("{}", err);
             Err(err)
-        },
+        }
     }
 }
 
@@ -34,8 +34,8 @@ pub async fn cancel_task_request(
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     id: Uuid,
 ) -> Result<TaskStatus, String> {
-    let mut container = task_container.lock().await;
-    let task = container.get(id).await;
+    let container = task_container.lock().await;
+    let task = container.get(&id).await;
 
     match task {
         Some(task) => {
@@ -47,7 +47,7 @@ pub async fn cancel_task_request(
             let err = format!("Task not found: {:?}", id);
             log::error!("{}", err);
             Err(err)
-        },
+        }
     }
 }
 
@@ -57,8 +57,8 @@ pub async fn get_task_error(
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     id: Uuid,
 ) -> Result<Option<String>, String> {
-    let mut container = task_container.lock().await;
-    let task = container.get(id).await;
+    let container = task_container.lock().await;
+    let task = container.get(&id).await;
 
     match task {
         Some(task) => {
@@ -70,6 +70,6 @@ pub async fn get_task_error(
             let err = format!("Task not found: {:?}", id);
             log::error!("{}", err);
             Err(err)
-        },
+        }
     }
 }

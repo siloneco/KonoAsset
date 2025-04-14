@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "data": [
+    {
+      "id": "c155488e-53bf-4c98-92e5-e5c8f66a1667",
+      "description": {
+        "name": "Test World Object",
+        "creator": "Test World Object Creator",
+        "imageFilename": "755b106d-8f88-4135-bc3c-ef076bc92f30.jpg",
+        "tags": ["TestWorldObjectTag"],
+        "memo": "Test World Object Memo",
+        "boothItemId": 6641548,
+        "dependencies": [],
+        "createdAt": 1743606000000,
+        "publishedAt": 1735657200000
+      },
+      "category": "TestCategory"
+    }
+  ]
+}

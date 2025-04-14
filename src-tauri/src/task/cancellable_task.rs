@@ -15,7 +15,7 @@ pub struct CancellableTask {
 }
 
 impl CancellableTask {
-    fn create<F>(handle: AppHandle, task: F) -> Self
+    fn create<F>(app_handle: Option<AppHandle>, task: F) -> Self
     where
         F: Future<Output = Result<(), String>> + Send + 'static,
     {
@@ -46,8 +46,10 @@ impl CancellableTask {
                 *status = TaskStatus::Cancelled;
             };
 
-            if let Err(e) = TaskStatusChanged::new(id, *status).emit(&handle) {
-                log::error!("Failed to emit TaskStatusChanged event: {}", e);
+            if let Some(app_handle) = app_handle {
+                if let Err(e) = TaskStatusChanged::new(id, *status).emit(&app_handle) {
+                    log::error!("Failed to emit TaskStatusChanged event: {}", e);
+                }
             }
         });
 
@@ -81,19 +83,31 @@ impl CancellableTask {
 }
 
 pub struct TaskContainer {
+    app_handle: Option<AppHandle>,
     tasks: Vec<Arc<Mutex<CancellableTask>>>,
 }
 
 impl TaskContainer {
-    pub fn new() -> Self {
-        Self { tasks: vec![] }
+    pub fn new(app_handle: AppHandle) -> Self {
+        Self {
+            app_handle: Some(app_handle),
+            tasks: vec![],
+        }
     }
 
-    pub fn run<F>(&mut self, app_handle: AppHandle, task: F) -> Result<Uuid, String>
+    #[cfg(test)]
+    fn new_without_app_handle() -> Self {
+        Self {
+            app_handle: None,
+            tasks: vec![],
+        }
+    }
+
+    pub fn run<F>(&mut self, task: F) -> Result<Uuid, String>
     where
         F: Future<Output = Result<(), String>> + Send + 'static,
     {
-        let task = CancellableTask::create(app_handle, task);
+        let task = CancellableTask::create(self.app_handle.clone(), task);
 
         let id = task.id;
         self.tasks.push(Arc::new(Mutex::new(task)));
@@ -101,15 +115,45 @@ impl TaskContainer {
         Ok(id)
     }
 
-    pub async fn get(&mut self, id: Uuid) -> Option<Arc<Mutex<CancellableTask>>> {
+    pub async fn get(&self, id: &Uuid) -> Option<Arc<Mutex<CancellableTask>>> {
         for task in &self.tasks {
-            let task_clone = Arc::clone(task);
-            let task = task.lock().await;
-            if task.id == id {
-                return Some(task_clone);
+            let task_id = &task.lock().await.id;
+            if task_id == id {
+                return Some(Arc::clone(task));
             }
         }
 
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_task_container() {
+        let mut task_container = TaskContainer::new_without_app_handle();
+
+        let task_id = task_container
+            .run(async {
+                tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+                Ok(())
+            })
+            .unwrap();
+
+        {
+            let task = task_container.get(&task_id).await.unwrap();
+            let status = task.lock().await.get_status().await;
+            assert_eq!(status, TaskStatus::Running);
+        }
+
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+
+        {
+            let task = task_container.get(&task_id).await.unwrap();
+            let status = task.lock().await.get_status().await;
+            assert_eq!(status, TaskStatus::Completed);
+        }
     }
 }

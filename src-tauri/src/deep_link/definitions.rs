@@ -29,12 +29,12 @@ pub enum DeepLinkAction {
 #[derive(Serialize, Debug, Clone, specta::Type, tauri_specta::Event)]
 #[serde(rename_all = "camelCase")]
 pub struct AddAssetDeepLink {
-    path: PathBuf,
-    booth_item_id: Option<u64>,
+    pub path: Vec<PathBuf>,
+    pub booth_item_id: Option<u64>,
 }
 
 impl AddAssetDeepLink {
-    pub fn new(path: PathBuf, booth_item_id: Option<u64>) -> Self {
+    pub fn new(path: Vec<PathBuf>, booth_item_id: Option<u64>) -> Self {
         Self {
             path,
             booth_item_id,

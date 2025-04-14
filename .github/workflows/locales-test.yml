@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "locales/**"
+      - ".github/workflows/locales-test.yml"
     branches:
       - "main"
       - "pre-release"
@@ -14,6 +15,7 @@ on:
       - synchronize
     paths:
       - "locales/**"
+      - ".github/workflows/locales-test.yml"
 
 permissions:
   contents: read

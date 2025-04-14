@@ -72,3 +72,54 @@ where
         .await
         .map_err(|e| e.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::file::modify_guard::{self, FileTransferGuard};
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_category_based_assets() {
+        let provider = "test/temp/adapter/util";
+
+        if std::fs::exists(provider).unwrap() {
+            std::fs::remove_dir_all(provider).unwrap();
+        }
+        std::fs::create_dir_all(provider).unwrap();
+
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            provider,
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
+
+        let mut provider = StoreProvider::create(provider).unwrap();
+        provider.load_all_assets_from_files(false).await.unwrap();
+
+        let provider = Arc::new(Mutex::new(provider));
+
+        let category_based_assets = get_category_based_assets(provider).await;
+
+        let avatars = category_based_assets.avatars;
+        let avatar_wearables = category_based_assets.avatar_wearables;
+        let world_objects = category_based_assets.world_objects;
+
+        assert_eq!(avatars.len(), 1);
+        assert_eq!(avatar_wearables.len(), 1);
+        assert_eq!(world_objects.len(), 1);
+
+        assert_eq!(
+            avatar_wearables
+                .get("TestAvatarWearableCategory")
+                .unwrap()
+                .len(),
+            1
+        );
+        assert_eq!(world_objects.get("TestCategory").unwrap().len(), 1);
+    }
+}

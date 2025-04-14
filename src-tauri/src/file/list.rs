@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::path::{Path, PathBuf};
 
-#[derive(Serialize, Debug, specta::Type)]
+#[derive(Serialize, Debug, PartialEq, Eq, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub enum EntryType {
     Directory,
@@ -78,4 +78,46 @@ pub async fn list_top_files_and_directories<P: AsRef<Path>>(
     }
 
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_list_top_files_and_directories() {
+        let path = "test/temp/list_top_files_and_directories";
+        let absolute_path = std::path::absolute(path).unwrap();
+
+        if std::fs::exists(path).unwrap() {
+            std::fs::remove_dir_all(path).unwrap();
+        }
+
+        std::fs::create_dir_all(path).unwrap();
+
+        std::fs::write(format!("{}/file1.txt", path), b"dummy").unwrap();
+        std::fs::write(format!("{}/file2.txt", path), b"dummy").unwrap();
+        std::fs::create_dir(format!("{}/dir1", path)).unwrap();
+        std::fs::write(format!("{}/dir1/file3.txt", path), b"dummy").unwrap();
+
+        let result = list_top_files_and_directories(path).await.unwrap();
+
+        assert_eq!(result.len(), 3);
+
+        assert!(result
+            .iter()
+            .any(|entry| entry.entry_type == EntryType::Directory
+                && entry.name == "dir1"
+                && entry.absolute_path == absolute_path.join("dir1")));
+        assert!(result
+            .iter()
+            .any(|entry| entry.entry_type == EntryType::File
+                && entry.name == "file1.txt"
+                && entry.absolute_path == absolute_path.join("file1.txt")));
+        assert!(result
+            .iter()
+            .any(|entry| entry.entry_type == EntryType::File
+                && entry.name == "file2.txt"
+                && entry.absolute_path == absolute_path.join("file2.txt")));
+    }
 }
