@@ -459,7 +459,7 @@ updateProgress: "update-progress"
 
 /** user-defined types **/
 
-export type AddAssetDeepLink = { path: string; boothItemId: number | null }
+export type AddAssetDeepLink = { path: string[]; boothItemId: number | null }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }

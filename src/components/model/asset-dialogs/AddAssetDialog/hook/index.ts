@@ -308,7 +308,7 @@ const useAddAssetDialog = ({
 
           clearForm()
 
-          setAssetPaths([path])
+          setAssetPaths(path)
           form.setValue('boothItemId', boothItemId)
 
           setTab('booth-input')
