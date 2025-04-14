@@ -30,6 +30,13 @@ impl LanguageCode {
             LanguageCode::EnGb => "en-GB",
         }
     }
+
+    pub fn booth_lang_code(&self) -> &str {
+        match self {
+            LanguageCode::JaJp => "ja",
+            LanguageCode::EnUs | LanguageCode::EnGb => "en",
+        }
+    }
 }
 
 #[serde_as]

@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use tauri::{async_runtime::Mutex, State};
 
-use crate::booth::{fetcher::BoothFetcher, image_resolver::PximgResolver, BoothAssetInfo};
+use crate::{
+    booth::{fetcher::BoothFetcher, image_resolver::PximgResolver, BoothAssetInfo},
+    preference::store::PreferenceStore,
+};
 
 #[tauri::command]
 #[specta::specta]
@@ -48,4 +51,21 @@ pub async fn resolve_pximg_filename(
         log::error!("Failed to resolve pximg filename: {}", e);
         e.to_string()
     })
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_booth_url(
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
+    id: u64,
+) -> Result<String, String> {
+    let app_lang_code = {
+        let preference = preference.lock().await;
+        preference.language.clone()
+    };
+
+    let booth_lang_code = app_lang_code.booth_lang_code();
+    let booth_url = format!("https://booth.pm/{}/items/{}", booth_lang_code, id);
+
+    Ok(booth_url)
 }

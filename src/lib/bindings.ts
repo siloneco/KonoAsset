@@ -185,6 +185,14 @@ async resolvePximgFilename(url: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getBoothUrl(id: number) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_booth_url", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async checkForUpdate() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("check_for_update") };

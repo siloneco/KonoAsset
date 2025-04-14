@@ -24,14 +24,14 @@ import {
   Folder,
   Trash2,
 } from 'lucide-react'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import {
   TooltipProvider,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
-import { cn, convertToBoothURL } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocalization } from '@/hooks/use-localization'
 import { commands } from '@/lib/bindings'
 import { AssetContext } from '@/components/context/AssetContext'
@@ -52,6 +52,7 @@ export const MoreButton = ({
 }: Props) => {
   const [deleting, setDeleting] = useState(false)
   const [dialogOpened, setDialogOpened] = useState(false)
+  const [boothUrl, setBoothUrl] = useState<string | undefined>(undefined)
 
   const { toast } = useToast()
   const { deleteAssetById } = useContext(AssetContext)
@@ -85,8 +86,23 @@ export const MoreButton = ({
   }
   const { t } = useLocalization()
 
-  const boothUrl =
-    boothItemID !== undefined ? convertToBoothURL(boothItemID) : undefined
+  const updateBoothUrl = async (id: number) => {
+    const result = await commands.getBoothUrl(id)
+    if (result.status === 'ok') {
+      setBoothUrl(result.data)
+    } else {
+      setBoothUrl(undefined)
+    }
+  }
+
+  useEffect(() => {
+    if (boothItemID === undefined) {
+      setBoothUrl(undefined)
+      return
+    }
+
+    updateBoothUrl(boothItemID)
+  }, [boothItemID])
 
   return (
     <DropdownMenu>
