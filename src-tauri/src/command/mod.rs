@@ -38,6 +38,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         // 外部API関連
         external::booth::get_asset_info_from_booth, // BOOTHからアセット情報を取得する
         external::booth::resolve_pximg_filename,
+        external::booth::get_booth_url,
         // アップデート関連
         update::common::check_for_update,
         update::common::download_update,
