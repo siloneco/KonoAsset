@@ -47,13 +47,14 @@ pub fn parse(args: &Vec<String>) -> Vec<DeepLinkAction> {
 fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
     let queries = url.query_pairs();
 
-    let mut path = None;
+    let mut path = vec![];
     let mut booth_item_id = None;
 
     for (key, value) in queries {
         match key.to_ascii_lowercase().as_ref() {
             "path" | "dir" | "file" => {
-                path = Some(PathBuf::from(value.as_ref()));
+                let value = PathBuf::from(value.as_ref());
+                path.push(value);
             }
             "id" | "boothid" | "boothitemid" => {
                 let id = value.parse::<u64>();
@@ -73,12 +74,12 @@ fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
         }
     }
 
-    if path.is_none() {
+    if path.len() <= 0 {
         log::error!("Path is not specified in add-asset deep link");
         return None;
     }
 
-    Some(AddAssetDeepLink::new(path.unwrap(), booth_item_id))
+    Some(AddAssetDeepLink::new(path, booth_item_id))
 }
 
 #[cfg(test)]
@@ -89,7 +90,8 @@ mod tests {
     fn test_parse() {
         let parsed = parse(&vec![
             "konoasset.exe".to_string(),
-            "konoasset://add-asset?path=.%2Ftest.txt&boothItemId=123".to_string(),
+            "konoasset://add-asset?path=.%2Ftest1.txt&path=.%2Ftest2.txt&boothItemId=123"
+                .to_string(),
         ]);
 
         assert_eq!(parsed.len(), 1);
@@ -97,7 +99,8 @@ mod tests {
 
         let DeepLinkAction::AddAsset(info) = &parsed[0];
 
-        assert_eq!(info.path, PathBuf::from("./test.txt"));
+        let expected_path = vec![PathBuf::from("./test1.txt"), PathBuf::from("./test2.txt")];
+        assert_eq!(info.path, expected_path);
         assert_eq!(info.booth_item_id, Some(123));
     }
 }
