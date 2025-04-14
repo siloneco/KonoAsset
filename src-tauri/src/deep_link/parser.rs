@@ -74,7 +74,7 @@ fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
         }
     }
 
-    if path.len() <= 0 {
+    if path.is_empty() {
         log::error!("Path is not specified in add-asset deep link");
         return None;
     }
