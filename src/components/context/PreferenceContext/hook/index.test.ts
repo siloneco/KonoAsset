@@ -46,6 +46,8 @@ describe('PreferenceContext Hook', () => {
 
     // Wait for the useEffect to finish
     await waitFor(() => expect(mockGetPreferences).toHaveBeenCalledOnce())
+    // Wait for the preference to be set
+    await new Promise((resolve) => setTimeout(resolve, 10))
 
     expect(result.current.preferenceContextValue.preference).toEqual(
       mockPreference,

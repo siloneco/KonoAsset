@@ -74,7 +74,7 @@ describe('BoothInputTab', () => {
     expect(moveToNextTab).toHaveBeenCalledOnce()
 
     const inputTarget = screen.getByPlaceholderText(
-      'https://booth.pm/ja/items/1234567',
+      'https://booth.pm/ja/items/6641548',
     )
 
     // Check input change works correctly

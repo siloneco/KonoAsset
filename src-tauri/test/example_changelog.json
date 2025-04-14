@@ -1,0 +1,110 @@
+[
+  {
+    "version": "2.0.0",
+    "features": [
+      {
+        "text": "v2.0.0 Feature 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v2.0.0 新機能 1"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "v2.0.0 Fix 1",
+        "langs": [
+          {
+            "lang": "ja-JP",
+            "text": "v2.0.0 修正 1"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "v2.0.0 Other change 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v2.0.0 他の変更 1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.5.0",
+    "features": [
+      {
+        "text": "v1.5.0 Feature 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v1.5.0 新機能 1"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "v1.5.0 Fix 1",
+        "langs": [
+          {
+            "lang": "ja-JP",
+            "text": "v1.5.0 修正 1"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "v1.5.0 Other change 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v1.5.0 他の変更 1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "features": [
+      {
+        "text": "v1.0.0 Feature 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v1.0.0 新機能 1"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "v1.0.0 Fix 1",
+        "langs": [
+          {
+            "lang": "ja-JP",
+            "text": "v1.0.0 修正 1"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "v1.0.0 Other change 1",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "v1.0.0 他の変更 1"
+          }
+        ]
+      }
+    ]
+  }
+]

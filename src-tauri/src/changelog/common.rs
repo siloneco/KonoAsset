@@ -7,7 +7,11 @@ use crate::language::structs::LanguageCode;
 use super::definitions::{ChangelogEntry, ChangelogVersion, LocalizedChanges};
 
 const URL: &str = "https://releases.konoasset.dev/manifests/changelog.json";
+
+#[cfg(not(test))]
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+#[cfg(test)]
+const VERSION: &str = "1.5.0";
 
 pub async fn fetch_and_parse_changelog() -> Result<Vec<ChangelogVersion>, String> {
     let changelog_body = fetch_changelogs().await?;
@@ -132,8 +136,29 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn test_parse_changelog() {
+    async fn test_changelog_json() {
         let text_changelog = include_str!("../../../changelog.json");
         parse_changelog(text_changelog).await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_pick_changes_in_preferred_lang() {
+        let example = parse_changelog(include_str!("../../test/example_changelog.json"))
+            .await
+            .unwrap();
+
+        let result = pick_changes_in_preferred_lang(example, "2.0.0", &LanguageCode::JaJp, false)
+            .await
+            .unwrap();
+
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].version, "2.0.0");
+        assert_eq!(result[0].pre_release, false);
+        assert_eq!(result[0].features.len(), 1);
+        assert_eq!(result[0].fixes.len(), 1);
+        assert_eq!(result[0].others.len(), 1);
+        assert_eq!(result[0].features[0], "v2.0.0 新機能 1");
+        assert_eq!(result[0].fixes[0], "v2.0.0 修正 1");
+        assert_eq!(result[0].others[0], "v2.0.0 他の変更 1");
     }
 }

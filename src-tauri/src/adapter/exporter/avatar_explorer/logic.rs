@@ -3,7 +3,6 @@ use std::{
     sync::Arc,
 };
 
-use serde::Serialize;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::{
@@ -13,42 +12,21 @@ use tokio::{
 };
 
 use crate::{
+    adapter::exporter::util::get_category_based_assets,
     data_store::provider::StoreProvider,
-    definitions::entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
+    definitions::entities::ProgressEvent,
     file::{
         cleanup::DeleteOnDrop,
         modify_guard::{self, FileTransferGuard},
     },
 };
 
-use super::util::get_category_based_assets;
-
-#[derive(Serialize)]
-#[serde(rename_all = "PascalCase")]
-struct AvatarExplorerItem {
-    title: String,
-    author_name: String,
-    item_memo: String,
-    author_id: String,
-    booth_id: i64,
-    item_path: String,
-    material_path: String,
-    thumbnail_url: String,
-    image_path: String,
-    author_image_url: String,
-    author_image_file_path: String,
-    #[serde(rename = "Type")]
-    item_type: u8,
-    custom_category: String,
-    supported_avatar: Vec<String>,
-    created_date: String,
-    updated_date: String,
-}
+use super::builder::AvatarExplorerItemBuilder;
 
 pub async fn export_as_avatar_explorer_compatible_structure<P>(
     store_provider: Arc<Mutex<StoreProvider>>,
     path: P,
-    app: &AppHandle,
+    app: Option<&AppHandle>,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
@@ -127,10 +105,14 @@ where
             false,
             FileTransferGuard::dest(path),
             |progress, filename| {
+                if app.is_none() {
+                    return;
+                }
+
                 let percentage =
                     ((processed_assets as f32 + progress) / (total_assets as f32)) * 100f32;
-                let result =
-                    ProgressEvent::new(percentage, format!("{}: {}", name, filename)).emit(app);
+                let result = ProgressEvent::new(percentage, format!("{}: {}", name, filename))
+                    .emit(app.unwrap());
 
                 if let Err(e) = result {
                     log::error!("Failed to emit progress event: {:?}", e);
@@ -191,10 +173,14 @@ where
             false,
             FileTransferGuard::dest(path),
             |progress, filename| {
+                if app.is_none() {
+                    return;
+                }
+
                 let percentage =
                     ((processed_assets as f32 + progress) / (total_assets as f32)) * 100f32;
-                let result =
-                    ProgressEvent::new(percentage, format!("{}: {}", name, filename)).emit(app);
+                let result = ProgressEvent::new(percentage, format!("{}: {}", name, filename))
+                    .emit(app.unwrap());
 
                 if let Err(e) = result {
                     log::error!("Failed to emit progress event: {:?}", e);
@@ -261,10 +247,14 @@ where
             false,
             FileTransferGuard::dest(path),
             |progress, filename| {
+                if app.is_none() {
+                    return;
+                }
+
                 let percentage =
                     ((processed_assets as f32 + progress) / (total_assets as f32)) * 100f32;
-                let result =
-                    ProgressEvent::new(percentage, format!("{}: {}", name, filename)).emit(app);
+                let result = ProgressEvent::new(percentage, format!("{}: {}", name, filename))
+                    .emit(app.unwrap());
 
                 if let Err(e) = result {
                     log::error!("Failed to emit progress event: {:?}", e);
@@ -422,175 +412,118 @@ where
     }
 }
 
-struct AvatarExplorerItemBuilder {
-    is_avatar: bool,
+#[cfg(test)]
+mod tests {
+    use crate::adapter::exporter::avatar_explorer::definitions::AvatarExplorerItem;
 
-    title: String,
-    author: String,
-    memo: Option<String>,
-    booth_item_id: Option<u64>,
-    category: Option<String>,
-    created_at: i64,
+    use super::*;
 
-    relative_item_path: Option<String>,
-}
+    #[tokio::test]
+    async fn test_export() {
+        let path = "test/temp/export/avatar_explorer";
+        let exported_path = format!("{path}/exported");
+        let store_path = format!("{path}/root_dir");
 
-impl AvatarExplorerItemBuilder {
-    fn set_relative_item_path(mut self, path: String) -> Self {
-        self.relative_item_path = Some(path);
-        self
-    }
-
-    fn build(self) -> Result<AvatarExplorerItem, String> {
-        if self.relative_item_path.is_none() {
-            return Err("Item path is required".into());
+        if std::fs::exists(path).unwrap() {
+            std::fs::remove_dir_all(path).unwrap();
         }
+        std::fs::create_dir_all(&exported_path).unwrap();
 
-        let title = self.title;
-        let author_name = self.author;
-        let item_memo = self.memo.unwrap_or_default();
+        modify_guard::copy_dir(
+            "test/example_root_dir/sample1",
+            store_path.clone(),
+            false,
+            FileTransferGuard::none(),
+            |_, _| {},
+        )
+        .await
+        .unwrap();
 
-        let booth_id = match self.booth_item_id {
-            Some(id) => id as i64,
-            None => -1,
-        };
-        let item_path = self.relative_item_path.unwrap();
+        let mut provider = StoreProvider::create(store_path).unwrap();
+        provider.load_all_assets_from_files(false).await.unwrap();
+        let provider = Arc::new(Mutex::new(provider));
 
-        let image_path = if booth_id >= 0 {
-            format!(".\\Datas\\Thumbnail\\{}.png", booth_id)
-        } else {
-            "".to_string()
-        };
+        export_as_avatar_explorer_compatible_structure(provider, &exported_path, None)
+            .await
+            .unwrap();
 
-        let (item_type, custom_category) = if self.is_avatar {
-            (0, "".to_string())
-        } else if let Some(category) = self.category.as_deref() {
-            let num = estimates_item_type_from_category(category);
+        let items_data_json = format!("{exported_path}/ItemsData.json");
+        let custom_category_txt = format!("{exported_path}/CustomCategory.txt");
+        let common_avatar_json = format!("{exported_path}/CommonAvatar.json");
 
-            if num < 9 {
-                (num, "".to_string())
-            } else {
-                (9, category.to_string())
-            }
-        } else {
-            (9, "Uncategorized".to_string())
-        };
+        let items_dir = format!("{exported_path}/Items");
+        let thumbnail_dir = format!("{exported_path}/Thumbnail");
 
-        let created_date = chrono::DateTime::<chrono::Utc>::from_timestamp_millis(self.created_at)
-            .map(|dt| dt.format("%Y-%m-%d %H:%M:%S").to_string())
-            .unwrap_or_else(|| self.created_at.to_string());
-        let updated_date = created_date.clone();
+        assert!(std::fs::exists(&items_data_json).unwrap());
+        assert!(std::fs::exists(&custom_category_txt).unwrap());
+        assert!(std::fs::exists(&common_avatar_json).unwrap());
 
-        Ok(AvatarExplorerItem {
-            title,
-            author_name,
-            item_memo,
-            author_id: "".into(),
-            booth_id,
-            item_path,
-            material_path: "".into(),
-            thumbnail_url: "".into(),
-            image_path,
-            author_image_url: "".into(),
-            author_image_file_path: "".into(),
-            item_type,
-            custom_category,
-            supported_avatar: vec![], // Unable to migrate due to inability to convert from avatar string to actual avatar directory
-            created_date,
-            updated_date,
-        })
-    }
-}
+        assert!(std::fs::exists(format!("{items_dir}/Test Avatar/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{items_dir}/Test Avatar Wearable/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{items_dir}/Test World Object/dummy.txt")).unwrap());
 
-fn estimates_item_type_from_category(category: &str) -> u8 {
-    match category.to_lowercase().as_str() {
-        "アバター" | "avatar" | "avatars" => 0,
-        "衣装" | "clothes" => 1,
-        "テクスチャ" | "texture" | "textures" => 2,
-        "ギミック" | "gimmick" | "gimmicks" => 3,
-        "アクセサリー" | "アクセサリ" | "装飾品" | "accessory" | "accessories" => 4,
-        "髪型" | "髪" | "髪の毛" | "hair" => 5,
-        "アニメーション" | "animation" | "animations" => 6,
-        "ツール" | "tool" | "tools" => 7,
-        "シェーダー" | "shader" | "shaders" => 8,
-        _ => 9,
-    }
-}
+        assert!(std::fs::exists(format!("{thumbnail_dir}/6641548.png")).unwrap());
 
-impl Into<AvatarExplorerItemBuilder> for Avatar {
-    fn into(self) -> AvatarExplorerItemBuilder {
-        let title = self.description.name;
-        let author = self.description.creator;
-        let memo = self.description.memo;
-        let booth_item_id = self.description.booth_item_id;
+        assert_eq!(
+            std::fs::read_to_string(custom_category_txt).unwrap(),
+            "TestAvatarWearableCategory\nWorld: TestCategory"
+        );
+        assert_eq!(std::fs::read_to_string(common_avatar_json).unwrap(), "[]");
 
-        let created_at = self.description.created_at;
+        let parsed: Vec<AvatarExplorerItem> =
+            serde_json::from_str(&std::fs::read_to_string(items_data_json).unwrap()).unwrap();
 
-        AvatarExplorerItemBuilder {
-            is_avatar: true,
-            title,
-            author,
-            memo,
-            booth_item_id,
-            category: None,
-            created_at,
-            relative_item_path: None,
-        }
-    }
-}
+        assert_eq!(parsed.len(), 3);
 
-impl Into<AvatarExplorerItemBuilder> for AvatarWearable {
-    fn into(self) -> AvatarExplorerItemBuilder {
-        let title = self.description.name;
-        let author = self.description.creator;
-        let memo = self.description.memo;
-        let booth_item_id = self.description.booth_item_id;
+        assert_eq!(parsed[0].title, "Test Avatar");
+        assert_eq!(parsed[0].author_name, "Test Avatar Creator");
+        assert_eq!(parsed[0].item_memo, "Test Avatar Memo");
+        assert_eq!(parsed[0].author_id, "");
+        assert_eq!(parsed[0].booth_id, 6641548);
+        assert_eq!(parsed[0].item_path, "Datas\\Items\\Test Avatar");
+        assert_eq!(parsed[0].material_path, "");
+        assert_eq!(parsed[0].thumbnail_url, "");
+        assert_eq!(parsed[0].image_path, ".\\Datas\\Thumbnail\\6641548.png");
+        assert_eq!(parsed[0].author_image_url, "");
+        assert_eq!(parsed[0].author_image_file_path, "");
+        assert_eq!(parsed[0].item_type, 0);
+        assert_eq!(parsed[0].custom_category, "");
+        assert_eq!(parsed[0].supported_avatar, Vec::<String>::new());
+        assert_eq!(parsed[0].created_date, "2025-04-02 15:00:00");
+        assert_eq!(parsed[0].updated_date, "2025-04-02 15:00:00");
 
-        let category = if self.category.is_empty() {
-            None
-        } else {
-            Some(self.category)
-        };
+        assert_eq!(parsed[1].title, "Test Avatar Wearable");
+        assert_eq!(parsed[1].author_name, "Test Avatar Wearable Creator");
+        assert_eq!(parsed[1].item_memo, "Test Avatar Wearable Memo");
+        assert_eq!(parsed[1].author_id, "");
+        assert_eq!(parsed[1].booth_id, 6641548);
+        assert_eq!(parsed[1].item_path, "Datas\\Items\\Test Avatar Wearable");
+        assert_eq!(parsed[1].material_path, "");
+        assert_eq!(parsed[1].thumbnail_url, "");
+        assert_eq!(parsed[1].image_path, ".\\Datas\\Thumbnail\\6641548.png");
+        assert_eq!(parsed[1].author_image_url, "");
+        assert_eq!(parsed[1].author_image_file_path, "");
+        assert_eq!(parsed[1].item_type, 9);
+        assert_eq!(parsed[1].custom_category, "TestAvatarWearableCategory");
+        assert_eq!(parsed[1].supported_avatar, Vec::<String>::new());
+        assert_eq!(parsed[1].created_date, "2025-04-02 15:00:00");
+        assert_eq!(parsed[1].updated_date, "2025-04-02 15:00:00");
 
-        let created_at = self.description.created_at;
-
-        AvatarExplorerItemBuilder {
-            is_avatar: false,
-            title,
-            author,
-            memo,
-            booth_item_id,
-            category,
-            created_at,
-            relative_item_path: None,
-        }
-    }
-}
-
-impl Into<AvatarExplorerItemBuilder> for WorldObject {
-    fn into(self) -> AvatarExplorerItemBuilder {
-        let title = self.description.name;
-        let author = self.description.creator;
-        let memo = self.description.memo;
-        let booth_item_id = self.description.booth_item_id;
-
-        let category = if self.category.is_empty() {
-            None
-        } else {
-            Some(format!("World: {}", self.category))
-        };
-
-        let created_at = self.description.created_at;
-
-        AvatarExplorerItemBuilder {
-            is_avatar: false,
-            title,
-            author,
-            memo,
-            booth_item_id,
-            category,
-            created_at,
-            relative_item_path: None,
-        }
+        assert_eq!(parsed[2].title, "Test World Object");
+        assert_eq!(parsed[2].author_name, "Test World Object Creator");
+        assert_eq!(parsed[2].item_memo, "Test World Object Memo");
+        assert_eq!(parsed[2].author_id, "");
+        assert_eq!(parsed[2].booth_id, 6641548);
+        assert_eq!(parsed[2].item_path, "Datas\\Items\\Test World Object");
+        assert_eq!(parsed[2].material_path, "");
+        assert_eq!(parsed[2].thumbnail_url, "");
+        assert_eq!(parsed[2].image_path, ".\\Datas\\Thumbnail\\6641548.png");
+        assert_eq!(parsed[2].author_image_url, "");
+        assert_eq!(parsed[2].author_image_file_path, "");
+        assert_eq!(parsed[2].item_type, 9);
+        assert_eq!(parsed[2].custom_category, "World: TestCategory");
+        assert_eq!(parsed[2].supported_avatar, Vec::<String>::new());
+        assert_eq!(parsed[2].created_date, "2025-04-02 15:00:00");
+        assert_eq!(parsed[2].updated_date, "2025-04-02 15:00:00");
     }
 }

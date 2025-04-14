@@ -1,5 +1,66 @@
 [
   {
+    "version": "1.1.2",
+    "features": [
+      {
+        "text": "アセット追加用DeepLinkで複数のファイルを指定できるように",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Support multiple files in add asset DeepLink"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "エクスポート時に一時画像ファイルが含まれてしまう問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Temp images included in exported zip"
+          }
+        ]
+      },
+      {
+        "text": "対応アバターやタグが増えすぎるとダイアログが見切れる問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Dialog overflow when adding multiple supported avatars or tags"
+          }
+        ]
+      },
+      {
+        "text": "拡張子に大文字が含まれる unitypackage が表示されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Unitypackages with uppercase extension names not showing"
+          }
+        ]
+      },
+      {
+        "text": "ウィンドウを最小化した状態でDeepLinkを踏んだ時に手前に表示されない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Minimized window not focusing on DeepLink click"
+          }
+        ]
+      },
+      {
+        "text": "言語設定が英語の場合でも日本語のBOOTHページを開いてしまう問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Japanese BOOTH pages opening even when app language is set to English"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.1.1",
     "fixes": [
       {
@@ -151,7 +212,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed an issue where the filter candidates were difficult to see and select"
+            "text": "Issue where the filter candidates were difficult to see and select"
           }
         ]
       },

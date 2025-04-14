@@ -62,10 +62,10 @@ pub fn run() {
     #[cfg(desktop)]
     {
         tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, args, _| {
-            let _ = app
-                .get_webview_window("main")
-                .expect("no main window")
-                .set_focus();
+            let window = app.get_webview_window("main").expect("no main window");
+
+            let _ = window.unminimize();
+            let _ = window.set_focus();
 
             let deep_links = parse_args_to_deep_links(&args);
             execute_deep_links(&app, &deep_links);
@@ -79,7 +79,6 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
-        .manage(Arc::new(Mutex::new(TaskContainer::new())))
         .setup(move |app| {
             logging::initialize_logger(&app.handle());
             builder.mount_events(app);
@@ -87,6 +86,7 @@ pub fn run() {
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
             app.manage(app.handle().clone());
+            app.manage(arc_mutex(TaskContainer::new(app.handle().clone())));
 
             #[cfg(any(windows, target_os = "linux"))]
             {

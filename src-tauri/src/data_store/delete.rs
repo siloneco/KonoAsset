@@ -130,3 +130,161 @@ pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::definitions::entities::{AssetDescription, Avatar};
+    use std::{fs::File, io::Write};
+
+    // Helper function to set up test directory
+    async fn setup_test_dir(dir_path: &str) -> PathBuf {
+        let path = PathBuf::from(dir_path);
+
+        if std::fs::exists(&path).unwrap() {
+            std::fs::remove_dir_all(&path).unwrap();
+        }
+
+        std::fs::create_dir_all(&path).unwrap();
+        std::fs::create_dir_all(path.join("data")).unwrap();
+        std::fs::create_dir_all(path.join("metadata")).unwrap();
+        std::fs::create_dir_all(path.join("images")).unwrap();
+
+        path
+    }
+
+    // Helper function to create a test image
+    fn create_test_image(app_dir: &PathBuf, filename: &str) -> String {
+        let images_dir = app_dir.join("images");
+        let image_path = images_dir.join(filename);
+
+        let mut file = File::create(&image_path).unwrap();
+        file.write_all(b"test image content").unwrap();
+
+        filename.to_string()
+    }
+
+    // Helper function to create a test asset directory
+    fn create_test_asset_dir(app_dir: &PathBuf, id: &Uuid) {
+        let asset_dir = app_dir.join("data").join(id.to_string());
+        std::fs::create_dir_all(&asset_dir).unwrap();
+
+        let test_file_path = asset_dir.join("test_file.txt");
+        let mut file = File::create(test_file_path).unwrap();
+        file.write_all(b"test asset content").unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_delete_asset_image() {
+        let app_dir = setup_test_dir("test/temp/delete_asset_image").await;
+
+        // Create a test image
+        let filename = "test_image.jpg";
+        create_test_image(&app_dir, filename);
+
+        // Verify the image exists
+        let image_path = app_dir.join("images").join(filename);
+        assert!(image_path.exists());
+
+        // Delete the image
+        let result = delete_asset_image(&app_dir, filename).await;
+
+        // Verify the result and that the image was deleted
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), true);
+        assert!(!image_path.exists());
+
+        // Test deleting a non-existent image
+        let result = delete_asset_image(&app_dir, "non_existent.jpg").await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), true);
+    }
+
+    #[tokio::test]
+    async fn test_delete_temporary_images() {
+        let app_dir = setup_test_dir("test/temp/delete_temporary_images").await;
+
+        // Create some temporary images
+        create_test_image(&app_dir, "temp_1.jpg");
+        create_test_image(&app_dir, "temp_2.jpg");
+
+        // Create some non-temporary images
+        create_test_image(&app_dir, "normal_1.jpg");
+        create_test_image(&app_dir, "normal_2.jpg");
+
+        // Verify all images exist
+        assert!(app_dir.join("images").join("temp_1.jpg").exists());
+        assert!(app_dir.join("images").join("temp_2.jpg").exists());
+        assert!(app_dir.join("images").join("normal_1.jpg").exists());
+        assert!(app_dir.join("images").join("normal_2.jpg").exists());
+
+        // Delete temporary images
+        let result = delete_temporary_images(&app_dir).await;
+
+        // Verify the result and that only temporary images were deleted
+        assert!(result.is_ok());
+        assert!(!app_dir.join("images").join("temp_1.jpg").exists());
+        assert!(!app_dir.join("images").join("temp_2.jpg").exists());
+        assert!(app_dir.join("images").join("normal_1.jpg").exists());
+        assert!(app_dir.join("images").join("normal_2.jpg").exists());
+    }
+
+    #[tokio::test]
+    async fn test_delete_asset_from_store() {
+        let app_dir = setup_test_dir("test/temp/delete_asset_from_store").await;
+
+        // Create a test provider and store
+        let provider = StoreProvider::create(&app_dir).unwrap();
+        let store = provider.get_avatar_store();
+
+        // Create a test asset with an image
+        let asset_id = Uuid::new_v4();
+        let image_filename = create_test_image(&app_dir, "test_avatar_image.jpg");
+        create_test_asset_dir(&app_dir, &asset_id);
+
+        let avatar = Avatar {
+            id: asset_id,
+            description: AssetDescription {
+                name: "Test Avatar".into(),
+                creator: "Test Creator".into(),
+                image_filename: Some(image_filename),
+                tags: vec!["test".into()],
+                memo: Some("Test memo".into()),
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+        };
+
+        // Add the asset to the store
+        store.add_asset_and_save(avatar).await.unwrap();
+
+        // Verify the asset exists
+        assert!(store.get_asset(asset_id).await.is_some());
+        assert!(app_dir.join("data").join(asset_id.to_string()).exists());
+        assert!(app_dir
+            .join("images")
+            .join("test_avatar_image.jpg")
+            .exists());
+
+        // Delete the asset
+        let result = delete_asset_from_store(&app_dir, store, asset_id).await;
+
+        // Verify the result and that the asset was deleted
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), true);
+        assert!(store.get_asset(asset_id).await.is_none());
+        assert!(!app_dir.join("data").join(asset_id.to_string()).exists());
+        assert!(!app_dir
+            .join("images")
+            .join("test_avatar_image.jpg")
+            .exists());
+
+        // Test deleting a non-existent asset
+        let non_existent_id = Uuid::new_v4();
+        let result = delete_asset_from_store(&app_dir, store, non_existent_id).await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), false);
+    }
+}

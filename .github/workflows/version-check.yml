@@ -5,6 +5,7 @@ on:
       - "package.json"
       - "src-tauri/Cargo.toml"
       - "src-tauri/tauri.conf.json"
+      - ".github/workflows/version-check.yml"
     branches:
       - "main"
       - "pre-release"
@@ -18,6 +19,7 @@ on:
       - "package.json"
       - "src-tauri/Cargo.toml"
       - "src-tauri/tauri.conf.json"
+      - ".github/workflows/version-check.yml"
 
 permissions:
   contents: read

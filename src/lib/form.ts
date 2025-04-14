@@ -19,5 +19,5 @@ export type AssetFormType = UseFormReturn<
   AssetFormFields,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any,
-  undefined
+  AssetFormFields
 >

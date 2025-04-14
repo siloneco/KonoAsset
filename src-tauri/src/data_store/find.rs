@@ -1,14 +1,15 @@
-use std::{collections::HashMap, ffi::OsStr, path::PathBuf};
+use std::{collections::HashMap, ffi::OsStr, path::Path};
 
 use crate::definitions::entities::FileInfo;
 
 const IGNORE_DIRECTORY_NAMES: [&str; 1] = ["__MACOSX"];
 
-pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>, String> {
-    let mut unitypackages = HashMap::new();
-    let path = dir.clone();
+pub fn find_unitypackage<P: AsRef<Path>>(dir: P) -> Result<HashMap<String, Vec<FileInfo>>, String> {
+    let dir = dir.as_ref();
 
-    let entries = std::fs::read_dir(&path).map_err(|e| e.to_string())?;
+    let mut unitypackages = HashMap::new();
+
+    let entries = std::fs::read_dir(dir).map_err(|e| e.to_string())?;
 
     for entry in entries {
         if let Err(e) = entry {
@@ -45,7 +46,7 @@ pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>
             .unwrap_or(OsStr::new(""))
             .to_str()
             .unwrap_or("");
-        if extension != "unitypackage" {
+        if extension.to_ascii_lowercase() != "unitypackage" {
             continue;
         }
 
@@ -75,4 +76,56 @@ pub fn find_unitypackage(dir: &PathBuf) -> Result<HashMap<String, Vec<FileInfo>>
     }
 
     Ok(unitypackages)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_find_unitypackage() {
+        let dir = "test/temp/find_unitypackage";
+
+        if std::fs::exists(dir).unwrap() {
+            std::fs::remove_dir_all(dir).unwrap();
+        }
+
+        std::fs::create_dir_all(dir).unwrap();
+
+        std::fs::create_dir_all(format!("{dir}/test")).unwrap();
+        std::fs::create_dir_all(format!("{dir}/__MACOSX")).unwrap();
+
+        let normal_filename = "normal.unitypackage";
+        let case_insensitive_filename = "case-insensitive.UniTypAckaGE";
+        let inside_dir_filename = "inside-dir.unitypackage";
+
+        std::fs::write(format!("{dir}/{normal_filename}"), "").unwrap();
+        std::fs::write(format!("{dir}/{case_insensitive_filename}"), "").unwrap();
+        std::fs::write(format!("{dir}/not-unitypackage.txt"), "").unwrap();
+
+        std::fs::write(format!("{dir}/test/{inside_dir_filename}"), "").unwrap();
+        std::fs::write(format!("{dir}/test/not-unitypackage.txt"), "").unwrap();
+
+        std::fs::write(format!("{dir}/__MACOSX/inside-macosx.unitypackage"), "").unwrap();
+
+        let result = find_unitypackage(dir).unwrap();
+
+        assert_eq!(result.len(), 2);
+
+        let top = result.get("").unwrap();
+        let inside_dir = result.get("test/").unwrap();
+
+        assert_eq!(top.len(), 2);
+
+        assert_eq!(inside_dir.len(), 1);
+        assert_eq!(result.get("__MACOSX").is_none(), true);
+
+        assert_eq!(top[0].file_name, case_insensitive_filename);
+        assert_eq!(top[1].file_name, normal_filename);
+
+        assert_eq!(
+            result.get("test/").unwrap()[0].file_name,
+            inside_dir_filename
+        );
+    }
 }
