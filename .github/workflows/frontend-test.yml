@@ -5,6 +5,7 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - ".github/workflows/frontend-test.yml"
     branches:
       - "main"
       - "pre-release"
@@ -18,6 +19,7 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - ".github/workflows/frontend-test.yml"
 
 permissions:
   contents: read

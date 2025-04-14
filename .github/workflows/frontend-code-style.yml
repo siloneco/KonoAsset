@@ -5,6 +5,7 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - ".github/workflows/frontend-code-style.yml"
     branches:
       - "main"
       - "pre-release"
@@ -14,6 +15,7 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - ".github/workflows/frontend-code-style.yml"
 
 jobs:
   frontend-code-style-test:

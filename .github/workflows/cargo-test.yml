@@ -4,6 +4,7 @@ on:
     paths:
       - "src-tauri/**"
       - "changelog.json"
+      - ".github/workflows/cargo-test.yml"
     branches:
       - "main"
       - "pre-release"
@@ -16,6 +17,7 @@ on:
     paths:
       - "src-tauri/**"
       - "changelog.json"
+      - ".github/workflows/cargo-test.yml"
 
 permissions:
   contents: read
