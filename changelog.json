@@ -18,7 +18,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed temp images included in exported zip"
+            "text": "Temp images included in exported zip"
           }
         ]
       },
@@ -27,7 +27,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed dialog overflow with many supported avatars or tags"
+            "text": "Dialog overflow when adding multiple supported avatars or tags"
           }
         ]
       },
@@ -36,7 +36,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed uppercase unitypackage extensions not showing"
+            "text": "Unitypackages with uppercase extension names not showing"
           }
         ]
       },
@@ -45,7 +45,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed minimized window not focusing on DeepLink"
+            "text": "Minimized window not focusing on DeepLink click"
           }
         ]
       },
@@ -54,7 +54,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed Japanese BOOTH pages opening even when app language is set to English"
+            "text": "Japanese BOOTH pages opening even when app language is set to English"
           }
         ]
       }
@@ -212,7 +212,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed an issue where the filter candidates were difficult to see and select"
+            "text": "Issue where the filter candidates were difficult to see and select"
           }
         ]
       },
