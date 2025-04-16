@@ -98,7 +98,7 @@ runs:
         mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
     - name: Upload artifacts
-      uses: ryand56/r2-upload-action@latest
+      uses: ryand56/r2-upload-action@v1.4
       with:
         r2-account-id: ${{ inputs.R2_ACCOUNT_ID }}
         r2-access-key-id: ${{ inputs.R2_ACCESS_KEY_ID }}
