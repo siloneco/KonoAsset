@@ -23,8 +23,8 @@ export const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
   const { version, backToTopPage, onVersionClick } = usePreferenceSidebar()
 
   return (
-    <Sidebar collapsible="none" className="h-screen w-80 border-r-2 py-4">
-      <SidebarHeader>
+    <Sidebar collapsible="none" className="h-screen w-64 border-r-2 py-4">
+      <SidebarHeader className="w-64">
         <Button
           className="w-full rounded-full"
           variant="ghost"
