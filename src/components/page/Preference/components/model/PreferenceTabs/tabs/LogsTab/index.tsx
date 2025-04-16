@@ -33,14 +33,15 @@ const LogsTab: FC<Props> = ({ id }) => {
             <RefreshCcw />
           </Button>
         </div>
-        <Card className="mt-4 p-4 w-[calc(100vw-330px)]">
-          <div className="flex w-full overflow-x-auto">
-            <ScrollArea className="flex-shrink-0 min-w-full">
-              <div className="pb-4 space-y-2">
+        <Card className="mt-4 p-4 w-[calc(100vw-320px)] h-[calc(100vh-120px)] overflow-hidden">
+          <div className="w-full h-full">
+            <ScrollArea className="h-full w-full pr-3 pb-3">
+              <div className="space-y-2 pr-10 pb-2">
                 {logs.map((log, index) => (
                   <LogTray key={index} log={log} />
                 ))}
               </div>
+              <ScrollBar orientation="vertical" />
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
