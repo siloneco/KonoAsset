@@ -626,9 +626,11 @@ const MultipleSelector = React.forwardRef<
                     'flex-1 bg-transparent outline-none placeholder:text-muted-foreground',
                     {
                       'w-fit':
-                        document.activeElement === inputRef.current &&
-                        hidePlaceholderWhenSelected,
-                      'w-full': document.activeElement !== inputRef.current,
+                        hidePlaceholderWhenSelected &&
+                        document.activeElement === inputRef.current,
+                      'w-full':
+                        hidePlaceholderWhenSelected &&
+                        document.activeElement !== inputRef.current,
                       'px-3': selected.length === 0,
                       'ml-1': selected.length !== 0,
                     },
