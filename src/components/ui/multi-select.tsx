@@ -303,16 +303,27 @@ const MultipleSelector = React.forwardRef<
       [onChange, selected],
     )
 
+    // State to track if backspace/delete is being debounced
+    const [isBackspaceDebounced, setIsBackspaceDebounced] =
+      React.useState(false)
+
     const handleKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const input = inputRef.current
         if (input) {
           if (e.key === 'Delete' || e.key === 'Backspace') {
-            if (input.value === '' && selected.length > 0) {
+            if (input.value !== '') {
+              setIsBackspaceDebounced(true)
+            } else if (selected.length > 0 && !isBackspaceDebounced) {
               const lastSelectOption = selected[selected.length - 1]
               // If last item is fixed, we should not remove it.
               if (!lastSelectOption.fixed) {
                 handleUnselect(selected[selected.length - 1])
+
+                setIsBackspaceDebounced(true)
+                setTimeout(() => {
+                  setIsBackspaceDebounced(false)
+                }, 300)
               }
             }
           }
@@ -322,7 +333,18 @@ const MultipleSelector = React.forwardRef<
           }
         }
       },
-      [handleUnselect, selected],
+      [handleUnselect, selected, isBackspaceDebounced],
+    )
+
+    // Handle key up to reset the debounce flag when the key is released
+    const handleKeyUp = React.useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          // Reset the debounce flag when the key is released
+          setIsBackspaceDebounced(false)
+        }
+      },
+      [],
     )
 
     useEffect(() => {
@@ -492,6 +514,10 @@ const MultipleSelector = React.forwardRef<
         onKeyDown={(e) => {
           handleKeyDown(e)
           commandProps?.onKeyDown?.(e)
+        }}
+        onKeyUp={(e) => {
+          handleKeyUp(e)
+          commandProps?.onKeyUp?.(e)
         }}
         className={cn(
           'h-auto overflow-visible bg-transparent',
