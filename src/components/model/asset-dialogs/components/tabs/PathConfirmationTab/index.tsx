@@ -6,6 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useLocalization } from '@/hooks/use-localization'
 import { BadgeAlert, BadgeCheck, FileWarning, Info } from 'lucide-react'
 
@@ -82,13 +88,24 @@ export const PathConfirmationTab = ({
         <Button variant="outline" className="mr-auto" onClick={back}>
           {t('general:button:back')}
         </Button>
-        <Button
-          className="ml-auto"
-          onClick={submit}
-          disabled={existingPaths.length === 0}
-        >
-          {t('addasset:path-confirmation:continue-button')}
-        </Button>
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger>
+              <Button
+                className="ml-auto"
+                onClick={submit}
+                disabled={existingPaths.length === 0}
+              >
+                {t('addasset:path-confirmation:continue-button')}
+              </Button>
+            </TooltipTrigger>
+            {existingPaths.length === 0 && (
+              <TooltipContent>
+                <p>{t('addasset:path-confirmation:unable-to-continue')}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </DialogFooter>
     </>
   )
