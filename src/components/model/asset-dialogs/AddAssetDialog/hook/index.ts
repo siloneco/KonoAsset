@@ -260,11 +260,11 @@ const useAddAssetDialog = ({
     }
 
     const extractedNonExistingPaths = result.data
-    const existingPaths = assetPaths.filter(
+    const validPaths = assetPaths.filter(
       (path) => !extractedNonExistingPaths.includes(path),
     )
 
-    setExistingPaths(existingPaths)
+    setExistingPaths(validPaths)
     setNonExistingPaths(extractedNonExistingPaths)
 
     setTab('path-confirmation')
