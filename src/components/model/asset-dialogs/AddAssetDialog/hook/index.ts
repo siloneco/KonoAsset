@@ -247,7 +247,7 @@ const useAddAssetDialog = ({
 
     if (result.status === 'error') {
       toast({
-        title: 'パスのチェックに失敗しました',
+        title: t('addasset:path-confirmation:validate-failed-toast-title'),
         description: result.error,
       })
       return false
