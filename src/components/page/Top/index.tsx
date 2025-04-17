@@ -9,6 +9,7 @@ import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { UpdateDialog } from '@/components/model/UpdateDialog'
 import { AssetView } from '@/components/model/asset-view/AssetView'
+import DataManagementDialog from '@/components/model/action-buttons/MoreButton/components/DataManagementDialog'
 
 const TopPage = () => {
   const {
@@ -25,6 +26,10 @@ const TopPage = () => {
     updateDialogOpen,
     setUpdateDialogOpen,
     updateDownloadTaskId,
+    dataManagementDialogAssetId,
+    dataManagementDialogOpen,
+    setDataManagementDialogOpen,
+    openDataManagementDialog,
   } = useTopPage()
 
   const { t } = useLocalization()
@@ -38,6 +43,7 @@ const TopPage = () => {
             <NavBar displayAssetCount={showingAssetCount} />
             <AssetView
               openAddAssetDialog={() => setAddAssetDialogOpen(true)}
+              openDataManagementDialog={openDataManagementDialog}
               setShowingAssetCount={setShowingAssetCount}
             />
             <AddAssetDialog
@@ -49,11 +55,20 @@ const TopPage = () => {
                 setEditAssetDialogAssetId(assetId)
                 setEditAssetDialogOpen(true)
               }}
+              openDataManagementDialog={(id) => {
+                setAddAssetDialogOpen(false)
+                openDataManagementDialog(id)
+              }}
             />
             <EditAssetDialog
               id={editAssetDialogAssetId}
               dialogOpen={editAssetDialogOpen}
               setDialogOpen={setEditAssetDialogOpen}
+            />
+            <DataManagementDialog
+              assetId={dataManagementDialogAssetId}
+              open={dataManagementDialogOpen}
+              onOpenChange={setDataManagementDialogOpen}
             />
           </main>
         </SidebarProvider>

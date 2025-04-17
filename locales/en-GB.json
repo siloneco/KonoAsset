@@ -167,8 +167,6 @@
     "resetdialog:reset-confirm:checkbox-text": "I understand that deleted data cannot be restored.",
     "resetdialog:button:delete": "Delete",
 
-    "slimassetdetail:edit-info": "Edit information",
-
     "squareimage:image": "Image",
 
     "taskstatushandler:failed-to-cancel-task": "Failed to cancel the task",

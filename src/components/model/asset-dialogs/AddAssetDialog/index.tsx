@@ -31,12 +31,14 @@ type Props = {
   dialogOpen: boolean
   setDialogOpen: (open: boolean) => void
   openEditDialog: (assetId: string) => void
+  openDataManagementDialog: (assetId: string) => void
 }
 
 const AddAssetDialog = ({
   dialogOpen,
   setDialogOpen,
   openEditDialog,
+  openDataManagementDialog,
 }: Props) => {
   const { t } = useLocalization()
 
@@ -80,6 +82,7 @@ const AddAssetDialog = ({
           <DuplicateWarningTab
             setTab={setTab}
             openEditDialog={openEditDialog}
+            openDataManagementDialog={openDataManagementDialog}
             tabIndex={2.5}
             totalTabs={5}
           />

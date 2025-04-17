@@ -28,6 +28,10 @@ type ReturnProps = {
   editAssetDialogOpen: boolean
   updateDialogOpen: boolean
   setUpdateDialogOpen: (open: boolean) => void
+  dataManagementDialogAssetId: string | null
+  dataManagementDialogOpen: boolean
+  setDataManagementDialogOpen: (open: boolean) => void
+  openDataManagementDialog: (assetId: string) => void
   updateDownloadTaskId: string | null
 }
 
@@ -47,6 +51,11 @@ export const useTopPage = (): ReturnProps => {
   const [updateDownloadTaskId, setUpdateDownloadTaskId] = useState<
     string | null
   >(null)
+
+  const [dataManagementDialogOpen, setDataManagementDialogOpen] =
+    useState(false)
+  const [dataManagementDialogAssetId, setDataManagementDialogAssetId] =
+    useState<string | null>(null)
 
   const [showingAssetCount, setShowingAssetCount] = useState(0)
 
@@ -122,6 +131,11 @@ export const useTopPage = (): ReturnProps => {
     executeUpdateCheck()
   }, [])
 
+  const openDataManagementDialog = (assetId: string) => {
+    setDataManagementDialogAssetId(assetId)
+    setDataManagementDialogOpen(true)
+  }
+
   return {
     assetContextValue,
     isDragAndHover,
@@ -135,6 +149,10 @@ export const useTopPage = (): ReturnProps => {
     editAssetDialogOpen,
     updateDialogOpen,
     setUpdateDialogOpen,
+    dataManagementDialogAssetId,
+    dataManagementDialogOpen,
+    setDataManagementDialogOpen,
+    openDataManagementDialog,
     updateDownloadTaskId,
   }
 }
