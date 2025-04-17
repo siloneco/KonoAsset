@@ -169,3 +169,17 @@ pub async fn get_image_absolute_path(
         }
     }
 }
+
+#[tauri::command]
+#[specta::specta]
+pub async fn extract_non_existent_paths(paths: Vec<PathBuf>) -> Result<Vec<PathBuf>, String> {
+    let mut non_existent_paths = Vec::new();
+
+    for path in paths {
+        if !path.exists() {
+            non_existent_paths.push(path);
+        }
+    }
+
+    Ok(non_existent_paths)
+}

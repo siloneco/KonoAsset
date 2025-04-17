@@ -11,6 +11,7 @@ import useAddAssetDialog from './hook'
 import DialogWrapper from '../components/DialogWrapper'
 import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
 import { useLocalization } from '@/hooks/use-localization'
+import { PathConfirmationTab } from '../components/tabs/PathConfirmationTab'
 
 export type AddAssetDialogContextType = {
   assetPaths?: string[]
@@ -49,11 +50,14 @@ const AddAssetDialog = ({
     form,
     setImageUrls,
     imageUrls,
+    existingPaths,
+    nonExistingPaths,
     importTaskId,
     onTaskCompleted,
     onTaskCancelled,
     onTaskFailed,
-    onSubmit,
+    validatePaths,
+    submit,
     submitting,
   } = useAddAssetDialog({ dialogOpen, setDialogOpen })
 
@@ -109,11 +113,24 @@ const AddAssetDialog = ({
           <AdditionalInputTab
             form={form}
             onBackToPreviousTabClicked={() => setTab('manual-input')}
-            onSubmit={onSubmit}
+            onSubmit={async () => {
+              const isAbleToSubmit = await validatePaths()
+              if (isAbleToSubmit) await submit(false)
+            }}
             submitting={submitting}
             tabIndex={5}
             totalTabs={5}
             submitButtonText={t('addasset:add-asset')}
+          />
+        </TabsContent>
+        <TabsContent value="path-confirmation">
+          <PathConfirmationTab
+            existingPaths={existingPaths}
+            nonExistingPaths={nonExistingPaths}
+            submit={async () => {
+              await submit(true)
+            }}
+            back={() => setTab('additional-input')}
           />
         </TabsContent>
         <TabsContent value="progress" className="max-w-[600px]">

@@ -353,6 +353,14 @@ async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async extractNonExistentPaths(paths: string[]) : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("extract_non_existent_paths", { paths }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async requireInitialSetup() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("require_initial_setup") };
