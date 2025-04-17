@@ -167,8 +167,6 @@
     "resetdialog:reset-confirm:checkbox-text": "私は削除後のデータが元に戻せないことを理解しています",
     "resetdialog:button:delete": "削除する",
 
-    "slimassetdetail:edit-info": "情報を編集",
-
     "squareimage:image": "画像",
 
     "taskstatushandler:failed-to-cancel-task": "キャンセルに失敗しました",
