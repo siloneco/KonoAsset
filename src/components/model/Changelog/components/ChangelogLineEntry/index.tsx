@@ -1,3 +1,9 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { FC, ReactNode } from 'react'
 
@@ -29,9 +35,18 @@ export const ChangelogLineEntry: FC<Props> = ({
         <span className="mr-1">{icon}</span>
         <span>{title}</span>
       </div>
-      <span className={cn('w-32 flex-grow truncate', textClassName)}>
-        {text}
-      </span>
+      <TooltipProvider>
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            <span className={cn('w-32 flex-grow truncate', textClassName)}>
+              {text}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{text}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   )
 }
