@@ -26,11 +26,14 @@ type ReturnProps = {
   setTab: (tab: string) => void
   imageUrls: string[]
   setImageUrls: (urls: string[]) => void
+  existingPaths: string[]
+  nonExistingPaths: string[]
   importTaskId: string | null
   onTaskCompleted: () => void
   onTaskCancelled: () => void
   onTaskFailed: (error: string | null) => void
-  onSubmit: () => Promise<void>
+  validatePaths: () => Promise<boolean>
+  submit: (ignoreNonExistingPaths: boolean) => Promise<void>
   submitting: boolean
 }
 
@@ -46,6 +49,9 @@ const useAddAssetDialog = ({
   >([])
   const [importTaskId, setImportTaskId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  const [existingPaths, setExistingPaths] = useState<string[]>([])
+  const [nonExistingPaths, setNonExistingPaths] = useState<string[]>([])
 
   // 1以上の場合、その回数だけフォームのリセットを行わずにダイアログを開く
   const [formClearSuppressionCount, setFormClearSuppressionCount] = useState(0)
@@ -236,7 +242,37 @@ const useAddAssetDialog = ({
     setDialogOpen(false)
   }
 
-  const onSubmit = async () => {
+  const validatePaths = async (): Promise<boolean> => {
+    const result = await commands.extractNonExistentPaths(assetPaths)
+
+    if (result.status === 'error') {
+      toast({
+        title: 'パスのチェックに失敗しました',
+        description: result.error,
+      })
+      return false
+    }
+
+    if (result.data.length === 0) {
+      setExistingPaths(assetPaths)
+      setNonExistingPaths([])
+      return true
+    }
+
+    const nonExistingPaths = result.data
+    const existingPaths = assetPaths.filter(
+      (path) => !nonExistingPaths.includes(path),
+    )
+
+    setExistingPaths(existingPaths)
+    setNonExistingPaths(nonExistingPaths)
+
+    setTab('path-confirmation')
+
+    return false
+  }
+
+  const submit = async (ignoreNonExistingPaths: boolean) => {
     if (submitting) {
       return
     }
@@ -270,9 +306,17 @@ const useAddAssetDialog = ({
         return
       }
 
+      const paths = assetPaths.filter((path) => {
+        if (!ignoreNonExistingPaths) {
+          return true
+        }
+
+        return existingPaths.includes(path)
+      })
+
       const result = await sendAssetImportRequest(
         form.getValues('assetType'),
-        assetPaths!,
+        paths,
         preAssetResult.data,
         preference.deleteOnImport,
       )
@@ -342,11 +386,14 @@ const useAddAssetDialog = ({
     setTab,
     imageUrls,
     setImageUrls,
+    existingPaths,
+    nonExistingPaths,
     importTaskId,
     onTaskCompleted,
     onTaskCancelled,
     onTaskFailed,
-    onSubmit,
+    validatePaths,
+    submit,
     submitting,
   }
 }
