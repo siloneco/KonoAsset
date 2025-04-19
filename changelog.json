@@ -1,5 +1,85 @@
 [
   {
+    "version": "1.1.3-rc.0",
+    "pre_release": true,
+    "features": [
+      {
+        "text": "重複登録の警告にファイル管理ダイアログを開くボタンを追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Added button to open file management dialog in duplicate registration warning"
+          }
+        ]
+      },
+      {
+        "text": "存在しないパスでアセットを登録しようとしたときに警告を出す機能を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Added warning when trying to register an asset with a non-existent path"
+          }
+        ]
+      },
+      {
+        "text": "言語ファイルを指定して適用する機能を追加",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Added ability to specify and apply language files"
+          }
+        ]
+      },
+      {
+        "text": "対応アバターやタグのサジェストが登録個数の多い順に表示されるように",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Suggestions for supported avatars and tags now display in order of most registered"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "ログの横スクロールバーが見切れる問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Horizontal scrollbar in logs was cut off"
+          }
+        ]
+      },
+      {
+        "text": "タグや対応アバターの入力欄の文字の削除における挙動を改善",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Improved behavior when deleting characters in tag and supported avatar input fields"
+          }
+        ]
+      },
+      {
+        "text": "タグや対応アバターの入力欄の入力テキストが見えやすいように改善",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Improved visibility of input text in tag and supported avatar input fields"
+          }
+        ]
+      },
+      {
+        "text": "変更履歴が長すぎると最後まで読めない問題を修正",
+        "langs": [
+          {
+            "lang": ["en-US", "en-GB"],
+            "text": "Changelog couldn't be read to the end when it was too long"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.1.2",
     "features": [
       {
