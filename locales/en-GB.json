@@ -188,6 +188,14 @@
     "loaderror:appdata-not-found-text": "The path is unknown as the settings file could not be located",
     "loaderror:report-error": "Report issue:",
 
+    "preference:language:load-from-file": "Load from file",
+    "preference:language:custom": "Custom",
+    "preference:language:failed-to-load-from-file:toast:title": "Failed to load language file",
+    "preference:language:loaded-language-file-toast:title": "Language file loaded",
+    "preference:language:loaded-language-file-toast:description:1": "Fallback applied: ",
+    "preference:language:loaded-language-file-toast:description:2": " items, unnecessary values: ",
+    "preference:language:loaded-language-file-toast:description:3": " items",
+
     "preference:toast-version-copied": "Version information copied!",
     "preference:back-to-top": "Return to top screen",
     "preference:settings": "General settings",

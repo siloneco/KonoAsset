@@ -436,7 +436,7 @@ async getCurrentLanguageData() : Promise<Result<LocalizationData, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>> {
+async loadLanguageFile(path: string) : Promise<Result<CustomLanguageFileLoadResult, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("load_language_file", { path }) };
 } catch (e) {
@@ -483,11 +483,12 @@ export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
 export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
+export type CustomLanguageFileLoadResult = { data: LocalizationData; missing_keys: string[]; additional_keys: string[] }
 export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type LanguageCode = "ja-JP" | "en-US" | "en-GB"
+export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | { "user-provided": string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
 export type LocalizedChanges = { version: string; pre_release: boolean; features: string[]; fixes: string[]; others: string[] }
