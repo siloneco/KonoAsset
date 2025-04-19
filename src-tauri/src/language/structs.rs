@@ -23,7 +23,9 @@ impl LanguageCode {
             LanguageCode::EnGb => include_str!("../../../locales/en-GB.json"),
             LanguageCode::UserProvided(_) => {
                 log::error!("User-provided language code does not have a JSON string");
-                panic!("User-provided language code does not have a JSON string")
+
+                // fallback to en-US
+                include_str!("../../../locales/en-US.json")
             }
         }
     }
