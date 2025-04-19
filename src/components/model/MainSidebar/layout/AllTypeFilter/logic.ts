@@ -15,20 +15,33 @@ export const fetchAllCategories = async (): Promise<Option[]> => {
     return []
   }
 
-  // merge the two arrays and remove duplicates
-  const categories = [
-    ...new Set([
-      ...avatarWearableCategoryResult.data,
-      ...worldObjectCategoryResult.data,
-    ]),
-  ]
+  const map = new Map<string, number>()
 
-  return categories.map((category) => {
-    return {
-      label: category,
-      value: category,
+  avatarWearableCategoryResult.data.forEach((category) => {
+    const existingPriority = map.get(category.value)
+
+    if (existingPriority === undefined) {
+      map.set(category.value, category.priority)
+    } else {
+      map.set(category.value, existingPriority + category.priority)
     }
   })
+
+  worldObjectCategoryResult.data.forEach((category) => {
+    const existingPriority = map.get(category.value)
+
+    if (existingPriority === undefined) {
+      map.set(category.value, category.priority)
+    } else {
+      map.set(category.value, existingPriority + category.priority)
+    }
+  })
+
+  const categories = Array.from(map.entries()).map(([value, priority]) => {
+    return { label: value, value, priority }
+  })
+
+  return categories
 }
 
 export const fetchAllSupportedAvatars = async (): Promise<Option[]> => {
@@ -40,6 +53,10 @@ export const fetchAllSupportedAvatars = async (): Promise<Option[]> => {
   }
 
   return result.data.map((avatar) => {
-    return { label: avatar, value: avatar }
+    return {
+      label: avatar.value,
+      value: avatar.value,
+      priority: avatar.priority,
+    }
   })
 }

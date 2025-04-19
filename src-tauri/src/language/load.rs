@@ -1,6 +1,6 @@
 use std::{fs::File, path::Path};
 
-use super::structs::{LanguageCode, LocalizationData};
+use super::structs::{CustomLocalizationData, LanguageCode, LocalizationData};
 
 pub fn load_from_file<P>(path: P) -> Result<LocalizationData, String>
 where
@@ -9,7 +9,7 @@ where
     let file = File::open(path.as_ref())
         .map_err(|e| format!("Failed to open file at {}: {}", path.as_ref().display(), e))?;
 
-    let data: LocalizationData = serde_json::from_reader(file).map_err(|e| {
+    let data: CustomLocalizationData = serde_json::from_reader(file).map_err(|e| {
         format!(
             "Failed to parse JSON from file at {}: {}",
             path.as_ref().display(),
@@ -17,7 +17,7 @@ where
         )
     })?;
 
-    return Ok(data);
+    return Ok(data.into());
 }
 
 pub fn load_from_language_code(language: LanguageCode) -> Result<LocalizationData, String> {

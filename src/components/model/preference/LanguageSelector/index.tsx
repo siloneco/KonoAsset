@@ -10,14 +10,35 @@ import {
 import { FC } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
 import { Languages } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
 
 type Props = {
   language: LanguageCode
-  setLanguage: (language: LanguageCode) => void
+  setLanguage: (
+    language: Exclude<LanguageCode, { 'user-provided': string }>,
+  ) => void
+  loadLanguageFile?: () => Promise<void>
 }
 
-export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
+export const LanguageSelector: FC<Props> = ({
+  language,
+  setLanguage,
+  loadLanguageFile,
+}) => {
   const { t } = useLocalization()
+
+  const selectValueLanguage =
+    typeof language === 'string' ? language : 'user-provided'
+  const customLanguage =
+    typeof language === 'string' ? language : language['user-provided']
+
+  const onSelectValueChange = (value: string) => {
+    if (value === 'user-provided' && loadLanguageFile !== undefined) {
+      loadLanguageFile()
+    } else {
+      setLanguage(value as Exclude<LanguageCode, { 'user-provided': string }>)
+    }
+  }
 
   return (
     <div className="flex flex-row items-center">
@@ -31,7 +52,7 @@ export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
         </p>
       </div>
       <div className="flex flex-row ml-auto space-x-2">
-        <Select value={language} onValueChange={setLanguage}>
+        <Select value={selectValueLanguage} onValueChange={onSelectValueChange}>
           <SelectTrigger className="ml-auto w-[180px]">
             <SelectValue placeholder={t('general:select:placeholder')} />
           </SelectTrigger>
@@ -39,6 +60,17 @@ export const LanguageSelector: FC<Props> = ({ language, setLanguage }) => {
             <SelectItem value="ja-JP">日本語</SelectItem>
             <SelectItem value="en-US">English (US)</SelectItem>
             <SelectItem value="en-GB">English (UK)</SelectItem>
+            {loadLanguageFile !== undefined && (
+              <>
+                <Separator className="my-2" />
+                <SelectItem value="user-provided">
+                  {selectValueLanguage !== 'user-provided' &&
+                    t('preference:language:load-from-file')}
+                  {selectValueLanguage === 'user-provided' &&
+                    `${t('preference:language:custom')} (${customLanguage})`}
+                </SelectItem>
+              </>
+            )}
           </SelectContent>
         </Select>
       </div>

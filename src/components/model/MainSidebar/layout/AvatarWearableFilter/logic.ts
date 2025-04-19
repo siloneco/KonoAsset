@@ -9,8 +9,8 @@ export const fetchAvatarWearableCategories = async (): Promise<Option[]> => {
     return []
   }
 
-  return result.data.map((category) => {
-    return { label: category, value: category }
+  return result.data.map((entry) => {
+    return { label: entry.value, value: entry.value, priority: entry.priority }
   })
 }
 
@@ -22,7 +22,7 @@ export const fetchAllSupportedAvatars = async (): Promise<Option[]> => {
     return []
   }
 
-  return result.data.map((avatar) => {
-    return { label: avatar, value: avatar }
+  return result.data.map((entry) => {
+    return { label: entry.value, value: entry.value, priority: entry.priority }
   })
 }

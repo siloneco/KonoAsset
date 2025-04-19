@@ -2,7 +2,7 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { PreferenceTabIDs } from '@/components/page/Preference/hook'
 
 import { TabsContent } from '@/components/ui/tabs'
-import { LanguageCode, Theme, UpdateChannel } from '@/lib/bindings'
+import { Theme, UpdateChannel } from '@/lib/bindings'
 import { FC, useContext } from 'react'
 import DataDirSelector from './components/DataDirSelector'
 import ResetButton from './components/ResetButton'
@@ -12,6 +12,8 @@ import UseUnitypackageSelectorToggle from '@/components/model/preference/UseUnit
 import DeleteSourceToggle from '@/components/model/preference/DeleteSourceToggle'
 import { LanguageSelector } from '@/components/model/preference/LanguageSelector'
 import UpdateChannelSelector from '@/components/model/preference/UpdateChannelSelector'
+import { open } from '@tauri-apps/plugin-dialog'
+import { LocalizationContext } from '@/components/context/LocalizationContext'
 
 type Props = {
   id: PreferenceTabIDs
@@ -19,6 +21,21 @@ type Props = {
 
 const SettingsTab: FC<Props> = ({ id }) => {
   const { preference, setPreference } = useContext(PreferenceContext)
+  const { data, loadBundledLanguageFile, loadLanguageFile } =
+    useContext(LocalizationContext)
+
+  const selectFileAndLoadLanguageFile = async () => {
+    const path = await open({
+      multiple: false,
+      filters: [{ extensions: ['json'], name: 'JSON' }],
+    })
+
+    if (path === null) {
+      return
+    }
+
+    await loadLanguageFile(path)
+  }
 
   return (
     <TabsContent value={id} className="mt-0 w-full h-screen">
@@ -61,10 +78,12 @@ const SettingsTab: FC<Props> = ({ id }) => {
         />
         <Separator />
         <LanguageSelector
-          language={preference.language}
-          setLanguage={async (language: LanguageCode) => {
+          language={data.language}
+          setLanguage={async (language) => {
+            await loadBundledLanguageFile(language)
             await setPreference({ ...preference, language }, true)
           }}
+          loadLanguageFile={selectFileAndLoadLanguageFile}
         />
         <UpdateChannelSelector
           updateChannel={preference.updateChannel}

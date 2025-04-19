@@ -1,16 +1,23 @@
-use std::{collections::HashSet, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
+use serde::Serialize;
 use tauri::{async_runtime::Mutex, State};
 
 use crate::data_store::provider::StoreProvider;
+
+#[derive(Serialize, Clone, Debug, PartialEq, Eq, specta::Type)]
+pub struct PrioritizedEntry {
+    priority: u32,
+    value: String,
+}
 
 #[tauri::command]
 #[specta::specta]
 pub async fn get_all_asset_tags(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-) -> Result<Vec<String>, String> {
+) -> Result<Vec<PrioritizedEntry>, String> {
     let basic_store = basic_store.lock().await;
-    let mut tags: HashSet<String> = HashSet::new();
+    let mut tags: HashMap<String, u32> = HashMap::new();
 
     basic_store
         .get_avatar_store()
@@ -19,7 +26,8 @@ pub async fn get_all_asset_tags(
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
-                tags.insert(tag.clone());
+                let count = tags.entry(tag.clone()).or_insert(0);
+                *count += 1;
             });
         });
 
@@ -30,7 +38,8 @@ pub async fn get_all_asset_tags(
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
-                tags.insert(tag.clone());
+                let count = tags.entry(tag.clone()).or_insert(0);
+                *count += 1;
             });
         });
 
@@ -41,19 +50,26 @@ pub async fn get_all_asset_tags(
         .iter()
         .for_each(|asset| {
             asset.description.tags.iter().for_each(|tag| {
-                tags.insert(tag.clone());
+                let count = tags.entry(tag.clone()).or_insert(0);
+                *count += 1;
             });
         });
 
-    Ok(tags.into_iter().collect())
+    Ok(tags
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn get_all_supported_avatar_values(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-) -> Result<Vec<String>, String> {
-    let mut values: HashSet<String> = HashSet::new();
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let mut values: HashMap<String, u32> = HashMap::new();
 
     basic_store
         .lock()
@@ -64,19 +80,26 @@ pub async fn get_all_supported_avatar_values(
         .iter()
         .for_each(|asset| {
             asset.supported_avatars.iter().for_each(|val| {
-                values.insert(val.clone());
+                let count = values.entry(val.clone()).or_insert(0);
+                *count += 1;
             });
         });
 
-    Ok(values.into_iter().collect())
+    Ok(values
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_categories(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-) -> Result<Vec<String>, String> {
-    let mut categories: HashSet<String> = HashSet::new();
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let mut categories: HashMap<String, u32> = HashMap::new();
 
     basic_store
         .lock()
@@ -91,18 +114,26 @@ pub async fn get_avatar_wearable_categories(
             if val.is_empty() {
                 return;
             }
-            categories.insert(val.to_string());
+
+            let count = categories.entry(val.to_string()).or_insert(0);
+            *count += 1;
         });
 
-    Ok(categories.into_iter().collect())
+    Ok(categories
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn get_world_object_categories(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-) -> Result<Vec<String>, String> {
-    let mut categories: HashSet<String> = HashSet::new();
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let mut categories: HashMap<String, u32> = HashMap::new();
 
     basic_store
         .lock()
@@ -117,18 +148,26 @@ pub async fn get_world_object_categories(
             if val.is_empty() {
                 return;
             }
-            categories.insert(val.to_string());
+
+            let count = categories.entry(val.to_string()).or_insert(0);
+            *count += 1;
         });
 
-    Ok(categories.into_iter().collect())
+    Ok(categories
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_supported_avatars(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-) -> Result<Vec<String>, String> {
-    let mut supported_avatars: HashSet<String> = HashSet::new();
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let mut supported_avatars: HashMap<String, u32> = HashMap::new();
 
     basic_store
         .lock()
@@ -139,9 +178,21 @@ pub async fn get_avatar_wearable_supported_avatars(
         .iter()
         .for_each(|asset| {
             asset.supported_avatars.iter().for_each(|val| {
-                supported_avatars.insert(val.clone());
+                let val = val.trim();
+                if val.is_empty() {
+                    return;
+                }
+
+                let count = supported_avatars.entry(val.to_string()).or_insert(0);
+                *count += 1;
             });
         });
 
-    Ok(supported_avatars.into_iter().collect())
+    Ok(supported_avatars
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
 }

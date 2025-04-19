@@ -21,10 +21,11 @@ export interface Option {
   value: string
   label: string
   disable?: boolean
+  priority?: number
   /** fixed option that can't be removed. */
   fixed?: boolean
   /** Group the options by providing key. */
-  [key: string]: string | boolean | undefined
+  [key: string]: string | number | boolean | undefined
 }
 interface GroupOption {
   [key: string]: Option[]
@@ -303,16 +304,27 @@ const MultipleSelector = React.forwardRef<
       [onChange, selected],
     )
 
+    // State to track if backspace/delete is being debounced
+    const [isBackspaceDebounced, setIsBackspaceDebounced] =
+      React.useState(false)
+
     const handleKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const input = inputRef.current
         if (input) {
           if (e.key === 'Delete' || e.key === 'Backspace') {
-            if (input.value === '' && selected.length > 0) {
+            if (input.value !== '') {
+              setIsBackspaceDebounced(true)
+            } else if (selected.length > 0 && !isBackspaceDebounced) {
               const lastSelectOption = selected[selected.length - 1]
               // If last item is fixed, we should not remove it.
               if (!lastSelectOption.fixed) {
                 handleUnselect(selected[selected.length - 1])
+
+                setIsBackspaceDebounced(true)
+                setTimeout(() => {
+                  setIsBackspaceDebounced(false)
+                }, 300)
               }
             }
           }
@@ -322,7 +334,18 @@ const MultipleSelector = React.forwardRef<
           }
         }
       },
-      [handleUnselect, selected],
+      [handleUnselect, selected, isBackspaceDebounced],
+    )
+
+    // Handle key up to reset the debounce flag when the key is released
+    const handleKeyUp = React.useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          // Reset the debounce flag when the key is released
+          setIsBackspaceDebounced(false)
+        }
+      },
+      [],
     )
 
     useEffect(() => {
@@ -493,6 +516,10 @@ const MultipleSelector = React.forwardRef<
           handleKeyDown(e)
           commandProps?.onKeyDown?.(e)
         }}
+        onKeyUp={(e) => {
+          handleKeyUp(e)
+          commandProps?.onKeyUp?.(e)
+        }}
         className={cn(
           'h-auto overflow-visible bg-transparent',
           commandProps?.className,
@@ -599,7 +626,12 @@ const MultipleSelector = React.forwardRef<
                   className={cn(
                     'flex-1 bg-transparent outline-none placeholder:text-muted-foreground',
                     {
-                      'w-full': hidePlaceholderWhenSelected,
+                      'w-fit':
+                        hidePlaceholderWhenSelected &&
+                        document.activeElement === inputRef.current,
+                      'w-full':
+                        hidePlaceholderWhenSelected &&
+                        document.activeElement !== inputRef.current,
                       'px-3': selected.length === 0,
                       'ml-1': selected.length !== 0,
                     },
@@ -669,7 +701,22 @@ const MultipleSelector = React.forwardRef<
                     >
                       <>
                         {dropdowns
-                          .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
+                          .sort((a, b) => {
+                            if (
+                              a.priority !== undefined &&
+                              b.priority !== undefined
+                            ) {
+                              if (a.priority !== b.priority) {
+                                return b.priority - a.priority
+                              }
+                            } else if (a.priority !== undefined) {
+                              return 1
+                            } else if (b.priority !== undefined) {
+                              return -1
+                            }
+
+                            return a.label.localeCompare(b.label, 'ja')
+                          })
                           .map((option) => {
                             return (
                               <CommandItem

@@ -36,11 +36,11 @@ export const ImportSection = () => {
         </Alert>
       </div>
       <div className="w-full flex justify-center space-x-4">
-        <Button className="w-1/4" onClick={startImportUsingZipFile}>
+        <Button onClick={startImportUsingZipFile}>
           <FolderArchive />
           {t('preference:adapter:import:button:zip')}
         </Button>
-        <Button className="w-1/4" onClick={startImportUsingDirectory}>
+        <Button onClick={startImportUsingDirectory}>
           <Folder />
           {t('preference:adapter:import:button:directory')}
         </Button>

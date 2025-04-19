@@ -38,7 +38,7 @@ runs:
       with:
         version: 10
         run_install: false
-    - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: 23
         cache: pnpm
@@ -53,7 +53,7 @@ runs:
       shell: bash
 
     - uses: dtolnay/rust-toolchain@stable
-    - uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2
+    - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
       with:
         workspaces: "./src-tauri -> target"
 
@@ -98,7 +98,7 @@ runs:
         mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
     - name: Upload artifacts
-      uses: ryand56/r2-upload-action@latest
+      uses: ryand56/r2-upload-action@b801a390acbdeb034c5e684ff5e1361c06639e7c # v1.4
       with:
         r2-account-id: ${{ inputs.R2_ACCOUNT_ID }}
         r2-access-key-id: ${{ inputs.R2_ACCESS_KEY_ID }}

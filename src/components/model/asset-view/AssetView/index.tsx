@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import SelectUnitypackageDialog from '../../SelectUnitypackageDialog'
-import DataManagementDialog from '../../action-buttons/MoreButton/components/DataManagementDialog'
 import EditAssetDialog from '../../asset-dialogs/EditAssetDialog'
 import MemoDialog from '../../MemoDialog'
 import { DependencyDialog } from '../../DependencyDialog'
@@ -12,11 +11,13 @@ import { AssetListView } from '../AssetListView'
 
 type Props = {
   openAddAssetDialog: () => void
+  openDataManagementDialog: (assetId: string) => void
   setShowingAssetCount: (count: number) => void
 }
 
 export const AssetView: FC<Props> = ({
   openAddAssetDialog,
+  openDataManagementDialog,
   setShowingAssetCount,
 }) => {
   const {
@@ -27,13 +28,11 @@ export const AssetView: FC<Props> = ({
     background,
 
     openSelectUnitypackageDialog,
-    openDataManagementDialog,
     openEditAssetDialog,
     openMemoDialog,
     openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setDataManagementDialogOpen,
     setEditAssetDialogOpen,
     setMemoDialogOpen,
     setDependencyDialogOpen,
@@ -41,8 +40,6 @@ export const AssetView: FC<Props> = ({
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    dataManagementDialogAssetId,
-    dataManagementDialogOpen,
     editAssetDialogAssetId,
     editAssetDialogOpen,
     memoDialogAssetId,
@@ -90,11 +87,6 @@ export const AssetView: FC<Props> = ({
         setDialogOpen={setSelectUnitypackageDialogOpen}
         assetId={selectUnitypackageDialogAssetId}
         unitypackageFiles={unitypackages}
-      />
-      <DataManagementDialog
-        assetId={dataManagementDialogAssetId}
-        open={dataManagementDialogOpen}
-        onOpenChange={setDataManagementDialogOpen}
       />
       <EditAssetDialog
         id={editAssetDialogAssetId}
