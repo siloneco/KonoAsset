@@ -130,9 +130,9 @@ impl PreferenceStore {
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
         self.update_channel = other.update_channel;
 
-        // If the new language is user-provided, skipping it prevents corruption of the preference file.
+        // If the new language is user-provided, skip updating the language field to prevent corruption.
         if let LanguageCode::UserProvided(_) = other.language {
-            return;
+            // Skip updating the language field.
         } else {
             self.language = other.language.clone();
         }
