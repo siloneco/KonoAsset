@@ -538,17 +538,16 @@ const TextInputSelect = React.forwardRef<
                             b.priority !== undefined
                           ) {
                             if (a.priority !== b.priority) {
-                              return a.priority - b.priority
+                              return b.priority - a.priority
                             }
                           } else if (a.priority !== undefined) {
-                            return -1
-                          } else if (b.priority !== undefined) {
                             return 1
+                          } else if (b.priority !== undefined) {
+                            return -1
                           }
 
                           return a.label.localeCompare(b.label, 'ja')
                         })
-                        .reverse()
                         .map((option) => {
                           return (
                             <CommandItem
