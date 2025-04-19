@@ -9,7 +9,11 @@ export const fetchAllTags = async (): Promise<Option[]> => {
     return []
   }
 
-  return result.data.map((tag) => {
-    return { label: tag, value: tag }
+  return result.data.map((entry) => {
+    return {
+      label: entry.value,
+      value: entry.value,
+      priority: entry.priority,
+    }
   })
 }

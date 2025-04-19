@@ -18,8 +18,9 @@ export interface Option {
   value: string
   label: string
   disable?: boolean
+  priority?: number
   fixed?: boolean
-  [key: string]: string | boolean | undefined
+  [key: string]: string | number | boolean | undefined
 }
 
 interface SingleSelectorProps {
@@ -531,7 +532,23 @@ const TextInputSelect = React.forwardRef<
                       className="h-full overflow-auto"
                     >
                       {dropdowns
-                        .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
+                        .sort((a, b) => {
+                          if (
+                            a.priority !== undefined &&
+                            b.priority !== undefined
+                          ) {
+                            if (a.priority !== b.priority) {
+                              return a.priority - b.priority
+                            }
+                          } else if (a.priority !== undefined) {
+                            return -1
+                          } else if (b.priority !== undefined) {
+                            return 1
+                          }
+
+                          return a.label.localeCompare(b.label, 'ja')
+                        })
+                        .reverse()
                         .map((option) => {
                           return (
                             <CommandItem

@@ -22,7 +22,13 @@ const AvatarLayout = ({ form }: Props) => {
       return
     }
 
-    setTagCandidates(result.data.map((value) => ({ label: value, value })))
+    setTagCandidates(
+      result.data.map((entry) => ({
+        label: entry.value,
+        value: entry.value,
+        priority: entry.priority,
+      })),
+    )
   }
 
   useEffect(() => {

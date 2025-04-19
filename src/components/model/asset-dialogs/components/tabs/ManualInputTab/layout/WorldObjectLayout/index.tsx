@@ -25,7 +25,13 @@ const WorldObjectLayout = ({ form }: Props) => {
       return
     }
 
-    setCategoryCandidates(result.data.map((value) => ({ label: value, value })))
+    setCategoryCandidates(
+      result.data.map((entry) => ({
+        label: entry.value,
+        value: entry.value,
+        priority: entry.priority,
+      })),
+    )
   }
 
   const fetchTagCandidates = async () => {
@@ -36,7 +42,13 @@ const WorldObjectLayout = ({ form }: Props) => {
       return
     }
 
-    setTagCandidates(result.data.map((value) => ({ label: value, value })))
+    setTagCandidates(
+      result.data.map((entry) => ({
+        label: entry.value,
+        value: entry.value,
+        priority: entry.priority,
+      })),
+    )
   }
 
   useEffect(() => {
