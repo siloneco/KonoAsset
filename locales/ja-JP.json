@@ -188,6 +188,14 @@
     "loaderror:appdata-not-found-text": "設定ファイルが読み込めていないため、パスが不明です",
     "loaderror:report-error": "問題を報告する:",
 
+    "preference:language:load-from-file": "ファイルから読み込む",
+    "preference:language:custom": "カスタム",
+    "preference:language:failed-to-load-from-file:toast:title": "言語ファイルの読み込みに失敗しました",
+    "preference:language:loaded-language-file-toast:title": "言語ファイルを読み込みました",
+    "preference:language:loaded-language-file-toast:description:1": "フォールバック済み: ",
+    "preference:language:loaded-language-file-toast:description:2": "個、不要な値: ",
+    "preference:language:loaded-language-file-toast:description:3": "個",
+
     "preference:toast-version-copied": "バージョン情報をコピーしました！",
     "preference:back-to-top": "トップ画面に戻る",
     "preference:settings": "一般設定",

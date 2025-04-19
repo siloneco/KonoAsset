@@ -129,7 +129,13 @@ impl PreferenceStore {
         self.delete_on_import = other.delete_on_import;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
         self.update_channel = other.update_channel;
-        self.language = other.language.clone();
+
+        // If the new language is user-provided, skipping it prevents corruption of the preference file.
+        if let LanguageCode::UserProvided(_) = other.language {
+            return;
+        } else {
+            self.language = other.language.clone();
+        }
     }
 
     pub fn save(&self) -> Result<(), io::Error> {

@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -12,6 +11,8 @@ pub enum LanguageCode {
     EnUs,
     #[serde(rename = "en-GB", alias = "enGb")] // alias is for legacy support
     EnGb,
+    #[serde(rename = "user-provided")]
+    UserProvided(String),
 }
 
 impl LanguageCode {
@@ -20,6 +21,10 @@ impl LanguageCode {
             LanguageCode::JaJp => include_str!("../../../locales/ja-JP.json"),
             LanguageCode::EnUs => include_str!("../../../locales/en-US.json"),
             LanguageCode::EnGb => include_str!("../../../locales/en-GB.json"),
+            LanguageCode::UserProvided(_) => {
+                log::error!("User-provided language code does not have a JSON string");
+                panic!("User-provided language code does not have a JSON string")
+            }
         }
     }
 
@@ -28,6 +33,7 @@ impl LanguageCode {
             LanguageCode::JaJp => "ja-JP",
             LanguageCode::EnUs => "en-US",
             LanguageCode::EnGb => "en-GB",
+            LanguageCode::UserProvided(code) => code,
         }
     }
 
@@ -35,14 +41,51 @@ impl LanguageCode {
         match self {
             LanguageCode::JaJp => "ja",
             LanguageCode::EnUs | LanguageCode::EnGb => "en",
+            LanguageCode::UserProvided(_) => "en",
         }
     }
 }
 
-#[serde_as]
 #[derive(Debug, Serialize, Deserialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct LocalizationData {
     pub language: LanguageCode,
     pub data: HashMap<String, String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct CustomLocalizationData {
+    pub language: String,
+    pub data: HashMap<String, String>,
+}
+
+impl Into<LocalizationData> for CustomLocalizationData {
+    fn into(self) -> LocalizationData {
+        LocalizationData {
+            language: LanguageCode::UserProvided(self.language.clone()),
+            data: self.data,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Clone, specta::Type)]
+pub struct CustomLanguageFileLoadResult {
+    pub data: LocalizationData,
+    pub missing_keys: Vec<String>,
+    pub additional_keys: Vec<String>,
+}
+
+impl CustomLanguageFileLoadResult {
+    pub fn new(
+        data: LocalizationData,
+        missing_keys: Vec<String>,
+        additional_keys: Vec<String>,
+    ) -> Self {
+        Self {
+            data,
+            missing_keys,
+            additional_keys,
+        }
+    }
 }
