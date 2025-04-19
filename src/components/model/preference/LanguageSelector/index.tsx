@@ -17,7 +17,7 @@ type Props = {
   setLanguage: (
     language: Exclude<LanguageCode, { 'user-provided': string }>,
   ) => void
-  loadLanguageFile: () => Promise<void>
+  loadLanguageFile?: () => Promise<void>
 }
 
 export const LanguageSelector: FC<Props> = ({
@@ -33,7 +33,7 @@ export const LanguageSelector: FC<Props> = ({
     typeof language === 'string' ? language : language['user-provided']
 
   const onSelectValueChange = (value: string) => {
-    if (value === 'user-provided') {
+    if (value === 'user-provided' && loadLanguageFile !== undefined) {
       loadLanguageFile()
     } else {
       setLanguage(value as Exclude<LanguageCode, { 'user-provided': string }>)
@@ -60,13 +60,17 @@ export const LanguageSelector: FC<Props> = ({
             <SelectItem value="ja-JP">日本語</SelectItem>
             <SelectItem value="en-US">English (US)</SelectItem>
             <SelectItem value="en-GB">English (UK)</SelectItem>
-            <Separator className="my-2" />
-            <SelectItem value="user-provided">
-              {selectValueLanguage !== 'user-provided' &&
-                t('preference:language:load-from-file')}
-              {selectValueLanguage === 'user-provided' &&
-                `${t('preference:language:custom')} (${customLanguage})`}
-            </SelectItem>
+            {loadLanguageFile !== undefined && (
+              <>
+                <Separator className="my-2" />
+                <SelectItem value="user-provided">
+                  {selectValueLanguage !== 'user-provided' &&
+                    t('preference:language:load-from-file')}
+                  {selectValueLanguage === 'user-provided' &&
+                    `${t('preference:language:custom')} (${customLanguage})`}
+                </SelectItem>
+              </>
+            )}
           </SelectContent>
         </Select>
       </div>
