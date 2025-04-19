@@ -21,10 +21,11 @@ export interface Option {
   value: string
   label: string
   disable?: boolean
+  priority?: number
   /** fixed option that can't be removed. */
   fixed?: boolean
   /** Group the options by providing key. */
-  [key: string]: string | boolean | undefined
+  [key: string]: string | number | boolean | undefined
 }
 interface GroupOption {
   [key: string]: Option[]
@@ -700,7 +701,22 @@ const MultipleSelector = React.forwardRef<
                     >
                       <>
                         {dropdowns
-                          .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
+                          .sort((a, b) => {
+                            if (
+                              a.priority !== undefined &&
+                              b.priority !== undefined
+                            ) {
+                              if (a.priority !== b.priority) {
+                                return b.priority - a.priority
+                              }
+                            } else if (a.priority !== undefined) {
+                              return 1
+                            } else if (b.priority !== undefined) {
+                              return -1
+                            }
+
+                            return a.label.localeCompare(b.label, 'ja')
+                          })
                           .map((option) => {
                             return (
                               <CommandItem

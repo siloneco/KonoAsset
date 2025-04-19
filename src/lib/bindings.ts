@@ -129,7 +129,7 @@ async exportForAvatarExplorer(path: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAllAssetTags() : Promise<Result<string[], string>> {
+async getAllAssetTags() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
 } catch (e) {
@@ -137,7 +137,7 @@ async getAllAssetTags() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAllSupportedAvatarValues() : Promise<Result<string[], string>> {
+async getAllSupportedAvatarValues() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_supported_avatar_values") };
 } catch (e) {
@@ -145,7 +145,7 @@ async getAllSupportedAvatarValues() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableCategories() : Promise<Result<string[], string>> {
+async getAvatarWearableCategories() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_categories") };
 } catch (e) {
@@ -153,7 +153,7 @@ async getAvatarWearableCategories() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableSupportedAvatars() : Promise<Result<string[], string>> {
+async getAvatarWearableSupportedAvatars() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_supported_avatars") };
 } catch (e) {
@@ -161,7 +161,7 @@ async getAvatarWearableSupportedAvatars() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getWorldObjectCategories() : Promise<Result<string[], string>> {
+async getWorldObjectCategories() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_world_object_categories") };
 } catch (e) {
@@ -499,6 +499,7 @@ export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; language: LanguageCode; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean; updateChannel: UpdateChannel }
+export type PrioritizedEntry = { priority: number; value: string }
 export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
