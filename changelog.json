@@ -46,7 +46,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed issue where horizontal scrollbar in logs was cut off"
+            "text": "Horizontal scrollbar in logs was cut off"
           }
         ]
       },
@@ -73,7 +73,7 @@
         "langs": [
           {
             "lang": ["en-US", "en-GB"],
-            "text": "Fixed issue where changelog couldn't be read to the end when too long"
+            "text": "Changelog couldn't be read to the end when it was too long"
           }
         ]
       }
