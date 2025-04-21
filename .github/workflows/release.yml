@@ -39,6 +39,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}
 
   build-and-release-for-pre-release:
     if: github.ref == 'refs/heads/pre-release'
@@ -73,3 +74,4 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}

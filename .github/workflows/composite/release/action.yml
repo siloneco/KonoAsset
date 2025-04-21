@@ -30,6 +30,9 @@ inputs:
   R2_BUCKET:
     required: true
     description: "The R2 bucket to upload the release to"
+  VT_API_KEY:
+    required: true
+    description: "The VirusTotal API key to use for scanning the release"
 
 runs:
   using: "composite"
@@ -106,3 +109,11 @@ runs:
         r2-bucket: ${{ inputs.R2_BUCKET }}
         source-dir: upload/
         destination-dir: ./
+
+    - name: VirusTotal Scan
+      uses: crazy-max/ghaction-virustotal@d34968c958ae283fe976efed637081b9f9dcf74f # v4
+      with:
+        vt_api_key: ${{ inputs.VT_API_KEY }}
+        request_rate: 4
+        files: |
+          ./upload/installer/*.exe
