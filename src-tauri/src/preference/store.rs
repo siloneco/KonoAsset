@@ -22,6 +22,7 @@ pub struct PreferenceStore {
     pub language: LanguageCode,
 
     pub delete_on_import: bool,
+    pub zip_extraction: bool,
     pub use_unitypackage_selected_open: bool,
 
     pub update_channel: UpdateChannel,
@@ -74,6 +75,7 @@ impl PreferenceStore {
             language: LanguageCode::JaJp,
 
             delete_on_import: false,
+            zip_extraction: true,
             use_unitypackage_selected_open: true,
 
             update_channel: UpdateChannel::Stable,
@@ -232,6 +234,7 @@ mod tests {
             language: LanguageCode::EnUs,
 
             delete_on_import: false,
+            zip_extraction: true,
             use_unitypackage_selected_open: false,
 
             update_channel: UpdateChannel::PreRelease,
@@ -249,6 +252,7 @@ mod tests {
                 "theme": "light",
                 "language": "en-US",
                 "deleteOnImport": false,
+                "zipExtraction": true,
                 "useUnitypackageSelectedOpen": false,
                 "updateChannel": "PreRelease"
             }
