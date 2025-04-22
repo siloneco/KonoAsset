@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog'
 import { useContext } from 'react'
 import { AddAssetDialogContext } from '../../../AddAssetDialog'
-import { OctagonAlert } from 'lucide-react'
+import { Folder, OctagonAlert, Pencil } from 'lucide-react'
 import SlimAssetDetail from '@/components/model/SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
 import { commands } from '@/lib/bindings'
@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 type Props = {
   setTab: (tab: string) => void
   openEditDialog: (assetId: string) => void
+  openDataManagementDialog: (assetId: string) => void
 
   tabIndex: number
   totalTabs: number
@@ -23,6 +24,7 @@ type Props = {
 const DuplicateWarningTab = ({
   setTab,
   openEditDialog,
+  openDataManagementDialog,
   tabIndex,
   totalTabs,
 }: Props) => {
@@ -80,7 +82,13 @@ const DuplicateWarningTab = ({
                 variant="secondary"
                 onClick={() => openEditDialog(item.id)}
               >
-                {t('slimassetdetail:edit-info')}
+                <Pencil />
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => openDataManagementDialog(item.id)}
+              >
+                <Folder />
               </Button>
             </SlimAssetDetail>
           </div>

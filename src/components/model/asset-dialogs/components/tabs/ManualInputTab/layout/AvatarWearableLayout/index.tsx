@@ -28,8 +28,9 @@ const AvatarWearableLayout = ({ form }: Props) => {
       return
     }
 
-    const options = result.data.map((value) => {
-      return { label: value, value }
+    const options: Option[] = result.data.map((entry) => {
+      const value = entry.value
+      return { label: value, value, priority: entry.priority }
     })
 
     setSupportedAvatarCandidates(options)
@@ -43,7 +44,13 @@ const AvatarWearableLayout = ({ form }: Props) => {
       return
     }
 
-    setCategoryCandidates(result.data.map((value) => ({ label: value, value })))
+    setCategoryCandidates(
+      result.data.map((entry) => ({
+        label: entry.value,
+        value: entry.value,
+        priority: entry.priority,
+      })),
+    )
   }
 
   const fetchTagCandidates = async () => {
@@ -54,7 +61,13 @@ const AvatarWearableLayout = ({ form }: Props) => {
       return
     }
 
-    setTagCandidates(result.data.map((value) => ({ label: value, value })))
+    setTagCandidates(
+      result.data.map((entry) => ({
+        label: entry.value,
+        value: entry.value,
+        priority: entry.priority,
+      })),
+    )
   }
 
   useEffect(() => {

@@ -24,13 +24,11 @@ type ReturnProps = {
     assetId: string,
     data: { [x: string]: FileInfo[] },
   ) => void
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
   openMemoDialog: (assetId: string) => void
   openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 
   setSelectUnitypackageDialogOpen: (open: boolean) => void
-  setDataManagementDialogOpen: (open: boolean) => void
   setEditAssetDialogOpen: (open: boolean) => void
   setMemoDialogOpen: (open: boolean) => void
   setDependencyDialogOpen: (open: boolean) => void
@@ -38,8 +36,6 @@ type ReturnProps = {
   selectUnitypackageDialogOpen: boolean
   selectUnitypackageDialogAssetId: string | null
   unitypackages: { [x: string]: FileInfo[] }
-  dataManagementDialogAssetId: string | null
-  dataManagementDialogOpen: boolean
   editAssetDialogAssetId: string | null
   editAssetDialogOpen: boolean
   memoDialogAssetId: string | null
@@ -56,11 +52,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     [x: string]: FileInfo[]
   }>({})
   const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
-    useState<string | null>(null)
-
-  const [dataManagementDialogOpen, setDataManagementDialogOpen] =
-    useState(false)
-  const [dataManagementDialogAssetId, setDataManagementDialogAssetId] =
     useState<string | null>(null)
 
   const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
@@ -190,11 +181,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setSelectUnitypackageDialogOpen(true)
   }
 
-  const openDataManagementDialog = (assetId: string) => {
-    setDataManagementDialogAssetId(assetId)
-    setDataManagementDialogOpen(true)
-  }
-
   const openEditAssetDialog = (assetId: string) => {
     setEditAssetDialogAssetId(assetId)
     setEditAssetDialogOpen(true)
@@ -219,13 +205,11 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     background: assetDisplaySortedList.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,
-    openDataManagementDialog,
     openEditAssetDialog,
     openMemoDialog,
     openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setDataManagementDialogOpen,
     setEditAssetDialogOpen,
     setMemoDialogOpen,
     setDependencyDialogOpen,
@@ -233,8 +217,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    dataManagementDialogAssetId,
-    dataManagementDialogOpen,
     editAssetDialogAssetId,
     editAssetDialogOpen,
     memoDialogAssetId,

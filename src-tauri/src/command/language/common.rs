@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use crate::language::{
     load::{load_from_file, load_from_language_code},
-    structs::{LanguageCode, LocalizationData},
+    structs::{CustomLanguageFileLoadResult, LanguageCode, LocalizationData},
 };
 
 #[tauri::command]
@@ -38,10 +38,31 @@ pub async fn get_current_language_data(
 pub async fn load_language_file(
     localization_data: State<'_, Arc<Mutex<LocalizationData>>>,
     path: PathBuf,
-) -> Result<LocalizationData, String> {
-    let data = load_from_file(&path)?;
+) -> Result<CustomLanguageFileLoadResult, String> {
+    let mut user_provided_data = load_from_file(&path)?;
 
-    *localization_data.lock().await = data.clone();
+    let fallback = load_from_language_code(LanguageCode::EnUs).map_err(|e| {
+        let err = format!("Failed to load fallback language file: {}", e);
+        log::error!("{}", err);
+        err
+    })?;
 
-    return Ok(data);
+    let mut missing_keys = fallback.data.keys().cloned().collect::<Vec<_>>();
+    let mut additional_keys = user_provided_data.data.keys().cloned().collect::<Vec<_>>();
+
+    missing_keys.retain(|key| !user_provided_data.data.contains_key(key));
+    additional_keys.retain(|key| !fallback.data.contains_key(key));
+
+    for missing_key in &missing_keys {
+        user_provided_data
+            .data
+            .insert(missing_key.clone(), fallback.data[missing_key].clone());
+    }
+
+    *localization_data.lock().await = user_provided_data.clone();
+
+    let result =
+        CustomLanguageFileLoadResult::new(user_provided_data, missing_keys, additional_keys);
+
+    Ok(result)
 }

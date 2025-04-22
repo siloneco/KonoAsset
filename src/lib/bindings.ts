@@ -129,7 +129,7 @@ async exportForAvatarExplorer(path: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAllAssetTags() : Promise<Result<string[], string>> {
+async getAllAssetTags() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
 } catch (e) {
@@ -137,7 +137,7 @@ async getAllAssetTags() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAllSupportedAvatarValues() : Promise<Result<string[], string>> {
+async getAllSupportedAvatarValues() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_supported_avatar_values") };
 } catch (e) {
@@ -145,7 +145,7 @@ async getAllSupportedAvatarValues() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableCategories() : Promise<Result<string[], string>> {
+async getAvatarWearableCategories() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_categories") };
 } catch (e) {
@@ -153,7 +153,7 @@ async getAvatarWearableCategories() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableSupportedAvatars() : Promise<Result<string[], string>> {
+async getAvatarWearableSupportedAvatars() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_supported_avatars") };
 } catch (e) {
@@ -161,7 +161,7 @@ async getAvatarWearableSupportedAvatars() : Promise<Result<string[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getWorldObjectCategories() : Promise<Result<string[], string>> {
+async getWorldObjectCategories() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_world_object_categories") };
 } catch (e) {
@@ -353,6 +353,14 @@ async getImageAbsolutePath(filename: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async extractNonExistentPaths(paths: string[]) : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("extract_non_existent_paths", { paths }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async requireInitialSetup() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("require_initial_setup") };
@@ -428,7 +436,7 @@ async getCurrentLanguageData() : Promise<Result<LocalizationData, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async loadLanguageFile(path: string) : Promise<Result<LocalizationData, string>> {
+async loadLanguageFile(path: string) : Promise<Result<CustomLanguageFileLoadResult, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("load_language_file", { path }) };
 } catch (e) {
@@ -475,11 +483,12 @@ export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
 export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
+export type CustomLanguageFileLoadResult = { data: LocalizationData; missing_keys: string[]; additional_keys: string[] }
 export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type LanguageCode = "ja-JP" | "en-US" | "en-GB"
+export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | { "user-provided": string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
 export type LocalizedChanges = { version: string; pre_release: boolean; features: string[]; fixes: string[]; others: string[] }
@@ -490,6 +499,7 @@ export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; language: LanguageCode; deleteOnImport: boolean; useUnitypackageSelectedOpen: boolean; updateChannel: UpdateChannel }
+export type PrioritizedEntry = { priority: number; value: string }
 export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }
 export type SimplifiedDirEntry = { entryType: EntryType; name: string; absolutePath: string }
