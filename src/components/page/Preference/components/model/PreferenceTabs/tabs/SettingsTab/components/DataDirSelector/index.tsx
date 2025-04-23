@@ -47,7 +47,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
 
   return (
     <div className="flex flex-row items-center">
-      <div className="space-y-2 flex-grow">
+      <div className="space-y-2 grow">
         <Label className="text-xl">
           {t('preference:settings:application-data')}
         </Label>

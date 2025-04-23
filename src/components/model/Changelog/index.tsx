@@ -18,11 +18,11 @@ export const Changelog: FC<Props> = ({ changes }) => {
   return (
     <div className="w-full">
       <div className="flex flex-row items-center">
-        <Separator className="flex w-32 flex-grow" />
+        <Separator className="flex w-32 grow" />
         <span className="px-4 text-muted-foreground">
           {t('top:update-dialog:changelog:title')}
         </span>
-        <Separator className="flex w-32 flex-grow" />
+        <Separator className="flex w-32 grow" />
       </div>
       <ScrollArea className="px-2">
         <div className="pb-2 pr-2 max-h-72">

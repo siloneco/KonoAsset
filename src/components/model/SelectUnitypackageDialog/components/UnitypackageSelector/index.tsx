@@ -34,7 +34,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
         {files.map((file) => (
           <div className="flex flex-row items-center w-full">
             <SiUnity size={18} />
-            <div className="flex-grow overflow-hidden mr-4">
+            <div className="grow overflow-hidden mr-4">
               <p className="ml-2 truncate overflow-hidden text-ellipsis whitespace-nowrap">
                 {file.fileName}
               </p>
