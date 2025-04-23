@@ -13,7 +13,10 @@ const SelectTypeButton = ({ text, onClick, selected }: Props) => {
     <Button
       onClick={onClick}
       variant={'outline'}
-      className={cn('w-96 h-12 py-1', selected && 'border-primary border-2')}
+      className={cn(
+        'w-96 h-12 py-1',
+        selected && 'border-primary dark:border-primary border-2',
+      )}
     >
       <div className="w-3">
         {selected && <ChevronsRight className="text-primary" size={32} />}

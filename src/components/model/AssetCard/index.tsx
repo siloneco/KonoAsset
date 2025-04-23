@@ -47,7 +47,7 @@ const AssetCard = ({
   }
 
   return (
-    <Card className="w-full bg-card m-1" ref={ref}>
+    <Card className="w-full bg-card m-1 py-0" ref={ref}>
       <CardContent className="p-4 h-full">
         <div className="h-[calc(100%-3rem)]">
           <SquareImage
@@ -63,7 +63,7 @@ const AssetCard = ({
             {asset.hasMemo && (
               <Button
                 variant="outline"
-                className="h-8 w-8"
+                className="size-8"
                 onClick={() => openMemoDialog(asset.id)}
               >
                 <NotebookText />
@@ -82,7 +82,7 @@ const AssetCard = ({
             {asset.creator}
           </Label>
         </div>
-        <div className="flex flex-row mt-2">
+        <div className="flex flex-row w-full mt-2 space-x-2">
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}

@@ -115,31 +115,29 @@ const CommandEmpty = forwardRef<
 })
 CommandEmpty.displayName = 'CommandEmpty'
 
-const TextInputSelect = (
-  {
-    ref,
-    value,
-    onChange,
-    placeholder,
-    defaultOptions: arrayDefaultOptions = [],
-    options: arrayOptions,
-    delay,
-    onSearch,
-    onSearchSync,
-    loadingIndicator,
-    emptyIndicator,
-    disabled,
-    groupBy,
-    className,
-    selectFirstItem = true,
-    creatable = false,
-    triggerSearchOnFocus = false,
-    commandProps,
-    inputProps
-  }: SingleSelectorProps & {
-    ref: React.RefObject<SingleSelectorRef>;
-  }
-) => {
+const TextInputSelect = ({
+  ref,
+  value,
+  onChange,
+  placeholder,
+  defaultOptions: arrayDefaultOptions = [],
+  options: arrayOptions,
+  delay,
+  onSearch,
+  onSearchSync,
+  loadingIndicator,
+  emptyIndicator,
+  disabled,
+  groupBy,
+  className,
+  selectFirstItem = true,
+  creatable = false,
+  triggerSearchOnFocus = false,
+  commandProps,
+  inputProps,
+}: SingleSelectorProps & {
+  ref?: React.RefObject<SingleSelectorRef>
+}) => {
   const { t } = useLocalization()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [open, setOpen] = React.useState(false)

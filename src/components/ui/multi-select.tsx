@@ -178,36 +178,34 @@ const CommandEmpty = forwardRef<
 })
 CommandEmpty.displayName = 'CommandEmpty'
 
-const MultipleSelector = (
-  {
-    ref,
-    value,
-    onChange,
-    placeholder,
-    defaultOptions: arrayDefaultOptions = [],
-    options: arrayOptions,
-    delay,
-    onSearch,
-    onSearchSync,
-    loadingIndicator,
-    emptyIndicator,
-    maxSelected = Number.MAX_SAFE_INTEGER,
-    onMaxSelected,
-    hidePlaceholderWhenSelected,
-    disabled,
-    groupBy,
-    className,
-    badgeClassName,
-    selectFirstItem = true,
-    creatable = false,
-    triggerSearchOnFocus = false,
-    commandProps,
-    inputProps,
-    hideClearAllButton = false
-  }: MultipleSelectorProps & {
-    ref: React.RefObject<MultipleSelectorRef>;
-  }
-) => {
+const MultipleSelector = ({
+  ref,
+  value,
+  onChange,
+  placeholder,
+  defaultOptions: arrayDefaultOptions = [],
+  options: arrayOptions,
+  delay,
+  onSearch,
+  onSearchSync,
+  loadingIndicator,
+  emptyIndicator,
+  maxSelected = Number.MAX_SAFE_INTEGER,
+  onMaxSelected,
+  hidePlaceholderWhenSelected,
+  disabled,
+  groupBy,
+  className,
+  badgeClassName,
+  selectFirstItem = true,
+  creatable = false,
+  triggerSearchOnFocus = false,
+  commandProps,
+  inputProps,
+  hideClearAllButton = false,
+}: MultipleSelectorProps & {
+  ref?: React.RefObject<MultipleSelectorRef>
+}) => {
   const { t } = useLocalization()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [open, setOpen] = React.useState(false)
@@ -303,8 +301,7 @@ const MultipleSelector = (
   )
 
   // State to track if backspace/delete is being debounced
-  const [isBackspaceDebounced, setIsBackspaceDebounced] =
-    React.useState(false)
+  const [isBackspaceDebounced, setIsBackspaceDebounced] = React.useState(false)
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
