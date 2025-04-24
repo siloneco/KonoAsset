@@ -30,7 +30,7 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
         <Folder className="mr-2" size={18} />
         <span className="text-foreground">{displayPath}</span>
       </div>
-      <Card className="p-2 pl-4 space-y-2 w-full">
+      <Card className="p-2 pl-4 w-full gap-2">
         {files.map((file) => (
           <div className="flex flex-row items-center w-full">
             <SiUnity size={18} />

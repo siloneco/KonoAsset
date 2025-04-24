@@ -53,7 +53,7 @@ const SelectUnitypackageDialog = ({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {t('assetcard:select-unitypackage:select-file')}
@@ -77,8 +77,8 @@ const SelectUnitypackageDialog = ({
           className="my-2 w-fit mx-auto flex items-center"
           onClick={() => setSkipDialogAndSave(!skipDialog)}
         >
-          <Checkbox checked={skipDialog} />
-          <Label className="ml-2">
+          <Checkbox checked={skipDialog} className="cursor-pointer" />
+          <Label className="ml-2 cursor-pointer">
             {t('assetcard:select-unitypackage:always-open-dir')}
           </Label>
         </div>
