@@ -53,14 +53,14 @@ const SelectUnitypackageDialog = ({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent className="max-w-[500px]">
+      <DialogContent className="max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {t('assetcard:select-unitypackage:select-file')}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-96 pr-4">
-          <div className="space-y-4 max-w-[446px]">
+          <div className="space-y-4 max-w-[534px]">
             {Object.keys(unitypackageFiles)
               .sort((a, b) => a.localeCompare(b))
               .map((path) => (
