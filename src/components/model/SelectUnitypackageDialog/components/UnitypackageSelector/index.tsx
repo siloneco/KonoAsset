@@ -33,8 +33,10 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
       <Card className="p-2 pl-4 w-full gap-2">
         {files.map((file) => (
           <div className="flex flex-row items-center w-full">
-            <SiUnity size={18} />
-            <div className="grow overflow-hidden mr-4">
+            <div className="flex shrink-0">
+              <SiUnity size={18} />
+            </div>
+            <div className="flex shrink overflow-hidden mr-4">
               <p className="ml-2 truncate overflow-hidden text-ellipsis whitespace-nowrap">
                 {file.fileName}
               </p>
