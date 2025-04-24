@@ -76,17 +76,15 @@ export const DependencyDialog: FC<Props> = ({
         </DialogHeader>
         {loading && (
           <div className="w-full space-y-2">
-            <Skeleton className="w-40 h-4 rounded-full" />
-            <Skeleton className="w-64 h-4 rounded-full" />
-            <Skeleton className="w-16 h-4 rounded-full" />
-            <Skeleton className="w-96 h-4 rounded-full" />
+            <Skeleton className="w-full h-14 rounded-lg" />
+            <Skeleton className="w-full h-14 rounded-lg" />
           </div>
         )}
         {!loading && (
           <ScrollArea className="max-h-96 pr-2">
             <div className="space-y-1">
               {dependencies.map((item) => (
-                <SlimAssetDetail asset={item} className="max-w-[450px]">
+                <SlimAssetDetail asset={item} className="max-w-[650px]">
                   <AssetCardOpenButton
                     id={item.id}
                     displayOpenButtonText

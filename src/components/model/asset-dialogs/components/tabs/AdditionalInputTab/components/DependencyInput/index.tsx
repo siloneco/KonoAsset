@@ -49,7 +49,7 @@ export const DependencyInput: FC<Props> = ({
                   <SlimAssetDetail
                     key={asset.id}
                     asset={asset}
-                    className="w-full bg-background border-0 border-b"
+                    className="w-[588px] bg-background border-0 border-b"
                   >
                     <Button
                       className="w-10 h-10"

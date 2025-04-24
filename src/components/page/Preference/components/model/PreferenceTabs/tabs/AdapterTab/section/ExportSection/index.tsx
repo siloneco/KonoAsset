@@ -94,7 +94,11 @@ export const ExportSection: FC = () => {
                 value={exportDestination ?? ''}
                 disabled
               />
-              <Button variant="secondary" onClick={selectExportDestination}>
+              <Button
+                variant="secondary"
+                className="h-10"
+                onClick={selectExportDestination}
+              >
                 {t('general:button:select')}
               </Button>
             </div>

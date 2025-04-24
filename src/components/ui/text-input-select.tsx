@@ -403,7 +403,8 @@ const TextInputSelect = ({
       >
         <div
           className={cn(
-            'min-h-10 rounded-md border border-input text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+            'min-h-10 rounded-md dark:bg-input/30 border border-input text-sm ring-offset-background',
+            'transition-[color,box-shadow] focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
             {
               'px-3 py-2': selected !== null,
               'cursor-text': !disabled,
@@ -431,7 +432,7 @@ const TextInputSelect = ({
                   }}
                   onClick={() => handleUnselect()}
                 >
-                  <X className="h-5 w-5 text-muted-foreground hover:text-foreground" />
+                  <X className="h-5 w-5 text-muted-foreground hover:text-foreground cursor-pointer" />
                 </button>
               </div>
             )}
@@ -494,7 +495,7 @@ const TextInputSelect = ({
         {open && (
           <CommandList
             className={cn(
-              'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in',
+              'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden',
               dropdownPosition === 'top'
                 ? 'bottom-full mb-1' // 上に表示する場合
                 : 'top-full mt-1', // 下に表示する場合

@@ -52,7 +52,7 @@ export const AssetSelector: FC<Props> = ({
         <Search className="absolute top-2 left-2 text-foreground/50" />
         <div
           className={cn(
-            'absolute z-10 w-[calc(100%-16px)] h-96 top-12 bg-background rounded-lg mx-2',
+            'absolute z-10 w-[calc(100%-16px)] h-96 top-12 bg-background rounded-lg border-2 border-border overflow-hidden',
             'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
             !open && 'hidden',
           )}

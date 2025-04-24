@@ -15,7 +15,8 @@ const SelectTypeButton = ({ text, onClick, selected }: Props) => {
       variant={'outline'}
       className={cn(
         'w-96 h-12 py-1',
-        selected && 'border-primary dark:border-primary border-2',
+        selected &&
+          'border-2 border-ring dark:border-ring ring-ring/50 ring-[3px]',
       )}
     >
       <div className="w-3">

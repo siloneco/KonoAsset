@@ -78,12 +78,13 @@ const AdditionalInputTab = ({
             {!hideDeleteSourceCheckbox && (
               <div className="flex items-center mr-4">
                 <Checkbox
+                  className="cursor-pointer disabled:cursor-not-allowed"
                   checked={deleteSourceChecked}
                   onCheckedChange={setDeleteSourceChecked}
                   disabled={submitting}
                 />
                 <Label
-                  className="ml-2"
+                  className="ml-2 cursor-pointer"
                   onClick={() => setDeleteSourceChecked(!deleteSourceChecked)}
                 >
                   {t('addasset:additional-input:delete-source')}

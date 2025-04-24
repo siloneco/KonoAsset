@@ -59,7 +59,7 @@ const DestinationSelectTab: FC<Props> = ({
             <Input value={currentDataDir} disabled />
             <Button
               variant="outline"
-              className="ml-2"
+              className="ml-2 h-10"
               onClick={onOpenButtonClick}
             >
               {t('general:button:open')}
@@ -74,7 +74,7 @@ const DestinationSelectTab: FC<Props> = ({
             <Input value={destinationPath} disabled />
             <Button
               variant="secondary"
-              className="ml-2"
+              className="ml-2 h-10"
               onClick={onSelectDestinationPathClick}
             >
               {t('general:button:select')}

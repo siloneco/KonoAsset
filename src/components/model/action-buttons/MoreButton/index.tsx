@@ -151,7 +151,7 @@ export const MoreButton = ({
               {t('general:button:delete')}
             </DropdownMenuItem>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="max-w-[500px]">
             <AlertDialogHeader>
               <AlertDialogTitle>
                 {t('assetcard:more-button:delete-confirm')}

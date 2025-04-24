@@ -87,7 +87,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
 
   return (
     <div className="mb-4">
-      <div className="w-full flex flex-row space-x-2">
+      <div className="w-full flex flex-row space-x-2 space-y-4">
         <div className="w-1/2 space-y-2">
           <Label> {t('general:supported-avatars')} </Label>
           <MultipleSelector

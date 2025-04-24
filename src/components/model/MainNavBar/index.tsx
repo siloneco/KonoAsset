@@ -44,7 +44,7 @@ const NavBar = ({ displayAssetCount }: Props) => {
               {totalAssetCount !== showingCount && (
                 <Button
                   className="h-8"
-                  variant={'outline'}
+                  variant="secondary"
                   onClick={clearFilters}
                 >
                   {t('general:clear-filter')}

@@ -58,7 +58,7 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
           <Input value={dataDir} className="w-full max-w-[600px]" disabled />
           <Button
             variant="outline"
-            className="ml-2"
+            className="ml-2 h-10"
             onClick={onOpenButtonClick}
           >
             {t('general:button:open')}

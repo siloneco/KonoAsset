@@ -528,7 +528,8 @@ const MultipleSelector = ({
     >
       <div
         className={cn(
-          'min-h-10 rounded-md border border-input text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+          'min-h-10 rounded-md dark:bg-input/30 border border-input text-sm ring-offset-background',
+          'transition-[color,box-shadow] focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
           {
             'pl-3': selected.length !== 0,
             'cursor-text': !disabled && selected.length !== 0,
@@ -574,7 +575,7 @@ const MultipleSelector = ({
                       }}
                       onClick={() => handleUnselect(option)}
                     >
-                      <X className="h-4 w-4 text-foreground" />
+                      <X className="h-4 w-4 text-foreground cursor-pointer" />
                     </button>
                   </Badge>
                 )
@@ -650,7 +651,7 @@ const MultipleSelector = ({
                 'hidden',
             )}
           >
-            <X />
+            <X className="cursor-pointer text-muted-foreground hover:text-foreground" />
           </button>
         </div>
       </div>
@@ -658,7 +659,7 @@ const MultipleSelector = ({
         {open && (
           <CommandList
             className={cn(
-              'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden animate-in',
+              'absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-hidden',
               dropdownPosition === 'top'
                 ? 'bottom-full -left-1' // 上に表示する場合
                 : 'top-full mt-1', // 下に表示する場合

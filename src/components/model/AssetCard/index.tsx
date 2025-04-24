@@ -48,18 +48,20 @@ const AssetCard = ({
 
   return (
     <Card className="w-full bg-card m-1 py-0" ref={ref}>
-      <CardContent className="p-4 h-full">
-        <div className="h-[calc(100%-3rem)]">
+      <CardContent className="p-4 w-full h-full">
+        <div className="h-[calc(100%-3rem)] w-full">
           <SquareImage
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
           />
-          <div className="mt-2 h-8 flex flex-row justify-between items-center text-center">
-            <AssetBadge
-              type={asset.assetType}
-              className="select-none cursor-pointer"
-              onClick={() => setAssetType(asset.assetType)}
-            />
+          <div className="mt-2 h-8 w-full flex flex-row justify-between items-center text-center">
+            <div className="flex shrink overflow-hidden">
+              <AssetBadge
+                type={asset.assetType}
+                className="select-none cursor-pointer w-full"
+                onClick={() => setAssetType(asset.assetType)}
+              />
+            </div>
             {asset.hasMemo && (
               <Button
                 variant="outline"
