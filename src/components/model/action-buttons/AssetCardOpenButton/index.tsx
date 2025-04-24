@@ -55,10 +55,10 @@ const AssetCardOpenButton = ({
   const { t } = useLocalization()
 
   return (
-    <div className={cn('flex flex-row w-full mr-2', className)}>
+    <div className={cn('flex flex-row w-full', className)}>
       <Button
         className={cn(
-          'w-full rounded-r-none',
+          'h-10 flex-grow rounded-r-none',
           !displayOpenButtonText && 'px-0',
         )}
         onClick={onMainButtonClick}
@@ -76,7 +76,7 @@ const AssetCardOpenButton = ({
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="rounded-l-none w-2 p-3 m-0">
+          <Button className="rounded-l-none h-10 w-2 p-3 m-0">
             <ChevronDown />
           </Button>
         </DropdownMenuTrigger>

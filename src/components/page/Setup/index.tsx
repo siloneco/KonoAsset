@@ -47,8 +47,10 @@ export const SetupPage: FC = () => {
               {t('setup:sidebar:3')}
             </SetupProgressContent>
           </div>
-          <Separator orientation="vertical" className="h-96" />
-          <div className="flex flex-grow flex-col">
+          <div className="h-96">
+            <Separator orientation="vertical" />
+          </div>
+          <div className="flex grow flex-col">
             <Tabs value={tabIndex + ''} className="h-96">
               <TabsContent value="1">
                 <AppAppearanceTab />

@@ -69,6 +69,7 @@ const BoothInputTabForEditDialog = ({
             <Button
               disabled={fetching || !isBoothURL(boothUrlInput)}
               onClick={() => getAssetDescriptionFromBooth()}
+              className="h-10 gap-1"
             >
               {!fetching && <ChevronRight size={16} />}
               {fetching && <Loader2 size={16} className="animate-spin" />}

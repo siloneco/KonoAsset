@@ -70,7 +70,7 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
         >
           {t('general:button:back')}
         </Button>
-        <Button className="mr-auto" onClick={moveToManualInputTab}>
+        <Button onClick={moveToManualInputTab}>
           {t('general:button:next')}
         </Button>
       </DialogFooter>

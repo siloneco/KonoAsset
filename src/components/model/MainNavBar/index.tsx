@@ -1,7 +1,6 @@
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { Card } from '@/components/ui/card'
 
-import { cn } from '@/lib/utils'
 import { useContext } from 'react'
 
 import { AssetContext } from '@/components/context/AssetContext'
@@ -10,11 +9,10 @@ import { useLocalization } from '@/hooks/use-localization'
 import { LayoutPopover } from './components/LayoutPopover'
 
 type Props = {
-  className?: string
   displayAssetCount?: number
 }
 
-const NavBar = ({ className, displayAssetCount }: Props) => {
+const NavBar = ({ displayAssetCount }: Props) => {
   const { clearFilters } = useContext(PersistentContext)
   const { assetDisplaySortedList } = useContext(AssetContext)
 
@@ -23,10 +21,10 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
   const showingCount = displayAssetCount ?? totalAssetCount
 
   return (
-    <div className={cn('p-4', className)}>
+    <div className="p-4">
       <div className="flex flex-row w-full">
         <div className="w-full">
-          <Card className="min-h-10 flex items-center">
+          <Card className="min-h-10 flex flex-row items-center p-0 gap-0">
             <div className="lg:w-28" />
             <div className="my-auto ml-4 lg:mx-auto">
               <span className="text-muted-foreground">
@@ -42,11 +40,11 @@ const NavBar = ({ className, displayAssetCount }: Props) => {
                 {t('mainnavbar:showing')}
               </span>
             </div>
-            <div className="w-28 ml-auto mr-2">
+            <div className="w-28 ml-auto mr-3">
               {totalAssetCount !== showingCount && (
                 <Button
                   className="h-8"
-                  variant={'outline'}
+                  variant="secondary"
                   onClick={clearFilters}
                 >
                   {t('general:clear-filter')}

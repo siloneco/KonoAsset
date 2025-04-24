@@ -58,7 +58,7 @@ const SquareImage = memo(function SquareImage({
         {loading && <Skeleton className="w-full h-full" />}
         {selectable && (
           <div
-            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-100 hover:bg-opacity-20 hover:dark:bg-opacity-30 dark:hover:opacity-100 dark:hover:bg-opacity-50"
+            className="absolute top-0 left-0 h-full w-full rounded-lg flex justify-center items-center opacity-0 bg-black text-white transition-all cursor-pointer hover:opacity-35 dark:hover:opacity-50"
             onClick={selectImage}
           >
             <ImagePlus size={50} />

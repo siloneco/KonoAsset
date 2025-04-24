@@ -53,8 +53,8 @@ const ManualInputTab = ({
           {t('addasset:manual-input:explanation-text')}
         </DialogDescription>
       </DialogHeader>
-      <div className="my-4">
-        <div className="flex flex-row space-x-6">
+      <div className="mt-4">
+        <div className="flex flex-row space-x-6 mb-4">
           <div className="w-1/3">
             <SquareImage
               assetType={assetType}

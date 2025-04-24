@@ -18,7 +18,7 @@ describe('SelectTypeButton', () => {
     )
     const target = screen.getByText(text)
 
-    expect(target.classList.contains('border-primary')).toBe(true)
+    expect(target.classList.contains('border-ring')).toBe(true)
     expect(target.classList.contains('border-2')).toBe(true)
     expect(target.querySelector('.lucide-chevrons-right')).not.toBeNull()
   })

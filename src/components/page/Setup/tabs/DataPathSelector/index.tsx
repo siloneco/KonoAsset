@@ -57,10 +57,12 @@ export const DataPathSelector: FC<Props> = ({ path, setPath }) => {
           <Label>{t('setup:tab:2:input-label')}</Label>
           <Input value={path} disabled className="mt-1 w-full" />
         </div>
-        <Button variant="secondary" onClick={openDirectory}>
+        <Button variant="secondary" className="h-10" onClick={openDirectory}>
           {t('general:button:open')}
         </Button>
-        <Button onClick={selectPath}>{t('general:select:placeholder')}</Button>
+        <Button className="h-10" onClick={selectPath}>
+          {t('general:select:placeholder')}
+        </Button>
       </div>
     </div>
   )

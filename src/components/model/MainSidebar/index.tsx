@@ -68,7 +68,7 @@ const MainSidebar = () => {
             <Button
               variant="outline"
               size="icon"
-              className="ml-auto mr-2 flex relative"
+              className="ml-auto mr-4 flex relative"
               onClick={() => navigate({ to: PreferenceRoute.to })}
             >
               <Settings />
