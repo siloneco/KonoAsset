@@ -1,12 +1,15 @@
 import { AssetContext } from '@/components/context/AssetContext'
-import { DragDropContext } from '@/components/context/DragDropContext'
+import {
+  DragDropContext,
+  DragDropRegisterConfig,
+} from '@/components/context/DragDropContext'
 import { useToast } from '@/hooks/use-toast'
 import { AssetSummary, AssetType, commands, events } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UnlistenFn } from '@tauri-apps/api/event'
-import { getCurrentWindow } from '@tauri-apps/api/window'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { Event, UnlistenFn } from '@tauri-apps/api/event'
+import { DragDropEvent } from '@tauri-apps/api/window'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AddAssetDialogContextType } from '..'
@@ -60,14 +63,8 @@ const useAddAssetDialog = ({
   const { t } = useLocalization()
 
   const { refreshAssets } = useContext(AssetContext)
-  const { current, lock } = useContext(DragDropContext)
+  const { register } = useContext(DragDropContext)
   const { preference } = useContext(PreferenceContext)
-
-  const currentDragDropUser = useRef<string | null>(null)
-
-  useEffect(() => {
-    currentDragDropUser.current = current
-  }, [current])
 
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
@@ -112,7 +109,7 @@ const useAddAssetDialog = ({
     },
   })
 
-  const clearForm = () => {
+  const clearForm = useCallback(() => {
     form.reset({
       assetType: 'Avatar',
       ...defaultValues,
@@ -120,61 +117,57 @@ const useAddAssetDialog = ({
 
     setAssetPaths([])
     setImageUrls([])
-  }
+  }, [form, defaultValues, setAssetPaths, setImageUrls])
 
-  const openDialogWithoutClearForm = () => {
+  const openDialogWithoutClearForm = useCallback(() => {
     if (dialogOpen) {
       return
     }
 
     setFormClearSuppressionCount((prev) => prev + 1)
     setDialogOpen(true)
-  }
+  }, [dialogOpen, setFormClearSuppressionCount, setDialogOpen])
+
+  const clearFormRef = useRef<() => void>(clearForm)
+  const openDialogWithoutClearFormRef = useRef<() => void>(
+    openDialogWithoutClearForm,
+  )
 
   useEffect(() => {
-    const unlockFn = lock('AddAssetDialog')
+    clearFormRef.current = clearForm
+    openDialogWithoutClearFormRef.current = openDialogWithoutClearForm
+  }, [clearForm, openDialogWithoutClearForm])
 
-    return () => {
-      unlockFn()
-    }
-  }, [])
-
-  useEffect(() => {
-    let isCancelled = false
-    let unlistenFn: UnlistenFn | undefined = undefined
-
-    const setupListener = async () => {
-      unlistenFn = await getCurrentWindow().onDragDropEvent((event) => {
-        if (isCancelled) return
-        if (currentDragDropUser.current !== 'AddAssetDialog') return
-
-        if (event.payload.type == 'drop') {
-          // 文字をドラッグアンドドロップしようとするとpaths.lengthが0になる
-          if (event.payload.paths.length <= 0) {
-            return
-          }
-
-          clearForm()
-
-          setAssetPaths(event.payload.paths)
-          setTab('booth-input')
-
-          openDialogWithoutClearForm()
-        }
-      })
-
-      if (isCancelled) {
-        unlistenFn()
-        return
+  const eventHandlingFn = useCallback(
+    async (event: Event<DragDropEvent>): Promise<boolean> => {
+      if (event.payload.type !== 'drop') {
+        return false
       }
+
+      // 文字をドラッグアンドドロップしようとするとpaths.lengthが0になる
+      if (event.payload.paths.length <= 0) {
+        return false
+      }
+
+      clearFormRef.current()
+
+      setAssetPaths(event.payload.paths)
+      setTab('booth-input')
+
+      openDialogWithoutClearFormRef.current()
+
+      return true
+    },
+    [setAssetPaths, setTab],
+  )
+
+  useEffect(() => {
+    const eventHandlingConfig: DragDropRegisterConfig = {
+      uniqueId: 'add-asset-dialog',
+      priority: 100,
     }
 
-    setupListener()
-
-    return () => {
-      isCancelled = true
-      unlistenFn?.()
-    }
+    register(eventHandlingConfig, eventHandlingFn)
   }, [])
 
   useEffect(() => {
