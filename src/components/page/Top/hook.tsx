@@ -1,5 +1,4 @@
 import { AssetContextType } from '@/components/context/AssetContext'
-import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useState, useEffect, useContext } from 'react'
 import {
   checkForUpdate,
@@ -14,6 +13,10 @@ import { ToastAction } from '@/components/ui/toast'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import {
+  DragDropContext,
+  DragDropRegisterConfig,
+} from '@/components/context/DragDropContext'
 
 type ReturnProps = {
   assetContextValue: AssetContextType
@@ -64,6 +67,8 @@ export const useTopPage = (): ReturnProps => {
   const { t } = useLocalization()
   const { toast } = useToast()
 
+  const { register } = useContext(DragDropContext)
+
   const assetContextValue: AssetContextType = {
     assetDisplaySortedList: assetDisplaySortedList,
     setAssetDisplaySortedList: setAssetDisplaySortedList,
@@ -83,9 +88,17 @@ export const useTopPage = (): ReturnProps => {
     assetContextValue.refreshAssets()
   }, [sortBy])
 
-  getCurrentWindow().onDragDropEvent((event) => {
-    onFileDrop(event, setDragAndHover)
-  })
+  useEffect(() => {
+    const config: DragDropRegisterConfig = {
+      uniqueId: 'top-page',
+      priority: 0,
+    }
+
+    register(config, async (event) => {
+      onFileDrop(event, setDragAndHover)
+      return false
+    })
+  }, [])
 
   const startUpdateDownloadingAndOpenDialog = async () => {
     await downloadUpdate(setUpdateDownloadTaskId)
