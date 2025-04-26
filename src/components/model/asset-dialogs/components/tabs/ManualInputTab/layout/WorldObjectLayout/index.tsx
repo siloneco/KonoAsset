@@ -66,7 +66,7 @@ const WorldObjectLayout = ({ form }: Props) => {
     : null
 
   return (
-    <div className="w-full flex flex-row space-x-2">
+    <div className="w-full flex flex-row space-x-2 mb-4">
       <div className="w-1/2 space-y-2">
         <Label> {t('general:category')} </Label>
         <TextInputSelect

@@ -30,8 +30,8 @@ const DialogWrapper: FC<Props> = ({
         <DialogTrigger asChild>
           <div className="fixed right-24 bottom-[92px]">
             <div className="fixed w-16 h-16 rounded-full bg-background" />
-            <Button className="fixed w-16 h-16 rounded-full [&_svg]:size-8">
-              <Plus size={32} />
+            <Button className="fixed w-16 h-16 rounded-full">
+              <Plus className="size-8" />
             </Button>
           </div>
         </DialogTrigger>

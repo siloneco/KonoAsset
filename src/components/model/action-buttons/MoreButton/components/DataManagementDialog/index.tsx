@@ -33,7 +33,7 @@ const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[510px]">
         <DialogHeader>
           <DialogTitle>
             {t('assetcard:more-button:data-management')}

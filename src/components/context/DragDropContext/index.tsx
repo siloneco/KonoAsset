@@ -1,17 +1,22 @@
 import { createContext, FC } from 'react'
 import useDragDropContext from './hook'
+import { Event } from '@tauri-apps/api/event'
+import { DragDropEvent } from '@tauri-apps/api/window'
 
-export type DragDropUser = 'AddAssetDialog' | 'AssetDataManagementDialog'
-type UnlockFn = () => void
+export type DragDropRegisterConfig = {
+  uniqueId: string
+  priority?: number
+}
+export type DragDropHandlingFn = (
+  event: Event<DragDropEvent>,
+) => Promise<boolean>
 
 export type DragDropContextType = {
-  current: DragDropUser
-  lock: (user: DragDropUser) => UnlockFn
+  register: (config: DragDropRegisterConfig, fn: DragDropHandlingFn) => void
 }
 
 export const DragDropContext = createContext<DragDropContextType>({
-  current: 'AddAssetDialog',
-  lock: () => () => {},
+  register: () => {},
 })
 
 type Props = {

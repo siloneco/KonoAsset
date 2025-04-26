@@ -52,7 +52,7 @@ export const AssetView: FC<Props> = ({
   })
 
   return (
-    <ScrollArea ref={layoutDivRef}>
+    <ScrollArea ref={layoutDivRef} className="h-[calc(100vh-72px)]">
       {sortedAssetSummary.length === 0 && (
         <AssetViewBackground
           type={background}
