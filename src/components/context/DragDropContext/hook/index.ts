@@ -63,11 +63,7 @@ const useDragDropContext = (): ReturnProps => {
         if (isCancelled) return
 
         for (const item of fnList) {
-          const { config, fn } = item
-
-          if (event.payload.type === 'drop') {
-            console.log(config.uniqueId)
-          }
+          const { fn } = item
 
           const stopPropagation = await fn(event)
 
