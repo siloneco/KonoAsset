@@ -11,6 +11,8 @@ type Props = {
 
 export const AssetViewBackground: FC<Props> = ({ type, openDialog }) => {
   const { t } = useLocalization()
+  const { clearFilters } = useContext(PersistentContext)
+
   if (type === 'NoAssets') {
     return (
       <div className="flex flex-col w-full h-[calc(100vh-170px)] justify-center items-center">
@@ -24,8 +26,6 @@ export const AssetViewBackground: FC<Props> = ({ type, openDialog }) => {
       </div>
     )
   } else if (type === 'NoResults') {
-    const { clearFilters } = useContext(PersistentContext)
-
     return (
       <div className="flex flex-col w-full h-[calc(100vh-170px)] justify-center items-center">
         <FolderSearch size={100} className="opacity-40" />
