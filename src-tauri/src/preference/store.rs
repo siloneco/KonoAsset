@@ -185,7 +185,7 @@ mod tests {
     fn test_load_preference_store() {
         let json_data = r#"
         {
-            "version": 4,
+            "version": 5,
             "data": {
                 "dataDirPath": "C:\\fake-path\\KonoAsset",
                 "theme": "dark",
