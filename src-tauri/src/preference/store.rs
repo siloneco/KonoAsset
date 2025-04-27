@@ -129,6 +129,7 @@ impl PreferenceStore {
         self.data_dir_path = other.data_dir_path.clone();
         self.theme = other.theme;
         self.delete_on_import = other.delete_on_import;
+        self.zip_extraction = other.zip_extraction;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
         self.update_channel = other.update_channel;
 

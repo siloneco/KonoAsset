@@ -14,6 +14,7 @@ import { LanguageSelector } from '@/components/model/preference/LanguageSelector
 import UpdateChannelSelector from '@/components/model/preference/UpdateChannelSelector'
 import { open } from '@tauri-apps/plugin-dialog'
 import { LocalizationContext } from '@/components/context/LocalizationContext'
+import { ZipExtractionToggle } from '@/components/model/preference/ZipExtractionToggle'
 
 type Props = {
   id: PreferenceTabIDs
@@ -71,6 +72,18 @@ const SettingsTab: FC<Props> = ({ id }) => {
               {
                 ...preference,
                 deleteOnImport: enable,
+              },
+              true,
+            )
+          }}
+        />
+        <ZipExtractionToggle
+          enable={preference.zipExtraction}
+          setEnable={async (enable: boolean) => {
+            await setPreference(
+              {
+                ...preference,
+                zipExtraction: enable,
               },
               true,
             )

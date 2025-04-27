@@ -14,6 +14,9 @@ import { useContext } from 'react'
 import { FolderArchive, Info } from 'lucide-react'
 import { AddAssetDialogContext } from '../../../AddAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
+import { Link } from '@tanstack/react-router'
+import { Route as PreferencePage } from '@/routes/preference'
 
 type Props = {
   setTab: (tab: string) => void
@@ -25,6 +28,7 @@ type Props = {
 const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
   const { t } = useLocalization()
   const { setAssetPaths } = useContext(AddAssetDialogContext)
+  const { preference } = useContext(PreferenceContext)
 
   const openFileOrDirSelector = async (dir: boolean) => {
     const path = await open({
@@ -61,17 +65,32 @@ const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
           }}
         />
       </div>
-      <div className="flex flex-row justify-center text-center mt-6">
-        <Info className="text-primary mr-1" />
-        <p className="text-muted-foreground">
-          {t('addasset:select-path:drop-text')}
-        </p>
-      </div>
-      <div className="flex flex-row justify-center text-center mt-4 mb-6">
-        <FolderArchive className="text-primary mr-1" />
-        <p className="text-muted-foreground">
-          {t('addasset:select-path:zip-text')}
-        </p>
+      <div className="my-6 space-y-4">
+        <div className="flex flex-row justify-center text-center">
+          <Info className="text-primary mr-1" />
+          <p className="text-muted-foreground">
+            {t('addasset:select-path:drop-text')}
+          </p>
+        </div>
+        <div className="flex flex-row justify-center text-center">
+          <FolderArchive className="text-primary mr-1" />
+          <p className="text-muted-foreground">
+            {preference.zipExtraction &&
+              t('addasset:select-path:zip-text:enabled')}
+            {!preference.zipExtraction && (
+              <>
+                {t('addasset:select-path:zip-text:disabled')}
+                <span className="ml-1">(</span>
+                <Link to={PreferencePage.to} className="text-primary">
+                  {t(
+                    'addasset:select-path:zip-text:disabled:move-to-preference-page',
+                  )}
+                </Link>
+                <span>)</span>
+              </>
+            )}
+          </p>
+        </div>
       </div>
       <DialogFooter>
         <DialogClose asChild>
