@@ -9,6 +9,7 @@ const mockPreference: PreferenceStore = {
   dataDirPath: '/path/to/data/dir',
   theme: 'system',
   useUnitypackageSelectedOpen: true,
+  zipExtraction: true,
   deleteOnImport: true,
   updateChannel: 'Stable',
   language: 'en-US',
