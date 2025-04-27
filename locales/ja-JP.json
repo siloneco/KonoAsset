@@ -63,7 +63,9 @@
     "addasset:select-path": "どちらを追加しますか？",
     "addasset:select-path:explanation-text": "フォルダとファイルのどちらを追加するか選択してください！",
     "addasset:select-path:drop-text": "ウィンドウ上にファイルかフォルダをドロップしても追加できます",
-    "addasset:select-path:zip-text": "ZIPファイルは自動で展開されます",
+    "addasset:select-path:zip-text:enabled": "ZIPファイルは自動で展開されます",
+    "addasset:select-path:zip-text:disabled": "ZIPファイルは自動で展開されません",
+    "addasset:select-path:zip-text:disabled:move-to-preference-page": "設定へ移動",
     "addasset:select-type": "アセットのタイプを選択",
     "addasset:select-type:explanation-text": "アセットのタイプを選択してください！",
     "addasset:select-type:avatar-wearable": "アバター関連 (服 / 髪 / アクセサリ / ギミック等)",
@@ -292,6 +294,9 @@
 
     "preference:settings:use-unitypackage-selector": "Unitypackageを優先して開く",
     "preference:settings:use-unitypackage-selector:explanation-text": "この設定が有効の場合「開く」ボタンを押したときにUnitypackageが選択された状態で開いたり、複数ある場合は利用するファイルを選ぶダイアログが表示されたりします",
+
+    "preference:settings:zip-extraction-toggle": "ZIPファイルを自動で展開する",
+    "preference:settings:zip-extraction-toggle:explanation-text": "アセットの追加でZIPファイルが指定されたとき、自動で展開処理を行います",
 
     "top:new-update-toast": "新しいアップデートがあります！",
     "top:new-update-toast:description": "アップデートにはバグ修正、機能追加などが含まれます",

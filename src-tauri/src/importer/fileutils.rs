@@ -62,6 +62,7 @@ pub async fn import_asset<P, Q>(
     src: P,
     dest: Q,
     cleanup_on_fail: bool,
+    zip_extraction: bool,
     progress_callback: impl Fn(f32, String),
 ) -> Result<(), Box<dyn Error>>
 where
@@ -105,7 +106,7 @@ where
     } else {
         let extension = src.extension();
 
-        if extension == Some(OsStr::new("zip")) {
+        if zip_extraction && extension == Some(OsStr::new("zip")) {
             let file_stem = src
                 .file_stem()
                 .unwrap_or(OsStr::new("imported"))
@@ -281,13 +282,13 @@ mod tests {
         std::fs::copy("test/zip/normal.zip", &zip_src).unwrap();
         std::fs::write(&normal_file_src, b"dummy").unwrap();
 
-        import_asset(&dir_src, &dest, true, |_, _| {})
+        import_asset(&dir_src, &dest, true, true, |_, _| {})
             .await
             .unwrap();
-        import_asset(&zip_src, &dest, true, |_, _| {})
+        import_asset(&zip_src, &dest, true, true, |_, _| {})
             .await
             .unwrap();
-        import_asset(&normal_file_src, &dest, true, |_, _| {})
+        import_asset(&normal_file_src, &dest, true, true, |_, _| {})
             .await
             .unwrap();
 

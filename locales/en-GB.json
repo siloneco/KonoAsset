@@ -63,7 +63,9 @@
     "addasset:select-path": "Which would you like to add?",
     "addasset:select-path:explanation-text": "Please choose whether to add a folder or file!",
     "addasset:select-path:drop-text": "You can also drag and drop a file or folder onto the window to add it",
-    "addasset:select-path:zip-text": "ZIP files will be extracted automatically",
+    "addasset:select-path:zip-text:enabled": "ZIP files will be extracted automatically",
+    "addasset:select-path:zip-text:disabled": "ZIP files will not be extracted automatically",
+    "addasset:select-path:zip-text:disabled:move-to-preference-page": "Move to settings page",
     "addasset:select-type": "Select asset type",
     "addasset:select-type:explanation-text": "Please select the asset type!",
     "addasset:select-type:avatar-wearable": "Avatar-related (clothes, accessories, gimmicks, etc.)",
@@ -292,6 +294,9 @@
 
     "preference:settings:use-unitypackage-selector": "Prioritise opening Unitypackage files",
     "preference:settings:use-unitypackage-selector:explanation-text": "If this setting is enabled, pressing the 'Open' button will select Unitypackage files by default, and if multiple files exist, a selection dialog will appear",
+
+    "preference:settings:zip-extraction-toggle": "Automatically extract ZIP files",
+    "preference:settings:zip-extraction-toggle:explanation-text": "When a ZIP file is selected to be added, it will be automatically extracted",
 
     "top:new-update-toast": "A new update is available!",
     "top:new-update-toast:description": "This update includes bug fixes, new features, and more",

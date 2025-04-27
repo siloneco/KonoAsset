@@ -30,6 +30,7 @@ async fn import_asset<T, F>(
     mut request: AssetImportRequest<T>,
     app_handle: Option<&AppHandle>,
     register_fn: F,
+    zip_extraction: bool,
 ) -> Result<T::AssetType, String>
 where
     T: PreAsset,
@@ -69,7 +70,7 @@ where
             }
         };
 
-        let result = import_files(&src_import_asset_path, &destination, progress_callback).await;
+        let result = import_files(&src_import_asset_path, &destination, progress_callback, zip_extraction).await;
 
         if let Err(err) = result {
             return Err(format!("Failed to import asset: {}", err));
@@ -111,6 +112,7 @@ pub async fn import_avatar(
     basic_store: &StoreProvider,
     request: AssetImportRequest<PreAvatar>,
     app_handle: &AppHandle,
+    zip_extraction: bool,
 ) -> Result<Avatar, String> {
     import_asset(
         basic_store,
@@ -119,6 +121,7 @@ pub async fn import_avatar(
         |provider: &'_ StoreProvider, asset: Avatar| {
             Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
         },
+        zip_extraction,
     )
     .await
 }
@@ -127,6 +130,7 @@ pub async fn import_avatar_wearable<T>(
     basic_store: &StoreProvider,
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
+    zip_extraction: bool,
 ) -> Result<AvatarWearable, String>
 where
     T: PreAsset<AssetType = AvatarWearable>,
@@ -143,6 +147,7 @@ where
                     .await
             })
         },
+        zip_extraction,
     )
     .await
 }
@@ -151,6 +156,7 @@ pub async fn import_world_object<T>(
     basic_store: &StoreProvider,
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
+    zip_extraction: bool,
 ) -> Result<WorldObject, String>
 where
     T: PreAsset<AssetType = WorldObject>,
@@ -167,6 +173,7 @@ where
                     .await
             })
         },
+        zip_extraction,
     )
     .await
 }
@@ -175,6 +182,7 @@ pub async fn import_additional_data<P>(
     basic_store: Arc<Mutex<StoreProvider>>,
     id: Uuid,
     path: P,
+    zip_extraction: bool,
 ) -> Result<(), String>
 where
     P: AsRef<Path>,
@@ -190,7 +198,7 @@ where
         return Err(format!("File or directory not found: {}", path.display()));
     }
 
-    fileutils::import_asset(path, &asset_data_dir, true, |_, _| {})
+    fileutils::import_asset(path, &asset_data_dir, true, zip_extraction, |_, _| {})
         .await
         .map_err(|e| format!("Failed to import additional data for asset ({}): {}", id, e))?;
 
@@ -201,6 +209,7 @@ async fn import_files(
     src: &PathBuf,
     dest: &PathBuf,
     progress_callback: impl Fn(f32, String),
+    zip_extraction: bool,
 ) -> Result<(), String> {
     if !dest.exists() {
         std::fs::create_dir_all(dest)
@@ -209,7 +218,7 @@ async fn import_files(
 
     let mut delete_on_drop = DeleteOnDrop::new(dest.clone());
 
-    fileutils::import_asset(src, dest, false, progress_callback)
+    fileutils::import_asset(src, dest, false, zip_extraction, progress_callback)
         .await
         .map_err(|e| format!("Failed to import asset: {:?}", e))?;
 
@@ -292,6 +301,7 @@ mod tests {
             |provider: &'_ StoreProvider, asset: Avatar| {
                 Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
             },
+            true,
         )
         .await
         .unwrap();

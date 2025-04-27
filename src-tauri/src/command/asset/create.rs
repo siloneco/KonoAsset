@@ -4,6 +4,7 @@ use tauri::{async_runtime::Mutex, AppHandle, State};
 use uuid::Uuid;
 
 use crate::{
+    preference::store::PreferenceStore,
     data_store::provider::StoreProvider,
     definitions::import_request::{
         AssetImportRequest, PreAvatar, PreAvatarWearable, PreWorldObject,
@@ -17,6 +18,7 @@ use crate::{
 pub async fn request_avatar_import(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
     request: AssetImportRequest<PreAvatar>,
 ) -> Result<Uuid, String> {
@@ -26,9 +28,11 @@ pub async fn request_avatar_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
+    let zip_extraction = (*preference.lock().await).zip_extraction;
+
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result = import_avatar(&basic_store, request, &cloned_app_handle).await;
+        let result = import_avatar(&basic_store, request, &cloned_app_handle, zip_extraction).await;
 
         if let Err(e) = result {
             log::error!("Failed to import avatar: {}", e);
@@ -48,6 +52,7 @@ pub async fn request_avatar_import(
 pub async fn request_avatar_wearable_import(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
     request: AssetImportRequest<PreAvatarWearable>,
 ) -> Result<Uuid, String> {
@@ -60,9 +65,11 @@ pub async fn request_avatar_wearable_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
+    let zip_extraction = (*preference.lock().await).zip_extraction;
+
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result = import_avatar_wearable(&basic_store, request, &cloned_app_handle).await;
+        let result = import_avatar_wearable(&basic_store, request, &cloned_app_handle, zip_extraction).await;
 
         if let Err(e) = result {
             log::error!("Failed to import avatar wearable: {}", e);
@@ -84,6 +91,7 @@ pub async fn request_avatar_wearable_import(
 pub async fn request_world_object_import(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
     request: AssetImportRequest<PreWorldObject>,
 ) -> Result<Uuid, String> {
@@ -93,9 +101,11 @@ pub async fn request_world_object_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
+    let zip_extraction = (*preference.lock().await).zip_extraction;
+
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result = import_world_object(&basic_store, request, &cloned_app_handle).await;
+        let result = import_world_object(&basic_store, request, &cloned_app_handle, zip_extraction).await;
 
         if let Err(e) = result {
             log::error!("Failed to import world object: {}", e);
