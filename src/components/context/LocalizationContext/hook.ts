@@ -4,10 +4,20 @@ import { LocalizationContextType } from '.'
 import { PreferenceContext } from '../PreferenceContext'
 import { useToast } from '@/hooks/use-toast'
 
+import enUs from '@/locales/en-US.json'
+import enGb from '@/locales/en-GB.json'
+import jaJp from '@/locales/ja-JP.json'
+
+const LANGUAGE_DATA_MAP = {
+  'en-US': enUs['data'],
+  'en-GB': enGb['data'],
+  'ja-JP': jaJp['data'],
+}
+
 export const useLocalizationContext = (): LocalizationContextType => {
   const [localizationData, setLocalizationData] = useState<LocalizationData>({
     language: 'en-US',
-    data: {},
+    data: LANGUAGE_DATA_MAP['en-US'],
   })
 
   const { preference } = useContext(PreferenceContext)
@@ -16,13 +26,10 @@ export const useLocalizationContext = (): LocalizationContextType => {
   const loadBundledLanguageFile = async (
     code: Exclude<LanguageCode, { 'user-provided': string }>,
   ) => {
-    const result = await commands.setLanguageCode(code)
-
-    if (result.status == 'ok') {
-      setLocalizationData(result.data)
-    } else {
-      console.error('Failed to set language:', result.error)
-    }
+    setLocalizationData({
+      language: code,
+      data: LANGUAGE_DATA_MAP[code],
+    })
   }
 
   useEffect(() => {
@@ -32,7 +39,8 @@ export const useLocalizationContext = (): LocalizationContextType => {
   }, [preference.language])
 
   const loadLanguageFile = async (path: string) => {
-    const result = await commands.loadLanguageFile(path)
+    const fallback_keys = Object.keys(LANGUAGE_DATA_MAP['en-US'])
+    const result = await commands.loadLanguageFile(path, fallback_keys)
 
     if (result.status === 'error') {
       console.error(result.error)
