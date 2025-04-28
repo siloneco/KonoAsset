@@ -8,7 +8,7 @@ use deep_link::{
     execute_deep_links, parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
-use language::{load::load_from_language_code, structs::LanguageCode};
+use language::structs::LocalizationData;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
@@ -79,6 +79,7 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
+        .manage(arc_mutex(LocalizationData::default()))
         .setup(move |app| {
             logging::initialize_logger(&app.handle());
             builder.mount_events(app);
@@ -101,22 +102,6 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
-            let language_state = match load_from_language_code(LanguageCode::EnUs) {
-                Ok(data) => {
-                    let language_state = arc_mutex(data);
-                    app.manage(language_state.clone());
-
-                    language_state
-                }
-                Err(err) => {
-                    log::error!("failed to load language data: {}", err);
-                    app.manage(LoadResult::error(false, err));
-
-                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                    return Ok(());
-                }
-            };
-
             let preference_file_path = app
                 .path()
                 .app_local_data_dir()
@@ -136,7 +121,6 @@ pub fn run() {
             let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
             let update_channel = pref_store.update_channel.clone();
-            let language_code = pref_store.language.clone();
 
             let pximg_resolver = PximgResolver::new(data_dir.join("images"));
 
@@ -146,17 +130,6 @@ pub fn run() {
                 app.handle().clone(),
                 &update_channel,
             )));
-
-            match load_from_language_code(language_code) {
-                Ok(data) => *language_state.blocking_lock() = data,
-                Err(err) => {
-                    log::error!("failed to load language data: {}", err);
-                    app.manage(LoadResult::error(false, err));
-
-                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                    return Ok(());
-                }
-            }
 
             let result = load_store_provider(&data_dir);
             if let Err(err) = result {
