@@ -39,8 +39,8 @@ export const useLocalizationContext = (): LocalizationContextType => {
   }, [preference.language])
 
   const loadLanguageFile = async (path: string) => {
-    const fallback_keys = Object.keys(LANGUAGE_DATA_MAP['en-US'])
-    const result = await commands.loadLanguageFile(path, fallback_keys)
+    const fallbackKeys = Object.keys(LANGUAGE_DATA_MAP['en-US'])
+    const result = await commands.loadLanguageFile(path, fallbackKeys)
 
     if (result.status === 'error') {
       console.error(result.error)
