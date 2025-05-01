@@ -159,7 +159,7 @@ where
     }
 
     let mut provider = StoreProvider::create(&path.to_path_buf())?;
-    provider.load_all_assets_from_files(false).await?;
+    provider.load_all_assets_from_files().await?;
 
     Ok(provider)
 }
@@ -241,7 +241,7 @@ mod tests {
         .unwrap();
 
         let mut provider = StoreProvider::create(dest).unwrap();
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
 
         assert_eq!(provider.get_avatar_store().get_all().await.len(), 1);
         assert_eq!(

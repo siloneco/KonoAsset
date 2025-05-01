@@ -440,7 +440,7 @@ mod tests {
         .unwrap();
 
         let mut provider = StoreProvider::create(store_path).unwrap();
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
         let provider = Arc::new(Mutex::new(provider));
 
         export_as_avatar_explorer_compatible_structure(provider, &exported_path, None)

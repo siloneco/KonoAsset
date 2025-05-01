@@ -160,10 +160,7 @@ mod tests {
         .unwrap();
 
         let mut store_provider = StoreProvider::create(&provider).unwrap();
-        store_provider
-            .load_all_assets_from_files(false)
-            .await
-            .unwrap();
+        store_provider.load_all_assets_from_files().await.unwrap();
 
         let store_provider = Arc::new(Mutex::new(store_provider));
 
