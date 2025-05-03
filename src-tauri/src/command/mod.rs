@@ -73,7 +73,6 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         task::status::cancel_task_request,
         task::status::get_task_error,
         // 言語関係
-        language::common::set_language_code,
         language::common::get_current_language_data,
         language::common::load_language_file,
         // DeepLink関係

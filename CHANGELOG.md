@@ -1,8 +1,10 @@
-## Not Released Yet
+## 1.1.4
 
 ### 🚀新機能
+- 言語設定に簡体字を追加 ( Thanks to [@Fallen-ice](https://github.com/Fallen-ice) )
 
 ### 🐛バグ修正
+- 全角括弧が重なって表示される問題を修正
 
 ### ⚙️その他
 

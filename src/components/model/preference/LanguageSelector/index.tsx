@@ -57,9 +57,10 @@ export const LanguageSelector: FC<Props> = ({
             <SelectValue placeholder={t('general:select:placeholder')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ja-JP">日本語</SelectItem>
             <SelectItem value="en-US">English (US)</SelectItem>
             <SelectItem value="en-GB">English (UK)</SelectItem>
+            <SelectItem value="ja-JP">日本語</SelectItem>
+            <SelectItem value="zh-CN">简体中文</SelectItem>
             {loadLanguageFile !== undefined && (
               <>
                 <Separator className="my-2" />
