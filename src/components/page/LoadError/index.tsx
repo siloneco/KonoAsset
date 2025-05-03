@@ -51,14 +51,17 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onLanguageChanged('ja-JP')}>
-                日本語
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onLanguageChanged('en-US')}>
                 English (US)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onLanguageChanged('en-GB')}>
                 English (UK)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onLanguageChanged('ja-JP')}>
+                日本語
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onLanguageChanged('zh-CN')}>
+                简体中文
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
