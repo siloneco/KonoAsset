@@ -63,9 +63,7 @@
     "addasset:select-path": "您想要添加什么？",
     "addasset:select-path:explanation-text": "请选择要添加文件夹还是文件！",
     "addasset:select-path:drop-text": "您也可以将文件或文件夹拖放到窗口进行添加",
-    "addasset:select-path:zip-text:enabled": "ZIP文件将自动解压",
-    "addasset:select-path:zip-text:disabled": "ZIP文件不会自动解压",
-    "addasset:select-path:zip-text:disabled:move-to-preference-page": "前往设置页面",
+    "addasset:select-path:zip-text": "ZIP文件将自动解压",
     "addasset:select-type": "选择资产类型",
     "addasset:select-type:explanation-text": "请选择资产类型！",
     "addasset:select-type:avatar-wearable": "虚拟形象相关（服装、配件、机关等）",
@@ -294,9 +292,6 @@
 
     "preference:settings:use-unitypackage-selector": "优先打开Unitypackage文件",
     "preference:settings:use-unitypackage-selector:explanation-text": "启用后点击「打开」按钮将优先选择Unitypackage文件，存在多个文件时会弹出选择框",
-
-    "preference:settings:zip-extraction-toggle": "自动解压ZIP文件",
-    "preference:settings:zip-extraction-toggle:explanation-text": "选择ZIP文件添加时将自动解压",
 
     "top:new-update-toast": "有新版本可用！",
     "top:new-update-toast:description": "本次更新包含错误修复、新功能等内容",
