@@ -420,14 +420,6 @@ async getTaskError(id: string) : Promise<Result<string | null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async setLanguageCode(language: LanguageCode) : Promise<Result<LocalizationData, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("set_language_code", { language }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getCurrentLanguageData() : Promise<Result<LocalizationData, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_current_language_data") };
@@ -436,9 +428,9 @@ async getCurrentLanguageData() : Promise<Result<LocalizationData, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async loadLanguageFile(path: string) : Promise<Result<CustomLanguageFileLoadResult, string>> {
+async loadLanguageFile(path: string, fallbackKeys: string[]) : Promise<Result<CustomLanguageFileLoadResult, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("load_language_file", { path }) };
+    return { status: "ok", data: await TAURI_INVOKE("load_language_file", { path, fallbackKeys }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -488,7 +480,7 @@ export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
-export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | { "user-provided": string }
+export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | "zh-CN" | { "user-provided": string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
 export type LocalizedChanges = { version: string; pre_release: boolean; features: string[]; fixes: string[]; others: string[] }

@@ -2,7 +2,7 @@ name: Locales Test
 on:
   push:
     paths:
-      - "locales/**"
+      - "src/locales/**"
       - ".github/workflows/locales-test.yml"
     branches:
       - "main"
@@ -14,7 +14,7 @@ on:
       - opened
       - synchronize
     paths:
-      - "locales/**"
+      - "src/locales/**"
       - ".github/workflows/locales-test.yml"
 
 permissions:

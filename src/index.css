@@ -72,6 +72,11 @@
   .no-webview-scroll-bar::-webkit-scrollbar {
     display: none;
   }
+
+  * {
+    /* 全角括弧が重ならないようにするため */
+    text-spacing-trim: space-all;
+  }
 }
 
 @layer base {
