@@ -1,4 +1,4 @@
-## Not Released Yet
+## 1.1.4
 
 ### 🚀新機能
 - 言語設定に簡体字を追加 ( Thanks to [@Fallen-ice](https://github.com/Fallen-ice) )
