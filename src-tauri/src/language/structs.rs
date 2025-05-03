@@ -23,7 +23,7 @@ impl LanguageCode {
             LanguageCode::JaJp => "ja-JP",
             LanguageCode::EnUs => "en-US",
             LanguageCode::EnGb => "en-GB",
-            LanguageCode::ZhCn => "zh-CH",
+            LanguageCode::ZhCn => "zh-CN",
             LanguageCode::UserProvided(code) => code,
         }
     }
