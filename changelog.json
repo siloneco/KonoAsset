@@ -3,7 +3,7 @@
     "version": "1.1.4",
     "features": [
       {
-        "text": "",
+        "text": "Added Simplified Chinese language setting (Thanks to Fallen-ice)",
         "langs": [
           {
             "lang": ["ja-JP"],
@@ -14,7 +14,7 @@
     ],
     "fixes": [
       {
-        "text": "",
+        "text": "Fixed issue where unicode brackets were overlapping",
         "langs": [
           {
             "lang": ["ja-JP"],
