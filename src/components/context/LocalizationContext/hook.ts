@@ -7,11 +7,13 @@ import { useToast } from '@/hooks/use-toast'
 import enUs from '@/locales/en-US.json'
 import enGb from '@/locales/en-GB.json'
 import jaJp from '@/locales/ja-JP.json'
+import zhCn from '@/locales/zh-CN.json'
 
 const LANGUAGE_DATA_MAP = {
   'en-US': enUs['data'],
   'en-GB': enGb['data'],
   'ja-JP': jaJp['data'],
+  'zh-CN': zhCn['data'],
 }
 
 export const useLocalizationContext = (): LocalizationContextType => {

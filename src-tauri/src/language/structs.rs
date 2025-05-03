@@ -11,6 +11,8 @@ pub enum LanguageCode {
     EnUs,
     #[serde(rename = "en-GB", alias = "enGb")] // alias is for legacy support
     EnGb,
+    #[serde(rename = "zh-CN")]
+    ZhCn,
     #[serde(rename = "user-provided")]
     UserProvided(String),
 }
@@ -21,6 +23,7 @@ impl LanguageCode {
             LanguageCode::JaJp => "ja-JP",
             LanguageCode::EnUs => "en-US",
             LanguageCode::EnGb => "en-GB",
+            LanguageCode::ZhCn => "zh-CN",
             LanguageCode::UserProvided(code) => code,
         }
     }
@@ -29,6 +32,7 @@ impl LanguageCode {
         match self {
             LanguageCode::JaJp => "ja",
             LanguageCode::EnUs | LanguageCode::EnGb => "en",
+            LanguageCode::ZhCn => "zh-cn",
             LanguageCode::UserProvided(_) => "en",
         }
     }
