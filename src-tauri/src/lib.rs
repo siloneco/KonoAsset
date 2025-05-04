@@ -8,6 +8,7 @@ use deep_link::{
     execute_deep_links, parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
+use file::modify_guard::{self, FileTransferGuard};
 use language::structs::LocalizationData;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
@@ -218,6 +219,10 @@ fn load_store_provider(
     let metadata_backup_dir = app_local_dir.join("backup").join("metadata");
 
     let result = tauri::async_runtime::block_on(async move {
+        if let Err(e) = migrate_legacy_backup_dir(store_provider_ref, &metadata_backup_dir).await {
+            log::error!("Failed to migrate legacy backup dir: {}", e);
+        }
+
         store_provider_ref
             .create_backup(metadata_backup_dir)
             .await?;
@@ -229,6 +234,30 @@ fn load_store_provider(
     }
 
     Ok(store_provider)
+}
+
+async fn migrate_legacy_backup_dir(
+    provider: &StoreProvider,
+    metadata_backup_dir: &PathBuf,
+) -> Result<(), String> {
+    let data_dir = provider.data_dir();
+    let legacy_metadata_backup_dir = data_dir.join("metadata").join("backups");
+
+    if !legacy_metadata_backup_dir.exists() {
+        return Ok(());
+    }
+
+    modify_guard::copy_dir(
+        legacy_metadata_backup_dir,
+        metadata_backup_dir.clone(),
+        true,
+        FileTransferGuard::src(data_dir),
+        |_, _| {},
+    )
+    .await
+    .map_err(|e| format!("Failed to migrate legacy metadata backup directory: {}", e))?;
+
+    Ok(())
 }
 
 fn cleanup_images_dir(data_dir: &PathBuf) {
