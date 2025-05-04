@@ -211,6 +211,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-read-progress"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70435a063593f3bf0824958d97bc809afc6bc8884240cd796c705039183ffbc5"
+dependencies = [
+ "bytes",
+ "futures-io",
+ "pin-utils",
+ "tokio",
+]
+
+[[package]]
 name = "async-recursion"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2170,6 +2182,7 @@ dependencies = [
 name = "konoasset"
 version = "1.1.4"
 dependencies = [
+ "async-read-progress",
  "async_zip",
  "chrono",
  "encoding_rs",
