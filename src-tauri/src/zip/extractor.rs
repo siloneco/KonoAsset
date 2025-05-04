@@ -119,6 +119,10 @@ where
                 .await
                 .map_err(|e| format!("Failed to read zip entry: {}", e))?
                 .report_progress(Duration::from_millis(100), |bytes_read| {
+                    if uncompressed_size == 0 {
+                        return;
+                    }
+
                     let completed = bytes_read as f32 / uncompressed_size as f32;
 
                     progress_callback(
