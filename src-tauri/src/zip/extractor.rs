@@ -1,5 +1,6 @@
-use std::path::Path;
+use std::{path::Path, time::Duration};
 
+use async_read_progress::AsyncReadProgressExt;
 use async_zip::{error::ZipError, tokio::read::seek::ZipFileReader};
 use tokio_util::compat::FuturesAsyncReadCompatExt;
 
@@ -38,6 +39,7 @@ where
 
     for i in 0..entry_length {
         let entry = zip.file().entries().get(i).unwrap();
+        let uncompressed_size = entry.uncompressed_size();
 
         let filename = match entry.filename().as_str() {
             Ok(name) => name.to_string(),
@@ -115,7 +117,15 @@ where
             let entry_reader = zip
                 .reader_without_entry(i)
                 .await
-                .map_err(|e| format!("Failed to read zip entry: {}", e))?;
+                .map_err(|e| format!("Failed to read zip entry: {}", e))?
+                .report_progress(Duration::from_millis(100), |bytes_read| {
+                    let completed = bytes_read as f32 / uncompressed_size as f32;
+
+                    progress_callback(
+                        (i as f32 + completed) / entry_length as f32,
+                        filename.clone(),
+                    );
+                });
 
             let mut writer = tokio::fs::OpenOptions::new()
                 .write(true)
