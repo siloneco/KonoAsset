@@ -48,12 +48,7 @@ impl StoreProvider {
         })
     }
 
-    pub async fn load_all_assets_from_files(&mut self, backup: bool) -> Result<(), String> {
-        if backup {
-            backup_metadata(&self.data_dir).await?;
-            prune_old_backup(&self.data_dir).await?;
-        }
-
+    pub async fn load_all_assets_from_files(&mut self) -> Result<(), String> {
         match self.avatar_store.load().await {
             Ok(_) => {}
             Err(e) => return Err(e),
@@ -324,7 +319,7 @@ impl StoreProvider {
 
         self.data_dir = new_path;
 
-        self.load_all_assets_from_files(true).await
+        self.load_all_assets_from_files().await
     }
 
     pub async fn remove_all_dependencies(&self, id: Uuid) -> Result<(), String> {
@@ -333,6 +328,59 @@ impl StoreProvider {
         self.world_object_store.delete_dependency(id).await?;
 
         return Ok(());
+    }
+
+    pub async fn create_backup<P: AsRef<Path>>(
+        &self,
+        metadata_backup_dir: P,
+    ) -> Result<(), String> {
+        prune_old_backup(&metadata_backup_dir).await?;
+
+        let metadata_path = self.data_dir.join("metadata");
+        if !metadata_path.exists() {
+            return Ok(());
+        }
+
+        let dir_name = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+        let backup_path = metadata_backup_dir.as_ref().join(dir_name);
+
+        let result = std::fs::create_dir_all(&backup_path);
+
+        if result.is_err() {
+            return Err("Failed to create backup directory".into());
+        }
+
+        let files = vec![
+            Avatar::filename(),
+            AvatarWearable::filename(),
+            WorldObject::filename(),
+        ];
+
+        for file in files {
+            let path = metadata_path.join(&file);
+            if !path.exists() {
+                continue;
+            }
+
+            let backup_file = backup_path.join(&file);
+
+            let result =
+                modify_guard::copy_file(&path, &backup_file, false, FileTransferGuard::none())
+                    .await;
+
+            if let Err(e) = result {
+                let msg = format!("Failed to backup metadata: {:?}", e);
+                log::warn!("{}", msg);
+                return Err(msg);
+            }
+        }
+
+        log::info!(
+            "Successfully created metadata backup in {}",
+            backup_path.display()
+        );
+
+        Ok(())
     }
 }
 
@@ -371,63 +419,12 @@ async fn rename_conflict_dir<P: AsRef<Path>>(path: P) -> Result<(), std::io::Err
     .await
 }
 
-async fn backup_metadata(data_dir: &PathBuf) -> Result<(), String> {
-    let metadata_path = data_dir.join("metadata");
-    let backup_path = metadata_path.join("backups");
-
-    if !metadata_path.exists() {
-        return Ok(());
-    }
-
-    let dir_name = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
-    let backup_path = backup_path.join(dir_name);
-
-    let result = std::fs::create_dir_all(&backup_path);
-
-    if result.is_err() {
-        return Err("Failed to create backup directory".into());
-    }
-
-    let files = vec![
-        Avatar::filename(),
-        AvatarWearable::filename(),
-        WorldObject::filename(),
-    ];
-
-    for file in files {
-        let path = metadata_path.join(&file);
-        if !path.exists() {
-            continue;
-        }
-
-        let backup_file = backup_path.join(&file);
-
-        let result =
-            modify_guard::copy_file(&path, &backup_file, false, FileTransferGuard::none()).await;
-
-        if let Err(e) = result {
-            let msg = format!("Failed to backup metadata: {:?}", e);
-            log::warn!("{}", msg);
-            return Err(msg);
-        }
-    }
-
-    log::info!(
-        "Successfully created metadata backup in {}",
-        backup_path.display()
-    );
-
-    Ok(())
-}
-
-async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
-    let backup_path = data_dir.join("metadata/backups");
+async fn prune_old_backup<P: AsRef<Path>>(metadata_backup_dir: P) -> Result<(), String> {
+    let backup_path = metadata_backup_dir.as_ref();
 
     if !backup_path.exists() {
         return Ok(());
     }
-
-    let mut entries = Vec::new();
 
     let read_dir =
         std::fs::read_dir(&backup_path).map_err(|e| format!("Failed to read dir: {:?}", e))?;
@@ -440,41 +437,41 @@ async fn prune_old_backup(data_dir: &PathBuf) -> Result<(), String> {
             continue;
         }
 
-        entries.push(path);
-    }
+        let file_stem = path.file_stem().unwrap().to_str().unwrap();
 
-    if entries.len() <= 10 {
-        return Ok(());
-    }
+        if is_outdated_timestamp(file_stem) {
+            log::debug!("purging outdated metadata backup: {}", path.display());
 
-    entries.sort_by(|a, b| {
-        let a = a
-            .file_name()
-            .unwrap_or(OsStr::new(""))
-            .to_str()
-            .unwrap_or("");
-        let b = b
-            .file_name()
-            .unwrap_or(OsStr::new(""))
-            .to_str()
-            .unwrap_or("");
-
-        a.cmp(b)
-    });
-
-    let to_remove = entries.len() - 10;
-
-    for i in 0..to_remove {
-        let path = &entries[i];
-
-        let result = modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path)).await;
-
-        if let Err(e) = result {
-            log::warn!("Failed to remove old backup: {:?}", e);
+            if let Err(e) =
+                modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path)).await
+            {
+                log::error!("Failed to remove outdated metadata backup: {:?}", e)
+            };
         }
     }
 
     Ok(())
+}
+
+const BACKUP_RETENTION_DAYS: i64 = 7;
+
+fn is_outdated_timestamp(timestamp: &str) -> bool {
+    let timestamp = match chrono::NaiveDateTime::parse_from_str(&timestamp, "%Y-%m-%d_%H-%M-%S") {
+        Ok(timestamp) => timestamp,
+        Err(e) => {
+            log::error!("error while parsing timestamp: {}", e);
+            return false;
+        }
+    };
+
+    let timestamp = chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(
+        timestamp,
+        chrono::Utc::now().offset().clone(),
+    );
+
+    let threshold = chrono::Utc::now() - chrono::Duration::days(BACKUP_RETENTION_DAYS);
+
+    timestamp < threshold
 }
 
 #[cfg(test)]
@@ -515,7 +512,7 @@ mod tests {
 
         let mut provider = StoreProvider::create(&target_one).unwrap();
 
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
 
         let ids = provider.get_used_ids().await;
 
@@ -526,7 +523,7 @@ mod tests {
 
         let mut external_provider = StoreProvider::create(&target_two).unwrap();
         external_provider
-            .load_all_assets_from_files(false)
+            .load_all_assets_from_files()
             .await
             .unwrap();
 
@@ -567,7 +564,7 @@ mod tests {
 
         let mut provider = StoreProvider::create(&current_path).unwrap();
 
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
 
         let result = provider
             .internal_migrate_data_dir(None, new_path)
@@ -596,5 +593,31 @@ mod tests {
         rename_conflict_dir(&path).await.unwrap();
 
         assert!(std::fs::exists(format!("{path}_backup_1")).unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_prune_old_backup() {
+        let base = "test/temp/prune_old_backup";
+
+        if std::fs::exists(base).unwrap() {
+            std::fs::remove_dir_all(base).unwrap();
+        }
+
+        std::fs::create_dir_all(base).unwrap();
+
+        let path = format!("{base}/2025-04-01_00-00-00");
+        std::fs::create_dir_all(&path).unwrap();
+
+        prune_old_backup(base).await.unwrap();
+
+        assert!(!std::fs::exists(path).unwrap());
+
+        let current_dir_name = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+        let path = format!("{base}/{current_dir_name}");
+        std::fs::create_dir_all(&path).unwrap();
+
+        prune_old_backup(base).await.unwrap();
+
+        assert!(std::fs::exists(path).unwrap());
     }
 }

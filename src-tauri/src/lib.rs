@@ -8,6 +8,7 @@ use deep_link::{
     execute_deep_links, parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
+use file::modify_guard::{self, FileTransferGuard};
 use language::structs::LocalizationData;
 use preference::store::PreferenceStore;
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
@@ -102,11 +103,9 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
-            let preference_file_path = app
-                .path()
-                .app_local_data_dir()
-                .unwrap()
-                .join("preference.json");
+            let app_local_data_dir = app.path().app_local_data_dir().unwrap();
+            let preference_file_path = app_local_data_dir.join("preference.json");
+
             app.manage(arc_mutex(InitialSetup::new(preference_file_path)));
 
             let result = load_preference_store(app.handle());
@@ -131,7 +130,7 @@ pub fn run() {
                 &update_channel,
             )));
 
-            let result = load_store_provider(&data_dir);
+            let result = load_store_provider(&data_dir, &app_local_data_dir);
             if let Err(err) = result {
                 log::error!("{}", err);
                 app.manage(LoadResult::error(true, err));
@@ -204,7 +203,10 @@ fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
     Ok(default_pref.unwrap())
 }
 
-fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
+fn load_store_provider(
+    data_dir: &PathBuf,
+    app_local_dir: &PathBuf,
+) -> Result<StoreProvider, String> {
     let result = StoreProvider::create(data_dir);
 
     if let Err(err) = result {
@@ -214,8 +216,17 @@ fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
     let mut store_provider = result.unwrap();
     let store_provider_ref = &mut store_provider;
 
+    let metadata_backup_dir = app_local_dir.join("backups").join("metadata");
+
     let result = tauri::async_runtime::block_on(async move {
-        store_provider_ref.load_all_assets_from_files(true).await
+        if let Err(e) = migrate_legacy_backup_dir(store_provider_ref, &metadata_backup_dir).await {
+            log::error!("Failed to migrate legacy backup dir: {}", e);
+        }
+
+        store_provider_ref
+            .create_backup(metadata_backup_dir)
+            .await?;
+        store_provider_ref.load_all_assets_from_files().await
     });
 
     if let Err(err) = result {
@@ -223,6 +234,30 @@ fn load_store_provider(data_dir: &PathBuf) -> Result<StoreProvider, String> {
     }
 
     Ok(store_provider)
+}
+
+async fn migrate_legacy_backup_dir(
+    provider: &StoreProvider,
+    metadata_backup_dir: &PathBuf,
+) -> Result<(), String> {
+    let data_dir = provider.data_dir();
+    let legacy_metadata_backup_dir = data_dir.join("metadata").join("backups");
+
+    if !legacy_metadata_backup_dir.exists() {
+        return Ok(());
+    }
+
+    modify_guard::copy_dir(
+        legacy_metadata_backup_dir,
+        metadata_backup_dir.clone(),
+        true,
+        FileTransferGuard::src(data_dir),
+        |_, _| {},
+    )
+    .await
+    .map_err(|e| format!("Failed to migrate legacy metadata backup directory: {}", e))?;
+
+    Ok(())
 }
 
 fn cleanup_images_dir(data_dir: &PathBuf) {
