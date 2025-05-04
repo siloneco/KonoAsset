@@ -216,7 +216,7 @@ fn load_store_provider(
     let mut store_provider = result.unwrap();
     let store_provider_ref = &mut store_provider;
 
-    let metadata_backup_dir = app_local_dir.join("backup").join("metadata");
+    let metadata_backup_dir = app_local_dir.join("backups").join("metadata");
 
     let result = tauri::async_runtime::block_on(async move {
         if let Err(e) = migrate_legacy_backup_dir(store_provider_ref, &metadata_backup_dir).await {
