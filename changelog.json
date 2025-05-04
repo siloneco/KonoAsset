@@ -1,5 +1,30 @@
 [
   {
+    "version": "1.1.4",
+    "features": [
+      {
+        "text": "Added Simplified Chinese language setting (Thanks to Fallen-ice)",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "言語設定に簡体字を追加 ( Thanks to Fallen-ice )"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed issue where unicode brackets were overlapping",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "全角括弧が重なって表示される問題を修正"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.1.3",
     "features": [
       {
