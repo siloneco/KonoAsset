@@ -49,6 +49,7 @@ const MultiFilterItemSelector = ({
       </div>
       <MultipleSelector
         className="mt-2"
+        badgeClassName="max-w-42"
         options={candidates}
         value={value}
         onChange={onValueChange}
