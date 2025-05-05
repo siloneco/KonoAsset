@@ -266,8 +266,7 @@ const MultipleSelector = ({
       return
     }
 
-    // Use setTimeout to ensure DOM is updated
-    const timer = setTimeout(() => {
+    const animationFrameId = requestAnimationFrame(() => {
       if (!badgesContainerRef.current) return
 
       // Get all badge elements
@@ -292,9 +291,9 @@ const MultipleSelector = ({
       }
 
       setLastBadgeInFirstRow(lastIndex)
-    }, 0)
+    })
 
-    return () => clearTimeout(timer)
+    return () => cancelAnimationFrame(animationFrameId)
   }, [selected])
 
   useEffect(() => {
