@@ -260,7 +260,7 @@ const MultipleSelector = ({
   }
 
   // Check badge positions to find the last badge in the first row
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     if (selected.length <= 1) {
       setLastBadgeInFirstRow(null)
       return
