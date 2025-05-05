@@ -94,6 +94,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
             options={supportedAvatarCandidates}
             placeholder={t('addasset:supported-avatars:placeholder')}
             className="max-w-72"
+            badgeClassName="max-w-58"
             hidePlaceholderWhenSelected
             creatable
             emptyIndicator={
@@ -151,6 +152,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}
           className="max-w-72"
+          badgeClassName="max-w-58"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={

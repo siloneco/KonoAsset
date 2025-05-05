@@ -224,9 +224,13 @@ const MultipleSelector = ({
   const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
 
   const inputDivRef = React.useRef<HTMLDivElement>(null)
+  const badgesContainerRef = React.useRef<HTMLDivElement>(null)
   const [commandListMaxHeight, setCommandListMaxHeight] =
     React.useState<number>(300)
   const [inputHeight, setInputHeight] = React.useState<number>(0)
+  const [lastBadgeInFirstRow, setLastBadgeInFirstRow] = React.useState<
+    number | null
+  >(null)
   const { getElementProperty } = useGetElementProperty(inputDivRef)
 
   // suggestの向きと高さを適切に設定する
@@ -254,6 +258,43 @@ const MultipleSelector = ({
 
     setCommandListMaxHeight(commandListHeight)
   }
+
+  // Check badge positions to find the last badge in the first row
+  React.useLayoutEffect(() => {
+    if (selected.length <= 1) {
+      setLastBadgeInFirstRow(null)
+      return
+    }
+
+    const animationFrameId = requestAnimationFrame(() => {
+      if (!badgesContainerRef.current) return
+
+      // Get all badge elements
+      const badges = Array.from(
+        badgesContainerRef.current.querySelectorAll('[data-badge]'),
+      ) as HTMLElement[]
+
+      if (badges.length === 0) return
+
+      // Get the top position of the first badge
+      const firstRowTop = badges[0].getBoundingClientRect().top
+      let lastIndex = 0
+
+      // Find the last badge in the first row
+      for (let i = 1; i < badges.length; i++) {
+        const top = badges[i].getBoundingClientRect().top
+        if (top > firstRowTop + 5) {
+          // 5px threshold for detecting new row
+          break
+        }
+        lastIndex = i
+      }
+
+      setLastBadgeInFirstRow(lastIndex)
+    })
+
+    return () => cancelAnimationFrame(animationFrameId)
+  }, [selected])
 
   useEffect(() => {
     updateCommandListDirectionAndMaxHeight()
@@ -544,17 +585,27 @@ const MultipleSelector = ({
       >
         <div className="relative flex flex-wrap gap-1">
           <ScrollArea className="max-h-36">
-            <div className="flex flex-wrap gap-1 py-2">
-              {selected.map((option) => {
+            <div
+              className="flex flex-wrap gap-1 py-2 pr-2"
+              ref={badgesContainerRef}
+            >
+              {selected.map((option, index) => {
                 return (
                   <Badge
                     key={option.value}
                     className={cn(
-                      'cursor-default',
+                      'cursor-default flex shrink',
                       'data-disabled:bg-muted-foreground data-disabled:text-muted data-disabled:hover:bg-muted-foreground overflow-hidden',
                       'data-fixed:bg-muted-foreground data-fixed:text-muted data-fixed:hover:bg-muted-foreground overflow-hidden',
+                      // Xボタンと重ならないようにする
+                      {
+                        'mr-6':
+                          selected.length === 1 ||
+                          lastBadgeInFirstRow === index,
+                      },
                       badgeClassName,
                     )}
+                    data-badge={true}
                     data-fixed={option.fixed}
                     data-disabled={disabled || undefined}
                   >

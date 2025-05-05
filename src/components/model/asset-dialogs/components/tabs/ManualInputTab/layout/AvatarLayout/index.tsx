@@ -47,6 +47,7 @@ const AvatarLayout = ({ form }: Props) => {
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}
           className="max-w-[600px]"
+          badgeClassName="max-w-[540px]"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
