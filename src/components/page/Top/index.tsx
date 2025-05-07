@@ -7,7 +7,6 @@ import NavBar from '../../model/MainNavBar'
 import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
 import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
-import { UpdateDialog } from '@/components/model/UpdateDialog'
 import { AssetView } from '@/components/model/asset-view/AssetView'
 import DataManagementDialog from '@/components/model/action-buttons/MoreButton/components/DataManagementDialog'
 
@@ -23,9 +22,6 @@ const TopPage = () => {
     setEditAssetDialogOpen,
     editAssetDialogAssetId,
     editAssetDialogOpen,
-    updateDialogOpen,
-    setUpdateDialogOpen,
-    updateDownloadTaskId,
     dataManagementDialogAssetId,
     dataManagementDialogOpen,
     setDataManagementDialogOpen,
@@ -73,11 +69,6 @@ const TopPage = () => {
           </main>
         </SidebarProvider>
       </AssetContext.Provider>
-      <UpdateDialog
-        dialogOpen={updateDialogOpen}
-        setDialogOpen={setUpdateDialogOpen}
-        taskId={updateDownloadTaskId}
-      />
       <div
         className={cn(
           'fixed h-full w-full opacity-0 z-60 pointer-events-none transition-opacity',

@@ -31,13 +31,8 @@ export const usePreferenceSidebar = (): ReturnProps => {
     })
   }
 
-  const getVersionAndSet = async () => {
-    const v = await getVersion()
-    setVersion(v)
-  }
-
   useEffect(() => {
-    getVersionAndSet()
+    getVersion().then(setVersion)
   }, [])
 
   return {

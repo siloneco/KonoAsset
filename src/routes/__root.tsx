@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster'
 import PersistentContextProvider from '@/components/context/PersistentContext'
 import PreferenceContextProvider from '@/components/context/PreferenceContext'
 import { LocalizationContextProvider } from '@/components/context/LocalizationContext'
+import { UpdateDialogProvider } from '@/components/context/UpdateDialogContext'
 
 export const Route = createRootRoute({
   component: () => (
@@ -18,8 +19,10 @@ export const Route = createRootRoute({
       <PreferenceContextProvider>
         <PersistentContextProvider>
           <LocalizationContextProvider>
-            <Outlet />
-            <Toaster />
+            <UpdateDialogProvider>
+              <Outlet />
+              <Toaster />
+            </UpdateDialogProvider>
           </LocalizationContextProvider>
         </PersistentContextProvider>
       </PreferenceContextProvider>
