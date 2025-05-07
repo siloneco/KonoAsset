@@ -35,13 +35,6 @@ vi.mock('@/lib/bindings', async () => {
             data: mockSortedAssets,
           }
         }),
-      checkForUpdate: vi
-        .fn()
-        .mockResolvedValueOnce({ status: 'ok', data: true })
-        .mockResolvedValueOnce({ status: 'ok', data: false })
-        .mockResolvedValueOnce({ status: 'error', error: 'error' }),
-      executeUpdate: vi.fn(),
-      doNotNotifyUpdate: vi.fn(),
     },
   }
 })

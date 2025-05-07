@@ -1,10 +1,9 @@
-import { downloadUpdate } from '@/components/page/Top/logic'
-import { checkForUpdate, dismissUpdate } from '@/components/page/Top/logic'
 import { buttonVariants } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { ToastAction } from '@radix-ui/react-toast'
 import { useLocalization } from '@/hooks/use-localization'
 import { useState } from 'react'
+import { checkForUpdate, dismissUpdate, downloadUpdate } from '../logic'
 
 type ReturnProps = {
   updateDialogOpen: boolean
