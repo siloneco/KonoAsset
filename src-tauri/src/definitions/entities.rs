@@ -252,7 +252,7 @@ impl HashSetVersionedLoader<WorldObject> for WorldObject {
     type VersionedType = VersionedWorldObjects;
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, specta::Type)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq, specta::Type)]
 pub enum AssetType {
     Avatar,
     AvatarWearable,

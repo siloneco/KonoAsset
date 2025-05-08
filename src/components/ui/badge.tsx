@@ -18,11 +18,11 @@ const badgeVariants = cva(
         outline:
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
         avatar:
-          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+          'border-transparent bg-avatar text-avatar-foreground hover:bg-avatar/80',
         avatarWearable:
-          'border-transparent bg-yellow-400 hover:bg-yellow-400/80 dark:bg-yellow-600 dark:hover:bg-yellow-600/80',
+          'border-transparent bg-avatar-wearable text-avatar-wearable-foreground hover:bg-avatar-wearable/80',
         worldObject:
-          'border-transparent bg-sky-400 hover:bg-sky-400/80 dark:bg-sky-600 dark:hover:bg-sky-600/80',
+          'border-transparent bg-world-object text-world-object-foreground hover:bg-world-object/80',
       },
     },
     defaultVariants: {

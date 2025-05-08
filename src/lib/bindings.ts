@@ -129,6 +129,22 @@ async exportForAvatarExplorer(path: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getRegistrationStatistics() : Promise<Result<AssetRegistrationStatistics[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_registration_statistics") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getVolumeStatistics() : Promise<Result<AssetVolumeStatistics[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_volume_statistics") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getAllAssetTags() : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
@@ -451,11 +467,13 @@ async requestStartupDeepLinkExecution() : Promise<Result<null, string>> {
 
 export const events = __makeEvents__<{
 addAssetDeepLink: AddAssetDeepLink,
+assetVolumeEstimatedEvent: AssetVolumeEstimatedEvent,
 progressEvent: ProgressEvent,
 taskStatusChanged: TaskStatusChanged,
 updateProgress: UpdateProgress
 }>({
 addAssetDeepLink: "add-asset-deep-link",
+assetVolumeEstimatedEvent: "asset-volume-estimated-event",
 progressEvent: "progress-event",
 taskStatusChanged: "task-status-changed",
 updateProgress: "update-progress"
@@ -470,8 +488,12 @@ updateProgress: "update-progress"
 export type AddAssetDeepLink = { path: string[]; boothItemId: number | null }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
+export type AssetRegistrationStatistics = { date: string; avatars: number; avatarWearables: number; worldObjects: number }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
+export type AssetVolumeEstimatedEvent = { type: AssetVolumeEstimatedEventType; data: AssetVolumeStatistics[] }
+export type AssetVolumeEstimatedEventType = "Chunk" | "Completed"
+export type AssetVolumeStatistics = { id: string; assetType: AssetType; name: string; sizeInBytes: number }
 export type Avatar = { id: string; description: AssetDescription }
 export type AvatarWearable = { id: string; description: AssetDescription; category: string; supportedAvatars: string[] }
 export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }

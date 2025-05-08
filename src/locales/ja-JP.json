@@ -202,6 +202,7 @@
     "preference:back-to-top": "トップ画面に戻る",
     "preference:settings": "一般設定",
     "preference:adapter": "データの移行",
+    "preference:statistics": "統計",
     "preference:logs": "ログの確認",
     "preference:about": "このアプリについて",
 
