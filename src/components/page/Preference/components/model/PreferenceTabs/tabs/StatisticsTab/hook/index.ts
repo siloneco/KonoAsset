@@ -57,7 +57,7 @@ export const useStatisticsTab = (): ReturnProps => {
 
   const throttledAssetVolumeStatistics = useThrottle(
     assetVolumeStatistics,
-    3000,
+    1000,
   )
 
   const fetchRegistrationStatistics = async () => {

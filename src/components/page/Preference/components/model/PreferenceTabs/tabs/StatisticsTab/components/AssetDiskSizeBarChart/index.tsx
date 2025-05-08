@@ -89,8 +89,17 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
               content={
                 <ChartTooltipContent
                   indicator="line"
-                  formatter={(value) => {
-                    return bytesFormatter(value as number)
+                  formatter={(value, _, item) => {
+                    console.log(item)
+                    return (
+                      <div>
+                        <p className="font-bold">{item.payload.name}</p>
+                        <div className="flex flex-row gap-2">
+                          <p className="text-muted-foreground">Size</p>
+                          <p>{bytesFormatter(value as number)}</p>
+                        </div>
+                      </div>
+                    )
                   }}
                 />
               }
