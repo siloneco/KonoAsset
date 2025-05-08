@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/chart'
 import { AssetVolumeStatistics } from '@/lib/bindings'
 import { Loader2 } from 'lucide-react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   data: AssetVolumeStatistics[]
@@ -32,6 +33,8 @@ type Props = {
 }
 
 export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
+  const { t } = useLocalization()
+
   const chartConfig = {
     asset: {
       label: 'Size',
@@ -46,14 +49,14 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
       <CardHeader>
         <CardTitle>
           <div className="flex flex-row items-center gap-2">
-            アセットごとのディスク容量
+            {t('preference:statistics:volume-bar-chart:title')}
             {loading && (
               <Loader2 className="animate-spin text-muted-foreground size-6" />
             )}
           </div>
         </CardTitle>
         <CardDescription>
-          アセットに登録されているファイルの合計ディスク容量
+          {t('preference:statistics:volume-bar-chart:description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,7 +98,9 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                       <div>
                         <p className="font-bold">{item.payload.name}</p>
                         <div className="flex flex-row gap-2">
-                          <p className="text-muted-foreground">Size</p>
+                          <p className="text-muted-foreground">
+                            {t('preference:statistics:volume-bar-chart:size')}
+                          </p>
                           <p>{bytesFormatter(value as number)}</p>
                         </div>
                       </div>

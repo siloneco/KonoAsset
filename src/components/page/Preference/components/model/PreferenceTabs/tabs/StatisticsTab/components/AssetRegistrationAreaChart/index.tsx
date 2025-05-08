@@ -53,8 +53,12 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>アセット登録数の推移</CardTitle>
-        <CardDescription>過去7日間のアセット登録数の推移</CardDescription>
+        <CardTitle>
+          {t('preference:statistics:asset-count-area-chart:title')}
+        </CardTitle>
+        <CardDescription>
+          {t('preference:statistics:asset-count-area-chart:description')}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="max-h-48 w-full">

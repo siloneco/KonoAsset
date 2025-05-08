@@ -66,9 +66,11 @@ export const AssetCountPieChart: React.FC<Props> = ({
   return (
     <Card className="flex flex-col w-full h-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>アセット登録数</CardTitle>
+        <CardTitle>
+          {t('preference:statistics:asset-count-pie-chart:title')}
+        </CardTitle>
         <CardDescription>
-          登録されているタイプごとのアセットの数
+          {t('preference:statistics:asset-count-pie-chart:description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -111,7 +113,9 @@ export const AssetCountPieChart: React.FC<Props> = ({
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          アセット
+                          {t(
+                            'preference:statistics:asset-count-pie-chart:unit',
+                          )}
                         </tspan>
                       </text>
                     )

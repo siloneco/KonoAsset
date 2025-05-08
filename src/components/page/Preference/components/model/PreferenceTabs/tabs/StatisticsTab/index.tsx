@@ -6,6 +6,7 @@ import { AssetRegistrationAreaChart } from './components/AssetRegistrationAreaCh
 import { NumberDisplay } from './components/NumberDisplay'
 import { AssetDiskSizeBarChart } from './components/AssetDiskSizeBarChart'
 import { useStatisticsTab } from './hook'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   id: PreferenceTabIDs
@@ -21,25 +22,34 @@ export const StatisticsTab: FC<Props> = ({ id }) => {
     avatarWearables,
     worldObjects,
   } = useStatisticsTab()
+  const { t } = useLocalization()
 
   return (
     <TabsContent value={id} className="mt-0 w-full h-screen">
       <div className="p-8 w-full h-full grid grid-cols-1 gap-4">
         <div className="w-full grid grid-rows-2 grid-cols-5 gap-4">
           <div className="col-span-3 row-span-1">
-            <NumberDisplay title="アセット登録数" number={total} unit="個" />
+            <NumberDisplay
+              title={t('preference:statistics:total')}
+              number={total}
+              unit={t('preference:statistics:unit')}
+            />
           </div>
           <div className="col-span-3 row-span-1 row-start-2 flex flex-row gap-4">
-            <NumberDisplay title="アバター" number={avatars} unit="個" />
             <NumberDisplay
-              title="アバター関連アセット"
-              number={avatarWearables}
-              unit="個"
+              title={t('general:typeavatar')}
+              number={avatars}
+              unit={t('preference:statistics:unit')}
             />
             <NumberDisplay
-              title="ワールドアセット"
+              title={t('general:typeavatarwearable')}
+              number={avatarWearables}
+              unit={t('preference:statistics:unit')}
+            />
+            <NumberDisplay
+              title={t('general:typeworldobject')}
               number={worldObjects}
-              unit="個"
+              unit={t('preference:statistics:unit')}
             />
           </div>
           <div className="row-span-2 col-span-2">
