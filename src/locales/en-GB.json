@@ -255,8 +255,8 @@
     "preference:statistics:asset-count-pie-chart:unit": "assets",
     "preference:statistics:asset-count-area-chart:title": "Asset Registration Trend",
     "preference:statistics:asset-count-area-chart:description": "Historical trend of asset registrations",
-    "preference:statistics:volume-bar-chart:title": "Disk Space by Asset",
-    "preference:statistics:volume-bar-chart:description": "Total disk space used by registered asset files",
+    "preference:statistics:volume-bar-chart:title": "Disc Space by Asset",
+    "preference:statistics:volume-bar-chart:description": "Total Disc space used by registered asset files",
     "preference:statistics:volume-bar-chart:size": "Size",
 
     "preference:logs:open-logs-folder": "Open folder",
