@@ -202,6 +202,7 @@
     "preference:back-to-top": "Return to top screen",
     "preference:settings": "General settings",
     "preference:adapter": "Data migration",
+    "preference:statistics": "Statistics",
     "preference:logs": "View logs",
     "preference:about": "About this app",
 
@@ -246,6 +247,17 @@
     "preference:adapter:export:completed": "Export completed!",
     "preference:adapter:export:failed": "Export failed",
     "preference:adapter:export:cancelled": "Export was cancelled",
+
+    "preference:statistics:total": "Total registered assets",
+    "preference:statistics:unit": "items",
+    "preference:statistics:asset-count-pie-chart:title": "Asset Count",
+    "preference:statistics:asset-count-pie-chart:description": "Number of assets by type",
+    "preference:statistics:asset-count-pie-chart:unit": "assets",
+    "preference:statistics:asset-count-area-chart:title": "Asset Registration Trend",
+    "preference:statistics:asset-count-area-chart:description": "Historical trend of asset registrations",
+    "preference:statistics:volume-bar-chart:title": "Disk Space by Asset",
+    "preference:statistics:volume-bar-chart:description": "Total disk space used by registered asset files",
+    "preference:statistics:volume-bar-chart:size": "Size",
 
     "preference:logs:open-logs-folder": "Open folder",
 
