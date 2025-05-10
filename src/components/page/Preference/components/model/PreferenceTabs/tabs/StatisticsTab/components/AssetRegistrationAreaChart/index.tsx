@@ -37,15 +37,15 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
       label: 'Assets',
     },
     avatars: {
-      label: t('general:typeavatar'),
+      label: t('general:typeavatar-multiple'),
       color: 'var(--avatar)',
     },
     avatarWearables: {
-      label: t('general:typeavatarwearable'),
+      label: t('general:typeavatarwearable-multiple'),
       color: 'var(--avatar-wearable)',
     },
     worldObjects: {
-      label: t('general:typeworldobject'),
+      label: t('general:typeworldobject-multiple'),
       color: 'var(--world-object)',
     },
   } satisfies ChartConfig

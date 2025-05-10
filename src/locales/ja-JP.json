@@ -23,8 +23,11 @@
     "general:show-all": "すべて表示",
 
     "general:typeavatar": "アバター素体",
+    "general:typeavatar-multiple": "アバター素体",
     "general:typeavatarwearable": "アバター関連アセット",
+    "general:typeavatarwearable-multiple": "アバター関連アセット",
     "general:typeworldobject": "ワールドアセット",
+    "general:typeworldobject-multiple": "ワールドアセット",
 
     "general:supported-avatars": "対応アバター",
     "general:category": "カテゴリ",

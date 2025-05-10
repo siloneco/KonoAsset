@@ -37,17 +37,17 @@ export const StatisticsTab: FC<Props> = ({ id }) => {
           </div>
           <div className="col-span-3 row-span-1 row-start-2 flex flex-row gap-3">
             <NumberDisplay
-              title={t('general:typeavatar')}
+              title={t('general:typeavatar-multiple')}
               number={avatars}
               unit={t('preference:statistics:unit')}
             />
             <NumberDisplay
-              title={t('general:typeavatarwearable')}
+              title={t('general:typeavatarwearable-multiple')}
               number={avatarWearables}
               unit={t('preference:statistics:unit')}
             />
             <NumberDisplay
-              title={t('general:typeworldobject')}
+              title={t('general:typeworldobject-multiple')}
               number={worldObjects}
               unit={t('preference:statistics:unit')}
             />

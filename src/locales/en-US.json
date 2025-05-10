@@ -23,8 +23,11 @@
     "general:show-all": "Show all",
 
     "general:typeavatar": "Avatar",
+    "general:typeavatar-multiple": "Avatars",
     "general:typeavatarwearable": "Avatar-related asset",
+    "general:typeavatarwearable-multiple": "Avatar-related assets",
     "general:typeworldobject": "World asset",
+    "general:typeworldobject-multiple": "World assets",
 
     "general:supported-avatars": "Supported avatars",
     "general:category": "Category",
