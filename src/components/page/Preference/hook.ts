@@ -1,6 +1,11 @@
 import { useState } from 'react'
 
-export type PreferenceTabIDs = 'settings' | 'adapter' | 'logs' | 'about'
+export type PreferenceTabIDs =
+  | 'settings'
+  | 'adapter'
+  | 'statistics'
+  | 'logs'
+  | 'about'
 
 type ReturnProps = {
   activeTab: PreferenceTabIDs

@@ -23,8 +23,11 @@
     "general:show-all": "すべて表示",
 
     "general:typeavatar": "アバター素体",
+    "general:typeavatar-multiple": "アバター素体",
     "general:typeavatarwearable": "アバター関連アセット",
+    "general:typeavatarwearable-multiple": "アバター関連アセット",
     "general:typeworldobject": "ワールドアセット",
+    "general:typeworldobject-multiple": "ワールドアセット",
 
     "general:supported-avatars": "対応アバター",
     "general:category": "カテゴリ",
@@ -202,6 +205,7 @@
     "preference:back-to-top": "トップ画面に戻る",
     "preference:settings": "一般設定",
     "preference:adapter": "データの移行",
+    "preference:statistics": "統計",
     "preference:logs": "ログの確認",
     "preference:about": "このアプリについて",
 
@@ -246,6 +250,17 @@
     "preference:adapter:export:completed": "エクスポートが完了しました！",
     "preference:adapter:export:failed": "エクスポートに失敗しました",
     "preference:adapter:export:cancelled": "エクスポートがキャンセルされました",
+
+    "preference:statistics:total": "アセット登録数",
+    "preference:statistics:unit": "個",
+    "preference:statistics:asset-count-pie-chart:title": "タイプごとのアセット登録数",
+    "preference:statistics:asset-count-pie-chart:description": "登録されているタイプごとのアセットの数",
+    "preference:statistics:asset-count-pie-chart:unit": "アセット",
+    "preference:statistics:asset-count-area-chart:title": "アセット登録数の推移",
+    "preference:statistics:asset-count-area-chart:description": "過去のアセット登録数の推移",
+    "preference:statistics:volume-bar-chart:title": "アセットごとのディスク容量",
+    "preference:statistics:volume-bar-chart:description": "アセットに登録されているファイルの合計ディスク容量",
+    "preference:statistics:volume-bar-chart:size": "サイズ",
 
     "preference:logs:open-logs-folder": "フォルダを開く",
 

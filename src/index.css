@@ -21,15 +21,23 @@
   --accent-foreground: hsl(240 5.9% 10%);
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 98%);
+
+  --avatar: hsl(346.8 71% 60%);
+  --avatar-foreground: hsl(355.7 100% 97.3%);
+  --avatar-wearable: hsl(48 100% 49%);
+  --avatar-wearable-foreground: hsl(240 10% 3.9%);
+  --world-object: hsl(196 100% 50%);
+  --world-object-foreground: hsl(240 10% 3.9%);
+
   --border: hsl(240 5.9% 90%);
   --input: hsl(240 5.9% 90%);
   --ring: hsl(346.8 77.2% 49.8%);
   --radius: 0.5rem;
-  --chart-1: hsl(12 76% 61%);
-  --chart-2: hsl(173 58% 39%);
-  --chart-3: hsl(197 37% 24%);
-  --chart-4: hsl(43 74% 66%);
-  --chart-5: hsl(27 87% 67%);
+  --chart-1: hsl(347, 70%, 63%);
+  --chart-2: hsl(347, 78%, 75%);
+  --chart-3: hsl(347, 89%, 82%);
+  --chart-4: hsl(345, 80%, 71%);
+  --chart-5: hsl(347, 72%, 83%);
   --sidebar: hsl(0 0% 98%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
   --sidebar-primary: hsl(240 5.9% 10%);
@@ -57,14 +65,22 @@
   --accent-foreground: hsl(0 0% 98%);
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(0 85.7% 97.3%);
+
+  --avatar: hsl(346.8 50.2% 49.8%);
+  --avatar-foreground: hsl(355.7 100% 97.3%);
+  --avatar-wearable: hsl(39 100% 41%);
+  --avatar-wearable-foreground: hsl(0 0% 95%);
+  --world-object: hsl(202 100% 41%);
+  --world-object-foreground: hsl(0 0% 95%);
+
   --border: hsl(240 3.7% 15.9%);
   --input: hsl(240 3.7% 15.9%);
   --ring: hsl(346.8 77.2% 49.8%);
-  --chart-1: hsl(220 70% 50%);
-  --chart-2: hsl(160 60% 45%);
-  --chart-3: hsl(30 80% 55%);
-  --chart-4: hsl(280 65% 60%);
-  --chart-5: hsl(340 75% 55%);
+  --chart-1: hsl(346.8 50.2% 49.8%);
+  --chart-2: hsl(347, 81%, 68%);
+  --chart-3: hsl(347, 87%, 79%);
+  --chart-4: hsl(345, 76%, 65%);
+  --chart-5: hsl(347, 64%, 78%);
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
   --sidebar-primary: hsl(224.3 76.3% 48%);
@@ -113,6 +129,13 @@
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-avatar: var(--avatar);
+  --color-avatar-foreground: var(--avatar-foreground);
+  --color-avatar-wearable: var(--avatar-wearable);
+  --color-avatar-wearable-foreground: var(--avatar-wearable-foreground);
+  --color-world-object: var(--world-object);
+  --color-world-object-foreground: var(--world-object-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);

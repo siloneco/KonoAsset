@@ -11,6 +11,7 @@ use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use file::modify_guard::{self, FileTransferGuard};
 use language::structs::LocalizationData;
 use preference::store::PreferenceStore;
+use statistics::{AssetVolumeEstimatedEvent, AssetVolumeStatisticsCache};
 use task::{cancellable_task::TaskContainer, definitions::TaskStatusChanged};
 use tauri::{async_runtime::Mutex, AppHandle, Manager};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -33,6 +34,7 @@ mod language;
 mod loader;
 mod logging;
 mod preference;
+mod statistics;
 mod task;
 mod updater;
 mod zip;
@@ -46,6 +48,7 @@ pub fn run() {
         TaskStatusChanged,
         AddAssetDeepLink,
         UpdateProgress,
+        AssetVolumeEstimatedEvent,
     ]);
 
     #[cfg(debug_assertions)]
@@ -81,6 +84,7 @@ pub fn run() {
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new()))
         .manage(arc_mutex(LocalizationData::default()))
+        .manage(arc_mutex(AssetVolumeStatisticsCache::new()))
         .setup(move |app| {
             logging::initialize_logger(&app.handle());
             builder.mount_events(app);

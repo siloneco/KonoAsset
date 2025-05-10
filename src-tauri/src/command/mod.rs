@@ -29,6 +29,9 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::adapter::export_as_konoasset_zip,
         asset::adapter::export_as_human_readable_zip,
         asset::adapter::export_for_avatar_explorer,
+        asset::statistics::get_registration_statistics,
+        asset::statistics::execute_volume_statistics_calculation_task,
+        asset::statistics::get_volume_statistics_cache,
         // サジェストの取得関連
         suggest::get::get_all_asset_tags,
         suggest::get::get_all_supported_avatar_values,
