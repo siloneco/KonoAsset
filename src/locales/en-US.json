@@ -250,7 +250,7 @@
 
     "preference:statistics:total": "Total registered assets",
     "preference:statistics:unit": "items",
-    "preference:statistics:asset-count-pie-chart:title": "Asset Count",
+    "preference:statistics:asset-count-pie-chart:title": "Asset Count by Type",
     "preference:statistics:asset-count-pie-chart:description": "Number of assets by type",
     "preference:statistics:asset-count-pie-chart:unit": "assets",
     "preference:statistics:asset-count-area-chart:title": "Asset Registration Trend",

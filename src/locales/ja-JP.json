@@ -250,7 +250,7 @@
 
     "preference:statistics:total": "アセット登録数",
     "preference:statistics:unit": "個",
-    "preference:statistics:asset-count-pie-chart:title": "アセット登録数",
+    "preference:statistics:asset-count-pie-chart:title": "タイプごとのアセット登録数",
     "preference:statistics:asset-count-pie-chart:description": "登録されているタイプごとのアセットの数",
     "preference:statistics:asset-count-pie-chart:unit": "アセット",
     "preference:statistics:asset-count-area-chart:title": "アセット登録数の推移",

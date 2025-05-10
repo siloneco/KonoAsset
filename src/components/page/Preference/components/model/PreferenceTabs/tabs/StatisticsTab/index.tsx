@@ -35,7 +35,7 @@ export const StatisticsTab: FC<Props> = ({ id }) => {
               unit={t('preference:statistics:unit')}
             />
           </div>
-          <div className="col-span-3 row-span-1 row-start-2 flex flex-row gap-4">
+          <div className="col-span-3 row-span-1 row-start-2 flex flex-row gap-3">
             <NumberDisplay
               title={t('general:typeavatar')}
               number={avatars}
@@ -54,9 +54,9 @@ export const StatisticsTab: FC<Props> = ({ id }) => {
           </div>
           <div className="row-span-2 col-span-2">
             <AssetCountPieChart
-              avatars={8}
-              avatarWearables={94}
-              worldObjects={17}
+              avatars={avatars}
+              avatarWearables={avatarWearables}
+              worldObjects={worldObjects}
             />
           </div>
         </div>

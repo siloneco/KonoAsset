@@ -73,7 +73,7 @@ export const AssetCountPieChart: React.FC<Props> = ({
           {t('preference:statistics:asset-count-pie-chart:description')}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-0 px-0">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"

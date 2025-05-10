@@ -17,15 +17,17 @@ export const NumberDisplay: React.FC<Props> = ({
   return (
     <Card className={cn('h-full w-full', className)}>
       <CardHeader>
-        <p className="truncate text-base font-bold">{title}</p>
+        <p className="truncate font-bold">{title}</p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         <div className="flex flex-row items-center justify-center">
-          <p className="text-5xl font-bold mr-1">{number}</p>
+          <p className="text-2xl lg:text-4xl xl:text-5xl font-bold whitespace-nowrap">
+            {number.toLocaleString()}
+          </p>
           {unit && (
-            <p className="text-lg font-bold text-muted-foreground self-end">
-              {unit}
-            </p>
+            <div className="hidden xl:flex self-end ml-1">
+              <p className="text-sm font-bold text-muted-foreground">{unit}</p>
+            </div>
           )}
         </div>
       </CardContent>
