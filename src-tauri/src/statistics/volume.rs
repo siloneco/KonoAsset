@@ -1,8 +1,9 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{collections::HashSet, path::PathBuf, sync::Arc};
 
 use serde::Serialize;
 use tauri::AppHandle;
 use tauri_specta::Event;
+use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::{
@@ -34,15 +35,22 @@ pub struct AssetVolumeEstimatedEvent {
 }
 
 pub async fn calculate_asset_volumes(
-    provider: &StoreProvider,
+    provider: Arc<Mutex<StoreProvider>>,
     app_handle: &AppHandle,
 ) -> Result<Vec<AssetVolumeStatistics>, String> {
-    let data_dir = provider.data_dir().join("data");
-    let mut result = Vec::new();
+    let (data_dir, avatars, wearables, world_objects) = {
+        let provider = provider.lock().await;
 
-    let avatars = provider.get_avatar_store().get_all().await;
-    let wearables = provider.get_avatar_wearable_store().get_all().await;
-    let world_objects = provider.get_world_object_store().get_all().await;
+        let data_dir = provider.data_dir().join("data");
+
+        let avatars = provider.get_avatar_store().get_all().await;
+        let wearables = provider.get_avatar_wearable_store().get_all().await;
+        let world_objects = provider.get_world_object_store().get_all().await;
+
+        (data_dir, avatars, wearables, world_objects)
+    };
+
+    let mut result = Vec::new();
 
     // Calculate volumes for avatars
     let avatar_results =

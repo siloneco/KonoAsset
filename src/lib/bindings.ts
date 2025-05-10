@@ -137,9 +137,17 @@ async getRegistrationStatistics() : Promise<Result<AssetRegistrationStatistics[]
     else return { status: "error", error: e  as any };
 }
 },
-async getVolumeStatistics() : Promise<Result<AssetVolumeStatistics[], string>> {
+async executeVolumeStatisticsCalculationTask() : Promise<Result<string, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_volume_statistics") };
+    return { status: "ok", data: await TAURI_INVOKE("execute_volume_statistics_calculation_task") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getVolumeStatisticsCache() : Promise<Result<AssetVolumeStatistics[] | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_volume_statistics_cache") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

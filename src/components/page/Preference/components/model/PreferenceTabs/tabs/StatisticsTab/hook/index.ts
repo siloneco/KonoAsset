@@ -131,12 +131,22 @@ export const useStatisticsTab = (): ReturnProps => {
         return
       }
 
-      const result = await commands.getVolumeStatistics()
+      const taskExecutionResult =
+        await commands.executeVolumeStatisticsCalculationTask()
 
-      if (result.status === 'ok') {
+      if (taskExecutionResult.status === 'error') {
+        console.error(taskExecutionResult.error)
+        return
+      }
+
+      const result = await commands.getVolumeStatisticsCache()
+
+      if (result.status === 'ok' && result.data !== null) {
         setAssetVolumeStatistics(
           result.data.sort((a, b) => b.sizeInBytes - a.sizeInBytes),
         )
+        setLoadingAssetVolumeStatistics(false)
+        return
       }
     }
 

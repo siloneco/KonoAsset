@@ -26,8 +26,8 @@ export const StatisticsTab: FC<Props> = ({ id }) => {
 
   return (
     <TabsContent value={id} className="mt-0 w-full h-screen">
-      <div className="p-8 w-full h-full grid grid-cols-1 gap-4">
-        <div className="w-full grid grid-rows-2 grid-cols-5 gap-4">
+      <div className="p-8 w-full max-w-[1200px] mx-auto h-full grid grid-cols-1 gap-3">
+        <div className="w-full grid grid-rows-2 grid-cols-5 gap-3">
           <div className="col-span-3 row-span-1">
             <NumberDisplay
               title={t('preference:statistics:total')}

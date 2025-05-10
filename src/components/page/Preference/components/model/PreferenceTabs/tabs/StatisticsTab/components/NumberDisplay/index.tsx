@@ -17,7 +17,7 @@ export const NumberDisplay: React.FC<Props> = ({
   return (
     <Card className={cn('h-full w-full', className)}>
       <CardHeader>
-        <p className="truncate">{title}</p>
+        <p className="truncate text-base font-bold">{title}</p>
       </CardHeader>
       <CardContent>
         <div className="flex flex-row items-center justify-center">
