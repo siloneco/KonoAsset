@@ -599,9 +599,7 @@ const MultipleSelector = ({
                       'data-fixed:bg-muted-foreground data-fixed:text-muted data-fixed:hover:bg-muted-foreground overflow-hidden',
                       // Xボタンと重ならないようにする
                       {
-                        'mr-6':
-                          selected.length === 1 ||
-                          lastBadgeInFirstRow === index,
+                        'mr-6': lastBadgeInFirstRow === index,
                       },
                       badgeClassName,
                     )}
