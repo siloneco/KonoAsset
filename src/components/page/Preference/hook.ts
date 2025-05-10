@@ -3,9 +3,9 @@ import { useState } from 'react'
 export type PreferenceTabIDs =
   | 'settings'
   | 'adapter'
+  | 'statistics'
   | 'logs'
   | 'about'
-  | 'statistics'
 
 type ReturnProps = {
   activeTab: PreferenceTabIDs
