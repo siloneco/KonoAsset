@@ -66,26 +66,41 @@ impl UpdateHandler {
             .check()
             .await?;
 
-        self.update_handler = result.clone();
-
-        if let Some(update) = result {
-            self.update_available = true;
-            self.update_version = Some(update.version);
-
-            self.initialized = true;
-            return Ok(true);
-        } else {
+        if result.is_none() {
             self.update_available = false;
             self.update_version = None;
 
             self.initialized = true;
             return Ok(false);
         }
+
+        let update = result.unwrap();
+
+        if let Some(legacy_update_handler) = &self.update_handler {
+            // If signature is different, we need to download the update again
+            if legacy_update_handler.signature != update.signature {
+                self.downloaded_update_data = None;
+                self.changelog = None;
+            }
+        }
+
+        self.update_handler = Some(update.clone());
+        self.update_available = true;
+        self.update_version = Some(update.version);
+        self.initialized = true;
+        return Ok(true);
     }
 
     pub async fn download_update(&mut self) -> tauri_plugin_updater::Result<()> {
+        if self.downloaded_update_data.is_some() {
+            log::info!("Update already downloaded, skipping download.");
+            return Ok(());
+        }
+
         if let Some(update) = &self.update_handler {
             let mut downloaded = 0;
+
+            log::info!("Downloading update...");
 
             let downloaded_data = update
                 .download(
@@ -98,16 +113,16 @@ impl UpdateHandler {
                             0f32
                         };
 
-                        log::debug!("downloaded {downloaded} bytes ({:.1}%)", progress * 100.0);
+                        log::debug!("Downloaded {downloaded} bytes ({:.1}%)", progress * 100.0);
 
                         if let Err(e) = UpdateProgress::new(progress).emit(&self.app_handle) {
                             log::error!("failed to emit update progress: {:?}", e);
                         }
                     },
                     || {
-                        log::info!("update download completed");
+                        log::info!("Update download completed");
                         if let Err(e) = UpdateProgress::new(100f32).emit(&self.app_handle) {
-                            log::error!("failed to emit update progress: {:?}", e);
+                            log::error!("Failed to emit update progress: {:?}", e);
                         }
                     },
                 )
