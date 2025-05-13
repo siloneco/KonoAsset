@@ -70,7 +70,7 @@ export const createFilterRequest = ({
   }
 
   if (queryTextMode === 'general') {
-    if (queryTextMode.length > 0) {
+    if (generalQueryText.length > 0) {
       const tokens = generalQueryText.split(/(\s+)/)
 
       for (let i = 0; i < tokens.length; i++) {
