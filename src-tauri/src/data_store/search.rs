@@ -201,7 +201,9 @@ fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> boo
             description
                 .memo
                 .as_ref()
-                .map_or(false, |memo| contains_text(&memo.to_ascii_lowercase(), &text));
+                .map_or(false, |memo| contains_text(&memo.to_ascii_lowercase(), &text)) ||
+            // BOOTHのアイテムIDに含まれているかどうか
+            (description.booth_item_id.is_some() && description.booth_item_id.unwrap().to_string().contains(&text));
     })
 }
 

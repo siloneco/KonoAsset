@@ -1,5 +1,6 @@
 import { AssetCardSize } from '@/components/context/PersistentContext'
 import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
+import { extractBoothItemId } from '@/lib/utils'
 
 const SMALL_CARD_WIDTH = 160
 const MEDIUM_CARD_WIDTH = 200
@@ -70,7 +71,21 @@ export const createFilterRequest = ({
 
   if (queryTextMode === 'general') {
     if (queryTextMode.length > 0) {
-      requestQuery = generalQueryText
+      const split = generalQueryText.split(/(\s+)/)
+
+      for (let i = 0; i < split.length; i++) {
+        if (split[i].length <= 0) {
+          continue
+        }
+
+        const extracted = extractBoothItemId(split[i])
+
+        if (extracted.status === 'ok') {
+          split[i] = `${extracted.data}`
+        }
+      }
+
+      requestQuery = split.join(' ')
     } else {
       requestQuery = null
     }
