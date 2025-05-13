@@ -11,6 +11,16 @@ body:
         新しい Issue を作成する前に、重複する Issue が無いか確認してください。
         Please check if there are any duplicate issues before creating a new issue.
 
+  - type: input
+    attributes:
+      label: バージョン (Version)
+      description: |
+        バグを確認したバージョンを記述してください。
+        Describe the version in which the bug was identified.
+      placeholder: v1.1.4
+    validations:
+      required: true
+
   - type: textarea
     attributes:
       label: 概要 (Summary)
