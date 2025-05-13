@@ -71,21 +71,10 @@ export const createFilterRequest = ({
 
   if (queryTextMode === 'general') {
     if (generalQueryText.length > 0) {
-      const tokens = generalQueryText.split(/(\s+)/)
-
-      for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i].length <= 0) {
-          continue
-        }
-
-        const extracted = extractBoothItemId(tokens[i])
-
-        if (extracted.status === 'ok') {
-          tokens[i] = `${extracted.data}`
-        }
-      }
-
-      requestQuery = tokens.join(' ')
+      requestQuery = generalQueryText.replace(/\S+/g, (token) => {
+        const extracted = extractBoothItemId(token)
+        return extracted.status === 'ok' ? `${extracted.data}` : token
+      })
     } else {
       requestQuery = null
     }
