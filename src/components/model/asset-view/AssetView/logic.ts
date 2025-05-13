@@ -71,21 +71,21 @@ export const createFilterRequest = ({
 
   if (queryTextMode === 'general') {
     if (queryTextMode.length > 0) {
-      const split = generalQueryText.split(/(\s+)/)
+      const tokens = generalQueryText.split(/(\s+)/)
 
-      for (let i = 0; i < split.length; i++) {
-        if (split[i].length <= 0) {
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].length <= 0) {
           continue
         }
 
-        const extracted = extractBoothItemId(split[i])
+        const extracted = extractBoothItemId(tokens[i])
 
         if (extracted.status === 'ok') {
-          split[i] = `${extracted.data}`
+          tokens[i] = `${extracted.data}`
         }
       }
 
-      requestQuery = split.join(' ')
+      requestQuery = tokens.join(' ')
     } else {
       requestQuery = null
     }
