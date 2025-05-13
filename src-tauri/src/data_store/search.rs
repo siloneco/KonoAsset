@@ -201,7 +201,9 @@ fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> boo
             description
                 .memo
                 .as_ref()
-                .map_or(false, |memo| contains_text(&memo.to_ascii_lowercase(), &text));
+                .map_or(false, |memo| contains_text(&memo.to_ascii_lowercase(), &text)) ||
+            // BOOTHのアイテムIDに含まれているかどうか
+            description.booth_item_id.map_or(false, |id| id.to_string().contains(&text));
     })
 }
 
@@ -240,7 +242,7 @@ mod tests {
             image_filename: None,
             tags: vec!["タグ1".to_string(), "タグ2".to_string(), "tag3".to_string()],
             memo: Some("メモ".to_string()),
-            booth_item_id: None,
+            booth_item_id: Some(6641548),
             dependencies: vec![],
             created_at: chrono::Local::now().timestamp_millis(),
             published_at: Some(chrono::Local::now().timestamp_millis()),
@@ -257,6 +259,9 @@ mod tests {
         // 全角数字と半角数字、全角アルファベットと半角アルファベットを区別しない
         assert_eq!(check_text_contains(&description, &vec!["たぐ１"]), true);
         assert_eq!(check_text_contains(&description, &vec!["Ｔａｇ"]), true);
+
+        // BOOTHのアイテムIDを指定して検索できる
+        assert_eq!(check_text_contains(&description, &vec!["6641548"]), true);
 
         // prefixを考慮する
         assert_eq!(
