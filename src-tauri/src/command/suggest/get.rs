@@ -2,6 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use serde::Serialize;
 use tauri::{async_runtime::Mutex, State};
+use uuid::Uuid;
 
 use crate::data_store::provider::StoreProvider;
 
@@ -15,6 +16,7 @@ pub struct PrioritizedEntry {
 #[specta::specta]
 pub async fn get_all_asset_tags(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let basic_store = basic_store.lock().await;
     let mut tags: HashMap<String, u32> = HashMap::new();
@@ -25,8 +27,19 @@ pub async fn get_all_asset_tags(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             asset.description.tags.iter().for_each(|tag| {
                 let count = tags.entry(tag.clone()).or_insert(0);
+
+                if !allowed {
+                    return;
+                }
+
                 *count += 1;
             });
         });
@@ -37,8 +50,19 @@ pub async fn get_all_asset_tags(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             asset.description.tags.iter().for_each(|tag| {
                 let count = tags.entry(tag.clone()).or_insert(0);
+
+                if !allowed {
+                    return;
+                }
+
                 *count += 1;
             });
         });
@@ -49,8 +73,19 @@ pub async fn get_all_asset_tags(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             asset.description.tags.iter().for_each(|tag| {
                 let count = tags.entry(tag.clone()).or_insert(0);
+
+                if !allowed {
+                    return;
+                }
+
                 *count += 1;
             });
         });
@@ -68,6 +103,7 @@ pub async fn get_all_asset_tags(
 #[specta::specta]
 pub async fn get_all_supported_avatar_values(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut values: HashMap<String, u32> = HashMap::new();
 
@@ -79,8 +115,19 @@ pub async fn get_all_supported_avatar_values(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             asset.supported_avatars.iter().for_each(|val| {
                 let count = values.entry(val.clone()).or_insert(0);
+
+                if !allowed {
+                    return;
+                }
+
                 *count += 1;
             });
         });
@@ -98,6 +145,7 @@ pub async fn get_all_supported_avatar_values(
 #[specta::specta]
 pub async fn get_avatar_wearable_categories(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut categories: HashMap<String, u32> = HashMap::new();
 
@@ -109,6 +157,12 @@ pub async fn get_avatar_wearable_categories(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             let val = asset.category.clone();
             let val = val.trim();
             if val.is_empty() {
@@ -116,6 +170,11 @@ pub async fn get_avatar_wearable_categories(
             }
 
             let count = categories.entry(val.to_string()).or_insert(0);
+
+            if !allowed {
+                return;
+            }
+
             *count += 1;
         });
 
@@ -132,6 +191,7 @@ pub async fn get_avatar_wearable_categories(
 #[specta::specta]
 pub async fn get_world_object_categories(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut categories: HashMap<String, u32> = HashMap::new();
 
@@ -143,6 +203,12 @@ pub async fn get_world_object_categories(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             let val = asset.category.clone();
             let val = val.trim();
             if val.is_empty() {
@@ -150,6 +216,11 @@ pub async fn get_world_object_categories(
             }
 
             let count = categories.entry(val.to_string()).or_insert(0);
+
+            if !allowed {
+                return;
+            }
+
             *count += 1;
         });
 
@@ -166,6 +237,7 @@ pub async fn get_world_object_categories(
 #[specta::specta]
 pub async fn get_avatar_wearable_supported_avatars(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut supported_avatars: HashMap<String, u32> = HashMap::new();
 
@@ -177,6 +249,12 @@ pub async fn get_avatar_wearable_supported_avatars(
         .await
         .iter()
         .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
             asset.supported_avatars.iter().for_each(|val| {
                 let val = val.trim();
                 if val.is_empty() {
@@ -184,6 +262,11 @@ pub async fn get_avatar_wearable_supported_avatars(
                 }
 
                 let count = supported_avatars.entry(val.to_string()).or_insert(0);
+
+                if !allowed {
+                    return;
+                }
+
                 *count += 1;
             });
         });

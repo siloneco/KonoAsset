@@ -21,7 +21,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchSupportedAvatars = async () => {
-    const result = await commands.getAllSupportedAvatarValues()
+    const result = await commands.getAllSupportedAvatarValues(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -37,7 +37,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
   }
 
   const fetchExistingCategories = async () => {
-    const result = await commands.getAvatarWearableCategories()
+    const result = await commands.getAvatarWearableCategories(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -54,7 +54,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags()
+    const result = await commands.getAllAssetTags(null)
 
     if (result.status === 'error') {
       console.error(result.error)

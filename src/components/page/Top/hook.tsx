@@ -31,6 +31,7 @@ export const useTopPage = (): ReturnProps => {
   const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
     AssetSummary[]
   >([])
+  const [filteredIds, setFilteredIds] = useState<string[] | null>(null)
   const [addAssetDialogOpen, setAddAssetDialogOpen] = useState(false)
 
   const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
@@ -53,6 +54,9 @@ export const useTopPage = (): ReturnProps => {
   const assetContextValue: AssetContextType = {
     assetDisplaySortedList: assetDisplaySortedList,
     setAssetDisplaySortedList: setAssetDisplaySortedList,
+
+    filteredIds: filteredIds,
+    setFilteredIds: setFilteredIds,
 
     deleteAssetById: async (id: string) => {
       setAssetDisplaySortedList((prev) =>

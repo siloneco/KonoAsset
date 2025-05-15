@@ -18,7 +18,7 @@ const WorldObjectLayout = ({ form }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchExistingCategories = async () => {
-    const result = await commands.getWorldObjectCategories()
+    const result = await commands.getWorldObjectCategories(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -35,7 +35,7 @@ const WorldObjectLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags()
+    const result = await commands.getAllAssetTags(null)
 
     if (result.status === 'error') {
       console.error(result.error)

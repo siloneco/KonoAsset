@@ -10,8 +10,9 @@ import { AssetContext } from '@/components/context/AssetContext'
 const WorldObjectFilter = () => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
+  const [isCategoryFocused, setIsCategoryFocused] = useState(false)
 
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
   const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
   const categoryValues: Option[] = categoryFilter.map((category) => ({
@@ -20,12 +21,14 @@ const WorldObjectFilter = () => {
   }))
 
   const updateCategoriesAndTags = async () => {
-    setCategoryCandidates(await fetchAllCategories())
+    if (!isCategoryFocused) {
+      setCategoryCandidates(await fetchAllCategories(filteredIds))
+    }
   }
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [assetDisplaySortedList])
+  }, [assetDisplaySortedList, filteredIds, isCategoryFocused])
 
   return (
     <div className="mt-4 space-y-4">
@@ -37,6 +40,10 @@ const WorldObjectFilter = () => {
         onValueChange={(values) =>
           setCategoryFilter(values.map((v) => v.value))
         }
+        inputProps={{
+          onFocus: () => setIsCategoryFocused(true),
+          onBlur: () => setIsCategoryFocused(false),
+        }}
       />
     </div>
   )
