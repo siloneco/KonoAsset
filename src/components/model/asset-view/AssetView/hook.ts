@@ -89,7 +89,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     supportedAvatarFilter,
     supportedAvatarFilterMatchType,
   } = useContext(PersistentContext)
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const { assetDisplaySortedList, setFilteredIds } = useContext(AssetContext)
 
   const updateSortedAssetSummary = async () => {
     const filterRequest: FilterRequest = createFilterRequest({
@@ -114,6 +114,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
           : assetDisplaySortedList,
       )
 
+      setFilteredIds(null)
       setShowingAssetCount(assetDisplaySortedList.length)
       return
     }
@@ -132,6 +133,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     )
 
     setSortedAssetSummary(reverseOrder ? sortedAssets.reverse() : sortedAssets)
+    setFilteredIds(assetIds)
     setShowingAssetCount(sortedAssets.length)
   }
 

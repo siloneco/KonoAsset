@@ -1,8 +1,10 @@
 import { Option } from '@/components/ui/multi-select'
 import { commands } from '@/lib/bindings'
 
-export const fetchAllTags = async (): Promise<Option[]> => {
-  const result = await commands.getAllAssetTags()
+export const fetchAllTags = async (
+  allowedIds: string[] | null,
+): Promise<Option[]> => {
+  const result = await commands.getAllAssetTags(allowedIds)
 
   if (result.status === 'error') {
     console.error(result.error)

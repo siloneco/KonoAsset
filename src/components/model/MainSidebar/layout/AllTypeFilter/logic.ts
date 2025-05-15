@@ -1,15 +1,18 @@
 import { Option } from '@/components/ui/multi-select'
 import { commands } from '@/lib/bindings'
 
-export const fetchAllCategories = async (): Promise<Option[]> => {
+export const fetchAllCategories = async (
+  allowedIds: string[] | null,
+): Promise<Option[]> => {
   const avatarWearableCategoryResult =
-    await commands.getAvatarWearableCategories()
+    await commands.getAvatarWearableCategories(allowedIds)
   if (avatarWearableCategoryResult.status === 'error') {
     console.error(avatarWearableCategoryResult.error)
     return []
   }
 
-  const worldObjectCategoryResult = await commands.getWorldObjectCategories()
+  const worldObjectCategoryResult =
+    await commands.getWorldObjectCategories(allowedIds)
   if (worldObjectCategoryResult.status === 'error') {
     console.error(worldObjectCategoryResult.error)
     return []
@@ -44,8 +47,10 @@ export const fetchAllCategories = async (): Promise<Option[]> => {
   return categories
 }
 
-export const fetchAllSupportedAvatars = async (): Promise<Option[]> => {
-  const result = await commands.getAvatarWearableSupportedAvatars()
+export const fetchAllSupportedAvatars = async (
+  allowedIds: string[] | null,
+): Promise<Option[]> => {
+  const result = await commands.getAvatarWearableSupportedAvatars(allowedIds)
 
   if (result.status === 'error') {
     console.error(result.error)

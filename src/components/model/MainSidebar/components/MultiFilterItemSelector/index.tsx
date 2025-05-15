@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label'
 import { useMultiFilterItemSelector } from './hook'
 import { MatchType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import { Command as CommandPrimitive } from 'cmdk'
 
 type Props = {
   label: string
@@ -12,6 +13,10 @@ type Props = {
   onValueChange?: (value: Option[]) => void
   matchType?: MatchType
   setMatchType?: (matchType: MatchType) => void
+  inputProps?: Omit<
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
+    'value' | 'placeholder' | 'disabled'
+  >
 }
 
 const MultiFilterItemSelector = ({
@@ -22,6 +27,7 @@ const MultiFilterItemSelector = ({
   onValueChange,
   matchType,
   setMatchType,
+  inputProps,
 }: Props) => {
   const { onMatchTypeClicked } = useMultiFilterItemSelector({
     matchType,
@@ -60,6 +66,7 @@ const MultiFilterItemSelector = ({
             {t('mainsidebar:multi-filter-item-selector:no-candidates')}
           </p>
         }
+        inputProps={inputProps}
       />
     </div>
   )

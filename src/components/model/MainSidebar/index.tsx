@@ -26,7 +26,7 @@ import { AssetContext } from '@/components/context/AssetContext'
 
 const MainSidebar = () => {
   const navigate = useNavigate()
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
   const {
     assetType,
     queryTextMode,
@@ -49,14 +49,18 @@ const MainSidebar = () => {
     label: tag,
   }))
 
-  const updateCategoriesAndTags = async () => {
-    setTagCandidates(await fetchAllTags())
+  const [isSelectorFocused, setIsSelectorFocused] = useState(false)
+
+  const updateTagCandidates = async () => {
+    setTagCandidates(await fetchAllTags(filteredIds))
   }
   const { t } = useLocalization()
 
   useEffect(() => {
-    updateCategoriesAndTags()
-  }, [assetDisplaySortedList])
+    if (!isSelectorFocused) {
+      updateTagCandidates()
+    }
+  }, [assetDisplaySortedList, filteredIds, isSelectorFocused])
 
   return (
     <Sidebar collapsible="none" className="w-64 border-r-2">
@@ -102,6 +106,10 @@ const MainSidebar = () => {
                   }
                   matchType={tagFilterMatchType}
                   setMatchType={setTagFilterMatchType}
+                  inputProps={{
+                    onFocus: () => setIsSelectorFocused(true),
+                    onBlur: () => setIsSelectorFocused(false),
+                  }}
                 />
               </div>
             </SidebarGroupContent>

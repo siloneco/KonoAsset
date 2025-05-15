@@ -153,41 +153,41 @@ async getVolumeStatisticsCache() : Promise<Result<AssetVolumeStatistics[] | null
     else return { status: "error", error: e  as any };
 }
 },
-async getAllAssetTags() : Promise<Result<PrioritizedEntry[], string>> {
+async getAllAssetTags(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags") };
+    return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
 },
-async getAllSupportedAvatarValues() : Promise<Result<PrioritizedEntry[], string>> {
+async getAllSupportedAvatarValues(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_all_supported_avatar_values") };
+    return { status: "ok", data: await TAURI_INVOKE("get_all_supported_avatar_values", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableCategories() : Promise<Result<PrioritizedEntry[], string>> {
+async getAvatarWearableCategories(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_categories") };
+    return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_categories", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
 },
-async getAvatarWearableSupportedAvatars() : Promise<Result<PrioritizedEntry[], string>> {
+async getAvatarWearableSupportedAvatars(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_supported_avatars") };
+    return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_supported_avatars", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
 },
-async getWorldObjectCategories() : Promise<Result<PrioritizedEntry[], string>> {
+async getWorldObjectCategories(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_world_object_categories") };
+    return { status: "ok", data: await TAURI_INVOKE("get_world_object_categories", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
