@@ -40,7 +40,7 @@ type ReturnProps = {
   submitting: boolean
 }
 
-const useAddAssetDialog = ({
+export const useAddAssetDialog = ({
   dialogOpen,
   setDialogOpen,
 }: Props): ReturnProps => {
@@ -390,5 +390,3 @@ const useAddAssetDialog = ({
     submitting,
   }
 }
-
-export default useAddAssetDialog

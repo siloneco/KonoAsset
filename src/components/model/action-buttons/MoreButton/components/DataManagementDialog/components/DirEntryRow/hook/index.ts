@@ -17,7 +17,10 @@ type ReturnProps = {
   isDeleted: boolean
 }
 
-const useDirEntryRow = ({ assetId, absolutePath }: Props): ReturnProps => {
+export const useDirEntryRow = ({
+  assetId,
+  absolutePath,
+}: Props): ReturnProps => {
   const [openButtonCheckMarked, setOpenButtonCheckMarked] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
@@ -73,5 +76,3 @@ const useDirEntryRow = ({ assetId, absolutePath }: Props): ReturnProps => {
     isDeleted,
   }
 }
-
-export default useDirEntryRow

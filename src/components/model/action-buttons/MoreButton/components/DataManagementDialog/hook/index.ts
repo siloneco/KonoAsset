@@ -46,7 +46,7 @@ const refetchEntries = async (
   }
 }
 
-const useDataManagementDialog = ({
+export const useDataManagementDialog = ({
   assetId,
   dialogOpen,
 }: Props): ReturnProps => {
@@ -202,5 +202,3 @@ const useDataManagementDialog = ({
     refreshButtonCheckMarked,
   }
 }
-
-export default useDataManagementDialog

@@ -23,7 +23,7 @@ type Props = {
   totalTabs: number
 }
 
-const BoothInputTabForEditDialog = ({
+export const BoothInputTabForEditDialog = ({
   form,
   closeDialog,
   goToNextTab,
@@ -96,5 +96,3 @@ const BoothInputTabForEditDialog = ({
     </>
   )
 }
-
-export default BoothInputTabForEditDialog

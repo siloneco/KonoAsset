@@ -1,10 +1,10 @@
 import { TabsContent } from '@/components/ui/tabs'
-import ManualInputTab from '../components/tabs/ManualInputTab'
-import useEditAssetDialog from './hook'
-import DialogWrapper from '../components/DialogWrapper'
+import { ManualInputTab } from '../components/tabs/ManualInputTab'
+import { useEditAssetDialog } from './hook'
+import { DialogWrapper } from '../components/DialogWrapper'
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import BoothInputTabForEditDialog from '../components/tabs/BoothInputTab/edit'
-import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
+import { BoothInputTabForEditDialog } from '../components/tabs/BoothInputTab/edit'
+import { AdditionalInputTab } from '../components/tabs/AdditionalInputTab'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalization } from '@/hooks/use-localization'
 
@@ -14,7 +14,7 @@ type Props = {
   setDialogOpen: (open: boolean) => void
 }
 
-const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
+export const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
   const {
     loadingAssetData,
     form,
@@ -87,5 +87,3 @@ const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
     </DialogWrapper>
   )
 }
-
-export default EditAssetDialog

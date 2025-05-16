@@ -1,9 +1,9 @@
 import { SidebarProvider } from '@/components/ui/sidebar'
-import PreferenceTabs from './components/model/PreferenceTabs'
+import { PreferenceTabs } from './components/model/PreferenceTabs'
 import { usePreferencePage } from './hook'
 import { PreferenceSidebar } from './components/model/PreferenceSidebar'
 
-const PreferencePage = () => {
+export const PreferencePage = () => {
   const { activeTab, setActiveTab } = usePreferencePage()
 
   return (
@@ -15,5 +15,3 @@ const PreferencePage = () => {
     </div>
   )
 }
-
-export default PreferencePage

@@ -15,9 +15,9 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AssetContext } from '@/components/context/AssetContext'
-import SlimAssetDetail from '../SlimAssetDetail'
+import { SlimAssetDetail } from '../SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
-import AssetCardOpenButton from '../action-buttons/AssetCardOpenButton'
+import { AssetCardOpenButton } from '../action-buttons/AssetCardOpenButton'
 
 type Props = {
   assetName: string | null

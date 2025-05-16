@@ -19,7 +19,7 @@ type Props = {
   >
 }
 
-const MultiFilterItemSelector = ({
+export const MultiFilterItemSelector = ({
   label,
   placeholder,
   value,
@@ -71,5 +71,3 @@ const MultiFilterItemSelector = ({
     </div>
   )
 }
-
-export default MultiFilterItemSelector

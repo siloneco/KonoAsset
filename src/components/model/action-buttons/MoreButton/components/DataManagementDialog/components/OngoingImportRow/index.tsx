@@ -13,7 +13,11 @@ type Props = {
   markAsFinished: () => void
 }
 
-const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
+export const OngoingImportRow: FC<Props> = ({
+  taskId,
+  filename,
+  markAsFinished,
+}) => {
   const [status, setStatus] = useState<TaskStatus>('Running')
   const { t } = useLocalization()
   const { toast } = useToast()
@@ -180,5 +184,3 @@ const OngoingImportRow: FC<Props> = ({ taskId, filename, markAsFinished }) => {
     </div>
   )
 }
-
-export default OngoingImportRow

@@ -7,12 +7,12 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { useManualInputTabHooks } from './hook'
-import SquareImage from '@/components/model/SquareImage'
+import { SquareImage } from '@/components/model/SquareImage'
 import { AssetFormType } from '@/lib/form'
 import { Label } from '@/components/ui/label'
-import AvatarLayout from './layout/AvatarLayout'
-import AvatarWearableLayout from './layout/AvatarWearableLayout'
-import WorldObjectLayout from './layout/WorldObjectLayout'
+import { AvatarLayout } from './layout/AvatarLayout'
+import { AvatarWearableLayout } from './layout/AvatarWearableLayout'
+import { WorldObjectLayout } from './layout/WorldObjectLayout'
 import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
   totalTabs: number
 }
 
-const ManualInputTab = ({
+export const ManualInputTab = ({
   form,
   imageUrls,
   onBackToPreviousTabClicked,
@@ -105,5 +105,3 @@ const ManualInputTab = ({
     </>
   )
 }
-
-export default ManualInputTab

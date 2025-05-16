@@ -14,9 +14,9 @@ async getAsset(id: string) : Promise<Result<GetAssetResult, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getSortedAssetsForDisplay(sortBy: SortBy) : Promise<Result<AssetSummary[], string>> {
+async getSortedAssetSummaries(sortBy: SortBy) : Promise<Result<AssetSummary[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_sorted_assets_for_display", { sortBy }) };
+    return { status: "ok", data: await TAURI_INVOKE("get_sorted_asset_summaries", { sortBy }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

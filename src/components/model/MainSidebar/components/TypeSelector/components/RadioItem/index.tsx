@@ -7,7 +7,7 @@ type Props = {
   text: string
 }
 
-const TypeSelectorRadioItem = ({ id, value, text }: Props) => {
+export const TypeSelectorRadioItem = ({ id, value, text }: Props) => {
   return (
     <div className="flex items-center space-x-2">
       <RadioGroupItem value={value} id={id} />
@@ -17,5 +17,3 @@ const TypeSelectorRadioItem = ({ id, value, text }: Props) => {
     </div>
   )
 }
-
-export default TypeSelectorRadioItem

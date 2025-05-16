@@ -22,7 +22,7 @@ type Props = {
   totalTabs: number
 }
 
-const BoothInputTabForAddDialog = ({
+export const BoothInputTabForAddDialog = ({
   form,
   setTab,
   setImageUrls,
@@ -116,5 +116,3 @@ const BoothInputTabForAddDialog = ({
     </>
   )
 }
-
-export default BoothInputTabForAddDialog

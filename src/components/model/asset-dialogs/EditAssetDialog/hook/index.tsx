@@ -40,7 +40,7 @@ type ReturnProps = {
   submitting: boolean
 }
 
-const useEditAssetDialog = ({
+export const useEditAssetDialog = ({
   id,
   dialogOpen,
   setDialogOpen,
@@ -183,7 +183,7 @@ const useEditAssetDialog = ({
 
       if (result.status === 'ok') {
         if (result.data === true) {
-          await refreshAssets(form.getValues('assetType'))
+          await refreshAssets()
 
           setDialogOpen(false)
           toast({
@@ -219,5 +219,3 @@ const useEditAssetDialog = ({
     submitting,
   }
 }
-
-export default useEditAssetDialog

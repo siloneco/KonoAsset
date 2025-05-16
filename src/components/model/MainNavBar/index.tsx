@@ -12,7 +12,7 @@ type Props = {
   displayAssetCount?: number
 }
 
-const NavBar = ({ displayAssetCount }: Props) => {
+export const NavBar = ({ displayAssetCount }: Props) => {
   const { clearFilters } = useContext(PersistentContext)
   const { assetDisplaySortedList } = useContext(AssetContext)
 
@@ -60,5 +60,3 @@ const NavBar = ({ displayAssetCount }: Props) => {
     </div>
   )
 }
-
-export default NavBar

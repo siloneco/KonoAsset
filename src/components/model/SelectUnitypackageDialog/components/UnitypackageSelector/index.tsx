@@ -11,7 +11,7 @@ type Props = {
   closeDialog: () => void
 }
 
-const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
+export const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
   const open = async (filepath: string) => {
     const result = await commands.openFileInFileManager(filepath)
     if (result.status === 'error') {
@@ -53,5 +53,3 @@ const UnitypackageSelector = ({ path, files, closeDialog }: Props) => {
     </div>
   )
 }
-
-export default UnitypackageSelector

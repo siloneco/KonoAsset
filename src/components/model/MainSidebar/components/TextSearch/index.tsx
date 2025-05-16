@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from 'react'
-import GeneralTextSearch from './components/GeneralTextSearch'
-import AdvancedTextSearch from './components/AdvancedTextSearch'
+import { GeneralTextSearch } from './components/GeneralTextSearch'
+import { AdvancedTextSearch } from './components/AdvancedTextSearch'
 
 type Props = {
   mode: 'general' | 'advanced'
@@ -15,7 +15,7 @@ type Props = {
   setCreator: (creator: string) => void
 }
 
-const TextSearch: FC<Props> = ({
+export const TextSearch: FC<Props> = ({
   mode,
   setMode,
   general,
@@ -70,5 +70,3 @@ const TextSearch: FC<Props> = ({
     />
   )
 }
-
-export default TextSearch

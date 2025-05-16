@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { FileWarning, Folder, Languages } from 'lucide-react'
+import { FileWarning, Folder } from 'lucide-react'
 import { FC } from 'react'
 import { cn } from '@/lib/utils'
 import {
@@ -26,15 +26,16 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { useLoadErrorPage } from './hook'
-import ResetDialog from '../../model/ResetDialog'
+import { ResetDialog } from '../../model/ResetDialog'
 import { useLocalization } from '@/hooks/use-localization'
+import { CubicLanguageSelector } from './components/CubicLanguageSelector'
 
 type Props = {
   preferenceLoaded: boolean
   error: string
 }
 
-const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
+export const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
   const { openAppDir, openAssetDir, openMetadataDir, onLanguageChanged } =
     useLoadErrorPage()
 
@@ -44,27 +45,7 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
     <div className="h-screen w-screen flex flex-col items-center justify-center">
       <Card className="w-[600px] p-6 relative">
         <div className="absolute top-5 right-5">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon">
-                <Languages />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onLanguageChanged('en-US')}>
-                English (US)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onLanguageChanged('en-GB')}>
-                English (UK)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onLanguageChanged('ja-JP')}>
-                日本語
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onLanguageChanged('zh-CN')}>
-                简体中文
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CubicLanguageSelector onSelected={onLanguageChanged} />
         </div>
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-center">
@@ -168,5 +149,3 @@ const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
     </div>
   )
 }
-
-export default LoadErrorPage

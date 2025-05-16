@@ -32,7 +32,7 @@ type Props = {
   ) => void
 }
 
-const AssetCardOpenButton = ({
+export const AssetCardOpenButton = ({
   className,
   id,
   hasDependencies,
@@ -102,5 +102,3 @@ const AssetCardOpenButton = ({
     </div>
   )
 }
-
-export default AssetCardOpenButton

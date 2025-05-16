@@ -12,7 +12,7 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
-import CheckboxAndLabel from './components/CheckboxAndLabel'
+import { CheckboxAndLabel } from './components/CheckboxAndLabel'
 import { useResetDialog } from './hook'
 import { Loader2 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
@@ -23,7 +23,7 @@ type Props = {
   className?: string
 }
 
-const ResetDialog: FC<Props> = ({ className }) => {
+export const ResetDialog: FC<Props> = ({ className }) => {
   const {
     deleteAppData,
     deleteMetadata,
@@ -108,5 +108,3 @@ const ResetDialog: FC<Props> = ({ className }) => {
     </AlertDialog>
   )
 }
-
-export default ResetDialog

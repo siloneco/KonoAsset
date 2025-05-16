@@ -2,12 +2,12 @@ import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories } from './logic'
-import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
+import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetContext } from '@/components/context/AssetContext'
 
-const WorldObjectFilter = () => {
+export const WorldObjectFilter = () => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [isCategoryFocused, setIsCategoryFocused] = useState(false)
@@ -48,5 +48,3 @@ const WorldObjectFilter = () => {
     </div>
   )
 }
-
-export default WorldObjectFilter

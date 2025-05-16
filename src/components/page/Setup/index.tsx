@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react'
 
-import LoadErrorPage from '../LoadError'
 import { Separator } from '@/components/ui/separator'
 import { SetupProgressContent } from './components/SetupProgressContent'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -107,5 +106,3 @@ export const SetupPage: FC = () => {
     </div>
   )
 }
-
-export default LoadErrorPage

@@ -9,7 +9,7 @@ type Props = {
   onClick?: () => void
 }
 
-const AssetBadge = ({ type, className, onClick }: Props) => {
+export const AssetBadge = ({ type, className, onClick }: Props) => {
   const { t } = useLocalization()
   if (type === 'Avatar') {
     return (
@@ -55,5 +55,3 @@ const AssetBadge = ({ type, className, onClick }: Props) => {
     </Badge>
   )
 }
-
-export default AssetBadge

@@ -11,7 +11,7 @@ type Props = {
   className?: string
 }
 
-const CheckboxAndLabel: FC<Props> = ({
+export const CheckboxAndLabel: FC<Props> = ({
   mainText,
   subText,
   checked,
@@ -37,5 +37,3 @@ const CheckboxAndLabel: FC<Props> = ({
     </div>
   )
 }
-
-export default CheckboxAndLabel

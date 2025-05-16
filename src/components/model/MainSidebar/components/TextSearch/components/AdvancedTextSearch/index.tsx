@@ -15,7 +15,7 @@ type Props = {
   ref: RefObject<HTMLInputElement | null>
 }
 
-const AdvancedTextSearch: FC<Props> = ({
+export const AdvancedTextSearch: FC<Props> = ({
   onSwitchModeClicked,
   name,
   setName,
@@ -82,5 +82,3 @@ const AdvancedTextSearch: FC<Props> = ({
     </div>
   )
 }
-
-export default AdvancedTextSearch

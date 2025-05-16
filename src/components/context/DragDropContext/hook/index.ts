@@ -18,7 +18,7 @@ type ReturnProps = {
 
 const DEFAULT_PRIORITY = 100
 
-const useDragDropContext = (): ReturnProps => {
+export const useDragDropContext = (): ReturnProps => {
   const [fnList, setFnList] = useState<StateType[]>([])
 
   const register = useCallback(
@@ -95,5 +95,3 @@ const useDragDropContext = (): ReturnProps => {
     dragDropContextValue,
   }
 }
-
-export default useDragDropContext

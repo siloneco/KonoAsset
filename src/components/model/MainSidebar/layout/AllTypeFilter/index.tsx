@@ -2,12 +2,12 @@ import { Option } from '@/components/ui/multi-select'
 
 import { useState, useEffect, useContext } from 'react'
 import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
-import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
+import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetContext } from '@/components/context/AssetContext'
 
-const AllTypeFilter = () => {
+export const AllTypeFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -91,5 +91,3 @@ const AllTypeFilter = () => {
     </div>
   )
 }
-
-export default AllTypeFilter

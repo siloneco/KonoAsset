@@ -14,7 +14,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new().commands(collect_commands![
         // アセット関連
         asset::get::get_asset,
-        asset::get::get_sorted_assets_for_display,
+        asset::get::get_sorted_asset_summaries,
         asset::get::get_asset_displays_by_booth_id,
         asset::create::request_avatar_import,
         asset::create::request_avatar_wearable_import,

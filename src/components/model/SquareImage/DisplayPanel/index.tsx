@@ -22,7 +22,7 @@ type Props = {
   onError?: () => void
 }
 
-const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
+export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
   const [fixedPath, setFixedPath] = useState<string | undefined>(undefined)
 
   const defaultImagePath = getDefaultImage(assetType)
@@ -67,5 +67,3 @@ const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
     </div>
   )
 }
-
-export default DisplayPanel
