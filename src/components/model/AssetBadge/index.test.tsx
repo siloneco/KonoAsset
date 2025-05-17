@@ -1,6 +1,6 @@
 import { setupAndRender as setupUserAndRender } from '@/test/init'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import AssetBadge from '.'
+import { AssetBadge } from '.'
 import { cleanup, render, screen } from '@testing-library/react'
 
 vi.mock('@/hooks/use-localization', () => {

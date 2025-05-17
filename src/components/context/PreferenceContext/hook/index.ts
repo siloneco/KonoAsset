@@ -8,12 +8,20 @@ type ReturnProps = {
   preferenceContextValue: PreferenceContextType
 }
 
+let didInit = false
+
 export const usePreferenceContext = (): ReturnProps => {
   const [preference, setPreference] = useState<PreferenceStore>(
     getDefaultPreferences(),
   )
 
   useEffect(() => {
+    if (didInit) {
+      return
+    }
+
+    didInit = true
+
     getPreferences().then((pref) => {
       setPreference(pref)
     })

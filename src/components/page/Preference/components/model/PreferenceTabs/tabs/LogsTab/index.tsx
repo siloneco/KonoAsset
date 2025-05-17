@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card'
 import { TabsContent } from '@/components/ui/tabs'
 import { Folder, RefreshCcw } from 'lucide-react'
 import { FC } from 'react'
-import LogTray from './components/LogTray'
+import { LogTray } from './components/LogTray'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { useLogsTab } from './hook'
 import { useLocalization } from '@/hooks/use-localization'
@@ -13,7 +13,7 @@ type Props = {
   id: PreferenceTabIDs
 }
 
-const LogsTab: FC<Props> = ({ id }) => {
+export const LogsTab: FC<Props> = ({ id }) => {
   const { t } = useLocalization()
   const { logs, reloadLogs, openLogsFolder } = useLogsTab()
 
@@ -50,5 +50,3 @@ const LogsTab: FC<Props> = ({ id }) => {
     </TabsContent>
   )
 }
-
-export default LogsTab

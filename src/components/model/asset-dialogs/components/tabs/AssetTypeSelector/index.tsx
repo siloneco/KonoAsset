@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import SelectTypeButton from './selector/SelectTypeButton'
+import { SelectTypeButton } from './selector/SelectTypeButton'
 import { AssetFormType } from '@/lib/form'
 import { useLocalization } from '@/hooks/use-localization'
 
@@ -17,7 +17,12 @@ type Props = {
   totalTabs: number
 }
 
-const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
+export const AssetTypeSelectorTab = ({
+  form,
+  setTab,
+  tabIndex,
+  totalTabs,
+}: Props) => {
   const { t } = useLocalization()
   const backToBoothInput = () => {
     setTab('booth-input')
@@ -77,5 +82,3 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
     </>
   )
 }
-
-export default AssetTypeSelectorTab

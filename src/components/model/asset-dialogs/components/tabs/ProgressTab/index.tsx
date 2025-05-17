@@ -8,7 +8,12 @@ type Props = {
   onFailed: (error: string | null) => void
 }
 
-const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
+export const ProgressTab = ({
+  taskId,
+  onCompleted,
+  onFailed,
+  onCancelled,
+}: Props) => {
   const { t } = useLocalization()
 
   return (
@@ -23,5 +28,3 @@ const ProgressTab = ({ taskId, onCompleted, onFailed, onCancelled }: Props) => {
     />
   )
 }
-
-export default ProgressTab

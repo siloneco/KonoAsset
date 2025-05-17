@@ -41,7 +41,7 @@ pub async fn get_asset(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_sorted_assets_for_display(
+pub async fn get_sorted_asset_summaries(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     sort_by: SortBy,
 ) -> Result<Vec<AssetSummary>, String> {

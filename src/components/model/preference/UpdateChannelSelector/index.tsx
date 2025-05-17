@@ -15,7 +15,7 @@ type Props = {
   setUpdateChannel: (channel: UpdateChannel) => void
 }
 
-const UpdateChannelSelector: FC<Props> = ({
+export const UpdateChannelSelector: FC<Props> = ({
   updateChannel,
   setUpdateChannel,
 }) => {
@@ -52,5 +52,3 @@ const UpdateChannelSelector: FC<Props> = ({
     </div>
   )
 }
-
-export default UpdateChannelSelector

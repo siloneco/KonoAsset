@@ -1,7 +1,7 @@
 import { AssetDescription, AssetType } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { fetchAssetInformation, updateAsset } from '../logic'
@@ -40,7 +40,7 @@ type ReturnProps = {
   submitting: boolean
 }
 
-const useEditAssetDialog = ({
+export const useEditAssetDialog = ({
   id,
   dialogOpen,
   setDialogOpen,
@@ -94,7 +94,7 @@ const useEditAssetDialog = ({
     },
   })
 
-  const clearForm = () => {
+  const clearForm = useCallback(() => {
     form.reset({
       assetType: 'Avatar',
       name: '',
@@ -108,7 +108,7 @@ const useEditAssetDialog = ({
     })
 
     setImageUrls([])
-  }
+  }, [form, setImageUrls])
 
   useEffect(() => {
     if (!dialogOpen) {
@@ -116,60 +116,64 @@ const useEditAssetDialog = ({
       setTimeout(() => {
         clearForm()
         setTab('booth-input')
+        setLoadingAssetData(true)
       }, 500)
     }
-  }, [dialogOpen])
+  }, [dialogOpen, clearForm])
 
-  const loadAssetData = async (id: string) => {
-    setLoadingAssetData(true)
-    const result = await fetchAssetInformation(id)
+  const loadAssetData = useCallback(
+    async (id: string) => {
+      setLoadingAssetData(true)
+      const result = await fetchAssetInformation(id)
 
-    if (result.status === 'error') {
-      toast({
-        title: t('addasset:get:error-toast'),
-        description: result.error,
-      })
-      return
-    }
+      if (result.status === 'error') {
+        toast({
+          title: t('addasset:get:error-toast'),
+          description: result.error,
+        })
+        return
+      }
 
-    const data = result.data
+      const data = result.data
 
-    if (data.assetType === 'Avatar') {
-      const avatar = data.avatar!
+      if (data.assetType === 'Avatar') {
+        const avatar = data.avatar!
 
-      form.setValue('assetType', 'Avatar')
-      setDescriptionToForm(form, avatar.description)
-    } else if (data.assetType === 'AvatarWearable') {
-      const avatarWearable = data.avatarWearable!
+        form.setValue('assetType', 'Avatar')
+        setDescriptionToForm(form, avatar.description)
+      } else if (data.assetType === 'AvatarWearable') {
+        const avatarWearable = data.avatarWearable!
 
-      form.setValue('assetType', 'AvatarWearable')
-      form.setValue('category', avatarWearable.category)
-      form.setValue('supportedAvatars', avatarWearable.supportedAvatars)
-      setDescriptionToForm(form, avatarWearable.description)
-    } else if (data.assetType === 'WorldObject') {
-      const worldObject = data.worldObject!
+        form.setValue('assetType', 'AvatarWearable')
+        form.setValue('category', avatarWearable.category)
+        form.setValue('supportedAvatars', avatarWearable.supportedAvatars)
+        setDescriptionToForm(form, avatarWearable.description)
+      } else if (data.assetType === 'WorldObject') {
+        const worldObject = data.worldObject!
 
-      form.setValue('assetType', 'WorldObject')
-      form.setValue('category', worldObject.category)
-      setDescriptionToForm(form, worldObject.description)
-    } else {
-      toast({
-        title: t('addasset:get:error-toast'),
-        description: t('addasset:get:error-toast:unknown-asset-type'),
-      })
+        form.setValue('assetType', 'WorldObject')
+        form.setValue('category', worldObject.category)
+        setDescriptionToForm(form, worldObject.description)
+      } else {
+        toast({
+          title: t('addasset:get:error-toast'),
+          description: t('addasset:get:error-toast:unknown-asset-type'),
+        })
 
-      setDialogOpen(false)
-      return
-    }
+        setDialogOpen(false)
+        return
+      }
 
-    setLoadingAssetData(false)
-  }
+      setLoadingAssetData(false)
+    },
+    [form, setDialogOpen, t, toast],
+  )
 
   useEffect(() => {
-    if (dialogOpen && id !== null) {
+    if (dialogOpen && loadingAssetData && id !== null) {
       loadAssetData(id)
     }
-  }, [dialogOpen, id])
+  }, [dialogOpen, id, loadingAssetData, loadAssetData])
 
   const onSubmit = async () => {
     if (submitting || id === null) {
@@ -183,7 +187,7 @@ const useEditAssetDialog = ({
 
       if (result.status === 'ok') {
         if (result.data === true) {
-          await refreshAssets(form.getValues('assetType'))
+          await refreshAssets()
 
           setDialogOpen(false)
           toast({
@@ -219,5 +223,3 @@ const useEditAssetDialog = ({
     submitting,
   }
 }
-
-export default useEditAssetDialog

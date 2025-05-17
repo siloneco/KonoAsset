@@ -1,15 +1,15 @@
 import { TabsContent } from '@/components/ui/tabs'
 import { createContext } from 'react'
-import AssetPathSelectorTab from '../components/tabs/AssetPathSelectorTab'
-import BoothInputTabForAddDialog from '../components/tabs/BoothInputTab/add'
-import ManualInputTab from '../components/tabs/ManualInputTab'
-import AssetTypeSelectorTab from '../components/tabs/AssetTypeSelector'
-import DuplicateWarningTab from '../components/tabs/DuplicateWarningTab'
+import { AssetPathSelectorTab } from '../components/tabs/AssetPathSelectorTab'
+import { BoothInputTabForAddDialog } from '../components/tabs/BoothInputTab/add'
+import { ManualInputTab } from '../components/tabs/ManualInputTab'
+import { AssetTypeSelectorTab } from '../components/tabs/AssetTypeSelector'
+import { DuplicateWarningTab } from '../components/tabs/DuplicateWarningTab'
 import { AssetSummary } from '@/lib/bindings'
-import ProgressTab from '../components/tabs/ProgressTab'
-import useAddAssetDialog from './hook'
-import DialogWrapper from '../components/DialogWrapper'
-import AdditionalInputTab from '../components/tabs/AdditionalInputTab'
+import { ProgressTab } from '../components/tabs/ProgressTab'
+import { useAddAssetDialog } from './hook'
+import { DialogWrapper } from '../components/DialogWrapper'
+import { AdditionalInputTab } from '../components/tabs/AdditionalInputTab'
 import { useLocalization } from '@/hooks/use-localization'
 import { PathConfirmationTab } from '../components/tabs/PathConfirmationTab'
 
@@ -35,7 +35,7 @@ type Props = {
   openDataManagementDialog: (assetId: string) => void
 }
 
-const AddAssetDialog = ({
+export const AddAssetDialog = ({
   dialogOpen,
   setDialogOpen,
   openEditDialog,
@@ -145,5 +145,3 @@ const AddAssetDialog = ({
     </DialogWrapper>
   )
 }
-
-export default AddAssetDialog

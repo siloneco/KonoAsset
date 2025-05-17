@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import AssetTypeSelectorTab from '.'
+import { AssetTypeSelectorTab } from '.'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 vi.mock('@/hooks/use-localization', () => {

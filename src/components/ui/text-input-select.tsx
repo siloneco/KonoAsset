@@ -161,7 +161,7 @@ const TextInputSelect = ({
   const { getElementProperty } = useGetElementProperty(inputDivRef)
 
   // suggestの向きと高さを適切に設定する
-  const updateCommandListDirectionAndMaxHeight = () => {
+  const updateCommandListDirectionAndMaxHeight = React.useCallback(() => {
     const windowHeight = window.innerHeight
     const inputDivTop = getElementProperty('top')
     const inputDivBottom = getElementProperty('bottom')
@@ -180,11 +180,11 @@ const TextInputSelect = ({
       : Math.min(Math.max(windowHeight - inputDivBottom - 20, 75), 300) // 下に表示する場合
 
     setCommandListMaxHeight(commandListHeight)
-  }
+  }, [getElementProperty])
 
   useEffect(() => {
     updateCommandListDirectionAndMaxHeight()
-  }, [selected])
+  }, [selected, updateCommandListDirectionAndMaxHeight])
 
   useEffect(() => {
     window.addEventListener('resize', updateCommandListDirectionAndMaxHeight)
@@ -193,7 +193,7 @@ const TextInputSelect = ({
         'resize',
         updateCommandListDirectionAndMaxHeight,
       )
-  }, [])
+  }, [updateCommandListDirectionAndMaxHeight])
 
   React.useImperativeHandle(
     ref,
@@ -276,7 +276,7 @@ const TextInputSelect = ({
     }
 
     void exec()
-  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus])
+  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearchSync])
 
   useEffect(() => {
     /** async search */
@@ -301,7 +301,7 @@ const TextInputSelect = ({
     }
 
     void exec()
-  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus])
+  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearch])
 
   const CreatableItem = () => {
     if (!creatable) return undefined

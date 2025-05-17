@@ -13,7 +13,7 @@ type ReturnProps = {
   onFailed: (error: string | null) => Promise<void>
 }
 
-const useDataDirSelectorProgressTab = ({
+export const useDataDirSelectorProgressTab = ({
   destinationPath,
   setDialogOpen,
   updateLocalDataDir,
@@ -51,5 +51,3 @@ const useDataDirSelectorProgressTab = ({
     onFailed,
   }
 }
-
-export default useDataDirSelectorProgressTab

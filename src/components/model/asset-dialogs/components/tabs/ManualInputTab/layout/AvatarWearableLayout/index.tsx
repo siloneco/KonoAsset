@@ -12,7 +12,7 @@ type Props = {
   form: AssetFormType
 }
 
-const AvatarWearableLayout = ({ form }: Props) => {
+export const AvatarWearableLayout = ({ form }: Props) => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
@@ -180,5 +180,3 @@ const AvatarWearableLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default AvatarWearableLayout

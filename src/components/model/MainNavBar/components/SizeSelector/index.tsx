@@ -15,7 +15,7 @@ export const SizeSelector: FC<Props> = ({ current, setValue }) => {
   return (
     <div>
       <Label className="px-4 py-2 flex flex-row items-center text-base">
-        <Proportions className="text-muted-foreground mr-2" size={20} />
+        <Proportions className="text-muted-foreground" size={20} />
         {t('mainnavbar:size-settings:title')}
       </Label>
       <ButtonWithCheckMark value="Large" setter={setValue} current={current}>

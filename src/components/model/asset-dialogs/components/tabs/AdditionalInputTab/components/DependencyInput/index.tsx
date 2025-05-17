@@ -1,6 +1,6 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { AssetSelector } from '@/components/model/AssetSelector'
-import SlimAssetDetail from '@/components/model/SlimAssetDetail'
+import { SlimAssetDetail } from '@/components/model/SlimAssetDetail'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
 import { Label } from '@/components/ui/label'

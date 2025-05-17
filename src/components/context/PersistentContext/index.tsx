@@ -86,7 +86,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const PersistentContextProvider: FC<Props> = ({ children }) => {
+export const PersistentContextProvider: FC<Props> = ({ children }) => {
   const { persistentContextValue } = usePersistentContext()
 
   return (
@@ -95,5 +95,3 @@ const PersistentContextProvider: FC<Props> = ({ children }) => {
     </PersistentContext.Provider>
   )
 }
-
-export default PersistentContextProvider

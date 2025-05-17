@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Check, File, Folder, FolderOpen, Loader2, Trash2 } from 'lucide-react'
 import { FC } from 'react'
-import useDirEntryRow from './hook'
+import { useDirEntryRow } from './hook'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -11,7 +11,12 @@ type Props = {
   absolutePath: string
 }
 
-const DirEntryRow: FC<Props> = ({ assetId, type, filename, absolutePath }) => {
+export const DirEntryRow: FC<Props> = ({
+  assetId,
+  type,
+  filename,
+  absolutePath,
+}) => {
   const {
     openInFileManager,
     deleteEntry,
@@ -54,5 +59,3 @@ const DirEntryRow: FC<Props> = ({ assetId, type, filename, absolutePath }) => {
     </div>
   )
 }
-
-export default DirEntryRow

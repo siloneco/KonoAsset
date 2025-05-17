@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import PreferenceContextProvider from '.'
+import { PreferenceContextProvider } from '.'
 import { useTheme } from 'next-themes'
 import { usePreferenceContext } from './hook'
 

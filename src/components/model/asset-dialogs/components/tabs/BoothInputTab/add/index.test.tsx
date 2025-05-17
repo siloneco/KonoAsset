@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import BoothInputTab from '.'
+import { BoothInputTabForAddDialog } from '.'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useBoothInputTabForAddDialog } from './hook'
 import { setupAndRender } from '@/test/init'
@@ -54,7 +54,7 @@ describe('BoothInputTab', () => {
     const { user } = setupAndRender(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}
@@ -97,7 +97,7 @@ describe('BoothInputTab', () => {
     render(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}
@@ -129,7 +129,7 @@ describe('BoothInputTab', () => {
     render(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}
@@ -161,7 +161,7 @@ describe('BoothInputTab', () => {
     render(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}
@@ -201,7 +201,7 @@ describe('BoothInputTab', () => {
     render(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}
@@ -231,7 +231,7 @@ describe('BoothInputTab', () => {
     render(
       <Dialog open={true}>
         <DialogContent>
-          <BoothInputTab
+          <BoothInputTabForAddDialog
             // @ts-expect-error type check fails but it satisfies the required fields
             form={mockForm}
             setTab={mockSetTab}

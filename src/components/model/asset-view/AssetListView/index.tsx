@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import SlimAssetDetail from '../../SlimAssetDetail'
-import AssetCardOpenButton from '../../action-buttons/AssetCardOpenButton'
+import { SlimAssetDetail } from '../../SlimAssetDetail'
+import { AssetCardOpenButton } from '../../action-buttons/AssetCardOpenButton'
 import { MoreButton } from '../../action-buttons/MoreButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
@@ -32,11 +32,11 @@ export const AssetListView = ({
     <div className={cn(`grid gap-2 grid-cols-1 mx-4 pb-24`)}>
       {sortedAssetSummary.map((asset) => (
         <SlimAssetDetail key={asset.id} asset={asset}>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center gap-4">
             {asset.hasMemo && (
               <Button
                 variant="outline"
-                className="h-8 w-8 mr-2"
+                className="h-8 w-8"
                 onClick={() => openMemoDialog(asset.id)}
               >
                 <NotebookText />

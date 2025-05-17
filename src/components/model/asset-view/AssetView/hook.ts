@@ -1,7 +1,14 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, commands, FileInfo, FilterRequest } from '@/lib/bindings'
-import { RefObject, useContext, useEffect, useRef, useState } from 'react'
+import {
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   calculateColumnCount,
   createFilterRequest,
@@ -24,20 +31,16 @@ type ReturnProps = {
     assetId: string,
     data: { [x: string]: FileInfo[] },
   ) => void
-  openEditAssetDialog: (assetId: string) => void
   openMemoDialog: (assetId: string) => void
   openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 
   setSelectUnitypackageDialogOpen: (open: boolean) => void
-  setEditAssetDialogOpen: (open: boolean) => void
   setMemoDialogOpen: (open: boolean) => void
   setDependencyDialogOpen: (open: boolean) => void
 
   selectUnitypackageDialogOpen: boolean
   selectUnitypackageDialogAssetId: string | null
   unitypackages: { [x: string]: FileInfo[] }
-  editAssetDialogAssetId: string | null
-  editAssetDialogOpen: boolean
   memoDialogAssetId: string | null
   memoDialogOpen: boolean
   dependencyDialogOpen: boolean
@@ -53,11 +56,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   }>({})
   const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
     useState<string | null>(null)
-
-  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
-  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
-    string | null
-  >(null)
 
   const [memoDialogOpen, setMemoDialogOpen] = useState(false)
   const [memoDialogAssetId, setMemoDialogAssetId] = useState<string | null>(
@@ -91,7 +89,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   } = useContext(PersistentContext)
   const { assetDisplaySortedList, setFilteredIds } = useContext(AssetContext)
 
-  const updateSortedAssetSummary = async () => {
+  const updateSortedAssetSummary = useCallback(async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
       queryTextMode: queryTextMode,
@@ -135,44 +133,46 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setSortedAssetSummary(reverseOrder ? sortedAssets.reverse() : sortedAssets)
     setFilteredIds(assetIds)
     setShowingAssetCount(sortedAssets.length)
-  }
+  }, [
+    assetDisplaySortedList,
+    assetType,
+    categoryFilter,
+    generalQueryTextFilter,
+    queryTextFilterForCreator,
+    queryTextFilterForName,
+    queryTextMode,
+    reverseOrder,
+    setFilteredIds,
+    setShowingAssetCount,
+    supportedAvatarFilter,
+    supportedAvatarFilterMatchType,
+    tagFilter,
+    tagFilterMatchType,
+  ])
 
   useEffect(() => {
     updateSortedAssetSummary()
-  }, [
-    reverseOrder,
-    assetDisplaySortedList,
-    assetType,
-    queryTextMode,
-    generalQueryTextFilter,
-    queryTextFilterForName,
-    queryTextFilterForCreator,
-    categoryFilter,
-    tagFilter,
-    tagFilterMatchType,
-    supportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-  ])
+  }, [updateSortedAssetSummary])
 
   const layoutDivRef = useRef<HTMLDivElement>(null)
   const [gridColumnCount, setGridColumnCount] = useState(1)
 
   const { getElementProperty } = useGetElementProperty(layoutDivRef)
 
-  const updateColumns = () => {
+  const updateColumns = useCallback(() => {
     setGridColumnCount(
       assetCardSize !== 'List'
         ? calculateColumnCount(getElementProperty('width'), assetCardSize)
         : 1,
     )
-  }
+  }, [assetCardSize, getElementProperty])
 
   useEffect(() => {
     updateColumns()
 
     window.addEventListener('resize', updateColumns)
     return () => window.removeEventListener('resize', updateColumns)
-  }, [assetCardSize])
+  }, [assetCardSize, updateColumns])
 
   const openSelectUnitypackageDialog = (
     assetId: string,
@@ -181,11 +181,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setUnityPackages(data)
     setSelectUnitypackageDialogAssetId(assetId)
     setSelectUnitypackageDialogOpen(true)
-  }
-
-  const openEditAssetDialog = (assetId: string) => {
-    setEditAssetDialogAssetId(assetId)
-    setEditAssetDialogOpen(true)
   }
 
   const openMemoDialog = (assetId: string) => {
@@ -207,20 +202,16 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     background: assetDisplaySortedList.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,
-    openEditAssetDialog,
     openMemoDialog,
     openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setEditAssetDialogOpen,
     setMemoDialogOpen,
     setDependencyDialogOpen,
 
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    editAssetDialogAssetId,
-    editAssetDialogOpen,
     memoDialogAssetId,
     memoDialogOpen,
     dependencyDialogOpen,

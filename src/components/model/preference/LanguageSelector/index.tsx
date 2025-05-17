@@ -45,7 +45,7 @@ export const LanguageSelector: FC<Props> = ({
       <div className="space-y-2">
         <Label className="text-xl flex flex-row items-center">
           {t('preference:settings:language')}
-          <Languages className="opacity-70 ml-2" />
+          <Languages className="opacity-70" />
         </Label>
         <p className="text-muted-foreground text-sm">
           {t('preference:settings:language:explanation-text')}

@@ -1,4 +1,4 @@
-import AssetCard from '../../AssetCard'
+import { AssetCard } from '../../AssetCard'
 
 import { cn } from '@/lib/utils'
 import { AssetSummary, FileInfo } from '@/lib/bindings'

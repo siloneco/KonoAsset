@@ -18,7 +18,7 @@ export const UserProfile: FC<Props> = ({
 }) => {
   return (
     <div className="flex flex-row items-center space-x-4">
-      <Avatar>
+      <Avatar className="select-none">
         <AvatarImage src={iconUrl} alt={name} />
         <AvatarFallback>{name}</AvatarFallback>
       </Avatar>

@@ -26,7 +26,7 @@ type Props = {
   submitButtonText: string
 }
 
-const AdditionalInputTab = ({
+export const AdditionalInputTab = ({
   form,
   onBackToPreviousTabClicked,
   onSubmit,
@@ -101,5 +101,3 @@ const AdditionalInputTab = ({
     </div>
   )
 }
-
-export default AdditionalInputTab

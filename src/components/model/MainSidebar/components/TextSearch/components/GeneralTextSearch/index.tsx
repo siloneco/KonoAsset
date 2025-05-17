@@ -13,7 +13,7 @@ type Props = {
   ref: RefObject<HTMLInputElement | null>
 }
 
-const GeneralTextSearch: FC<Props> = ({
+export const GeneralTextSearch: FC<Props> = ({
   onSwitchModeClicked,
   general,
   setGeneral,
@@ -53,5 +53,3 @@ const GeneralTextSearch: FC<Props> = ({
     </div>
   )
 }
-
-export default GeneralTextSearch

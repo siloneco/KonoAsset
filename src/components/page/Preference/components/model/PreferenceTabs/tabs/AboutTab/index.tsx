@@ -13,7 +13,7 @@ type Props = {
   id: PreferenceTabIDs
 }
 
-const AboutTab: FC<Props> = ({ id }) => {
+export const AboutTab: FC<Props> = ({ id }) => {
   const { t } = useLocalization()
   const [version, setVersion] = useState('X.X.X')
 
@@ -32,7 +32,7 @@ const AboutTab: FC<Props> = ({ id }) => {
         <div className="grid grid-cols-8 w-[600px]">
           <div className="col-span-1" />
           <div className="col-span-6 flex justify-center items-center">
-            <img src="/logo.png" className="w-12 h-12" />
+            <img src="/logo.png" className="w-12 h-12 select-none" />
             <h1 className="text-4xl ml-2">
               KonoAsset
               <span className="ml-2 text-base text-muted-foreground">
@@ -40,10 +40,7 @@ const AboutTab: FC<Props> = ({ id }) => {
               </span>
             </h1>
           </div>
-          <div className="col-span-1 flex justify-end">
-            {/* TODO: implement */}
-            {/* <Button variant="secondary">更新を確認</Button> */}
-          </div>
+          <div className="col-span-1" />
         </div>
         <div className="w-[600px] mt-6">
           <Separator />
@@ -155,5 +152,3 @@ const AboutTab: FC<Props> = ({ id }) => {
     </TabsContent>
   )
 }
-
-export default AboutTab

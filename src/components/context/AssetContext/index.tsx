@@ -1,5 +1,6 @@
-import { AssetSummary, AssetType } from '@/lib/bindings'
-import { createContext } from 'react'
+import { AssetSummary } from '@/lib/bindings'
+import { createContext, FC } from 'react'
+import { useAssetContext } from './hook'
 
 export type AssetContextType = {
   assetDisplaySortedList: AssetSummary[]
@@ -10,7 +11,7 @@ export type AssetContextType = {
 
   deleteAssetById: (id: string) => void
 
-  refreshAssets: (assetType?: AssetType) => Promise<void>
+  refreshAssets: () => Promise<void>
 }
 
 export const AssetContext = createContext<AssetContextType>({
@@ -24,3 +25,13 @@ export const AssetContext = createContext<AssetContextType>({
 
   refreshAssets: async () => {},
 })
+
+type Props = {
+  children: React.ReactNode
+}
+
+export const AssetContextProvider: FC<Props> = ({ children }) => {
+  const { value } = useAssetContext()
+
+  return <AssetContext.Provider value={value}>{children}</AssetContext.Provider>
+}

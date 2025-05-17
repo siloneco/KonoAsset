@@ -9,7 +9,7 @@ type Props = {
   setEnable: (enable: boolean) => void
 }
 
-const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
+export const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center">
@@ -29,5 +29,3 @@ const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
     </div>
   )
 }
-
-export default DeleteSourceToggle

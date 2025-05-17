@@ -1,12 +1,12 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { MoreButton } from '../action-buttons/MoreButton'
-import AssetBadge from '@/components/part/AssetBadge'
+import { AssetBadge } from '@/components/model/AssetBadge'
 import { Label } from '@/components/ui/label'
 import { RefObject, useContext } from 'react'
-import SquareImage from '@/components/model/SquareImage'
+import { SquareImage } from '@/components/model/SquareImage'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import AssetCardOpenButton from '@/components/model/action-buttons/AssetCardOpenButton'
+import { AssetCardOpenButton } from '@/components/model/action-buttons/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -25,7 +25,7 @@ type Props = {
   openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 }
 
-const AssetCard = ({
+export const AssetCard = ({
   asset,
   ref,
   openSelectUnitypackageDialog,
@@ -80,7 +80,10 @@ const AssetCard = ({
           >
             {asset.name}
           </CardTitle>
-          <Label className="text-sm cursor-pointer" onClick={onShopNameClicked}>
+          <Label
+            className="text-sm cursor-pointer select-text"
+            onClick={onShopNameClicked}
+          >
             {asset.creator}
           </Label>
         </div>
@@ -109,5 +112,3 @@ const AssetCard = ({
     </Card>
   )
 }
-
-export default AssetCard

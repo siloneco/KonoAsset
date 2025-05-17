@@ -18,7 +18,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const PreferenceContextProvider: FC<Props> = ({ children }) => {
+export const PreferenceContextProvider: FC<Props> = ({ children }) => {
   const { preferenceContextValue } = usePreferenceContext()
   const { setTheme } = useTheme()
 
@@ -30,5 +30,3 @@ const PreferenceContextProvider: FC<Props> = ({ children }) => {
     </PreferenceContext.Provider>
   )
 }
-
-export default PreferenceContextProvider

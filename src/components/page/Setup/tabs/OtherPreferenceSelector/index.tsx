@@ -1,7 +1,7 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
-import DeleteSourceToggle from '@/components/model/preference/DeleteSourceToggle'
-import UpdateChannelSelector from '@/components/model/preference/UpdateChannelSelector'
-import UseUnitypackageSelectorToggle from '@/components/model/preference/UseUnitypackageSelectorToggle'
+import { DeleteSourceToggle } from '@/components/model/preference/DeleteSourceToggle'
+import { UpdateChannelSelector } from '@/components/model/preference/UpdateChannelSelector'
+import { UseUnitypackageSelectorToggle } from '@/components/model/preference/UseUnitypackageSelectorToggle'
 import { ZipExtractionToggle } from '@/components/model/preference/ZipExtractionToggle'
 import { ScrollArea } from '@/components/ui/scroll-area'
 

@@ -1,12 +1,12 @@
 import { RadioGroup } from '@/components/ui/radio-group'
 import { useContext } from 'react'
 import { Separator } from '@/components/ui/separator'
-import TypeSelectorRadioItem from './components/RadioItem'
+import { TypeSelectorRadioItem } from './components/RadioItem'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
 
-const TypeSelector = () => {
+export const TypeSelector = () => {
   const { assetType, setAssetType } = useContext(PersistentContext)
 
   const { t } = useLocalization()
@@ -50,5 +50,3 @@ const TypeSelector = () => {
     </RadioGroup>
   )
 }
-
-export default TypeSelector

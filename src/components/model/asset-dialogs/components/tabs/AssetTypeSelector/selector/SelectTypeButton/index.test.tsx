@@ -1,7 +1,7 @@
 import { setupAndRender } from '@/test/init'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import SelectTypeButton from '.'
+import { SelectTypeButton } from '.'
 
 describe('SelectTypeButton', () => {
   afterEach(() => {

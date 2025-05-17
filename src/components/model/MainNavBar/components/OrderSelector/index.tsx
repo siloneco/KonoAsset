@@ -15,7 +15,7 @@ export const OrderSelector: FC<Props> = ({ current, setValue }) => {
   return (
     <div>
       <Label className="px-4 py-2 flex flex-row items-center text-base">
-        <ArrowDownAz className="text-muted-foreground mr-2" size={20} />
+        <ArrowDownAz className="text-muted-foreground" size={20} />
         {t('mainnavbar:sort-settings:title')}
       </Label>
       <ButtonWithCheckMark

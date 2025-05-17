@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
-import DestinationSelectTab from './tabs/DestinationSelectTab'
-import ProgressTab from './tabs/ProgressTab'
+import { DestinationSelectTab } from './tabs/DestinationSelectTab'
+import { ProgressTab } from './tabs/ProgressTab'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { commands } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,7 @@ type Props = {
   updateLocalDataDir: (dataDir: string) => Promise<void>
 }
 
-const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
+export const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [destinationPath, setDestinationPath] = useState('')
   const [migrationEnabled, setMigrationEnabled] = useState(true)
@@ -108,5 +108,3 @@ const DataDirSelector: FC<Props> = ({ dataDir, updateLocalDataDir }) => {
     </div>
   )
 }
-
-export default DataDirSelector

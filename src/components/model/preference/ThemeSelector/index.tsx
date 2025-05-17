@@ -15,7 +15,7 @@ type Props = {
   setTheme: (theme: Theme) => void
 }
 
-const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
+export const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center">
@@ -44,5 +44,3 @@ const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
     </div>
   )
 }
-
-export default ThemeSelector

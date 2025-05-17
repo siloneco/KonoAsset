@@ -8,7 +8,7 @@ type Props = {
   selected: boolean
 }
 
-const SelectTypeButton = ({ text, onClick, selected }: Props) => {
+export const SelectTypeButton = ({ text, onClick, selected }: Props) => {
   return (
     <Button
       onClick={onClick}
@@ -26,5 +26,3 @@ const SelectTypeButton = ({ text, onClick, selected }: Props) => {
     </Button>
   )
 }
-
-export default SelectTypeButton

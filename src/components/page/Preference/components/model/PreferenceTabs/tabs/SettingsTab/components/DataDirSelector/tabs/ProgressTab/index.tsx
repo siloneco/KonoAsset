@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { TaskStatusHandler } from '@/components/model/TaskStatusHandler'
-import useDataDirSelectorProgressTab from './hook'
+import { useDataDirSelectorProgressTab } from './hook'
 import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   updateLocalDataDir: (dataDir: string) => Promise<void>
 }
 
-const ProgressTab: FC<Props> = ({
+export const ProgressTab: FC<Props> = ({
   taskId,
   destinationPath,
   setDialogOpen,
@@ -36,5 +36,3 @@ const ProgressTab: FC<Props> = ({
     />
   )
 }
-
-export default ProgressTab

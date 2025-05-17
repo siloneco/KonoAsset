@@ -18,7 +18,7 @@ type ReturnProps = {
 
 const DEFAULT_PRIORITY = 100
 
-const useDragDropContext = (): ReturnProps => {
+export const useDragDropContext = (): ReturnProps => {
   const [fnList, setFnList] = useState<StateType[]>([])
 
   const register = useCallback(
@@ -85,7 +85,7 @@ const useDragDropContext = (): ReturnProps => {
       isCancelled = true
       unlistenFn?.()
     }
-  }, [fnList, setFnList])
+  }, [fnList])
 
   const dragDropContextValue: DragDropContextType = {
     register,
@@ -95,5 +95,3 @@ const useDragDropContext = (): ReturnProps => {
     dragDropContextValue,
   }
 }
-
-export default useDragDropContext

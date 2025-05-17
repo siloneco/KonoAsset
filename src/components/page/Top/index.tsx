@@ -1,18 +1,18 @@
-import { AssetContext } from '@/components/context/AssetContext'
-import MainSidebar from '@/components/model/MainSidebar'
+import { MainSidebar } from '@/components/model/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { useTopPage } from './hook'
-import NavBar from '../../model/MainNavBar'
-import AddAssetDialog from '@/components/model/asset-dialogs/AddAssetDialog'
-import EditAssetDialog from '@/components/model/asset-dialogs/EditAssetDialog'
+import { NavBar } from '../../model/MainNavBar'
+import { AddAssetDialog } from '@/components/model/asset-dialogs/AddAssetDialog'
+import { EditAssetDialog } from '@/components/model/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetView } from '@/components/model/asset-view/AssetView'
-import DataManagementDialog from '@/components/model/action-buttons/MoreButton/components/DataManagementDialog'
+import { DataManagementDialog } from '@/components/model/action-buttons/MoreButton/components/DataManagementDialog'
+import { AssetContextProvider } from '@/components/context/AssetContext'
+import { useCallback } from 'react'
 
-const TopPage = () => {
+export const TopPage = () => {
   const {
-    assetContextValue,
     isDragAndHover,
     showingAssetCount,
     setShowingAssetCount,
@@ -30,27 +30,33 @@ const TopPage = () => {
 
   const { t } = useLocalization()
 
+  const openEditAssetDialog = useCallback(
+    (assetId: string) => {
+      setAddAssetDialogOpen(false)
+
+      setEditAssetDialogAssetId(assetId)
+      setEditAssetDialogOpen(true)
+    },
+    [setAddAssetDialogOpen, setEditAssetDialogAssetId, setEditAssetDialogOpen],
+  )
+
   return (
-    <div className="flex">
-      <AssetContext.Provider value={assetContextValue}>
+    <div className="flex selection:bg-primary selection:text-primary-foreground">
+      <AssetContextProvider>
         <SidebarProvider>
           <MainSidebar />
           <main className="w-full h-screen flex flex-col">
             <NavBar displayAssetCount={showingAssetCount} />
             <AssetView
               openAddAssetDialog={() => setAddAssetDialogOpen(true)}
+              openEditAssetDialog={openEditAssetDialog}
               openDataManagementDialog={openDataManagementDialog}
               setShowingAssetCount={setShowingAssetCount}
             />
             <AddAssetDialog
               dialogOpen={addAssetDialogOpen}
               setDialogOpen={setAddAssetDialogOpen}
-              openEditDialog={(assetId) => {
-                setAddAssetDialogOpen(false)
-
-                setEditAssetDialogAssetId(assetId)
-                setEditAssetDialogOpen(true)
-              }}
+              openEditDialog={openEditAssetDialog}
               openDataManagementDialog={(id) => {
                 setAddAssetDialogOpen(false)
                 openDataManagementDialog(id)
@@ -68,7 +74,7 @@ const TopPage = () => {
             />
           </main>
         </SidebarProvider>
-      </AssetContext.Provider>
+      </AssetContextProvider>
       <div
         className={cn(
           'fixed h-full w-full opacity-0 z-60 pointer-events-none transition-opacity',
@@ -84,5 +90,3 @@ const TopPage = () => {
     </div>
   )
 }
-
-export default TopPage

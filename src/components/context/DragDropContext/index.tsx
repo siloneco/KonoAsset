@@ -1,5 +1,5 @@
 import { createContext, FC } from 'react'
-import useDragDropContext from './hook'
+import { useDragDropContext } from './hook'
 import { Event } from '@tauri-apps/api/event'
 import { DragDropEvent } from '@tauri-apps/api/window'
 
@@ -7,6 +7,7 @@ export type DragDropRegisterConfig = {
   uniqueId: string
   priority?: number
 }
+
 export type DragDropHandlingFn = (
   event: Event<DragDropEvent>,
 ) => Promise<boolean>
@@ -23,7 +24,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const DragDropContextProvider: FC<Props> = ({ children }) => {
+export const DragDropContextProvider: FC<Props> = ({ children }) => {
   const { dragDropContextValue } = useDragDropContext()
 
   return (
@@ -32,5 +33,3 @@ const DragDropContextProvider: FC<Props> = ({ children }) => {
     </DragDropContext.Provider>
   )
 }
-
-export default DragDropContextProvider

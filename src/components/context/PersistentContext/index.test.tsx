@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, Mock, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import PersistentContextProvider from '.'
+import { PersistentContextProvider } from '.'
 import { usePersistentContext } from './hook'
 
 vi.mock('./hook', () => {

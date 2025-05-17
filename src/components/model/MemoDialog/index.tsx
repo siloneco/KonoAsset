@@ -24,7 +24,11 @@ type Props = {
 
 const URL_REGEX = /https?:\/\/[^\s]+/g
 
-const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
+export const MemoDialog: FC<Props> = ({
+  assetId,
+  dialogOpen,
+  setDialogOpen,
+}) => {
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
   const [loading, setLoading] = useState(false)
@@ -145,5 +149,3 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
     </Dialog>
   )
 }
-
-export default MemoDialog
