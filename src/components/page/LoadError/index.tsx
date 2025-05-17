@@ -42,7 +42,7 @@ export const LoadErrorPage: FC<Props> = ({ preferenceLoaded, error }) => {
   const { t } = useLocalization()
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
+    <div className="h-screen w-screen flex flex-col items-center justify-center selection:bg-primary selection:text-primary-foreground">
       <Card className="w-[600px] p-6 relative">
         <div className="absolute top-5 right-5">
           <CubicLanguageSelector onSelected={onLanguageChanged} />

@@ -80,7 +80,10 @@ export const AssetCard = ({
           >
             {asset.name}
           </CardTitle>
-          <Label className="text-sm cursor-pointer" onClick={onShopNameClicked}>
+          <Label
+            className="text-sm cursor-pointer select-text"
+            onClick={onShopNameClicked}
+          >
             {asset.creator}
           </Label>
         </div>

@@ -594,7 +594,7 @@ const MultipleSelector = ({
                   <Badge
                     key={option.value}
                     className={cn(
-                      'cursor-default flex shrink',
+                      'cursor-default flex shrink select-none',
                       'data-disabled:bg-muted-foreground data-disabled:text-muted data-disabled:hover:bg-muted-foreground overflow-hidden',
                       'data-fixed:bg-muted-foreground data-fixed:text-muted data-fixed:hover:bg-muted-foreground overflow-hidden',
                       // Xボタンと重ならないようにする
@@ -669,7 +669,7 @@ const MultipleSelector = ({
                     : placeholder
                 }
                 className={cn(
-                  'flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground',
+                  'flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground placeholder:select-none',
                   {
                     'w-fit':
                       hidePlaceholderWhenSelected &&

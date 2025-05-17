@@ -42,7 +42,7 @@ export const SquareImage = memo(function SquareImage({
       <AspectRatio
         ratio={1}
         className={cn(
-          'w-full h-full flex items-center rounded-lg overflow-hidden',
+          'w-full h-full flex items-center rounded-lg overflow-hidden select-none',
           className,
         )}
       >

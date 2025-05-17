@@ -32,7 +32,7 @@ export const AboutTab: FC<Props> = ({ id }) => {
         <div className="grid grid-cols-8 w-[600px]">
           <div className="col-span-1" />
           <div className="col-span-6 flex justify-center items-center">
-            <img src="/logo.png" className="w-12 h-12" />
+            <img src="/logo.png" className="w-12 h-12 select-none" />
             <h1 className="text-4xl ml-2">
               KonoAsset
               <span className="ml-2 text-base text-muted-foreground">

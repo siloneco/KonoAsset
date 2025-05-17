@@ -7,7 +7,7 @@ export const PreferencePage = () => {
   const { activeTab, setActiveTab } = usePreferencePage()
 
   return (
-    <div className="h-screen w-screen flex flex-row">
+    <div className="h-screen w-screen flex flex-row selection:bg-primary selection:text-primary-foreground">
       <SidebarProvider>
         <PreferenceSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <PreferenceTabs activeTab={activeTab} />

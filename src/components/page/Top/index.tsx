@@ -30,7 +30,7 @@ export const TopPage = () => {
   const { t } = useLocalization()
 
   return (
-    <div className="flex">
+    <div className="flex selection:bg-primary selection:text-primary-foreground">
       <AssetContextProvider>
         <SidebarProvider>
           <MainSidebar />

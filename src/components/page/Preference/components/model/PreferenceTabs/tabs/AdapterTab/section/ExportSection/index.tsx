@@ -32,7 +32,7 @@ export const ExportSection: FC = () => {
     <div className="pb-12">
       <Label className="text-xl flex flex-row items-center">
         {t('preference:adapter:export')}
-        <FolderOutput className="text-foreground/50 ml-2" />
+        <FolderOutput className="text-foreground/50" />
       </Label>
       <p className="mt-1 text-sm text-muted-foreground">
         {t('preference:adapter:export:description')}
