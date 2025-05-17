@@ -9,7 +9,14 @@ import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Event, UnlistenFn } from '@tauri-apps/api/event'
 import { DragDropEvent } from '@tauri-apps/api/window'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AddAssetDialogContextType } from '..'
@@ -88,18 +95,21 @@ export const useAddAssetDialog = ({
     publishedAt: z.number().nullable(),
   })
 
-  const defaultValues = {
-    name: '',
-    creator: '',
-    imageFilename: null,
-    boothItemId: null,
-    tags: [],
-    memo: null,
-    dependencies: [],
-    category: '',
-    supportedAvatars: [],
-    publishedAt: null,
-  }
+  const defaultValues = useMemo(
+    () => ({
+      name: '',
+      creator: '',
+      imageFilename: null,
+      boothItemId: null,
+      tags: [],
+      memo: null,
+      dependencies: [],
+      category: '',
+      supportedAvatars: [],
+      publishedAt: null,
+    }),
+    [],
+  )
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -168,7 +178,7 @@ export const useAddAssetDialog = ({
     }
 
     register(eventHandlingConfig, eventHandlingFn)
-  }, [])
+  }, [eventHandlingFn, register])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -181,7 +191,7 @@ export const useAddAssetDialog = ({
     window.addEventListener('keydown', handleKeyDown)
 
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [setDialogOpen])
 
   useEffect(() => {
     if (formClearSuppressionCount > 0) {
@@ -193,7 +203,7 @@ export const useAddAssetDialog = ({
       clearForm()
       setTab('selector')
     }
-  }, [dialogOpen])
+  }, [dialogOpen, clearForm, formClearSuppressionCount])
 
   const contextValue = {
     assetPaths,
@@ -370,7 +380,7 @@ export const useAddAssetDialog = ({
       isCancelled = true
       unlistenCompleteFn?.()
     }
-  }, [])
+  }, [form, clearForm, openDialogWithoutClearForm])
 
   return {
     form,

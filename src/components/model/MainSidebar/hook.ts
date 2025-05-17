@@ -1,7 +1,7 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { Option } from '@/components/ui/multi-select'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { fetchAllTags } from './logic'
 import { AssetType, MatchType } from '@/lib/bindings'
 
@@ -54,15 +54,15 @@ export const useMainSidebar = (): ReturnProps => {
     label: tag,
   }))
 
-  const updateTagCandidates = async () => {
+  const updateTagCandidates = useCallback(async () => {
     setTagCandidates(await fetchAllTags(filteredIds))
-  }
+  }, [filteredIds])
 
   useEffect(() => {
     if (!tagSelectorFocused) {
       updateTagCandidates()
     }
-  }, [assetDisplaySortedList, filteredIds, tagSelectorFocused])
+  }, [assetDisplaySortedList, tagSelectorFocused, updateTagCandidates])
 
   return {
     textSearchMode: queryTextMode,

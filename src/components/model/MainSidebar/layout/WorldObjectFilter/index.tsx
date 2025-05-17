@@ -1,6 +1,6 @@
 import { Option } from '@/components/ui/multi-select'
 
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import { fetchAllCategories } from './logic'
 import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
@@ -20,15 +20,15 @@ export const WorldObjectFilter = () => {
     label: category,
   }))
 
-  const updateCategoriesAndTags = async () => {
+  const updateCategoriesAndTags = useCallback(async () => {
     if (!isCategoryFocused) {
       setCategoryCandidates(await fetchAllCategories(filteredIds))
     }
-  }
+  }, [filteredIds, isCategoryFocused])
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [assetDisplaySortedList, filteredIds, isCategoryFocused])
+  }, [assetDisplaySortedList, updateCategoriesAndTags])
 
   return (
     <div className="mt-4 space-y-4">

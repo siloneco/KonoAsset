@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { AssetType, commands } from '@/lib/bindings'
 import { convertFileSrc } from '@tauri-apps/api/core'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 
 const ALT = 'Asset Image'
 
@@ -27,7 +27,7 @@ export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
 
   const defaultImagePath = getDefaultImage(assetType)
 
-  const getAbsolutePathAndSet = async () => {
+  const getAbsolutePathAndSet = useCallback(async () => {
     if (filename === undefined || filename.length == 0) {
       return
     }
@@ -38,11 +38,11 @@ export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
     } else {
       console.error(absolutePath.error)
     }
-  }
+  }, [filename])
 
   useEffect(() => {
     getAbsolutePathAndSet()
-  }, [filename])
+  }, [getAbsolutePathAndSet])
 
   if (fixedPath !== undefined) {
     return (

@@ -1,7 +1,14 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, commands, FileInfo, FilterRequest } from '@/lib/bindings'
-import { RefObject, useContext, useEffect, useRef, useState } from 'react'
+import {
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   calculateColumnCount,
   createFilterRequest,
@@ -91,7 +98,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   } = useContext(PersistentContext)
   const { assetDisplaySortedList, setFilteredIds } = useContext(AssetContext)
 
-  const updateSortedAssetSummary = async () => {
+  const updateSortedAssetSummary = useCallback(async () => {
     const filterRequest: FilterRequest = createFilterRequest({
       assetType: assetType,
       queryTextMode: queryTextMode,
@@ -135,44 +142,46 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setSortedAssetSummary(reverseOrder ? sortedAssets.reverse() : sortedAssets)
     setFilteredIds(assetIds)
     setShowingAssetCount(sortedAssets.length)
-  }
+  }, [
+    assetDisplaySortedList,
+    assetType,
+    categoryFilter,
+    generalQueryTextFilter,
+    queryTextFilterForCreator,
+    queryTextFilterForName,
+    queryTextMode,
+    reverseOrder,
+    setFilteredIds,
+    setShowingAssetCount,
+    supportedAvatarFilter,
+    supportedAvatarFilterMatchType,
+    tagFilter,
+    tagFilterMatchType,
+  ])
 
   useEffect(() => {
     updateSortedAssetSummary()
-  }, [
-    reverseOrder,
-    assetDisplaySortedList,
-    assetType,
-    queryTextMode,
-    generalQueryTextFilter,
-    queryTextFilterForName,
-    queryTextFilterForCreator,
-    categoryFilter,
-    tagFilter,
-    tagFilterMatchType,
-    supportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-  ])
+  }, [updateSortedAssetSummary])
 
   const layoutDivRef = useRef<HTMLDivElement>(null)
   const [gridColumnCount, setGridColumnCount] = useState(1)
 
   const { getElementProperty } = useGetElementProperty(layoutDivRef)
 
-  const updateColumns = () => {
+  const updateColumns = useCallback(() => {
     setGridColumnCount(
       assetCardSize !== 'List'
         ? calculateColumnCount(getElementProperty('width'), assetCardSize)
         : 1,
     )
-  }
+  }, [assetCardSize, getElementProperty])
 
   useEffect(() => {
     updateColumns()
 
     window.addEventListener('resize', updateColumns)
     return () => window.removeEventListener('resize', updateColumns)
-  }, [assetCardSize])
+  }, [assetCardSize, updateColumns])
 
   const openSelectUnitypackageDialog = (
     assetId: string,

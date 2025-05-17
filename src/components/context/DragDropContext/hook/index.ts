@@ -85,7 +85,7 @@ export const useDragDropContext = (): ReturnProps => {
       isCancelled = true
       unlistenFn?.()
     }
-  }, [fnList, setFnList])
+  }, [fnList])
 
   const dragDropContextValue: DragDropContextType = {
     register,

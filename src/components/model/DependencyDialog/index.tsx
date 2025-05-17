@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog'
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AssetContext } from '@/components/context/AssetContext'
@@ -45,7 +45,7 @@ export const DependencyDialog: FC<Props> = ({
   const { t } = useLocalization()
   const { assetDisplaySortedList } = useContext(AssetContext)
 
-  const updateDependencies = () => {
+  const updateDependencies = useCallback(() => {
     setLoading(true)
     try {
       setDependencies(
@@ -56,13 +56,13 @@ export const DependencyDialog: FC<Props> = ({
     } finally {
       setLoading(false)
     }
-  }
+  }, [assetDisplaySortedList, dependencyIds])
 
   useEffect(() => {
     if (dialogOpen) {
       updateDependencies()
     }
-  }, [dialogOpen, dependencyIds])
+  }, [dialogOpen, updateDependencies])
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

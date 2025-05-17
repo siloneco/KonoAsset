@@ -1,6 +1,6 @@
 import { Option } from '@/components/ui/multi-select'
 
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import {
   fetchAllSupportedAvatars,
   fetchAvatarWearableCategories,
@@ -41,23 +41,18 @@ export const AvatarWearableFilter = () => {
     }),
   )
 
-  const updateCandidates = async () => {
+  const updateCandidates = useCallback(async () => {
     if (!isCategoryFocused) {
       setCategoryCandidates(await fetchAvatarWearableCategories(filteredIds))
     }
     if (!isSupportedAvatarFocused) {
       setSupportedAvatarCandidates(await fetchAllSupportedAvatars(filteredIds))
     }
-  }
+  }, [filteredIds, isCategoryFocused, isSupportedAvatarFocused])
 
   useEffect(() => {
     updateCandidates()
-  }, [
-    assetDisplaySortedList,
-    filteredIds,
-    isCategoryFocused,
-    isSupportedAvatarFocused,
-  ])
+  }, [assetDisplaySortedList, updateCandidates])
 
   return (
     <div className="mt-4 space-y-4">

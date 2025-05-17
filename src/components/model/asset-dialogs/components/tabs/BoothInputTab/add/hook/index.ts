@@ -1,5 +1,5 @@
 import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
-import { useState, useContext, ChangeEvent, useEffect } from 'react'
+import { useState, useContext, ChangeEvent } from 'react'
 import { AddAssetDialogContext } from '../../../../../AddAssetDialog'
 import { sep } from '@tauri-apps/api/path'
 import { AssetFormType } from '@/lib/form'
@@ -29,8 +29,14 @@ export const useBoothInputTabForAddDialog = ({
   setTab,
   setImageUrls,
 }: Props): ReturnProps => {
-  const [boothUrlInput, setBoothUrlInput] = useState('')
-  const [boothItemId, setBoothItemId] = useState<number | null>(null)
+  const formBoothItemId = form.getValues('boothItemId')
+  const formBoothUrl =
+    formBoothItemId !== null ? convertToBoothURL(formBoothItemId) : ''
+
+  console.log(formBoothItemId)
+
+  const [boothItemId, setBoothItemId] = useState(formBoothItemId)
+  const [boothUrlInput, setBoothUrlInput] = useState(formBoothUrl)
   const [fetching, setFetching] = useState(false)
 
   const { t } = useLocalization()
@@ -39,15 +45,6 @@ export const useBoothInputTabForAddDialog = ({
   const { assetPaths, setDuplicateWarningItems } = useContext(
     AddAssetDialogContext,
   )
-
-  useEffect(() => {
-    const boothItemId = form.getValues('boothItemId')
-
-    if (boothItemId !== null) {
-      setBoothItemId(boothItemId)
-      setBoothUrlInput(convertToBoothURL(boothItemId))
-    }
-  }, [])
 
   const backToPreviousTab = () => {
     setTab('selector')

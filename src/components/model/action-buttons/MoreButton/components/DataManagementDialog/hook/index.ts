@@ -94,14 +94,20 @@ export const useDataManagementDialog = ({
       setOngoingImports([])
       ongoingImportsRef.current = []
     }
-  }, [dialogOpen])
+  }, [dialogOpen, ongoingImports])
 
-  useEffect(() => {
+  const [prevAssetId, setPrevAssetId] = useState<string | null>(assetId)
+  const [prevDialogOpen, setPrevDialogOpen] = useState<boolean>(dialogOpen)
+
+  if (prevAssetId !== assetId || prevDialogOpen !== dialogOpen) {
+    setPrevAssetId(assetId)
+    setPrevDialogOpen(dialogOpen)
+
     setOngoingImports([])
     ongoingImportsRef.current = []
     setFinishedImportTaskIDs([])
     refresh(false)
-  }, [assetId, dialogOpen])
+  }
 
   const markOngoingImportAsFinished = (taskId: string) => {
     setFinishedImportTaskIDs((prevIDs) => {
@@ -191,7 +197,7 @@ export const useDataManagementDialog = ({
     }
 
     register(eventHandlingConfig, eventHandlingFn)
-  }, [])
+  }, [eventHandlingFn, register])
 
   return {
     entries,

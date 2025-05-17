@@ -39,7 +39,7 @@ export const useBoothInputTabForEditDialog = ({
 
     setBoothUrlInput(convertToBoothURL(formBoothItemId))
     setBoothItemId(formBoothItemId)
-  }, [])
+  }, [form])
 
   const getAssetDescriptionFromBooth = async () => {
     if (fetching || boothItemId === null) {

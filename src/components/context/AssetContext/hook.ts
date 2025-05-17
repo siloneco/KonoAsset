@@ -1,6 +1,6 @@
 import { AssetSummary } from '@/lib/bindings'
 import { AssetContextType } from '.'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { refreshAssets } from './logic'
 import { PersistentContext } from '../PersistentContext'
 
@@ -16,17 +16,17 @@ export const useAssetContext = (): ReturnProps => {
 
   const { sortBy } = useContext(PersistentContext)
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     const result = await refreshAssets(sortBy)
 
     if (result !== null) {
       setAssetDisplaySortedList(result)
     }
-  }
+  }, [sortBy])
 
   useEffect(() => {
     refresh()
-  }, [sortBy])
+  }, [refresh])
 
   const value: AssetContextType = {
     assetDisplaySortedList,

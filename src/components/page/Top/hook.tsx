@@ -52,15 +52,11 @@ export const useTopPage = (): ReturnProps => {
       onFileDrop(event, setDragAndHover)
       return false
     })
-  }, [])
-
-  const executeUpdateCheck = async () => {
-    await checkForUpdate()
-  }
+  }, [register])
 
   useEffect(() => {
-    executeUpdateCheck()
-  }, [])
+    checkForUpdate()
+  }, [checkForUpdate])
 
   const openDataManagementDialog = (assetId: string) => {
     setDataManagementDialogAssetId(assetId)
