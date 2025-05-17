@@ -31,20 +31,16 @@ type ReturnProps = {
     assetId: string,
     data: { [x: string]: FileInfo[] },
   ) => void
-  openEditAssetDialog: (assetId: string) => void
   openMemoDialog: (assetId: string) => void
   openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 
   setSelectUnitypackageDialogOpen: (open: boolean) => void
-  setEditAssetDialogOpen: (open: boolean) => void
   setMemoDialogOpen: (open: boolean) => void
   setDependencyDialogOpen: (open: boolean) => void
 
   selectUnitypackageDialogOpen: boolean
   selectUnitypackageDialogAssetId: string | null
   unitypackages: { [x: string]: FileInfo[] }
-  editAssetDialogAssetId: string | null
-  editAssetDialogOpen: boolean
   memoDialogAssetId: string | null
   memoDialogOpen: boolean
   dependencyDialogOpen: boolean
@@ -60,11 +56,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   }>({})
   const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
     useState<string | null>(null)
-
-  const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
-  const [editAssetDialogAssetId, setEditAssetDialogAssetId] = useState<
-    string | null
-  >(null)
 
   const [memoDialogOpen, setMemoDialogOpen] = useState(false)
   const [memoDialogAssetId, setMemoDialogAssetId] = useState<string | null>(
@@ -192,11 +183,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setSelectUnitypackageDialogOpen(true)
   }
 
-  const openEditAssetDialog = (assetId: string) => {
-    setEditAssetDialogAssetId(assetId)
-    setEditAssetDialogOpen(true)
-  }
-
   const openMemoDialog = (assetId: string) => {
     setMemoDialogAssetId(assetId)
     setMemoDialogOpen(true)
@@ -216,20 +202,16 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     background: assetDisplaySortedList.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,
-    openEditAssetDialog,
     openMemoDialog,
     openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setEditAssetDialogOpen,
     setMemoDialogOpen,
     setDependencyDialogOpen,
 
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    editAssetDialogAssetId,
-    editAssetDialogOpen,
     memoDialogAssetId,
     memoDialogOpen,
     dependencyDialogOpen,

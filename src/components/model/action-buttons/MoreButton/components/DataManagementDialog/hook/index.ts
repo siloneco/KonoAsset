@@ -86,7 +86,7 @@ export const useDataManagementDialog = ({
   }
 
   useEffect(() => {
-    if (!dialogOpen) {
+    if (!dialogOpen && ongoingImports.length > 0) {
       ongoingImports.forEach((entry) => {
         commands.cancelTaskRequest(entry.taskId)
       })

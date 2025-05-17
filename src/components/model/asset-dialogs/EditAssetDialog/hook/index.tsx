@@ -116,6 +116,7 @@ export const useEditAssetDialog = ({
       setTimeout(() => {
         clearForm()
         setTab('booth-input')
+        setLoadingAssetData(true)
       }, 500)
     }
   }, [dialogOpen, clearForm])
@@ -169,10 +170,10 @@ export const useEditAssetDialog = ({
   )
 
   useEffect(() => {
-    if (dialogOpen && id !== null) {
+    if (dialogOpen && loadingAssetData && id !== null) {
       loadAssetData(id)
     }
-  }, [dialogOpen, id, loadAssetData])
+  }, [dialogOpen, id, loadingAssetData, loadAssetData])
 
   const onSubmit = async () => {
     if (submitting || id === null) {

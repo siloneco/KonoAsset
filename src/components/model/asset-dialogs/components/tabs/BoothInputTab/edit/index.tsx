@@ -56,8 +56,7 @@ export const BoothInputTabForEditDialog = ({
       <div className="my-8 space-y-6">
         <div>
           <Label className="text-base ml-1">
-            {' '}
-            {t('addasset:booth-edit:overwrite')}{' '}
+            {t('addasset:booth-edit:overwrite')}
           </Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input

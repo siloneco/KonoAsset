@@ -2,11 +2,12 @@ import { TabsContent } from '@/components/ui/tabs'
 import { ManualInputTab } from '../components/tabs/ManualInputTab'
 import { useEditAssetDialog } from './hook'
 import { DialogWrapper } from '../components/DialogWrapper'
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { BoothInputTabForEditDialog } from '../components/tabs/BoothInputTab/edit'
 import { AdditionalInputTab } from '../components/tabs/AdditionalInputTab'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalization } from '@/hooks/use-localization'
+import { DialogTitle } from '@/components/ui/dialog'
+import { DialogDescription } from '@radix-ui/react-dialog'
 
 type Props = {
   id: string | null
@@ -41,12 +42,10 @@ export const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
       hideTrigger
     >
       <TabsContent value="loading">
-        <DialogTitle>
-          <Skeleton className="w-72 h-4 rounded-sm" />
-        </DialogTitle>
-        <DialogDescription>
-          <Skeleton className="mt-2 w-52 h-4 rounded-sm" />
-        </DialogDescription>
+        <DialogTitle className="hidden" />
+        <DialogDescription className="hidden" />
+        <Skeleton className="w-72 h-4 rounded-sm" />
+        <Skeleton className="mt-2 w-52 h-4 rounded-sm" />
         <Skeleton className="mt-8 w-32 h-4 rounded-sm" />
         <Skeleton className="mt-2 w-full h-8 rounded-sm" />
         <Skeleton className="mt-6 mx-auto w-24 h-10 rounded-sm" />

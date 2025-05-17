@@ -9,6 +9,7 @@ import { useLocalization } from '@/hooks/use-localization'
 import { AssetView } from '@/components/model/asset-view/AssetView'
 import { DataManagementDialog } from '@/components/model/action-buttons/MoreButton/components/DataManagementDialog'
 import { AssetContextProvider } from '@/components/context/AssetContext'
+import { useCallback } from 'react'
 
 export const TopPage = () => {
   const {
@@ -29,6 +30,16 @@ export const TopPage = () => {
 
   const { t } = useLocalization()
 
+  const openEditAssetDialog = useCallback(
+    (assetId: string) => {
+      setAddAssetDialogOpen(false)
+
+      setEditAssetDialogAssetId(assetId)
+      setEditAssetDialogOpen(true)
+    },
+    [setAddAssetDialogOpen, setEditAssetDialogAssetId, setEditAssetDialogOpen],
+  )
+
   return (
     <div className="flex selection:bg-primary selection:text-primary-foreground">
       <AssetContextProvider>
@@ -38,18 +49,14 @@ export const TopPage = () => {
             <NavBar displayAssetCount={showingAssetCount} />
             <AssetView
               openAddAssetDialog={() => setAddAssetDialogOpen(true)}
+              openEditAssetDialog={openEditAssetDialog}
               openDataManagementDialog={openDataManagementDialog}
               setShowingAssetCount={setShowingAssetCount}
             />
             <AddAssetDialog
               dialogOpen={addAssetDialogOpen}
               setDialogOpen={setAddAssetDialogOpen}
-              openEditDialog={(assetId) => {
-                setAddAssetDialogOpen(false)
-
-                setEditAssetDialogAssetId(assetId)
-                setEditAssetDialogOpen(true)
-              }}
+              openEditDialog={openEditAssetDialog}
               openDataManagementDialog={(id) => {
                 setAddAssetDialogOpen(false)
                 openDataManagementDialog(id)

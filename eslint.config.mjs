@@ -44,6 +44,7 @@ export default tseslint.config(
       'no-unreachable': 'error',
       'no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
+      'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
 
       'unused-imports/no-unused-vars': [

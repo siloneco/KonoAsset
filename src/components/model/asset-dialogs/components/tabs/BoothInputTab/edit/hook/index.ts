@@ -1,5 +1,5 @@
 import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
-import { useState, ChangeEvent, useEffect } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
 import { getAndSetAssetInfoFromBoothToForm } from '../../logic'
@@ -23,23 +23,16 @@ export const useBoothInputTabForEditDialog = ({
   goToNextTab,
   setImageUrls,
 }: Props): ReturnProps => {
-  const [boothUrlInput, setBoothUrlInput] = useState('')
-  const [boothItemId, setBoothItemId] = useState<number | null>(null)
+  const formBoothItemId = form.getValues('boothItemId')
+  const formBoothUrl =
+    formBoothItemId !== null ? convertToBoothURL(formBoothItemId) : ''
+
+  const [boothUrlInput, setBoothUrlInput] = useState(formBoothUrl)
+  const [boothItemId, setBoothItemId] = useState(formBoothItemId)
   const [fetching, setFetching] = useState(false)
 
   const { t } = useLocalization()
   const { toast } = useToast()
-
-  useEffect(() => {
-    const formBoothItemId = form.getValues('boothItemId')
-
-    if (formBoothItemId === null) {
-      return
-    }
-
-    setBoothUrlInput(convertToBoothURL(formBoothItemId))
-    setBoothItemId(formBoothItemId)
-  }, [form])
 
   const getAssetDescriptionFromBooth = async () => {
     if (fetching || boothItemId === null) {
