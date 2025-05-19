@@ -1,7 +1,7 @@
 import { commands, FileInfo } from '@/lib/bindings'
 import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import UnitypackageSelector from './components/UnitypackageSelector'
+import { UnitypackageSelector } from './components/UnitypackageSelector'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -17,7 +17,7 @@ type Props = {
   unitypackageFiles: { [x: string]: FileInfo[] }
 }
 
-const SelectUnitypackageDialog = ({
+export const SelectUnitypackageDialog = ({
   assetId,
   dialogOpen,
   setDialogOpen,
@@ -98,5 +98,3 @@ const SelectUnitypackageDialog = ({
     </Dialog>
   )
 }
-
-export default SelectUnitypackageDialog

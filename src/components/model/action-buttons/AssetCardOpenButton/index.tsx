@@ -32,7 +32,7 @@ type Props = {
   ) => void
 }
 
-const AssetCardOpenButton = ({
+export const AssetCardOpenButton = ({
   className,
   id,
   hasDependencies,
@@ -71,7 +71,9 @@ const AssetCardOpenButton = ({
           />
         )}
         {mainButtonChecked && <Check size={24} />}
-        {displayOpenButtonText && <p>{t('general:button:open')}</p>}
+        {displayOpenButtonText && (
+          <p className="select-none">{t('general:button:open')}</p>
+        )}
       </Button>
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>
@@ -102,5 +104,3 @@ const AssetCardOpenButton = ({
     </div>
   )
 }
-
-export default AssetCardOpenButton

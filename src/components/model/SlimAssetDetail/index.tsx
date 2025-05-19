@@ -1,4 +1,4 @@
-import SquareImage from '@/components/model/SquareImage'
+import { SquareImage } from '@/components/model/SquareImage'
 import { Card } from '@/components/ui/card'
 import { AssetSummary } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
@@ -10,9 +10,9 @@ type Props = {
   asset: AssetSummary
 }
 
-const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
+export const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
   return (
-    <Card className={cn('w-full flex flex-row p-2 space-x-4', className)}>
+    <Card className={cn('w-full flex flex-row p-2 space-x-4 gap-0', className)}>
       <div
         className={cn(
           'w-2 h-12 rounded-full',
@@ -36,5 +36,3 @@ const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
     </Card>
   )
 }
-
-export default SlimAssetDetail

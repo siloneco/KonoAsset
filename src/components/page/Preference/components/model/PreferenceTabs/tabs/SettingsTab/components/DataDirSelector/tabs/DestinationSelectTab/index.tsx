@@ -18,7 +18,7 @@ type Props = {
   setMigrationEnabled: (enabled: boolean) => void
 }
 
-const DestinationSelectTab: FC<Props> = ({
+export const DestinationSelectTab: FC<Props> = ({
   currentDataDir,
   switchToProgressTab,
   destinationPath,
@@ -122,5 +122,3 @@ const DestinationSelectTab: FC<Props> = ({
     </>
   )
 }
-
-export default DestinationSelectTab

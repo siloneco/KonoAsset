@@ -6,8 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import SelectDirectoryCard from './selector/SelectDirectoryCard'
-import SelectFileCard from './selector/SelectFileCard'
+import { SelectDirectoryCard } from './selector/SelectDirectoryCard'
+import { SelectFileCard } from './selector/SelectFileCard'
 import { open } from '@tauri-apps/plugin-dialog'
 import { downloadDir } from '@tauri-apps/api/path'
 import { useContext } from 'react'
@@ -25,7 +25,11 @@ type Props = {
   totalTabs: number
 }
 
-const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
+export const AssetPathSelectorTab = ({
+  setTab,
+  tabIndex,
+  totalTabs,
+}: Props) => {
   const { t } = useLocalization()
   const { setAssetPaths } = useContext(AddAssetDialogContext)
   const { preference } = useContext(PreferenceContext)
@@ -102,5 +106,3 @@ const AssetPathSelectorTab = ({ setTab, tabIndex, totalTabs }: Props) => {
     </>
   )
 }
-
-export default AssetPathSelectorTab

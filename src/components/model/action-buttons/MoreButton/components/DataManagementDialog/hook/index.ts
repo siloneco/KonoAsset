@@ -46,7 +46,7 @@ const refetchEntries = async (
   }
 }
 
-const useDataManagementDialog = ({
+export const useDataManagementDialog = ({
   assetId,
   dialogOpen,
 }: Props): ReturnProps => {
@@ -86,7 +86,7 @@ const useDataManagementDialog = ({
   }
 
   useEffect(() => {
-    if (!dialogOpen) {
+    if (!dialogOpen && ongoingImports.length > 0) {
       ongoingImports.forEach((entry) => {
         commands.cancelTaskRequest(entry.taskId)
       })
@@ -94,14 +94,20 @@ const useDataManagementDialog = ({
       setOngoingImports([])
       ongoingImportsRef.current = []
     }
-  }, [dialogOpen])
+  }, [dialogOpen, ongoingImports])
 
-  useEffect(() => {
+  const [prevAssetId, setPrevAssetId] = useState<string | null>(assetId)
+  const [prevDialogOpen, setPrevDialogOpen] = useState<boolean>(dialogOpen)
+
+  if (prevAssetId !== assetId || prevDialogOpen !== dialogOpen) {
+    setPrevAssetId(assetId)
+    setPrevDialogOpen(dialogOpen)
+
     setOngoingImports([])
     ongoingImportsRef.current = []
     setFinishedImportTaskIDs([])
     refresh(false)
-  }, [assetId, dialogOpen])
+  }
 
   const markOngoingImportAsFinished = (taskId: string) => {
     setFinishedImportTaskIDs((prevIDs) => {
@@ -191,7 +197,7 @@ const useDataManagementDialog = ({
     }
 
     register(eventHandlingConfig, eventHandlingFn)
-  }, [])
+  }, [eventHandlingFn, register])
 
   return {
     entries,
@@ -202,5 +208,3 @@ const useDataManagementDialog = ({
     refreshButtonCheckMarked,
   }
 }
-
-export default useDataManagementDialog

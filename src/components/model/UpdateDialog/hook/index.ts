@@ -2,7 +2,7 @@ import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { events, commands, LocalizedChanges } from '@/lib/bindings'
 import { UnlistenFn } from '@tauri-apps/api/event'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type Props = {
   dialogOpen: boolean
@@ -30,7 +30,7 @@ export const useUpdateDialog = ({
   const { toast } = useToast()
   const { t } = useLocalization()
 
-  const onCancelButtonClick = async () => {
+  const onCancelButtonClick = useCallback(async () => {
     if (taskId !== null) {
       const result = await commands.cancelTaskRequest(taskId)
       if (result.status === 'error') {
@@ -42,7 +42,7 @@ export const useUpdateDialog = ({
     toast({
       title: t('general:cancelled'),
     })
-  }
+  }, [taskId, setDialogOpen, t, toast])
 
   const onUpdateButtonClick = async () => {
     const result = await commands.installUpdate()
@@ -170,7 +170,7 @@ export const useUpdateDialog = ({
       unlistenProgressFn?.()
       unlistenCompleteFn?.()
     }
-  }, [taskId])
+  }, [taskId, onCancelButtonClick, t, toast])
 
   return {
     progress,

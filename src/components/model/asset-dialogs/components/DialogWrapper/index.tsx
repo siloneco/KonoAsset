@@ -15,7 +15,7 @@ type Props = {
   preventCloseOnOutsideClick?: boolean
 }
 
-const DialogWrapper: FC<Props> = ({
+export const DialogWrapper: FC<Props> = ({
   dialogOpen,
   setDialogOpen,
   tab,
@@ -54,5 +54,3 @@ const DialogWrapper: FC<Props> = ({
     </Dialog>
   )
 }
-
-export default DialogWrapper

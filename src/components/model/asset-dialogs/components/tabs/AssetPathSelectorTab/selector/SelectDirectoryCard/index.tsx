@@ -7,7 +7,7 @@ type Props = {
   onClick: () => void
 }
 
-const SelectDirectoryCard = ({ onClick }: Props) => {
+export const SelectDirectoryCard = ({ onClick }: Props) => {
   const { t } = useLocalization()
   return (
     <Card className="w-[250px]">
@@ -28,5 +28,3 @@ const SelectDirectoryCard = ({ onClick }: Props) => {
     </Card>
   )
 }
-
-export default SelectDirectoryCard

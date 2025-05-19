@@ -1,8 +1,5 @@
-import { AssetContextType } from '@/components/context/AssetContext'
 import { useState, useEffect, useContext } from 'react'
-import { onFileDrop, refreshAssets } from './logic'
-import { PersistentContext } from '@/components/context/PersistentContext'
-import { AssetSummary } from '@/lib/bindings'
+import { onFileDrop } from './logic'
 import {
   DragDropContext,
   DragDropRegisterConfig,
@@ -10,7 +7,6 @@ import {
 import { UpdateDialogContext } from '@/components/context/UpdateDialogContext'
 
 type ReturnProps = {
-  assetContextValue: AssetContextType
   isDragAndHover: boolean
   showingAssetCount: number
   setShowingAssetCount: (count: number) => void
@@ -27,11 +23,6 @@ type ReturnProps = {
 }
 
 export const useTopPage = (): ReturnProps => {
-  const { sortBy } = useContext(PersistentContext)
-  const [assetDisplaySortedList, setAssetDisplaySortedList] = useState<
-    AssetSummary[]
-  >([])
-  const [filteredIds, setFilteredIds] = useState<string[] | null>(null)
   const [addAssetDialogOpen, setAddAssetDialogOpen] = useState(false)
 
   const [editAssetDialogOpen, setEditAssetDialogOpen] = useState(false)
@@ -51,28 +42,6 @@ export const useTopPage = (): ReturnProps => {
   const { register } = useContext(DragDropContext)
   const { checkForUpdate } = useContext(UpdateDialogContext)
 
-  const assetContextValue: AssetContextType = {
-    assetDisplaySortedList: assetDisplaySortedList,
-    setAssetDisplaySortedList: setAssetDisplaySortedList,
-
-    filteredIds: filteredIds,
-    setFilteredIds: setFilteredIds,
-
-    deleteAssetById: async (id: string) => {
-      setAssetDisplaySortedList((prev) =>
-        prev.filter((asset) => asset.id !== id),
-      )
-    },
-
-    refreshAssets: async () => {
-      refreshAssets(sortBy, setAssetDisplaySortedList)
-    },
-  }
-
-  useEffect(() => {
-    assetContextValue.refreshAssets()
-  }, [sortBy])
-
   useEffect(() => {
     const config: DragDropRegisterConfig = {
       uniqueId: 'top-page',
@@ -83,15 +52,11 @@ export const useTopPage = (): ReturnProps => {
       onFileDrop(event, setDragAndHover)
       return false
     })
-  }, [])
-
-  const executeUpdateCheck = async () => {
-    await checkForUpdate()
-  }
+  }, [register])
 
   useEffect(() => {
-    executeUpdateCheck()
-  }, [])
+    checkForUpdate()
+  }, [checkForUpdate])
 
   const openDataManagementDialog = (assetId: string) => {
     setDataManagementDialogAssetId(assetId)
@@ -99,7 +64,6 @@ export const useTopPage = (): ReturnProps => {
   }
 
   return {
-    assetContextValue,
     isDragAndHover,
     showingAssetCount,
     setShowingAssetCount,

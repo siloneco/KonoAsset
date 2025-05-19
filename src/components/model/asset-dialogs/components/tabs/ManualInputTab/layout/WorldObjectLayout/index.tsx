@@ -12,7 +12,7 @@ type Props = {
   form: AssetFormType
 }
 
-const WorldObjectLayout = ({ form }: Props) => {
+export const WorldObjectLayout = ({ form }: Props) => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
@@ -117,5 +117,3 @@ const WorldObjectLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default WorldObjectLayout

@@ -1,6 +1,6 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { LanguageSelector } from '@/components/model/preference/LanguageSelector'
-import ThemeSelector from '@/components/model/preference/ThemeSelector'
+import { ThemeSelector } from '@/components/model/preference/ThemeSelector'
 import { FC, useContext } from 'react'
 
 export const AppAppearanceTab: FC = () => {

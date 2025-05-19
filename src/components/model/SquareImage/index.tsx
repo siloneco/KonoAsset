@@ -5,7 +5,7 @@ import { AssetType } from '@/lib/bindings'
 import { memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { useSquareImage } from './hook'
-import DisplayPanel from './DisplayPanel'
+import { DisplayPanel } from './DisplayPanel'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
   setUrlImageIndex?: (index: number) => void
 }
 
-const SquareImage = memo(function SquareImage({
+export const SquareImage = memo(function SquareImage({
   assetType,
   className,
   selectable = false,
@@ -42,7 +42,7 @@ const SquareImage = memo(function SquareImage({
       <AspectRatio
         ratio={1}
         className={cn(
-          'w-full h-full flex items-center rounded-lg overflow-hidden',
+          'w-full h-full flex items-center rounded-lg overflow-hidden select-none',
           className,
         )}
       >
@@ -98,5 +98,3 @@ const SquareImage = memo(function SquareImage({
     </div>
   )
 })
-
-export default SquareImage

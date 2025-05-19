@@ -7,10 +7,10 @@ import {
 } from '@/components/ui/dialog'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import useDataManagementDialog from './hook'
-import DirEntryRow from './components/DirEntryRow'
+import { useDataManagementDialog } from './hook'
+import { DirEntryRow } from './components/DirEntryRow'
 import { Check, File, Folder, InfoIcon, RefreshCcw } from 'lucide-react'
-import OngoingImportRow from './components/OngoingImportRow'
+import { OngoingImportRow } from './components/OngoingImportRow'
 import { sep } from '@tauri-apps/api/path'
 import { useLocalization } from '@/hooks/use-localization'
 
@@ -20,7 +20,11 @@ type Props = {
   onOpenChange: (open: boolean) => void
 }
 
-const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
+export const DataManagementDialog = ({
+  assetId,
+  open,
+  onOpenChange,
+}: Props) => {
   const {
     entries,
     onAddButtonClicked,
@@ -110,5 +114,3 @@ const DataManagementDialog = ({ assetId, open, onOpenChange }: Props) => {
     </Dialog>
   )
 }
-
-export default DataManagementDialog

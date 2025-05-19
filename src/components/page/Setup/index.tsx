@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react'
 
-import LoadErrorPage from '../LoadError'
 import { Separator } from '@/components/ui/separator'
 import { SetupProgressContent } from './components/SetupProgressContent'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -30,7 +29,7 @@ export const SetupPage: FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background">
+    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background selection:bg-primary selection:text-primary-foreground">
       <div className="w-full max-w-[1000px] mx-10 p-6 bg-card rounded-2xl border-2 border-accent">
         <h1 className="flex justify-center items-center text-2xl">
           {t('setup:welcome')}
@@ -107,5 +106,3 @@ export const SetupPage: FC = () => {
     </div>
   )
 }
-
-export default LoadErrorPage

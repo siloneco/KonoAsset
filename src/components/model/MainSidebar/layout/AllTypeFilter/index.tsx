@@ -1,13 +1,13 @@
 import { Option } from '@/components/ui/multi-select'
 
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import { fetchAllCategories, fetchAllSupportedAvatars } from './logic'
-import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
+import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetContext } from '@/components/context/AssetContext'
 
-const AllTypeFilter = () => {
+export const AllTypeFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
     Option[]
@@ -38,23 +38,18 @@ const AllTypeFilter = () => {
     }),
   )
 
-  const updateCandidates = async () => {
+  const updateCandidates = useCallback(async () => {
     if (!isCategoryFocused) {
       setCategoryCandidates(await fetchAllCategories(filteredIds))
     }
     if (!isSupportedAvatarFocused) {
       setSupportedAvatarCandidates(await fetchAllSupportedAvatars(filteredIds))
     }
-  }
+  }, [filteredIds, isCategoryFocused, isSupportedAvatarFocused])
 
   useEffect(() => {
     updateCandidates()
-  }, [
-    assetDisplaySortedList,
-    filteredIds,
-    isCategoryFocused,
-    isSupportedAvatarFocused,
-  ])
+  }, [assetDisplaySortedList, updateCandidates])
 
   return (
     <div className="mt-4 space-y-4">
@@ -91,5 +86,3 @@ const AllTypeFilter = () => {
     </div>
   )
 }
-
-export default AllTypeFilter

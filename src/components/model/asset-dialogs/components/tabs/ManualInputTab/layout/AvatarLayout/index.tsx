@@ -10,7 +10,7 @@ type Props = {
   form: AssetFormType
 }
 
-const AvatarLayout = ({ form }: Props) => {
+export const AvatarLayout = ({ form }: Props) => {
   const { t } = useLocalization()
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
@@ -75,5 +75,3 @@ const AvatarLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default AvatarLayout
