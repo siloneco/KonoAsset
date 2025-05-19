@@ -33,8 +33,6 @@ export const useBoothInputTabForAddDialog = ({
   const formBoothUrl =
     formBoothItemId !== null ? convertToBoothURL(formBoothItemId) : ''
 
-  console.log(formBoothItemId)
-
   const [boothItemId, setBoothItemId] = useState(formBoothItemId)
   const [boothUrlInput, setBoothUrlInput] = useState(formBoothUrl)
   const [fetching, setFetching] = useState(false)
