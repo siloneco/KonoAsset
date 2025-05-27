@@ -45,7 +45,7 @@ export default defineConfig(async () => ({
         'src/main.tsx',
         'src/routeTree.gen.ts',
         // shadcn-ui components
-        'src/components/ui/**',
+        'src/components/atoms/**',
         'src/hooks/use-toast.ts',
         'src/hooks/use-mobile.tsx',
         // Automatically generated files

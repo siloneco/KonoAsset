@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { ChevronRight, Loader2 } from 'lucide-react'
 import { AssetFormType } from '@/lib/form'
 import { useBoothInputTabForEditDialog } from './hook'
-import { isBoothURL } from '@/lib/utils'
+import { isBoothURL } from '@/lib/booth'
 import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {

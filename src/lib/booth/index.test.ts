@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { convertToBoothURL, extractBoothItemId, isBoothURL } from './utils'
+import { convertToBoothURL, extractBoothItemId, isBoothURL } from '.'
 
 describe.concurrent('utils', () => {
   it('executes isBoothURL correctly', () => {
@@ -47,8 +47,14 @@ describe.concurrent('utils', () => {
 
   it('executes convertToBoothURL correctly', () => {
     // 正常
-    expect(convertToBoothURL(123)).toBe('https://booth.pm/ja/items/123')
-    expect(convertToBoothURL(987654)).toBe('https://booth.pm/ja/items/987654')
-    expect(convertToBoothURL(1000)).toBe('https://booth.pm/ja/items/1000')
+    expect(convertToBoothURL(123, 'ja-JP')).toBe(
+      'https://booth.pm/ja/items/123',
+    )
+    expect(convertToBoothURL(987654, 'ja-JP')).toBe(
+      'https://booth.pm/ja/items/987654',
+    )
+    expect(convertToBoothURL(1000, 'ja-JP')).toBe(
+      'https://booth.pm/ja/items/1000',
+    )
   })
 })

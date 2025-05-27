@@ -1,6 +1,12 @@
 import { commands, FileInfo } from '@/lib/bindings'
-import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import {
+  DialogClose,
+  DialogFooter,
+  DialogHeader,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { UnitypackageSelector } from './components/UnitypackageSelector'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'

@@ -26,3 +26,4 @@ dist-ssr
 
 # vitest coverage output
 coverage
+*storybook.log

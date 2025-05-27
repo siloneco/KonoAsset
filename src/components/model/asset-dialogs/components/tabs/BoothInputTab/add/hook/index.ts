@@ -1,4 +1,4 @@
-import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
+import { convertToBoothURL, extractBoothItemId } from '@/lib/booth'
 import { useState, useContext, ChangeEvent } from 'react'
 import { AddAssetDialogContext } from '../../../../../AddAssetDialog'
 import { sep } from '@tauri-apps/api/path'
@@ -6,6 +6,7 @@ import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
 import { getAndSetAssetInfoFromBoothToForm } from '../../logic'
 import { useLocalization } from '@/hooks/use-localization'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 type Props = {
   form: AssetFormType
@@ -29,9 +30,13 @@ export const useBoothInputTabForAddDialog = ({
   setTab,
   setImageUrls,
 }: Props): ReturnProps => {
+  const { preference } = useContext(PreferenceContext)
+
   const formBoothItemId = form.getValues('boothItemId')
   const formBoothUrl =
-    formBoothItemId !== null ? convertToBoothURL(formBoothItemId) : ''
+    formBoothItemId !== null
+      ? convertToBoothURL(formBoothItemId, preference.language)
+      : ''
 
   const [boothItemId, setBoothItemId] = useState(formBoothItemId)
   const [boothUrlInput, setBoothUrlInput] = useState(formBoothUrl)

@@ -1,6 +1,5 @@
 import { Separator } from '@/components/ui/separator'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import TextInputSelect from '@/components/ui/text-input-select'
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
 import { AssetFormType } from '@/lib/form'

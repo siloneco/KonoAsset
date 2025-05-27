@@ -1,9 +1,6 @@
 import {
   AlertDialogHeader,
   AlertDialogFooter,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import {
   AlertDialog,
   AlertDialogTrigger,
   AlertDialogContent,
@@ -11,6 +8,7 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { CheckboxAndLabel } from './components/CheckboxAndLabel'
 import { useResetDialog } from './hook'

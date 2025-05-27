@@ -3,8 +3,13 @@ import { useDestinationSelectTab } from './hook'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DialogHeader, DialogFooter, DialogClose } from '@/components/ui/dialog'
-import { DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import {
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Info, Loader2 } from 'lucide-react'
 import { useLocalization } from '@/hooks/use-localization'

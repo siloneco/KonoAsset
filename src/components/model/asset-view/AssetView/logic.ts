@@ -1,6 +1,6 @@
 import { AssetCardSize } from '@/components/context/PersistentContext'
 import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
-import { extractBoothItemId } from '@/lib/utils'
+import { extractBoothItemId } from '@/lib/booth'
 
 const SMALL_CARD_WIDTH = 160
 const MEDIUM_CARD_WIDTH = 200

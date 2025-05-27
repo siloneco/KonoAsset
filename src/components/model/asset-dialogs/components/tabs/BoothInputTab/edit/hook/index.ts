@@ -1,9 +1,10 @@
-import { convertToBoothURL, extractBoothItemId } from '@/lib/utils'
-import { useState, ChangeEvent } from 'react'
+import { convertToBoothURL, extractBoothItemId } from '@/lib/booth'
+import { useState, ChangeEvent, useContext } from 'react'
 import { AssetFormType } from '@/lib/form'
 import { useToast } from '@/hooks/use-toast'
 import { getAndSetAssetInfoFromBoothToForm } from '../../logic'
 import { useLocalization } from '@/hooks/use-localization'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 type Props = {
   form: AssetFormType
@@ -23,9 +24,13 @@ export const useBoothInputTabForEditDialog = ({
   goToNextTab,
   setImageUrls,
 }: Props): ReturnProps => {
+  const { preference } = useContext(PreferenceContext)
+
   const formBoothItemId = form.getValues('boothItemId')
   const formBoothUrl =
-    formBoothItemId !== null ? convertToBoothURL(formBoothItemId) : ''
+    formBoothItemId !== null
+      ? convertToBoothURL(formBoothItemId, preference.language)
+      : ''
 
   const [boothUrlInput, setBoothUrlInput] = useState(formBoothUrl)
   const [boothItemId, setBoothItemId] = useState(formBoothItemId)

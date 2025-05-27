@@ -3,14 +3,12 @@ import {
   DialogHeader,
   DialogFooter,
   DialogDescription,
-} from '@/components/ui/dialog'
-import { AssetSummary, FileInfo } from '@/lib/bindings'
-import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog'
+import { AssetSummary, FileInfo } from '@/lib/bindings'
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'

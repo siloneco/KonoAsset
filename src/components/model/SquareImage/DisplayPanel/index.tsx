@@ -62,7 +62,7 @@ export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
   }
 
   return (
-    <div className="bg-white">
+    <div className="w-full bg-white">
       <img src={defaultImagePath} alt={ALT} className="opacity-60 w-full" />
     </div>
   )

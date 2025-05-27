@@ -1,6 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { MoreButton } from '../action-buttons/MoreButton'
-import { AssetBadge } from '@/components/model/AssetBadge'
 import { Label } from '@/components/ui/label'
 import { RefObject, useContext } from 'react'
 import { SquareImage } from '@/components/model/SquareImage'
@@ -10,6 +9,7 @@ import { AssetCardOpenButton } from '@/components/model/action-buttons/AssetCard
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AssetCardTypeBadge } from '@/components/presentation/asset-card/AssetCardTypeBadge'
 
 type Props = {
   asset: AssetSummary
@@ -56,7 +56,7 @@ export const AssetCard = ({
           />
           <div className="mt-2 h-8 w-full flex flex-row justify-between items-center text-center">
             <div className="flex shrink overflow-hidden">
-              <AssetBadge
+              <AssetCardTypeBadge
                 type={asset.assetType}
                 className="select-none cursor-pointer w-full"
                 onClick={() => setAssetType(asset.assetType)}

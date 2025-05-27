@@ -16,10 +16,9 @@ export const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
       <div
         className={cn(
           'w-2 h-12 rounded-full',
-          asset.assetType === 'Avatar' && 'bg-primary',
-          asset.assetType === 'AvatarWearable' &&
-            'bg-yellow-400 dark:bg-yellow-600',
-          asset.assetType === 'WorldObject' && 'bg-sky-400 dark:bg-sky-600',
+          asset.assetType === 'Avatar' && 'bg-avatar',
+          asset.assetType === 'AvatarWearable' && 'bg-avatar-wearable',
+          asset.assetType === 'WorldObject' && 'bg-world-object',
         )}
       />
       <div className="w-12 h-12">
