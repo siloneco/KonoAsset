@@ -34,7 +34,7 @@ export const WorldObjectLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags(null)
+    const result = await commands.getAssetTags('WorldObject', null)
 
     if (result.status === 'error') {
       console.error(result.error)

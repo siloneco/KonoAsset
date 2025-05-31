@@ -3,17 +3,18 @@ import { Option } from '@/components/ui/multi-select'
 import { useState, useEffect, useContext, useCallback } from 'react'
 import { fetchAllCategories } from './logic'
 import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetContext } from '@/components/context/AssetContext'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
 
 export const WorldObjectFilter = () => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [isCategoryFocused, setIsCategoryFocused] = useState(false)
 
-  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
-  const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
+  const { sortedAssetSummaries } = useAssetSummaryStore()
+  const { matchedAssetIds, categoryFilter, updateFilter } =
+    useContext(AssetFilterContext)
 
   const categoryValues: Option[] = categoryFilter.map((category) => ({
     value: category,
@@ -22,13 +23,13 @@ export const WorldObjectFilter = () => {
 
   const updateCategoriesAndTags = useCallback(async () => {
     if (!isCategoryFocused) {
-      setCategoryCandidates(await fetchAllCategories(filteredIds))
+      setCategoryCandidates(await fetchAllCategories(matchedAssetIds))
     }
-  }, [filteredIds, isCategoryFocused])
+  }, [matchedAssetIds, isCategoryFocused])
 
   useEffect(() => {
     updateCategoriesAndTags()
-  }, [assetDisplaySortedList, updateCategoriesAndTags])
+  }, [sortedAssetSummaries, updateCategoriesAndTags])
 
   return (
     <div className="mt-4 space-y-4">
@@ -38,7 +39,7 @@ export const WorldObjectFilter = () => {
         candidates={categoryCandidates}
         value={categoryValues}
         onValueChange={(values) =>
-          setCategoryFilter(values.map((v) => v.value))
+          updateFilter({ categoryFilter: values.map((v) => v.value) })
         }
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),

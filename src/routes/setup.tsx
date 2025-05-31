@@ -1,4 +1,4 @@
-import { SetupPage } from '@/components/page/Setup'
+import { SetupPage } from '@/page/Setup'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/setup')({

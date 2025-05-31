@@ -17,28 +17,22 @@ import { Route as PreferenceRoute } from '@/routes/preference'
 import { TextSearch } from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
 import { AllTypeFilter } from './layout/AllTypeFilter'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
+import { useContext } from 'react'
 import { useMainSidebar } from './hook'
 
 export const MainSidebar = () => {
+  const { tagCandidates, tagValues, tagSelectorInputProps } = useMainSidebar()
+
   const {
-    textSearchMode,
-    setTextSearchMode,
+    assetType,
+    queryTextMode,
     generalQueryTextFilter,
-    setGeneralQueryTextFilter,
-    queryTextFilterForName,
-    setQueryTextFilterForName,
     queryTextFilterForCreator,
-    setQueryTextFilterForCreator,
-
-    filteredAssetType,
-
-    tagCandidates,
-    tagValues,
-    setTagFilter,
+    queryTextFilterForName,
     tagFilterMatchType,
-    setTagFilterMatchType,
-    tagSelectorInputProps,
-  } = useMainSidebar()
+    updateFilter,
+  } = useContext(AssetFilterContext)
 
   const navigate = useNavigate()
   const { t } = useLocalization()
@@ -62,22 +56,34 @@ export const MainSidebar = () => {
           <SidebarGroup>
             <SidebarGroupContent className="p-2">
               <TextSearch
-                mode={textSearchMode}
-                setMode={setTextSearchMode}
+                mode={queryTextMode}
+                toggleMode={() => {
+                  updateFilter({
+                    queryTextMode:
+                      queryTextMode === 'general' ? 'advanced' : 'general',
+                    generalQueryTextFilter: '',
+                    queryTextFilterForName: '',
+                    queryTextFilterForCreator: '',
+                  })
+                }}
                 general={generalQueryTextFilter}
-                setGeneral={setGeneralQueryTextFilter}
+                setGeneral={(text) =>
+                  updateFilter({ generalQueryTextFilter: text })
+                }
                 name={queryTextFilterForName}
-                setName={setQueryTextFilterForName}
+                setName={(text) =>
+                  updateFilter({ queryTextFilterForName: text })
+                }
                 creator={queryTextFilterForCreator}
-                setCreator={setQueryTextFilterForCreator}
+                setCreator={(text) =>
+                  updateFilter({ queryTextFilterForCreator: text })
+                }
               />
               <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
-              {filteredAssetType === 'All' && <AllTypeFilter />}
-              {filteredAssetType === 'AvatarWearable' && (
-                <AvatarWearableFilter />
-              )}
-              {filteredAssetType === 'WorldObject' && <WorldObjectFilter />}
+              {assetType === 'All' && <AllTypeFilter />}
+              {assetType === 'AvatarWearable' && <AvatarWearableFilter />}
+              {assetType === 'WorldObject' && <WorldObjectFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
                   label={t('general:tag')}
@@ -85,10 +91,12 @@ export const MainSidebar = () => {
                   candidates={tagCandidates}
                   value={tagValues}
                   onValueChange={(values) =>
-                    setTagFilter(values.map((v) => v.value))
+                    updateFilter({ tagFilter: values.map((v) => v.value) })
                   }
                   matchType={tagFilterMatchType}
-                  setMatchType={setTagFilterMatchType}
+                  setMatchType={(matchType) =>
+                    updateFilter({ tagFilterMatchType: matchType })
+                  }
                   inputProps={tagSelectorInputProps}
                 />
               </div>

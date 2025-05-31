@@ -6,9 +6,9 @@ import {
   fetchAvatarWearableCategories,
 } from './logic'
 import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetContext } from '@/components/context/AssetContext'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
 
 export const AvatarWearableFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
@@ -20,15 +20,14 @@ export const AvatarWearableFilter = () => {
     useState(false)
   const { t } = useLocalization()
 
-  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
+  const { sortedAssetSummaries } = useAssetSummaryStore()
   const {
+    matchedAssetIds,
     categoryFilter,
-    setCategoryFilter,
     supportedAvatarFilter,
-    setSupportedAvatarFilter,
     supportedAvatarFilterMatchType,
-    setSupportedAvatarFilterMatchType,
-  } = useContext(PersistentContext)
+    updateFilter,
+  } = useContext(AssetFilterContext)
 
   const categoryValues: Option[] = categoryFilter.map((category) => ({
     value: category,
@@ -43,16 +42,20 @@ export const AvatarWearableFilter = () => {
 
   const updateCandidates = useCallback(async () => {
     if (!isCategoryFocused) {
-      setCategoryCandidates(await fetchAvatarWearableCategories(filteredIds))
+      setCategoryCandidates(
+        await fetchAvatarWearableCategories(matchedAssetIds),
+      )
     }
     if (!isSupportedAvatarFocused) {
-      setSupportedAvatarCandidates(await fetchAllSupportedAvatars(filteredIds))
+      setSupportedAvatarCandidates(
+        await fetchAllSupportedAvatars(matchedAssetIds),
+      )
     }
-  }, [filteredIds, isCategoryFocused, isSupportedAvatarFocused])
+  }, [matchedAssetIds, isCategoryFocused, isSupportedAvatarFocused])
 
   useEffect(() => {
     updateCandidates()
-  }, [assetDisplaySortedList, updateCandidates])
+  }, [sortedAssetSummaries, updateCandidates])
 
   return (
     <div className="mt-4 space-y-4">
@@ -62,7 +65,7 @@ export const AvatarWearableFilter = () => {
         candidates={categoryCandidates}
         value={categoryValues}
         onValueChange={(values) =>
-          setCategoryFilter(values.map((v) => v.value))
+          updateFilter({ categoryFilter: values.map((v) => v.value) })
         }
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
@@ -77,10 +80,14 @@ export const AvatarWearableFilter = () => {
         candidates={supportedAvatarCandidates}
         value={supportedAvatarValues}
         onValueChange={(values) =>
-          setSupportedAvatarFilter(values.map((v) => v.value))
+          updateFilter({
+            supportedAvatarFilter: values.map((v) => v.value),
+          })
         }
         matchType={supportedAvatarFilterMatchType}
-        setMatchType={setSupportedAvatarFilterMatchType}
+        setMatchType={(matchType) =>
+          updateFilter({ supportedAvatarFilterMatchType: matchType })
+        }
         inputProps={{
           onFocus: () => setIsSupportedAvatarFocused(true),
           onBlur: () => setIsSupportedAvatarFocused(false),

@@ -4,7 +4,7 @@ import { AdvancedTextSearch } from './components/AdvancedTextSearch'
 
 type Props = {
   mode: 'general' | 'advanced'
-  setMode: (mode: 'general' | 'advanced') => void
+  toggleMode: () => void
 
   general: string
   setGeneral: (general: string) => void
@@ -17,7 +17,7 @@ type Props = {
 
 export const TextSearch: FC<Props> = ({
   mode,
-  setMode,
+  toggleMode,
   general,
   setGeneral,
   name,
@@ -43,11 +43,7 @@ export const TextSearch: FC<Props> = ({
   if (mode === 'advanced') {
     return (
       <AdvancedTextSearch
-        onSwitchModeClicked={() => {
-          setMode('general')
-          setName('')
-          setCreator('')
-        }}
+        onSwitchModeClicked={toggleMode}
         name={name}
         setName={setName}
         creator={creator}
@@ -60,10 +56,7 @@ export const TextSearch: FC<Props> = ({
   //  mode === 'general' のとき
   return (
     <GeneralTextSearch
-      onSwitchModeClicked={() => {
-        setMode('advanced')
-        setGeneral('')
-      }}
+      onSwitchModeClicked={toggleMode}
       general={general}
       setGeneral={setGeneral}
       ref={inputRef}

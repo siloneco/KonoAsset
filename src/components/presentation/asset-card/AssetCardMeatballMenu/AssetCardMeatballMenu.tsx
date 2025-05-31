@@ -94,7 +94,7 @@ export const AssetCardMeatballMenu: FC<Props> = ({
           deleteAsset={deleteAsset}
         >
           <DropdownMenuItem
-            className="font-bold text-destructive focus:text-destructive"
+            className="font-bold text-red-600 focus:text-red-600 dark:text-red-700 dark:focus:text-red-700"
             onSelect={(e) => e.preventDefault()}
           >
             <Trash2 size={16} className="text-card-foreground/40" />

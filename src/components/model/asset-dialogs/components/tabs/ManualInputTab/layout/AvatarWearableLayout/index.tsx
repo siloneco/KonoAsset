@@ -54,7 +54,7 @@ export const AvatarWearableLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags(null)
+    const result = await commands.getAssetTags('AvatarWearable', null)
 
     if (result.status === 'error') {
       console.error(result.error)

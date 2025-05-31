@@ -6,6 +6,7 @@ import { useAssetView } from './hook'
 import { AssetCardSize } from '@/components/context/PersistentContext'
 import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetSummary } from '@/lib/bindings'
+import { cn } from '@/lib/utils'
 
 type Props = {
   sortedAndFilteredAssetSummaries: AssetSummary[]
@@ -31,27 +32,44 @@ export const AssetView: FC<Props> = ({
   })
 
   return (
-    <ScrollArea className="h-full" ref={layoutDivRef}>
+    <>
       {sortedAndFilteredAssetSummaries.length === 0 && (
-        <AssetViewBackground
-          type={noAssetRegistered ? 'NoAssets' : 'NoResults'}
-          {...props}
-        />
+        <>
+          <AssetViewBackground
+            type={noAssetRegistered ? 'NoAssets' : 'NoResults'}
+            {...props}
+          />
+          <div className="h-24" />
+        </>
       )}
-      {layout === 'Grid' && (
-        <AssetViewGridLayout
-          sortedAssetSummaries={sortedAndFilteredAssetSummaries}
-          columnCount={gridColumnCount}
-          displaySize={assetCardSize === 'List' ? 'Medium' : assetCardSize}
-          {...props}
+      <ScrollArea
+        className={cn(
+          'h-full flex justify-center items-center',
+          sortedAndFilteredAssetSummaries.length === 0 && 'h-0 overflow-hidden',
+        )}
+        ref={layoutDivRef}
+      >
+        {layout === 'Grid' && (
+          <AssetViewGridLayout
+            sortedAssetSummaries={sortedAndFilteredAssetSummaries}
+            columnCount={gridColumnCount}
+            displaySize={assetCardSize === 'List' ? 'Medium' : assetCardSize}
+            {...props}
+          />
+        )}
+        {layout === 'List' && (
+          <AssetViewListLayout
+            sortedAssetSummaries={sortedAndFilteredAssetSummaries}
+            {...props}
+          />
+        )}
+        <div
+          className={cn(
+            'h-24',
+            sortedAndFilteredAssetSummaries.length === 0 && 'hidden',
+          )}
         />
-      )}
-      {layout === 'List' && (
-        <AssetViewListLayout
-          sortedAssetSummaries={sortedAndFilteredAssetSummaries}
-          {...props}
-        />
-      )}
-    </ScrollArea>
+      </ScrollArea>
+    </>
   )
 }

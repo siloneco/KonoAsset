@@ -148,8 +148,8 @@ const MockComponent: FC<ComponentProps<typeof AssetFormForAdd>> = (props) => {
 
   const propsOpenFileOrDirSelector = props.openFileOrDirSelector
   const openFileOrDirSelector = useCallback(
-    async (args: { type: 'file' | 'directory' }) => {
-      propsOpenFileOrDirSelector(args)
+    async (type: 'file' | 'directory') => {
+      propsOpenFileOrDirSelector(type)
       return Promise.resolve(['test.png'])
     },
     [propsOpenFileOrDirSelector],

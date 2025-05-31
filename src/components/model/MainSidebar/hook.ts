@@ -1,27 +1,12 @@
-import { AssetContext } from '@/components/context/AssetContext'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { Option } from '@/components/ui/multi-select'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { fetchAllTags } from './logic'
-import { AssetType, MatchType } from '@/lib/bindings'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
 
 type ReturnProps = {
-  textSearchMode: 'general' | 'advanced'
-  setTextSearchMode: (mode: 'general' | 'advanced') => void
-  generalQueryTextFilter: string
-  setGeneralQueryTextFilter: (filter: string) => void
-  queryTextFilterForName: string
-  setQueryTextFilterForName: (filter: string) => void
-  queryTextFilterForCreator: string
-  setQueryTextFilterForCreator: (filter: string) => void
-
-  filteredAssetType: AssetType | 'All'
-
   tagCandidates: Option[]
   tagValues: Option[]
-  setTagFilter: (filter: string[]) => void
-  tagFilterMatchType: MatchType
-  setTagFilterMatchType: (matchType: MatchType) => void
   tagSelectorInputProps: {
     onFocus: () => void
     onBlur: () => void
@@ -29,25 +14,12 @@ type ReturnProps = {
 }
 
 export const useMainSidebar = (): ReturnProps => {
-  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
-  const {
-    assetType,
-    queryTextMode,
-    setQueryTextMode,
-    generalQueryTextFilter,
-    setGeneralQueryTextFilter,
-    queryTextFilterForName,
-    setQueryTextFilterForName,
-    queryTextFilterForCreator,
-    setQueryTextFilterForCreator,
-    tagFilter,
-    setTagFilter,
-    tagFilterMatchType,
-    setTagFilterMatchType,
-  } = useContext(PersistentContext)
+  const { sortedAssetSummaries } = useAssetSummaryStore()
 
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
   const [tagSelectorFocused, setTagSelectorFocused] = useState(false)
+
+  const { matchedAssetIds, tagFilter } = useContext(AssetFilterContext)
 
   const tagValues: Option[] = tagFilter.map((tag) => ({
     value: tag,
@@ -55,32 +27,18 @@ export const useMainSidebar = (): ReturnProps => {
   }))
 
   const updateTagCandidates = useCallback(async () => {
-    setTagCandidates(await fetchAllTags(filteredIds))
-  }, [filteredIds])
+    setTagCandidates(await fetchAllTags(matchedAssetIds))
+  }, [matchedAssetIds])
 
   useEffect(() => {
     if (!tagSelectorFocused) {
       updateTagCandidates()
     }
-  }, [assetDisplaySortedList, tagSelectorFocused, updateTagCandidates])
+  }, [sortedAssetSummaries, tagSelectorFocused, updateTagCandidates])
 
   return {
-    textSearchMode: queryTextMode,
-    setTextSearchMode: setQueryTextMode,
-    generalQueryTextFilter,
-    setGeneralQueryTextFilter,
-    queryTextFilterForName,
-    setQueryTextFilterForName,
-    queryTextFilterForCreator,
-    setQueryTextFilterForCreator,
-
-    filteredAssetType: assetType,
-
     tagCandidates,
     tagValues,
-    setTagFilter,
-    tagFilterMatchType,
-    setTagFilterMatchType,
 
     tagSelectorInputProps: {
       onFocus: () => setTagSelectorFocused(true),

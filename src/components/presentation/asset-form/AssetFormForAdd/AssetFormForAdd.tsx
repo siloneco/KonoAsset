@@ -1,7 +1,7 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { AssetFormForAddDialogTabs, useAssetFormForAdd } from './hook'
 import { useLocalization } from '@/hooks/use-localization'
-import { FC, ReactNode } from 'react'
+import { ComponentProps, FC, ReactNode } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -78,11 +78,9 @@ type Props = {
   }
   assetSummaries: AssetSummary[]
   assetSubmissionData: AssetSubmissionData
-  openFileOrDirSelector: ({
-    type,
-  }: {
-    type: 'file' | 'directory'
-  }) => Promise<string[] | null>
+  openFileOrDirSelector: (
+    type: 'file' | 'directory',
+  ) => Promise<string[] | null>
   fetchBoothInformation: (
     boothItemId: number,
   ) => Promise<Result<BoothAssetInfo, string>>
@@ -110,14 +108,14 @@ type Props = {
 export const AssetFormForAdd: FC<Props> = ({
   dialogOpen,
   setDialogOpen,
-  assetSummaries,
   preference,
+  assetSummaries,
   assetSubmissionData,
   openFileOrDirSelector,
   fetchBoothInformation,
   getAssetSummariesByBoothId,
-  resolveImageAbsolutePath,
   downloadImageFromUrl,
+  resolveImageAbsolutePath,
   openAssetManagedDir,
   openEditAssetDialog,
   openDirEditDialog,
@@ -156,7 +154,7 @@ export const AssetFormForAdd: FC<Props> = ({
       tab={tab}
       setTab={setTab}
     >
-      <TabsContent value="item-selector">
+      <TabsContentWrapper value="item-selector" className={cn('grid gap-4')}>
         <AssetFormItemSelectTab
           tabIndex={{
             current: 1,
@@ -168,8 +166,8 @@ export const AssetFormForAdd: FC<Props> = ({
           setItems={assetSubmissionData.items.setValue}
           TanstackRouterLinkComponent={TanstackRouterLinkComponent}
         />
-      </TabsContent>
-      <TabsContent value="booth-input">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="booth-input">
         <AssetFormBoothInputTab
           type="add"
           tabIndex={{
@@ -183,8 +181,8 @@ export const AssetFormForAdd: FC<Props> = ({
           nextTab={() => setTab('type-selector')}
           previousTab={() => setTab('item-selector')}
         />
-      </TabsContent>
-      <TabsContent value="duplicate-warning">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="duplicate-warning">
         <AssetFormDuplicateWarningTab
           tabIndex={{
             current: 2.5,
@@ -198,8 +196,8 @@ export const AssetFormForAdd: FC<Props> = ({
           nextTab={() => setTab('type-selector')}
           previousTab={() => setTab('booth-input')}
         />
-      </TabsContent>
-      <TabsContent value="type-selector">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="type-selector">
         <AssetFormTypeSelectTab
           tabIndex={{
             current: 3,
@@ -210,8 +208,8 @@ export const AssetFormForAdd: FC<Props> = ({
           nextTab={() => setTab('first-input')}
           previousTab={() => setTab('booth-input')}
         />
-      </TabsContent>
-      <TabsContent value="first-input">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="first-input">
         <AssetFormFirstInputTab
           tabIndex={{
             current: 4,
@@ -227,8 +225,8 @@ export const AssetFormForAdd: FC<Props> = ({
           nextTab={() => setTab('second-input')}
           previousTab={() => setTab('type-selector')}
         />
-      </TabsContent>
-      <TabsContent value="second-input">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="second-input">
         <AssetFormSecondInputTab
           type="add"
           tabIndex={{
@@ -248,16 +246,16 @@ export const AssetFormForAdd: FC<Props> = ({
           submitInProgress={submitProgress !== undefined}
           previousTab={() => setTab('first-input')}
         />
-      </TabsContent>
-      <TabsContent value="path-confirmation">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="path-confirmation">
         <AssetFormPathConfirmationTab
           existingPaths={existentPaths}
           nonExistingPaths={nonExistentPaths}
           submit={submit}
           previousTab={() => setTab('second-input')}
         />
-      </TabsContent>
-      <TabsContent value="progress">
+      </TabsContentWrapper>
+      <TabsContentWrapper value="progress">
         <TaskProgressDialogContent
           title={t('addasset:progress-bar')}
           description=""
@@ -265,7 +263,7 @@ export const AssetFormForAdd: FC<Props> = ({
           progress={submitProgress?.progress ?? 0}
           cancel={submitProgress?.cancel ?? (async () => {})}
         />
-      </TabsContent>
+      </TabsContentWrapper>
     </DialogWrapper>
   )
 }
@@ -307,5 +305,11 @@ const DialogWrapper: FC<DialogWrapperProps> = ({
         </Tabs>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const TabsContentWrapper: FC<ComponentProps<typeof TabsContent>> = (props) => {
+  return (
+    <TabsContent {...props} className={cn('grid gap-4', props.className)} />
   )
 }

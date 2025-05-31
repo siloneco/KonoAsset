@@ -1,24 +1,22 @@
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { Card } from '@/components/ui/card'
-
-import { useContext } from 'react'
-
-import { AssetContext } from '@/components/context/AssetContext'
+import { FC, useContext } from 'react'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
 import { LayoutPopover } from './components/LayoutPopover'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { DEFAULT_CRITERIA } from '@/components/functional/AssetFilterContext/AssetFilterContext.constants'
 
-type Props = {
-  displayAssetCount?: number
-}
-
-export const NavBar = ({ displayAssetCount }: Props) => {
-  const { clearFilters } = useContext(PersistentContext)
-  const { assetDisplaySortedList } = useContext(AssetContext)
+export const NavBar: FC = () => {
+  const { updateFilter } = useContext(AssetFilterContext)
+  const { sortedAssetSummaries } = useAssetSummaryStore()
+  const { matchedAssetIds } = useContext(AssetFilterContext)
 
   const { t } = useLocalization()
-  const totalAssetCount = assetDisplaySortedList.length
-  const showingCount = displayAssetCount ?? totalAssetCount
+
+  const totalAssetCount = sortedAssetSummaries.length
+  const showingCount =
+    matchedAssetIds !== null ? matchedAssetIds.length : totalAssetCount
 
   return (
     <div className="p-4">
@@ -45,7 +43,7 @@ export const NavBar = ({ displayAssetCount }: Props) => {
                 <Button
                   className="h-8"
                   variant="secondary"
-                  onClick={clearFilters}
+                  onClick={() => updateFilter(DEFAULT_CRITERIA)}
                 >
                   {t('general:clear-filter')}
                 </Button>

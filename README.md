@@ -1,5 +1,9 @@
 # KonoAsset
 
+> [!IMPORTANT]
+> このブランチはリファクタリングに失敗したので放棄されました  
+> develop ブランチでリファクタリングが完了し次第削除されます
+
 ![GitHub deployments](https://img.shields.io/github/deployments/siloneco/KonoAsset/release?style=flat)
 ![GitHub Release](https://img.shields.io/github/v/release/siloneco/KonoAsset?label=Stable)
 ![GitHub Release](https://img.shields.io/github/v/release/siloneco/KonoAsset?include_prereleases&label=Pre-Release)

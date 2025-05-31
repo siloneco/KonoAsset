@@ -15,7 +15,7 @@ export const AvatarLayout = ({ form }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags(null)
+    const result = await commands.getAssetTags('Avatar', null)
 
     if (result.status === 'error') {
       console.error(result.error)

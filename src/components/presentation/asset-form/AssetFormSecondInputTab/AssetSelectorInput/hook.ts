@@ -73,8 +73,6 @@ export const useAssetSelectorInput = ({
 
   const onBlur = useCallback(
     (e: React.FocusEvent<HTMLDivElement, Element>) => {
-      console.log(e.currentTarget)
-      console.log(e.relatedTarget)
       if (!e.currentTarget.contains(e.relatedTarget as Node)) {
         setOpen(false)
       }

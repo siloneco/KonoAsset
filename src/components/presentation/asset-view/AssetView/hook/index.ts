@@ -15,11 +15,11 @@ type ReturnProps = {
 
 export const useAssetView = ({ assetCardSize }: Props): ReturnProps => {
   const [gridColumnCount, setGridColumnCount] = useState(1)
-  const layoutDivRef = useRef<HTMLDivElement>(null)
 
+  const layoutDivRef = useRef<HTMLDivElement>(null)
   const { getElementProperty } = useGetElementProperty(layoutDivRef)
 
-  const updateColumns = useCallback(() => {
+  const updateGridColumnCount = useCallback(() => {
     setGridColumnCount(
       assetCardSize !== 'List'
         ? calculateColumnCount(getElementProperty('width'), assetCardSize)
@@ -28,11 +28,11 @@ export const useAssetView = ({ assetCardSize }: Props): ReturnProps => {
   }, [assetCardSize, getElementProperty])
 
   useEffect(() => {
-    updateColumns()
+    updateGridColumnCount()
 
-    window.addEventListener('resize', updateColumns)
-    return () => window.removeEventListener('resize', updateColumns)
-  }, [assetCardSize, updateColumns])
+    window.addEventListener('resize', updateGridColumnCount)
+    return () => window.removeEventListener('resize', updateGridColumnCount)
+  }, [updateGridColumnCount])
 
   return {
     layoutDivRef,

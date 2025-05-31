@@ -1,10 +1,17 @@
-import { AssetContext } from '@/components/context/AssetContext'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { AssetFilterContext } from '@/components/functional/AssetFilterContext/AssetFilterContext'
 import { AssetView } from '@/components/presentation/asset-view/AssetView'
 import { AssetType, commands } from '@/lib/bindings'
-import { ComponentProps, useCallback, useContext, useMemo } from 'react'
+import {
+  ComponentProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react'
+import { resolveImageAbsolutePath } from '../logic'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
 
 type ReturnProps = Pick<
   ComponentProps<typeof AssetView>,
@@ -22,21 +29,32 @@ type ReturnProps = Pick<
 >
 
 export const useAssetViewContainer = (): ReturnProps => {
-  const { assetDisplaySortedList, deleteAssetById } = useContext(AssetContext)
+  const {
+    sortedAssetSummaries,
+    deleteAssetSummaryFromFrontend,
+    refreshAssetSummaries,
+  } = useAssetSummaryStore()
   const { matchedAssetIds, updateFilter, clearFilters } =
     useContext(AssetFilterContext)
   const { assetCardSize } = useContext(PersistentContext)
   const { preference } = useContext(PreferenceContext)
+  const { sortBy, reverseOrder } = useContext(PersistentContext)
+
+  useEffect(() => {
+    refreshAssetSummaries(sortBy)
+  }, [refreshAssetSummaries, sortBy])
 
   const sortedAndFilteredAssetSummaries = useMemo(() => {
-    if (matchedAssetIds === null) {
-      return assetDisplaySortedList
+    const result = sortedAssetSummaries.filter(
+      (asset) => matchedAssetIds === null || matchedAssetIds.includes(asset.id),
+    )
+
+    if (!reverseOrder) {
+      return result
     } else {
-      return assetDisplaySortedList.filter((asset) =>
-        matchedAssetIds.includes(asset.id),
-      )
+      return result.reverse()
     }
-  }, [assetDisplaySortedList, matchedAssetIds])
+  }, [sortedAssetSummaries, matchedAssetIds, reverseOrder])
 
   const onOpenManagedDirButtonClick = useCallback(async (assetId: string) => {
     const result = await commands.openManagedDir(assetId)
@@ -55,9 +73,9 @@ export const useAssetViewContainer = (): ReturnProps => {
         return
       }
 
-      deleteAssetById(assetId)
+      deleteAssetSummaryFromFrontend(assetId)
     },
-    [deleteAssetById],
+    [deleteAssetSummaryFromFrontend],
   )
 
   const setFilterAssetType = useCallback(
@@ -82,7 +100,7 @@ export const useAssetViewContainer = (): ReturnProps => {
   return {
     sortedAndFilteredAssetSummaries,
     assetCardSize,
-    noAssetRegistered: assetDisplaySortedList.length === 0,
+    noAssetRegistered: sortedAssetSummaries.length === 0,
     clearAssetFilters: clearFilters,
     language: preference.language,
     onOpenManagedDirButtonClick,
@@ -90,6 +108,6 @@ export const useAssetViewContainer = (): ReturnProps => {
     deleteAsset,
     setFilterAssetType,
     setCreatorNameFilter,
-    resolveImageAbsolutePath: commands.getImageAbsolutePath,
+    resolveImageAbsolutePath,
   }
 }

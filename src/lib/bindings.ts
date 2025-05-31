@@ -153,9 +153,9 @@ async getVolumeStatisticsCache() : Promise<Result<AssetVolumeStatistics[] | null
     else return { status: "error", error: e  as any };
 }
 },
-async getAllAssetTags(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
+async getAssetTags(assetType: AssetType | null, allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("get_all_asset_tags", { allowedIds }) };
+    return { status: "ok", data: await TAURI_INVOKE("get_asset_tags", { assetType, allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

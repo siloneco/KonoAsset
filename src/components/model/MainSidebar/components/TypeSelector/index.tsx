@@ -2,12 +2,12 @@ import { RadioGroup } from '@/components/ui/radio-group'
 import { useContext } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { TypeSelectorRadioItem } from './components/RadioItem'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import { AssetFilterContext } from '@/components/functional/AssetFilterContext'
 
 export const TypeSelector = () => {
-  const { assetType, setAssetType } = useContext(PersistentContext)
+  const { assetType, updateFilter } = useContext(AssetFilterContext)
 
   const { t } = useLocalization()
   const onValueChange = (value: string) => {
@@ -17,9 +17,9 @@ export const TypeSelector = () => {
       value === 'AvatarWearable' ||
       value === 'WorldObject'
     ) {
-      setAssetType(value)
+      updateFilter({ assetType: value as AssetType })
     } else {
-      setAssetType('All')
+      updateFilter({ assetType: 'All' })
     }
   }
 

@@ -1,4 +1,3 @@
-import { AssetContext } from '@/components/context/AssetContext'
 import {
   DragDropContext,
   DragDropRegisterConfig,
@@ -23,6 +22,8 @@ import { AddAssetDialogContextType } from '..'
 import { createPreAsset, sendAssetImportRequest } from '../logic'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 type Props = {
   dialogOpen: boolean
@@ -69,9 +70,10 @@ export const useAddAssetDialog = ({
   const { toast } = useToast()
   const { t } = useLocalization()
 
-  const { refreshAssets } = useContext(AssetContext)
+  const { refreshAssetSummaries } = useAssetSummaryStore()
   const { register } = useContext(DragDropContext)
   const { preference } = useContext(PreferenceContext)
+  const { sortBy } = useContext(PersistentContext)
 
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
@@ -221,7 +223,7 @@ export const useAddAssetDialog = ({
 
     setTab('empty')
     setDialogOpen(false)
-    refreshAssets()
+    refreshAssetSummaries(sortBy)
   }
 
   const onTaskCancelled = () => {

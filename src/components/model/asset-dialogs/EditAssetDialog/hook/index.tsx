@@ -6,8 +6,9 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { fetchAssetInformation, updateAsset } from '../logic'
 import { useToast } from '@/hooks/use-toast'
-import { AssetContext } from '@/components/context/AssetContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetSummaryStore } from '@/stores/AssetSummaryStore'
+import { PersistentContext } from '@/components/context/PersistentContext'
 
 const setDescriptionToForm = (
   form: AssetFormType,
@@ -50,7 +51,8 @@ export const useEditAssetDialog = ({
   const [loadingAssetData, setLoadingAssetData] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
-  const { refreshAssets } = useContext(AssetContext)
+  const { refreshAssetSummaries } = useAssetSummaryStore()
+  const { sortBy } = useContext(PersistentContext)
 
   const { t } = useLocalization()
   const { toast } = useToast()
@@ -187,7 +189,7 @@ export const useEditAssetDialog = ({
 
       if (result.status === 'ok') {
         if (result.data === true) {
-          await refreshAssets()
+          await refreshAssetSummaries(sortBy)
 
           setDialogOpen(false)
           toast({

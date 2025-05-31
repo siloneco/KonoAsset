@@ -20,11 +20,9 @@ type Props = {
     total: number
   }
   zipExtraction: boolean
-  openFileOrDirSelector: ({
-    type,
-  }: {
-    type: 'file' | 'directory'
-  }) => Promise<string[] | null>
+  openFileOrDirSelector: (
+    type: 'file' | 'directory',
+  ) => Promise<string[] | null>
   setItems: (items: string[]) => void
   nextTab: () => void
   TanstackRouterLinkComponent?: FC<{ children: ReactNode; className?: string }>

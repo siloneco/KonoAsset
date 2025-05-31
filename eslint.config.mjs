@@ -77,7 +77,10 @@ export default tseslint.config(
           zones: [
             {
               from: `./src/components/model/**/*`,
-              target: `./src/components/!(model|page|context)/**/*`,
+              target: [
+                `./src/components/!(model|context)/**/*`,
+                // `./src/page/**/*`,
+              ],
             },
             {
               target: ['./src/components/!(presentation|container)/**/*'],

@@ -1,11 +1,9 @@
 import { useCallback } from 'react'
 
 type Props = {
-  openFileOrDirSelector: ({
-    type,
-  }: {
-    type: 'file' | 'directory'
-  }) => Promise<string[] | null>
+  openFileOrDirSelector: (
+    type: 'file' | 'directory',
+  ) => Promise<string[] | null>
   setItems: (items: string[]) => void
   nextTab: () => void
 }
@@ -22,7 +20,7 @@ export const useAssetFormItemSelectTab = ({
 }: Props): ReturnProps => {
   const onTriggered = useCallback(
     async (type: 'file' | 'directory') => {
-      const items = await openFileOrDirSelector({ type })
+      const items = await openFileOrDirSelector(type)
       if (items) {
         setItems(items)
         nextTab()
