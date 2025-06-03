@@ -58,6 +58,10 @@ export const MemoDialog: FC<Props> = ({
         const world = result.data.worldObject!
         setName(world.description.name ?? '')
         setMemo(world.description.memo ?? '')
+      } else if (result.data.assetType === 'OtherAsset') {
+        const other = result.data.otherAsset!
+        setName(other.description.name ?? '')
+        setMemo(other.description.memo ?? '')
       }
     } finally {
       setLoading(false)

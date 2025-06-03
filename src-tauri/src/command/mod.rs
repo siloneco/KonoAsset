@@ -19,10 +19,12 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::create::request_avatar_import,
         asset::create::request_avatar_wearable_import,
         asset::create::request_world_object_import,
+        asset::create::request_other_asset_import,
         asset::delete::request_asset_deletion,
         asset::update::update_avatar,
         asset::update::update_avatar_wearable,
         asset::update::update_world_object,
+        asset::update::update_other_asset,
         asset::filter::get_filtered_asset_ids,
         asset::status::get_load_status,
         asset::adapter::import_from_other_data_store,
@@ -34,10 +36,10 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::statistics::get_volume_statistics_cache,
         // サジェストの取得関連
         suggest::get::get_all_asset_tags,
-        suggest::get::get_all_supported_avatar_values,
         suggest::get::get_avatar_wearable_categories,
         suggest::get::get_avatar_wearable_supported_avatars,
         suggest::get::get_world_object_categories,
+        suggest::get::get_other_asset_categories,
         // 外部API関連
         external::booth::get_asset_info_from_booth, // BOOTHからアセット情報を取得する
         external::booth::resolve_pximg_filename,

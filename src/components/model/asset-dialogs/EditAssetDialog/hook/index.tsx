@@ -58,12 +58,14 @@ export const useEditAssetDialog = ({
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
   const assetTypeWorldObject: AssetType = 'WorldObject'
+  const assetTypeOtherAsset: AssetType = 'OtherAsset'
 
   const formSchema = z.object({
     assetType: z.union([
       z.literal(assetTypeAvatar),
       z.literal(assetTypeAvatarWearable),
       z.literal(assetTypeWorldObject),
+      z.literal(assetTypeOtherAsset),
     ]),
     name: z.string().min(1),
     creator: z.string().min(1),
@@ -154,6 +156,12 @@ export const useEditAssetDialog = ({
         form.setValue('assetType', 'WorldObject')
         form.setValue('category', worldObject.category)
         setDescriptionToForm(form, worldObject.description)
+      } else if (data.assetType === 'OtherAsset') {
+        const otherAsset = data.otherAsset!
+
+        form.setValue('assetType', 'OtherAsset')
+        form.setValue('category', otherAsset.category)
+        setDescriptionToForm(form, otherAsset.description)
       } else {
         toast({
           title: t('addasset:get:error-toast'),

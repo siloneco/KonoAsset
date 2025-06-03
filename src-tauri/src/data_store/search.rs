@@ -167,6 +167,53 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             });
     }
 
+    if req.asset_type.is_none() || req.asset_type.as_ref().unwrap() == &AssetType::OtherAsset {
+        store
+            .get_other_asset_store()
+            .get_all()
+            .await
+            .iter()
+            .for_each(|asset| {
+                // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ
+                if req.supported_avatars.is_some() {
+                    return;
+                }
+                // 文字検索が指定されている場合は、含まれているかを確認
+                if let Some(text_filters) = &text_filters {
+                    if !check_text_contains(&asset.description, text_filters) {
+                        return;
+                    }
+                }
+                // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
+                if let Some(categories) = &req.categories {
+                    if !categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+                // タグが指定されている場合は、そのタグが全て設定されているかを確認
+                if let Some(tags) = &req.tags {
+                    let mut iter = tags.iter();
+
+                    if req.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
+                    } else if req.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(&tag)) {
+                            return;
+                        }
+                    }
+                }
+
+                results.push(asset.get_id());
+            });
+    }
+
     results
 }
 

@@ -28,6 +28,8 @@
   --avatar-wearable-foreground: hsl(240 10% 3.9%);
   --world-object: hsl(196 100% 50%);
   --world-object-foreground: hsl(240 10% 3.9%);
+  --other-asset: hsl(0, 0%, 87%);
+  --other-asset-foreground: hsl(240 5.9% 10%);
 
   --border: hsl(240 5.9% 90%);
   --input: hsl(240 5.9% 90%);
@@ -72,6 +74,8 @@
   --avatar-wearable-foreground: hsl(0 0% 95%);
   --world-object: hsl(202 100% 41%);
   --world-object-foreground: hsl(0 0% 95%);
+  --other-asset: hsl(0, 0%, 33%);
+  --other-asset-foreground: hsl(0, 0%, 100%);
 
   --border: hsl(240 3.7% 15.9%);
   --input: hsl(240 3.7% 15.9%);
@@ -136,6 +140,8 @@
   --color-avatar-wearable-foreground: var(--avatar-wearable-foreground);
   --color-world-object: var(--world-object);
   --color-world-object-foreground: var(--world-object-foreground);
+  --color-other-asset: var(--other-asset);
+  --color-other-asset-foreground: var(--other-asset-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);

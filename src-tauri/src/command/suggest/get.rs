@@ -90,27 +90,8 @@ pub async fn get_all_asset_tags(
             });
         });
 
-    Ok(tags
-        .iter()
-        .map(|(key, value)| PrioritizedEntry {
-            priority: *value,
-            value: key.clone(),
-        })
-        .collect())
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn get_all_supported_avatar_values(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
-    allowed_ids: Option<Vec<Uuid>>,
-) -> Result<Vec<PrioritizedEntry>, String> {
-    let mut values: HashMap<String, u32> = HashMap::new();
-
     basic_store
-        .lock()
-        .await
-        .get_avatar_wearable_store()
+        .get_other_asset_store()
         .get_all()
         .await
         .iter()
@@ -121,8 +102,8 @@ pub async fn get_all_supported_avatar_values(
                 true
             };
 
-            asset.supported_avatars.iter().for_each(|val| {
-                let count = values.entry(val.clone()).or_insert(0);
+            asset.description.tags.iter().for_each(|tag| {
+                let count = tags.entry(tag.clone()).or_insert(0);
 
                 if !allowed {
                     return;
@@ -132,7 +113,7 @@ pub async fn get_all_supported_avatar_values(
             });
         });
 
-    Ok(values
+    Ok(tags
         .iter()
         .map(|(key, value)| PrioritizedEntry {
             priority: *value,
@@ -199,6 +180,52 @@ pub async fn get_world_object_categories(
         .lock()
         .await
         .get_world_object_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            let val = asset.category.clone();
+            let val = val.trim();
+            if val.is_empty() {
+                return;
+            }
+
+            let count = categories.entry(val.to_string()).or_insert(0);
+
+            if !allowed {
+                return;
+            }
+
+            *count += 1;
+        });
+
+    Ok(categories
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_other_asset_categories(
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let mut categories: HashMap<String, u32> = HashMap::new();
+
+    basic_store
+        .lock()
+        .await
+        .get_other_asset_store()
         .get_all()
         .await
         .iter()

@@ -14,6 +14,7 @@ import { AvatarLayout } from './layout/AvatarLayout'
 import { AvatarWearableLayout } from './layout/AvatarWearableLayout'
 import { WorldObjectLayout } from './layout/WorldObjectLayout'
 import { useLocalization } from '@/hooks/use-localization'
+import { OtherAssetLayout } from './layout/OtherAssetLayout'
 
 type Props = {
   form: AssetFormType
@@ -91,6 +92,7 @@ export const ManualInputTab = ({
         {assetType === 'Avatar' && <AvatarLayout form={form} />}
         {assetType === 'AvatarWearable' && <AvatarWearableLayout form={form} />}
         {assetType === 'WorldObject' && <WorldObjectLayout form={form} />}
+        {assetType === 'OtherAsset' && <OtherAssetLayout form={form} />}
 
         <div className="w-full flex justify-between">
           <Button variant="outline" onClick={onBackToPreviousTabClicked}>

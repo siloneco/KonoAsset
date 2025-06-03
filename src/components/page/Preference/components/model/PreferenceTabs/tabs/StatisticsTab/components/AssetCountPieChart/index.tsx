@@ -20,12 +20,14 @@ type Props = {
   avatars: number
   avatarWearables: number
   worldObjects: number
+  otherAssets: number
 }
 
 export const AssetCountPieChart: React.FC<Props> = ({
   avatars,
   avatarWearables,
   worldObjects,
+  otherAssets,
 }) => {
   const { t } = useLocalization()
 
@@ -45,6 +47,10 @@ export const AssetCountPieChart: React.FC<Props> = ({
       label: t('general:typeworldobject-multiple'),
       color: 'var(--world-object)',
     },
+    otherAssets: {
+      label: t('general:typeotherasset-multiple'),
+      color: 'var(--other-asset)',
+    },
   } satisfies ChartConfig
 
   const chartData = [
@@ -58,6 +64,11 @@ export const AssetCountPieChart: React.FC<Props> = ({
       type: 'worldObjects',
       count: worldObjects,
       fill: 'var(--color-world-object)',
+    },
+    {
+      type: 'otherAssets',
+      count: otherAssets,
+      fill: 'var(--color-other-asset)',
     },
   ]
 
@@ -76,7 +87,7 @@ export const AssetCountPieChart: React.FC<Props> = ({
       <CardContent className="flex-1 pb-0 px-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square max-h-[400px]"
         >
           <PieChart>
             <ChartTooltip
@@ -87,7 +98,7 @@ export const AssetCountPieChart: React.FC<Props> = ({
               data={chartData}
               dataKey="count"
               nameKey="type"
-              innerRadius={60}
+              innerRadius={80}
               strokeWidth={5}
               startAngle={-270}
             >

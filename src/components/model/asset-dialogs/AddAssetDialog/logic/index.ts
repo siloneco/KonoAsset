@@ -5,6 +5,7 @@ import {
   commands,
   PreAvatar,
   PreAvatarWearable,
+  PreOtherAsset,
   PreWorldObject,
   Result,
 } from '@/lib/bindings'
@@ -22,7 +23,7 @@ export const createPreAsset = ({
   category,
   supportedAvatars,
 }: CreatePreAssetProps): Result<
-  PreAvatar | PreAvatarWearable | PreWorldObject,
+  PreAvatar | PreAvatarWearable | PreWorldObject | PreOtherAsset,
   string
 > => {
   if (assetType === 'Avatar') {
@@ -41,6 +42,13 @@ export const createPreAsset = ({
     return { status: 'ok', data: preAsset }
   } else if (assetType === 'WorldObject') {
     const preAsset: PreWorldObject = {
+      description,
+      category: category!,
+    }
+
+    return { status: 'ok', data: preAsset }
+  } else if (assetType === 'OtherAsset') {
+    const preAsset: PreOtherAsset = {
       description,
       category: category!,
     }
@@ -81,6 +89,14 @@ export const sendAssetImportRequest = async (
     }
 
     return await commands.requestWorldObjectImport(request)
+  } else if (assetType === 'OtherAsset') {
+    const request: AssetImportRequest<PreOtherAsset> = {
+      preAsset: preAsset as PreOtherAsset,
+      absolutePaths: assetPaths,
+      deleteSource,
+    }
+
+    return await commands.requestOtherAssetImport(request)
   } else {
     return { status: 'error', error: `Unsupported asset type: ${assetType}` }
   }

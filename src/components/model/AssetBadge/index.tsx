@@ -44,6 +44,17 @@ export const AssetBadge = ({ type, className, onClick }: Props) => {
       </Badge>
     )
   }
+  if (type === 'OtherAsset') {
+    return (
+      <Badge
+        variant="otherAsset"
+        className={cn('block truncate', className)}
+        onClick={onClick}
+      >
+        {t('general:typeotherasset')}
+      </Badge>
+    )
+  }
 
   return (
     <Badge

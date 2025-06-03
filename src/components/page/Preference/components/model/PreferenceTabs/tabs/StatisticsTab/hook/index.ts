@@ -17,6 +17,7 @@ type ReturnProps = {
   avatars: number
   avatarWearables: number
   worldObjects: number
+  otherAssets: number
 }
 
 export const useStatisticsTab = (): ReturnProps => {
@@ -31,6 +32,7 @@ export const useStatisticsTab = (): ReturnProps => {
   const [avatars, setAvatars] = useState(0)
   const [avatarWearables, setAvatarWearables] = useState(0)
   const [worldObjects, setWorldObjects] = useState(0)
+  const [otherAssets, setOtherAssets] = useState(0)
 
   const throttledAssetVolumeStatistics = useThrottle(
     assetVolumeStatistics,
@@ -49,6 +51,7 @@ export const useStatisticsTab = (): ReturnProps => {
         setAvatars(result.data[lastIndex].avatars)
         setAvatarWearables(result.data[lastIndex].avatarWearables)
         setWorldObjects(result.data[lastIndex].worldObjects)
+        setOtherAssets(result.data[lastIndex].otherAssets)
       }
     }
   }
@@ -139,9 +142,10 @@ export const useStatisticsTab = (): ReturnProps => {
     assetRegistrationAreaChartData,
     assetVolumeStatistics: throttledAssetVolumeStatistics,
     loadingAssetVolumeStatistics,
-    total: avatars + avatarWearables + worldObjects,
+    total: avatars + avatarWearables + worldObjects + otherAssets,
     avatars,
     avatarWearables,
     worldObjects,
+    otherAssets,
   }
 }

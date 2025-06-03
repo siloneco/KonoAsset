@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::entities::{AssetType, Avatar, AvatarWearable, WorldObject};
+use super::entities::{AssetType, Avatar, AvatarWearable, OtherAsset, WorldObject};
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -10,6 +10,7 @@ pub struct GetAssetResult {
     pub avatar: Option<Avatar>,
     pub avatar_wearable: Option<AvatarWearable>,
     pub world_object: Option<WorldObject>,
+    pub other_asset: Option<OtherAsset>,
 }
 
 impl GetAssetResult {
@@ -19,6 +20,7 @@ impl GetAssetResult {
             avatar: Some(asset),
             avatar_wearable: None,
             world_object: None,
+            other_asset: None,
         }
     }
 
@@ -28,6 +30,7 @@ impl GetAssetResult {
             avatar: None,
             avatar_wearable: Some(asset),
             world_object: None,
+            other_asset: None,
         }
     }
 
@@ -37,6 +40,17 @@ impl GetAssetResult {
             avatar: None,
             avatar_wearable: None,
             world_object: Some(asset),
+            other_asset: None,
+        }
+    }
+
+    pub fn other_asset(asset: OtherAsset) -> Self {
+        Self {
+            asset_type: AssetType::OtherAsset,
+            avatar: None,
+            avatar_wearable: None,
+            world_object: None,
+            other_asset: Some(asset),
         }
     }
 }

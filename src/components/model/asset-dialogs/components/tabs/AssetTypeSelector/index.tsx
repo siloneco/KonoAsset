@@ -44,7 +44,7 @@ export const AssetTypeSelectorTab = ({
           {t('addasset:select-type:explanation-text')}
         </DialogDescription>
       </DialogHeader>
-      <div className="my-8 space-y-6 flex flex-col items-center">
+      <div className="my-8 space-y-4 flex flex-col items-center">
         <SelectTypeButton
           text={t('general:typeavatar')}
           onClick={() => {
@@ -65,6 +65,13 @@ export const AssetTypeSelectorTab = ({
             form.setValue('assetType', 'WorldObject')
           }}
           selected={assetType === 'WorldObject'}
+        />
+        <SelectTypeButton
+          text={t('general:typeotherasset')}
+          onClick={() => {
+            form.setValue('assetType', 'OtherAsset')
+          }}
+          selected={assetType === 'OtherAsset'}
         />
       </div>
       <DialogFooter>

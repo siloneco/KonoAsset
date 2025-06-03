@@ -4,6 +4,7 @@ import {
   AvatarWearable,
   commands,
   GetAssetResult,
+  OtherAsset,
   Result,
   WorldObject,
 } from '@/lib/bindings'
@@ -26,6 +27,8 @@ export const updateAsset = async ({
     return await updateAvatarWearable({ id, form })
   } else if (assetType === 'WorldObject') {
     return await updateWorldObject({ id, form })
+  } else if (assetType === 'OtherAsset') {
+    return await updateOtherAsset({ id, form })
   }
 
   return { status: 'error', error: 'Invalid asset type' }
@@ -128,6 +131,39 @@ const updateWorldObject = async ({
   }
 
   return await commands.updateWorldObject(asset)
+}
+
+const updateOtherAsset = async ({
+  id,
+  form,
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+  const name = form.getValues('name')
+  const creator = form.getValues('creator')
+  const imageFilename = form.getValues('imageFilename')
+  const boothItemId = form.getValues('boothItemId')
+  const tags = form.getValues('tags')
+  const memo = form.getValues('memo')
+  const dependencies = form.getValues('dependencies')
+  const category = form.getValues('category')
+  const publishedAt = form.getValues('publishedAt')
+
+  const asset: OtherAsset = {
+    id,
+    description: {
+      name,
+      creator,
+      imageFilename,
+      boothItemId,
+      tags,
+      memo,
+      dependencies,
+      createdAt: 0, // unused on updating
+      publishedAt,
+    },
+    category,
+  }
+
+  return await commands.updateOtherAsset(asset)
 }
 
 export const fetchAssetInformation = async (

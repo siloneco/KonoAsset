@@ -38,7 +38,7 @@ pub async fn calculate_asset_volumes(
     provider: Arc<Mutex<StoreProvider>>,
     app_handle: &AppHandle,
 ) -> Result<Vec<AssetVolumeStatistics>, String> {
-    let (data_dir, avatars, wearables, world_objects) = {
+    let (data_dir, avatars, wearables, world_objects, other_assets) = {
         let provider = provider.lock().await;
 
         let data_dir = provider.data_dir().join("data");
@@ -46,8 +46,9 @@ pub async fn calculate_asset_volumes(
         let avatars = provider.get_avatar_store().get_all().await;
         let wearables = provider.get_avatar_wearable_store().get_all().await;
         let world_objects = provider.get_world_object_store().get_all().await;
+        let other_assets = provider.get_other_asset_store().get_all().await;
 
-        (data_dir, avatars, wearables, world_objects)
+        (data_dir, avatars, wearables, world_objects, other_assets)
     };
 
     let mut result = Vec::new();
@@ -72,6 +73,12 @@ pub async fn calculate_asset_volumes(
     )
     .await?;
     result.extend(world_object_results);
+
+    // Calculate volumes for other assets
+    let other_results =
+        calculate_volume_for_assets(&data_dir, app_handle, AssetType::OtherAsset, &other_assets)
+            .await?;
+    result.extend(other_results);
 
     // Emit final completed event
     let emit_result = AssetVolumeEstimatedEvent {

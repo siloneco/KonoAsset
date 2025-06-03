@@ -23,6 +23,8 @@ const badgeVariants = cva(
           'border-transparent bg-avatar-wearable text-avatar-wearable-foreground hover:bg-avatar-wearable/80',
         worldObject:
           'border-transparent bg-world-object text-world-object-foreground hover:bg-world-object/80',
+        otherAsset:
+          'border-transparent bg-other-asset text-other-asset-foreground hover:bg-other-asset/80',
       },
     },
     defaultVariants: {

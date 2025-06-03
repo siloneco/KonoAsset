@@ -13,6 +13,8 @@ const getDefaultImage = (assetType: AssetType) => {
       return '/no-image/AvatarWearable.png'
     case 'WorldObject':
       return '/no-image/WorldObject.png'
+    case 'OtherAsset':
+      return '/no-image/Avatar.png' // TODO: Change this
   }
 }
 

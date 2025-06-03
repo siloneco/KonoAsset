@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "data": [
+    {
+      "id": "18670493-a258-4b22-8079-e2cc37823964",
+      "description": {
+        "name": "Test Other Asset",
+        "creator": "Test Other Asset Creator",
+        "imageFilename": "69ead78f-c754-47c4-bb89-12df7e61c154.jpg",
+        "tags": ["TestOtherAssetTag"],
+        "memo": "Test Other Asset Memo",
+        "boothItemId": 6641548,
+        "dependencies": [],
+        "createdAt": 1743606000000,
+        "publishedAt": 1735657200000
+      },
+      "category": "TestOtherAssetCategory"
+    }
+  ]
+}

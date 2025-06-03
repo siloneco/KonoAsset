@@ -1,5 +1,5 @@
 use super::{
-    entities::{AssetDescription, Avatar, AvatarWearable, WorldObject},
+    entities::{AssetDescription, Avatar, AvatarWearable, OtherAsset, WorldObject},
     traits::AssetTrait,
 };
 use serde::Deserialize;
@@ -28,6 +28,12 @@ pub struct PreAvatarWearable {
 
 #[derive(Deserialize, Debug, Clone, specta::Type)]
 pub struct PreWorldObject {
+    pub description: AssetDescription,
+    pub category: String,
+}
+
+#[derive(Deserialize, Debug, Clone, specta::Type)]
+pub struct PreOtherAsset {
     pub description: AssetDescription,
     pub category: String,
 }
@@ -76,5 +82,17 @@ impl PreAsset for PreWorldObject {
 
     fn create(&self) -> Self::AssetType {
         WorldObject::create(self.description.clone(), self.category.clone())
+    }
+}
+
+impl PreAsset for PreOtherAsset {
+    type AssetType = OtherAsset;
+
+    fn description(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
+
+    fn create(&self) -> Self::AssetType {
+        OtherAsset::create(self.description.clone(), self.category.clone())
     }
 }
