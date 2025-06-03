@@ -28,8 +28,8 @@
     "general:typeavatarwearable-multiple": "Avatar-related assets",
     "general:typeworldobject": "World asset",
     "general:typeworldobject-multiple": "World assets",
-    "general:typeotherasset": "Other asset",
-    "general:typeotherasset-multiple": "Other assets",
+    "general:typeotherasset": "Others",
+    "general:typeotherasset-multiple": "Others",
 
     "general:supported-avatars": "Supported avatars",
     "general:category": "Category",
