@@ -14,7 +14,7 @@ const getDefaultImage = (assetType: AssetType) => {
     case 'WorldObject':
       return '/no-image/WorldObject.png'
     case 'OtherAsset':
-      return '/no-image/Avatar.png' // TODO: Change this
+      return '/no-image/OtherAsset.png'
   }
 }
 
