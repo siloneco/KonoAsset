@@ -174,7 +174,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             .await
             .iter()
             .for_each(|asset| {
-                // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ
+                // 対応アバターが指定されている場合は、その他のアセットタイプに対応アバターの概念がないので全部スキップ
                 if req.supported_avatars.is_some() {
                     return;
                 }
