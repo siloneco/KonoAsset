@@ -23,6 +23,7 @@ type AssetCountPerDay = {
   avatars: number
   avatarWearables: number
   worldObjects: number
+  otherAssets: number
 }
 
 type Props = {
@@ -47,6 +48,10 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
     worldObjects: {
       label: t('general:typeworldobject-multiple'),
       color: 'var(--world-object)',
+    },
+    otherAssets: {
+      label: t('general:typeotherasset-multiple'),
+      color: 'var(--other-asset)',
     },
   } satisfies ChartConfig
 
@@ -110,6 +115,14 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
               fill="var(--color-world-object)"
               fillOpacity={0.7}
               stroke="var(--color-world-object)"
+              stackId="a"
+            />
+            <Area
+              dataKey="otherAssets"
+              type="natural"
+              fill="var(--color-other-asset)"
+              fillOpacity={0.7}
+              stroke="var(--color-other-asset)"
               stackId="a"
             />
           </AreaChart>

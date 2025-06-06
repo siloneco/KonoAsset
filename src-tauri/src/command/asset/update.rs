@@ -4,7 +4,7 @@ use tauri::{async_runtime::Mutex, State};
 
 use crate::{
     data_store::provider::StoreProvider,
-    definitions::entities::{Avatar, AvatarWearable, WorldObject},
+    definitions::entities::{Avatar, AvatarWearable, OtherAsset, WorldObject},
 };
 
 #[tauri::command]
@@ -95,6 +95,38 @@ pub async fn update_world_object(
         log::info!("Successfully updated world object (ID = {:?})", id);
     } else {
         log::error!("Failed to update world object: {:?}", result);
+    }
+
+    match result {
+        Ok(_) => Ok(true),
+        Err(e) => Err(e),
+    }
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn update_other_asset(
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    asset: OtherAsset,
+) -> Result<bool, String> {
+    log::info!("Updating other asset (ID = {:?})", asset.id);
+    log::debug!("Updating other asset to: {:?}", asset);
+
+    let id = asset.id.clone();
+
+    let result = {
+        let basic_store = basic_store.lock().await;
+
+        basic_store
+            .get_other_asset_store()
+            .update_asset_and_save(asset)
+            .await
+    };
+
+    if let Ok(_) = &result {
+        log::info!("Successfully updated other asset (ID = {:?})", id);
+    } else {
+        log::error!("Failed to update other asset: {:?}", result);
     }
 
     match result {

@@ -54,6 +54,14 @@ async requestWorldObjectImport(request: AssetImportRequest<PreWorldObject>) : Pr
     else return { status: "error", error: e  as any };
 }
 },
+async requestOtherAssetImport(request: AssetImportRequest<PreOtherAsset>) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("request_other_asset_import", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async requestAssetDeletion(id: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("request_asset_deletion", { id }) };
@@ -81,6 +89,14 @@ async updateAvatarWearable(asset: AvatarWearable) : Promise<Result<boolean, stri
 async updateWorldObject(asset: WorldObject) : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("update_world_object", { asset }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async updateOtherAsset(asset: OtherAsset) : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_other_asset", { asset }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -161,14 +177,6 @@ async getAllAssetTags(allowedIds: string[] | null) : Promise<Result<PrioritizedE
     else return { status: "error", error: e  as any };
 }
 },
-async getAllSupportedAvatarValues(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("get_all_supported_avatar_values", { allowedIds }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getAvatarWearableCategories(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_avatar_wearable_categories", { allowedIds }) };
@@ -188,6 +196,14 @@ async getAvatarWearableSupportedAvatars(allowedIds: string[] | null) : Promise<R
 async getWorldObjectCategories(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_world_object_categories", { allowedIds }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getOtherAssetCategories(allowedIds: string[] | null) : Promise<Result<PrioritizedEntry[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_other_asset_categories", { allowedIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -496,9 +512,9 @@ updateProgress: "update-progress"
 export type AddAssetDeepLink = { path: string[]; boothItemId: number | null }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
-export type AssetRegistrationStatistics = { date: string; avatars: number; avatarWearables: number; worldObjects: number }
+export type AssetRegistrationStatistics = { date: string; avatars: number; avatarWearables: number; worldObjects: number; otherAssets: number }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }
-export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject"
+export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject" | "OtherAsset"
 export type AssetVolumeEstimatedEvent = { type: AssetVolumeEstimatedEventType; data: AssetVolumeStatistics[] }
 export type AssetVolumeEstimatedEventType = "Chunk" | "Completed"
 export type AssetVolumeStatistics = { id: string; assetType: AssetType; name: string; sizeInBytes: number }
@@ -509,7 +525,7 @@ export type CustomLanguageFileLoadResult = { data: LocalizationData; missing_key
 export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
-export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null }
+export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null; otherAsset: OtherAsset | null }
 export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | "zh-CN" | { "user-provided": string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
@@ -517,8 +533,10 @@ export type LocalizedChanges = { version: string; pre_release: boolean; features
 export type LogEntry = { time: string; level: LogLevel; target: string; message: string }
 export type LogLevel = "Error" | "Warn" | "Info" | "Debug" | "Trace"
 export type MatchType = "AND" | "OR"
+export type OtherAsset = { id: string; description: AssetDescription; category: string }
 export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
+export type PreOtherAsset = { description: AssetDescription; category: string }
 export type PreWorldObject = { description: AssetDescription; category: string }
 export type PreferenceStore = { dataDirPath: string; theme: Theme; language: LanguageCode; deleteOnImport: boolean; zipExtraction: boolean; useUnitypackageSelectedOpen: boolean; updateChannel: UpdateChannel }
 export type PrioritizedEntry = { priority: number; value: string }

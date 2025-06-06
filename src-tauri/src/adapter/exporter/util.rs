@@ -5,7 +5,7 @@ use tokio::{fs::File, sync::Mutex};
 
 use crate::{
     data_store::provider::StoreProvider,
-    definitions::entities::{Avatar, AvatarWearable, WorldObject},
+    definitions::entities::{Avatar, AvatarWearable, OtherAsset, WorldObject},
 };
 
 use super::definitions::{AssetExportOverview, CategoryBasedAssets};
@@ -13,7 +13,7 @@ use super::definitions::{AssetExportOverview, CategoryBasedAssets};
 pub async fn get_category_based_assets(
     store_provider: Arc<Mutex<StoreProvider>>,
 ) -> CategoryBasedAssets {
-    let (data_dir, avatars, avatar_wearables, world_objects) = {
+    let (data_dir, avatars, avatar_wearables, world_objects, other_assets) = {
         let store_provider = store_provider.lock().await;
 
         let data_dir = store_provider.data_dir();
@@ -21,8 +21,15 @@ pub async fn get_category_based_assets(
         let avatars = store_provider.get_avatar_store().get_all().await;
         let avatar_wearables = store_provider.get_avatar_wearable_store().get_all().await;
         let world_objects = store_provider.get_world_object_store().get_all().await;
+        let other_assets = store_provider.get_other_asset_store().get_all().await;
 
-        (data_dir, avatars, avatar_wearables, world_objects)
+        (
+            data_dir,
+            avatars,
+            avatar_wearables,
+            world_objects,
+            other_assets,
+        )
     };
 
     let avatars = avatars
@@ -50,10 +57,21 @@ pub async fn get_category_based_assets(
                 map
             });
 
+    let other_assets_by_category =
+        other_assets
+            .into_iter()
+            .fold(HashMap::new(), |mut map, item| {
+                map.entry(sanitize_filename::sanitize(&item.category))
+                    .or_insert_with(Vec::new)
+                    .push(AssetExportOverview::<OtherAsset>::new(item, &data_dir));
+                map
+            });
+
     CategoryBasedAssets::new(
         avatars,
         avatar_wearables_by_category,
         world_objects_by_category,
+        other_assets_by_category,
     )
 }
 
@@ -108,10 +126,12 @@ mod tests {
         let avatars = category_based_assets.avatars;
         let avatar_wearables = category_based_assets.avatar_wearables;
         let world_objects = category_based_assets.world_objects;
+        let other_assets = category_based_assets.other_assets;
 
         assert_eq!(avatars.len(), 1);
         assert_eq!(avatar_wearables.len(), 1);
         assert_eq!(world_objects.len(), 1);
+        assert_eq!(other_assets.len(), 1);
 
         assert_eq!(
             avatar_wearables
@@ -120,6 +140,10 @@ mod tests {
                 .len(),
             1
         );
-        assert_eq!(world_objects.get("TestCategory").unwrap().len(), 1);
+        assert_eq!(
+            world_objects.get("TestWorldObjectCategory").unwrap().len(),
+            1
+        );
+        assert_eq!(other_assets.get("TestOtherAssetCategory").unwrap().len(), 1);
     }
 }

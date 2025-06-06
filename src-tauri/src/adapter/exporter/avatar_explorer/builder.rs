@@ -1,4 +1,4 @@
-use crate::definitions::entities::{Avatar, AvatarWearable, WorldObject};
+use crate::definitions::entities::{Avatar, AvatarWearable, OtherAsset, WorldObject};
 
 use super::definitions::AvatarExplorerItem;
 
@@ -158,6 +158,34 @@ impl Into<AvatarExplorerItemBuilder> for WorldObject {
             None
         } else {
             Some(format!("World: {}", self.category))
+        };
+
+        let created_at = self.description.created_at;
+
+        AvatarExplorerItemBuilder {
+            is_avatar: false,
+            title,
+            author,
+            memo,
+            booth_item_id,
+            category,
+            created_at,
+            relative_item_path: None,
+        }
+    }
+}
+
+impl Into<AvatarExplorerItemBuilder> for OtherAsset {
+    fn into(self) -> AvatarExplorerItemBuilder {
+        let title = self.description.name;
+        let author = self.description.creator;
+        let memo = self.description.memo;
+        let booth_item_id = self.description.booth_item_id;
+
+        let category = if self.category.is_empty() {
+            None
+        } else {
+            Some(self.category)
         };
 
         let created_at = self.description.created_at;
@@ -359,6 +387,55 @@ mod tests {
         };
 
         let builder: AvatarExplorerItemBuilder = world_object.into();
+        assert_eq!(builder.category, None);
+    }
+
+    #[test]
+    fn test_other_asset_into_builder() {
+        let other_asset = OtherAsset {
+            id: Uuid::new_v4(),
+            description: AssetDescription {
+                name: "Test Other Asset".to_string(),
+                creator: "Test Creator".to_string(),
+                image_filename: Some("image.png".to_string()),
+                tags: vec!["tag1".to_string(), "tag2".to_string()],
+                memo: Some("Test Memo".to_string()),
+                booth_item_id: Some(12345),
+                dependencies: vec![],
+                created_at: 1735689600000, // 2025-01-01 00:00:00
+                published_at: Some(1735689600000),
+            },
+            category: "Category".to_string(),
+        };
+
+        let builder: AvatarExplorerItemBuilder = other_asset.into();
+
+        assert_eq!(builder.is_avatar, false);
+        assert_eq!(builder.title, "Test Other Asset");
+        assert_eq!(builder.author, "Test Creator");
+        assert_eq!(builder.memo, Some("Test Memo".to_string()));
+        assert_eq!(builder.booth_item_id, Some(12345));
+        assert_eq!(builder.category, Some("Category".to_string()));
+        assert_eq!(builder.created_at, 1735689600000);
+        assert_eq!(builder.relative_item_path, None);
+
+        let other_asset = OtherAsset {
+            id: Uuid::new_v4(),
+            description: AssetDescription {
+                name: "Test Other Asset".to_string(),
+                creator: "Test Creator".to_string(),
+                image_filename: None,
+                tags: vec![],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1735689600000,
+                published_at: None,
+            },
+            category: "".to_string(),
+        };
+
+        let builder: AvatarExplorerItemBuilder = other_asset.into();
         assert_eq!(builder.category, None);
     }
 

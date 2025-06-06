@@ -13,7 +13,7 @@ use uuid::Uuid;
 use crate::{
     data_store::provider::StoreProvider,
     definitions::{
-        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
+        entities::{Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject},
         import_request::{AssetImportRequest, PreAsset, PreAvatar},
         traits::AssetTrait,
     },
@@ -70,7 +70,13 @@ where
             }
         };
 
-        let result = import_files(&src_import_asset_path, &destination, progress_callback, zip_extraction).await;
+        let result = import_files(
+            &src_import_asset_path,
+            &destination,
+            progress_callback,
+            zip_extraction,
+        )
+        .await;
 
         if let Err(err) = result {
             return Err(format!("Failed to import asset: {}", err));
@@ -169,6 +175,32 @@ where
             Box::pin(async {
                 provider
                     .get_world_object_store()
+                    .add_asset_and_save(asset)
+                    .await
+            })
+        },
+        zip_extraction,
+    )
+    .await
+}
+
+pub async fn import_other_asset<T>(
+    basic_store: &StoreProvider,
+    request: AssetImportRequest<T>,
+    app_handle: &AppHandle,
+    zip_extraction: bool,
+) -> Result<OtherAsset, String>
+where
+    T: PreAsset<AssetType = OtherAsset>,
+{
+    import_asset(
+        basic_store,
+        request,
+        Some(app_handle),
+        |provider: &'_ StoreProvider, asset: OtherAsset| {
+            Box::pin(async {
+                provider
+                    .get_other_asset_store()
                     .add_asset_and_save(asset)
                     .await
             })

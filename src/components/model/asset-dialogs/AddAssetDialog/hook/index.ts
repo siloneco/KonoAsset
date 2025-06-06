@@ -76,12 +76,14 @@ export const useAddAssetDialog = ({
   const assetTypeAvatar: AssetType = 'Avatar'
   const assetTypeAvatarWearable: AssetType = 'AvatarWearable'
   const assetTypeWorldObject: AssetType = 'WorldObject'
+  const assetTypeOtherAsset: AssetType = 'OtherAsset'
 
   const formSchema = z.object({
     assetType: z.union([
       z.literal(assetTypeAvatar),
       z.literal(assetTypeAvatarWearable),
       z.literal(assetTypeWorldObject),
+      z.literal(assetTypeOtherAsset),
     ]),
     name: z.string().min(1),
     creator: z.string().min(1),

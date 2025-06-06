@@ -28,6 +28,8 @@
     "general:typeavatarwearable-multiple": "アバター関連アセット",
     "general:typeworldobject": "ワールドアセット",
     "general:typeworldobject-multiple": "ワールドアセット",
+    "general:typeotherasset": "その他",
+    "general:typeotherasset-multiple": "その他",
 
     "general:supported-avatars": "対応アバター",
     "general:category": "カテゴリ",

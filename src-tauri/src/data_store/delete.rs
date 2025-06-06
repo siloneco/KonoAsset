@@ -16,7 +16,8 @@ pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<(), Stri
 
     let deleted = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await?
         || delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await?
-        || delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await?;
+        || delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await?
+        || delete_asset_from_store(&app_dir, &provider.get_other_asset_store(), id).await?;
 
     if !deleted {
         return Err("Asset not found".into());

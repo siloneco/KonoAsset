@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 use crate::{
     definitions::{
-        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
+        entities::{Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject},
         traits::AssetTrait,
     },
     file::{
@@ -29,6 +29,7 @@ pub struct StoreProvider {
     avatar_store: JsonStore<Avatar>,
     avatar_wearable_store: JsonStore<AvatarWearable>,
     world_object_store: JsonStore<WorldObject>,
+    other_asset_store: JsonStore<OtherAsset>,
 }
 
 impl StoreProvider {
@@ -38,6 +39,7 @@ impl StoreProvider {
         let avatar_store: JsonStore<Avatar> = JsonStore::create(&data_dir)?;
         let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(&data_dir)?;
         let world_object_store: JsonStore<WorldObject> = JsonStore::create(&data_dir)?;
+        let other_asset_store: JsonStore<OtherAsset> = JsonStore::create(&data_dir)?;
 
         Ok(Self {
             data_dir,
@@ -45,6 +47,7 @@ impl StoreProvider {
             avatar_store: avatar_store,
             avatar_wearable_store: avatar_wearable_store,
             world_object_store: world_object_store,
+            other_asset_store: other_asset_store,
         })
     }
 
@@ -64,6 +67,11 @@ impl StoreProvider {
             Err(e) => return Err(e),
         }
 
+        match self.other_asset_store.load().await {
+            Ok(_) => {}
+            Err(e) => return Err(e),
+        }
+
         Ok(())
     }
 
@@ -77,6 +85,10 @@ impl StoreProvider {
 
     pub fn get_world_object_store(&self) -> &JsonStore<WorldObject> {
         &self.world_object_store
+    }
+
+    pub fn get_other_asset_store(&self) -> &JsonStore<OtherAsset> {
+        &self.other_asset_store
     }
 
     pub fn data_dir(&self) -> PathBuf {
@@ -96,6 +108,13 @@ impl StoreProvider {
         );
         ids.extend(
             self.world_object_store
+                .get_all()
+                .await
+                .iter()
+                .map(|a| a.get_id()),
+        );
+        ids.extend(
+            self.other_asset_store
                 .get_all()
                 .await
                 .iter()
@@ -303,6 +322,9 @@ impl StoreProvider {
         self.world_object_store
             .merge_from(&external.world_object_store, reassign_map)
             .await?;
+        self.other_asset_store
+            .merge_from(&external.other_asset_store, reassign_map)
+            .await?;
 
         Ok(())
     }
@@ -316,6 +338,7 @@ impl StoreProvider {
         self.avatar_store = JsonStore::create(&new_path)?;
         self.avatar_wearable_store = JsonStore::create(&new_path)?;
         self.world_object_store = JsonStore::create(&new_path)?;
+        self.other_asset_store = JsonStore::create(&new_path)?;
 
         self.data_dir = new_path;
 
@@ -326,6 +349,7 @@ impl StoreProvider {
         self.avatar_store.delete_dependency(id).await?;
         self.avatar_wearable_store.delete_dependency(id).await?;
         self.world_object_store.delete_dependency(id).await?;
+        self.other_asset_store.delete_dependency(id).await?;
 
         return Ok(());
     }
@@ -354,6 +378,7 @@ impl StoreProvider {
             Avatar::filename(),
             AvatarWearable::filename(),
             WorldObject::filename(),
+            OtherAsset::filename(),
         ];
 
         for file in files {
@@ -516,10 +541,11 @@ mod tests {
 
         let ids = provider.get_used_ids().await;
 
-        assert_eq!(ids.len(), 3);
+        assert_eq!(ids.len(), 4);
         assert!(ids.contains(&Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap()));
         assert!(ids.contains(&Uuid::from_str("2bde4d66-1843-4250-b929-157f947f5751").unwrap()));
         assert!(ids.contains(&Uuid::from_str("c155488e-53bf-4c98-92e5-e5c8f66a1667").unwrap()));
+        assert!(ids.contains(&Uuid::from_str("b2003e9a-86c1-4ab6-9e6b-4388497e2226").unwrap()));
 
         let mut external_provider = StoreProvider::create(&target_two).unwrap();
         external_provider
@@ -538,13 +564,14 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(provider.get_used_ids().await.len(), 6);
+        assert_eq!(provider.get_used_ids().await.len(), 8);
         assert_eq!(provider.get_avatar_store().get_all().await.len(), 2);
         assert_eq!(
             provider.get_avatar_wearable_store().get_all().await.len(),
             2
         );
         assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
+        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 2);
 
         let mut avatars = provider.get_avatar_store().get_all().await.into_iter();
         assert_ne!(

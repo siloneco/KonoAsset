@@ -15,7 +15,8 @@ export const TypeSelector = () => {
       value === 'All' ||
       value === 'Avatar' ||
       value === 'AvatarWearable' ||
-      value === 'WorldObject'
+      value === 'WorldObject' ||
+      value === 'OtherAsset'
     ) {
       setAssetType(value)
     } else {
@@ -46,6 +47,11 @@ export const TypeSelector = () => {
         id="r4"
         value={'WorldObject' as AssetType}
         text={t('general:typeworldobject')}
+      />
+      <TypeSelectorRadioItem
+        id="r5"
+        value={'OtherAsset' as AssetType}
+        text={t('general:typeotherasset')}
       />
     </RadioGroup>
   )

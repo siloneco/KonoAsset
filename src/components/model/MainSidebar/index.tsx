@@ -18,6 +18,7 @@ import { TextSearch } from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
 import { AllTypeFilter } from './layout/AllTypeFilter'
 import { useMainSidebar } from './hook'
+import { OtherAssetFilter } from './layout/OtherAssetFilter'
 
 export const MainSidebar = () => {
   const {
@@ -78,6 +79,7 @@ export const MainSidebar = () => {
                 <AvatarWearableFilter />
               )}
               {filteredAssetType === 'WorldObject' && <WorldObjectFilter />}
+              {filteredAssetType === 'OtherAsset' && <OtherAssetFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
                   label={t('general:tag')}

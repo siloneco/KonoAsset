@@ -123,7 +123,9 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                       ? 'var(--avatar)'
                       : entry.assetType === 'AvatarWearable'
                         ? 'var(--avatar-wearable)'
-                        : 'var(--world-object)'
+                        : entry.assetType === 'WorldObject'
+                          ? 'var(--world-object)'
+                          : 'var(--other-asset)'
                   }
                 />
               ))}
@@ -145,6 +147,8 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                     fillColor = 'var(--avatar-wearable-foreground)'
                   } else if (item.assetType === 'WorldObject') {
                     fillColor = 'var(--world-object-foreground)'
+                  } else if (item.assetType === 'OtherAsset') {
+                    fillColor = 'var(--other-asset-foreground)'
                   }
 
                   return (

@@ -21,7 +21,7 @@ export const AvatarWearableLayout = ({ form }: Props) => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchSupportedAvatars = async () => {
-    const result = await commands.getAllSupportedAvatarValues(null)
+    const result = await commands.getAvatarWearableSupportedAvatars(null)
 
     if (result.status === 'error') {
       console.error(result.error)

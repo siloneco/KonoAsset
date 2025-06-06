@@ -131,6 +131,7 @@ mod tests {
             1
         );
         assert_eq!(provider.get_world_object_store().get_all().await.len(), 1);
+        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 1);
 
         import_data_store_from_zip(&mut provider, src, None)
             .await
@@ -142,5 +143,6 @@ mod tests {
             2
         );
         assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
+        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 2);
     }
 }
