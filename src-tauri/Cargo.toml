@@ -32,7 +32,6 @@ showfile = { version = "0.1.1" }
 opener = { version = "0.7.2" }
 tauri-plugin-dialog = "2"
 reqwest = { version = "0.12.9", features = ["json", "blocking"] }
-regex = "1.11.1"
 monostate = "0.1.13"
 kanaria = "0.2.0"
 async_zip = { version = "0.0.17", features = ["full"] }
@@ -41,7 +40,6 @@ encoding_rs = "0.8.35"
 specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
 specta-typescript = "0.0.9"
 tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "typescript"] }
-serde_with = "3.12.0"
 tauri-plugin-deep-link = "2"
 semver = "1.0.26"
 async-read-progress = "0.2.0"

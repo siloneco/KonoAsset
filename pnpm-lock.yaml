@@ -74,24 +74,12 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.86.1
         version: 1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@tanstack/router-devtools':
-        specifier: ^1.86.1
-        version: 1.116.0(@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.115.3)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tiny-invariant@1.3.3)
       '@tauri-apps/api':
         specifier: ^2
         version: 2.5.0
-      '@tauri-apps/plugin-deep-link':
-        specifier: ~2
-        version: 2.2.1
       '@tauri-apps/plugin-dialog':
         specifier: ~2
         version: 2.2.1
-      '@tauri-apps/plugin-shell':
-        specifier: ^2
-        version: 2.2.1
-      '@tauri-apps/plugin-updater':
-        specifier: ~2.7.0
-        version: 2.7.1
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -119,15 +107,9 @@ importers:
       recharts:
         specifier: ^2.15.3
         version: 2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      sonner:
-        specifier: ^2.0.3
-        version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.2.0
-      vaul:
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
         specifier: ^3.24.3
         version: 3.24.3
@@ -177,9 +159,6 @@ importers:
       eslint-plugin-unused-imports:
         specifier: 4.1.4
         version: 4.1.4(@typescript-eslint/eslint-plugin@8.30.1(@typescript-eslint/parser@8.30.1(eslint@9.25.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.0(jiti@2.4.2))
-      globals:
-        specifier: 16.0.0
-        version: 16.0.0
       husky:
         specifier: 9.1.7
         version: 9.1.7
@@ -1355,14 +1334,6 @@ packages:
     resolution: {integrity: sha512-K7JJNrRVvyjAVnbXOH2XLRhFXDkeP54Kt2P4FR1Kl2KDGlIbkua5VqZQD2rot3qaDrpufyUa63nuLai1kOLTsQ==}
     engines: {node: '>=12'}
 
-  '@tanstack/react-router-devtools@1.116.0':
-    resolution: {integrity: sha512-PsJZWPjcmwZGe71kUvH4bI1ozkv1FgBuBEE0hTYlTCSJ3uG+qv3ndGEI+AiFyuF5OStrbfg0otW1OxeNq5vdGQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@tanstack/react-router': ^1.116.0
-      react: '>=18.0.0 || >=19.0.0'
-      react-dom: '>=18.0.0 || >=19.0.0'
-
   '@tanstack/react-router@1.116.0':
     resolution: {integrity: sha512-ZBAg5Q6zJf0mnP9DYPiaaQ/wLDH2ujCMi/2RllpH86VUkdkyvQQzpAyKoiYJ891wh9OPgj6W6tPrzB4qy5FpRA==}
     engines: {node: '>=12'}
@@ -1379,30 +1350,6 @@ packages:
   '@tanstack/router-core@1.115.3':
     resolution: {integrity: sha512-gynHs72LHVg05fuJTwZZYhDL4VNEAK0sXz7IqiBv7a3qsYeEmIZsGaFr9sVjTkuF1kbrFBdJd5JYutzBh9Uuhw==}
     engines: {node: '>=12'}
-
-  '@tanstack/router-devtools-core@1.115.3':
-    resolution: {integrity: sha512-VBdgw1qxeOD/6FlZ9gitrWPUKGW83CuAW31gf32E0dxL7sIXP+yEFyPlNsVlENan1oSaEuV8tjKkuq5s4MfaPw==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@tanstack/router-core': ^1.115.3
-      csstype: ^3.0.10
-      solid-js: '>=1.9.5'
-      tiny-invariant: ^1.3.3
-    peerDependenciesMeta:
-      csstype:
-        optional: true
-
-  '@tanstack/router-devtools@1.116.0':
-    resolution: {integrity: sha512-Tx8UD+JbRA8Fgo0fDLcfdnH43+CVhbFi6KSUvdhHFBSdDfQnrrNQsDfNqml2fAI89VBEDsfxrwU2lwAF2R/1qw==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@tanstack/react-router': ^1.116.0
-      csstype: ^3.0.10
-      react: '>=18.0.0 || >=19.0.0'
-      react-dom: '>=18.0.0 || >=19.0.0'
-    peerDependenciesMeta:
-      csstype:
-        optional: true
 
   '@tanstack/router-generator@1.116.0':
     resolution: {integrity: sha512-XhCp85zP87G2bpSXnosiP3fiMo8HMQD2mvWqFFTFKz87WocabQYGlfhmNYWmBwI50EuS7Ph9lwXsSkV0oKh0xw==}
@@ -1519,17 +1466,8 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
 
-  '@tauri-apps/plugin-deep-link@2.2.1':
-    resolution: {integrity: sha512-8skZ6qIH/kWaV8d6jj3aPvvkIOuqkVk0APRDey9n9N3Ueu3n4MIbuxpAKR2EdoAyQxnXxPTNVyjw2D35/vfGyg==}
-
   '@tauri-apps/plugin-dialog@2.2.1':
     resolution: {integrity: sha512-wZmCouo4PgTosh/UoejPw9DPs6RllS5Pp3fuOV2JobCu36mR5AXU2MzU9NZiVaFi/5Zfc8RN0IhcZHnksJ1o8A==}
-
-  '@tauri-apps/plugin-shell@2.2.1':
-    resolution: {integrity: sha512-G1GFYyWe/KlCsymuLiNImUgC8zGY0tI0Y3p8JgBCWduR5IEXlIJS+JuG1qtveitwYXlfJrsExt3enhv5l2/yhA==}
-
-  '@tauri-apps/plugin-updater@2.7.1':
-    resolution: {integrity: sha512-1OPqEY/z7NDVSeTEMIhD2ss/vXWdpfZ5Th2Mk0KtPR/RA6FKuOTDGZQhxoyYBk0pcZJ+nNZUbl/IujDCLBApjA==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -2275,18 +2213,9 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@16.0.0:
-    resolution: {integrity: sha512-iInW14XItCXET01CQFqudPOWP2jYMl7T+QRQT+UNcR/iQncN/F0UNpgd76iFkBPgNQb4+X3LV9tLJYzwh+Gl3A==}
-    engines: {node: '>=18'}
-
   globalthis@1.0.4:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
-
-  goober@2.1.16:
-    resolution: {integrity: sha512-erjk19y1U33+XAMe1VTvIONHYoSqE4iS7BYUZfHaqeohLmnC0FdxEh7rQU+6MZ4OajItzjZFSRtVANrQwNq6/g==}
-    peerDependencies:
-      csstype: ^3.0.10
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -2981,16 +2910,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  seroval-plugins@1.2.1:
-    resolution: {integrity: sha512-H5vs53+39+x4Udwp4J5rNZfgFuA+Lt+uU+09w1gYBVWomtAl98B+E9w7yC05Xc81/HgLvJdlyqJbU0fJCKCmdw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      seroval: ^1.0
-
-  seroval@1.2.1:
-    resolution: {integrity: sha512-yBxFFs3zmkvKNmR0pFSU//rIsYjuX418TnlDmc2weaq5XFDqDIV/NOMPBoLrbxjLH42p4UzRuXHryXh9dYcKcw==}
-    engines: {node: '>=10'}
-
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
     engines: {node: '>= 0.4'}
@@ -3033,15 +2952,6 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
-
-  solid-js@1.9.5:
-    resolution: {integrity: sha512-ogI3DaFcyn6UhYhrgcyRAMbu/buBJitYQASZz5WzfQVPP10RD2AbCoRZ517psnezrasyCbWzIxZ6kVqet768xw==}
-
-  sonner@2.0.3:
-    resolution: {integrity: sha512-njQ4Hht92m0sMqqHVDL32V2Oun9W1+PHO9NDv9FHfJjT3JT22IG4Jpo3FPQy+mouRKCXFWO+r67v6MrHX2zeIA==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -3257,12 +3167,6 @@ packages:
     resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  vaul@1.1.2:
-    resolution: {integrity: sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA==}
-    peerDependencies:
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
 
   victory-vendor@36.9.2:
     resolution: {integrity: sha512-PnpQQMuxlwYdocC8fIJqVXvkeViHYzotI+NJrCuav0ZYFoq912ZHBk3mCeuj+5/VpodOjPe1z0Fk2ihgzlXqjQ==}
@@ -4486,18 +4390,6 @@ snapshots:
 
   '@tanstack/history@1.115.0': {}
 
-  '@tanstack/react-router-devtools@1.116.0(@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.115.3)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tiny-invariant@1.3.3)':
-    dependencies:
-      '@tanstack/react-router': 1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@tanstack/router-devtools-core': 1.115.3(@tanstack/router-core@1.115.3)(csstype@3.1.3)(solid-js@1.9.5)(tiny-invariant@1.3.3)
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      solid-js: 1.9.5
-    transitivePeerDependencies:
-      - '@tanstack/router-core'
-      - csstype
-      - tiny-invariant
-
   '@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@tanstack/history': 1.115.0
@@ -4521,30 +4413,6 @@ snapshots:
       '@tanstack/history': 1.115.0
       '@tanstack/store': 0.7.0
       tiny-invariant: 1.3.3
-
-  '@tanstack/router-devtools-core@1.115.3(@tanstack/router-core@1.115.3)(csstype@3.1.3)(solid-js@1.9.5)(tiny-invariant@1.3.3)':
-    dependencies:
-      '@tanstack/router-core': 1.115.3
-      clsx: 2.1.1
-      goober: 2.1.16(csstype@3.1.3)
-      solid-js: 1.9.5
-      tiny-invariant: 1.3.3
-    optionalDependencies:
-      csstype: 3.1.3
-
-  '@tanstack/router-devtools@1.116.0(@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.115.3)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tiny-invariant@1.3.3)':
-    dependencies:
-      '@tanstack/react-router': 1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@tanstack/react-router-devtools': 1.116.0(@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.115.3)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tiny-invariant@1.3.3)
-      clsx: 2.1.1
-      goober: 2.1.16(csstype@3.1.3)
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-    optionalDependencies:
-      csstype: 3.1.3
-    transitivePeerDependencies:
-      - '@tanstack/router-core'
-      - tiny-invariant
 
   '@tanstack/router-generator@1.116.0(@tanstack/react-router@1.116.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
     dependencies:
@@ -4640,19 +4508,7 @@ snapshots:
       '@tauri-apps/cli-win32-ia32-msvc': 2.5.0
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
 
-  '@tauri-apps/plugin-deep-link@2.2.1':
-    dependencies:
-      '@tauri-apps/api': 2.5.0
-
   '@tauri-apps/plugin-dialog@2.2.1':
-    dependencies:
-      '@tauri-apps/api': 2.5.0
-
-  '@tauri-apps/plugin-shell@2.2.1':
-    dependencies:
-      '@tauri-apps/api': 2.5.0
-
-  '@tauri-apps/plugin-updater@2.7.1':
     dependencies:
       '@tauri-apps/api': 2.5.0
 
@@ -5609,16 +5465,10 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@16.0.0: {}
-
   globalthis@1.0.4:
     dependencies:
       define-properties: 1.2.1
       gopd: 1.2.0
-
-  goober@2.1.16(csstype@3.1.3):
-    dependencies:
-      csstype: 3.1.3
 
   gopd@1.2.0: {}
 
@@ -6325,12 +6175,6 @@ snapshots:
 
   semver@7.7.1: {}
 
-  seroval-plugins@1.2.1(seroval@1.2.1):
-    dependencies:
-      seroval: 1.2.1
-
-  seroval@1.2.1: {}
-
   set-function-length@1.2.2:
     dependencies:
       define-data-property: 1.1.4
@@ -6390,17 +6234,6 @@ snapshots:
   siginfo@2.0.0: {}
 
   signal-exit@4.1.0: {}
-
-  solid-js@1.9.5:
-    dependencies:
-      csstype: 3.1.3
-      seroval: 1.2.1
-      seroval-plugins: 1.2.1(seroval@1.2.1)
-
-  sonner@2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
 
   source-map-js@1.2.1: {}
 
@@ -6638,15 +6471,6 @@ snapshots:
   use-sync-external-store@1.5.0(react@19.1.0):
     dependencies:
       react: 19.1.0
-
-  vaul@1.1.2(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@radix-ui/react-dialog': 1.1.11(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
 
   victory-vendor@36.9.2:
     dependencies:
