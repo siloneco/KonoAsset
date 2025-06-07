@@ -206,16 +206,11 @@ export const useAddAssetDialog = ({
     // Only proceed if dialogOpen changed from false to true
     if (!prevDialogOpenRef.current) {
       if (formClearSuppressionCount > 0) {
-        console.log(
-          'test1: formClearSuppressionCount',
-          formClearSuppressionCount,
-        )
         setFormClearSuppressionCount((prev) => prev - 1)
         prevDialogOpenRef.current = dialogOpen
         return
       }
 
-      console.log('test2: formClearSuppressionCount', formClearSuppressionCount)
       clearForm()
       setTab('selector')
     }
