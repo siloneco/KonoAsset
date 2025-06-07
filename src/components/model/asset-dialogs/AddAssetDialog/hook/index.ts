@@ -195,16 +195,27 @@ export const useAddAssetDialog = ({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [setDialogOpen])
 
+  const prevDialogOpenRef = useRef(dialogOpen)
+
   useEffect(() => {
-    if (formClearSuppressionCount > 0) {
-      setFormClearSuppressionCount((prev) => prev - 1)
+    if (!dialogOpen) {
+      prevDialogOpenRef.current = dialogOpen
       return
     }
 
-    if (dialogOpen) {
+    // Only proceed if dialogOpen changed from false to true
+    if (!prevDialogOpenRef.current) {
+      if (formClearSuppressionCount > 0) {
+        setFormClearSuppressionCount((prev) => prev - 1)
+        prevDialogOpenRef.current = dialogOpen
+        return
+      }
+
       clearForm()
       setTab('selector')
     }
+
+    prevDialogOpenRef.current = dialogOpen
   }, [dialogOpen, clearForm, formClearSuppressionCount])
 
   const contextValue = {
