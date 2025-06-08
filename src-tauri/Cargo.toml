@@ -29,7 +29,7 @@ ringbuffer = "0.15.0"
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4.39", features = ["serde"] }
 showfile = { version = "0.1.1" }
-opener = { version = "0.7.2" }
+opener = { version = "0.8.0" }
 tauri-plugin-dialog = "2"
 reqwest = { version = "0.12.9", features = ["json", "blocking"] }
 monostate = "0.1.13"
