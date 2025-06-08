@@ -80,6 +80,7 @@ export const MultiFilterItemSelector = ({
         onChange={onValueChange}
         placeholder={formattedPlaceholder}
         hidePlaceholderWhenSelected
+        negativeSelectable
         emptyIndicator={
           <p className="text-center text-lg text-muted-foreground">
             {t('mainsidebar:multi-filter-item-selector:no-candidates')}

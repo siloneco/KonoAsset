@@ -81,6 +81,8 @@ interface MultipleSelectorProps {
   >
   /** hide the clear all button. */
   hideClearAllButton?: boolean
+  /** Allow negative selection (NOT designation) with leading hyphen. */
+  negativeSelectable?: boolean
 }
 
 export interface MultipleSelectorRef {
@@ -175,6 +177,7 @@ const MultipleSelector = ({
   commandProps,
   inputProps,
   hideClearAllButton = false,
+  negativeSelectable = false,
 }: MultipleSelectorProps & {
   ref?: React.RefObject<MultipleSelectorRef>
 }) => {
@@ -435,6 +438,7 @@ const MultipleSelector = ({
   const CreatableItem = () => {
     if (!creatable) return undefined
     const isNotDesignation = inputValue.startsWith('-')
+    if (isNotDesignation && !negativeSelectable) return undefined
     const cleanInputValue = isNotDesignation ? inputValue.slice(1) : inputValue
     if (
       isOptionsExist(options, [cleanInputValue]) ||
@@ -513,21 +517,29 @@ const MultipleSelector = ({
 
     if (creatable) {
       return (value: string, search: string) => {
-        // Remove leading hyphen from search term for comparison
-        const cleanSearch = search.startsWith('-') ? search.slice(1) : search
         const cleanValue = value.toLowerCase()
-        return cleanValue.includes(cleanSearch.toLowerCase()) ? 1 : -1
+        // When negativeSelectable is true, match both with and without hyphen
+        if (negativeSelectable && search.startsWith('-')) {
+          const cleanSearch = search.slice(1).toLowerCase()
+          return cleanValue.includes(cleanSearch) ? 1 : -1
+        }
+        // Normal search without hyphen
+        return cleanValue.includes(search.toLowerCase()) ? 1 : -1
       }
     }
 
     // Custom filter for handling hyphenated search terms
     return (value: string, search: string) => {
-      // Remove leading hyphen from search term for comparison
-      const cleanSearch = search.startsWith('-') ? search.slice(1) : search
       const cleanValue = value.toLowerCase()
-      return cleanValue.includes(cleanSearch.toLowerCase()) ? 1 : -1
+      // When negativeSelectable is true, match both with and without hyphen
+      if (negativeSelectable && search.startsWith('-')) {
+        const cleanSearch = search.slice(1).toLowerCase()
+        return cleanValue.includes(cleanSearch) ? 1 : -1
+      }
+      // Normal search without hyphen
+      return cleanValue.includes(search.toLowerCase()) ? 1 : -1
     }
-  }, [creatable, commandProps?.filter])
+  }, [creatable, commandProps?.filter, negativeSelectable])
 
   return (
     <Command
@@ -549,7 +561,7 @@ const MultipleSelector = ({
         commandProps?.shouldFilter !== undefined
           ? commandProps.shouldFilter
           : !onSearch
-      } // When onSearch is provided, we don't want to filter the options. You can still override it.
+      }
       filter={commandFilter()}
     >
       <div
@@ -585,14 +597,14 @@ const MultipleSelector = ({
                       'data-disabled:bg-muted-foreground data-disabled:text-muted data-disabled:hover:bg-muted-foreground overflow-hidden',
                       {
                         'mr-6': lastBadgeInFirstRow === index,
-                        'bg-destructive': isNot,
+                        'bg-destructive': isNot && negativeSelectable,
                       },
                       badgeClassName,
                     )}
                     data-badge={true}
                     data-disabled={disabled || undefined}
                   >
-                    {isNot && <Ban className="h-3 w-3" />}
+                    {isNot && negativeSelectable && <Ban className="h-3 w-3" />}
                     <span className="truncate">{displayValue}</span>
                     <button
                       className={cn(
@@ -613,14 +625,16 @@ const MultipleSelector = ({
                       <X
                         className={cn(
                           'h-4 w-4 cursor-pointer text-primary-foregroun',
-                          isNot && 'text-destructive-foreground',
+                          isNot &&
+                            negativeSelectable &&
+                            'text-destructive-foreground',
                         )}
                       />
                     </button>
                   </Badge>
                 )
 
-                if (isNot) {
+                if (isNot && negativeSelectable) {
                   return (
                     <Tooltip key={option}>
                       <TooltipTrigger asChild>{BadgeContent}</TooltipTrigger>
@@ -640,8 +654,12 @@ const MultipleSelector = ({
                 value={inputValue}
                 disabled={disabled}
                 onValueChange={(value) => {
-                  setInputValue(value)
-                  inputProps?.onValueChange?.(value)
+                  // If negativeSelectable is false, prevent adding hyphen at the start
+                  const newValue = negativeSelectable
+                    ? value
+                    : value.replace(/^-/, '')
+                  setInputValue(newValue)
+                  inputProps?.onValueChange?.(newValue)
                 }}
                 onBlur={(event) => {
                   if (!onScrollbar) {
