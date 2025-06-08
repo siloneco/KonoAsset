@@ -131,6 +131,10 @@ impl AssetTrait for Avatar {
         "avatars.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::Avatar
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -195,6 +199,10 @@ impl AssetTrait for AvatarWearable {
         "avatarWearables.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::AvatarWearable
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -248,6 +256,10 @@ impl AssetTrait for WorldObject {
         "worldObjects.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::WorldObject
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -299,6 +311,10 @@ impl OtherAsset {
 impl AssetTrait for OtherAsset {
     fn filename() -> String {
         "otherAssets.json".into()
+    }
+
+    fn asset_type() -> AssetType {
+        AssetType::OtherAsset
     }
 
     fn get_id(&self) -> Uuid {

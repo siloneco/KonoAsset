@@ -2,18 +2,21 @@ use std::{
     collections::{HashMap, HashSet},
     ffi::OsStr,
     fs,
+    hash::Hash,
     path::{Path, PathBuf},
 };
 
-use serde::Serialize;
+use serde::{de::DeserializeOwned, Serialize};
 use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
 
 use crate::{
+    data_store::delete::delete_asset_image,
     definitions::{
         entities::{
-            AssetUpdatePayload, Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject,
+            AssetType, AssetUpdatePayload, Avatar, AvatarWearable, OtherAsset, ProgressEvent,
+            WorldObject,
         },
         traits::AssetTrait,
     },
@@ -21,6 +24,8 @@ use crate::{
         cleanup::DeleteOnDrop,
         modify_guard::{self, DeletionGuard, FileTransferGuard},
     },
+    importer::execute_image_fixation,
+    loader::HashSetVersionedLoader,
 };
 
 use super::json_store::JsonStore;
@@ -128,44 +133,14 @@ impl StoreProvider {
 
     pub async fn update_asset_and_save(&self, asset: AssetUpdatePayload) -> Result<(), String> {
         match asset {
-            AssetUpdatePayload::Avatar(mut avatar) => {
+            AssetUpdatePayload::Avatar(avatar) => {
                 if self.avatar_store.get_asset(avatar.id).await.is_some() {
                     return self.avatar_store.update_asset_and_save(avatar).await;
                 }
 
-                let id = avatar.id.clone();
-
-                if let Some(avatar_wearable) = self.avatar_wearable_store.get_asset(avatar.id).await
-                {
-                    avatar.description.created_at = avatar_wearable.description.created_at;
-
-                    self.avatar_store.add_asset_and_save(avatar).await?;
-                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(world_object) = self.world_object_store.get_asset(avatar.id).await {
-                    avatar.description.created_at = world_object.description.created_at;
-
-                    self.avatar_store.add_asset_and_save(avatar).await?;
-                    self.world_object_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(other_asset) = self.other_asset_store.get_asset(avatar.id).await {
-                    avatar.description.created_at = other_asset.description.created_at;
-
-                    self.avatar_store.add_asset_and_save(avatar).await?;
-                    self.other_asset_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                Err("Asset not found".into())
+                migrate_asset_type(self, &self.avatar_store, avatar).await
             }
-            AssetUpdatePayload::AvatarWearable(mut avatar_wearable) => {
+            AssetUpdatePayload::AvatarWearable(avatar_wearable) => {
                 if self
                     .avatar_wearable_store
                     .get_asset(avatar_wearable.id)
@@ -178,48 +153,9 @@ impl StoreProvider {
                         .await;
                 }
 
-                let id = avatar_wearable.id.clone();
-
-                if let Some(avatar) = self.avatar_store.get_asset(avatar_wearable.id).await {
-                    avatar_wearable.description.created_at = avatar.description.created_at;
-
-                    self.avatar_wearable_store
-                        .add_asset_and_save(avatar_wearable)
-                        .await?;
-                    self.avatar_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(world_object) =
-                    self.world_object_store.get_asset(avatar_wearable.id).await
-                {
-                    avatar_wearable.description.created_at = world_object.description.created_at;
-
-                    self.avatar_wearable_store
-                        .add_asset_and_save(avatar_wearable)
-                        .await?;
-                    self.world_object_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(other_asset) =
-                    self.other_asset_store.get_asset(avatar_wearable.id).await
-                {
-                    avatar_wearable.description.created_at = other_asset.description.created_at;
-
-                    self.avatar_wearable_store
-                        .add_asset_and_save(avatar_wearable)
-                        .await?;
-                    self.other_asset_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                Err("Asset not found".into())
+                migrate_asset_type(self, &self.avatar_wearable_store, avatar_wearable).await
             }
-            AssetUpdatePayload::WorldObject(mut world_object) => {
+            AssetUpdatePayload::WorldObject(world_object) => {
                 if self
                     .world_object_store
                     .get_asset(world_object.id)
@@ -232,46 +168,9 @@ impl StoreProvider {
                         .await;
                 }
 
-                let id = world_object.id.clone();
-
-                if let Some(avatar) = self.avatar_store.get_asset(world_object.id).await {
-                    world_object.description.created_at = avatar.description.created_at;
-
-                    self.world_object_store
-                        .add_asset_and_save(world_object)
-                        .await?;
-                    self.avatar_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(avatar_wearable) =
-                    self.avatar_wearable_store.get_asset(world_object.id).await
-                {
-                    world_object.description.created_at = avatar_wearable.description.created_at;
-
-                    self.world_object_store
-                        .add_asset_and_save(world_object)
-                        .await?;
-                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(other_asset) = self.other_asset_store.get_asset(world_object.id).await {
-                    world_object.description.created_at = other_asset.description.created_at;
-
-                    self.world_object_store
-                        .add_asset_and_save(world_object)
-                        .await?;
-                    self.other_asset_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                Err("Asset not found".into())
+                migrate_asset_type(self, &self.world_object_store, world_object).await
             }
-            AssetUpdatePayload::OtherAsset(mut other_asset) => {
+            AssetUpdatePayload::OtherAsset(other_asset) => {
                 if self
                     .other_asset_store
                     .get_asset(other_asset.id)
@@ -284,45 +183,7 @@ impl StoreProvider {
                         .await;
                 }
 
-                let id = other_asset.id.clone();
-
-                if let Some(avatar) = self.avatar_store.get_asset(other_asset.id).await {
-                    other_asset.description.created_at = avatar.description.created_at;
-
-                    self.other_asset_store
-                        .add_asset_and_save(other_asset)
-                        .await?;
-                    self.avatar_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(avatar_wearable) =
-                    self.avatar_wearable_store.get_asset(other_asset.id).await
-                {
-                    other_asset.description.created_at = avatar_wearable.description.created_at;
-
-                    self.other_asset_store
-                        .add_asset_and_save(other_asset)
-                        .await?;
-                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                if let Some(world_object) = self.world_object_store.get_asset(other_asset.id).await
-                {
-                    other_asset.description.created_at = world_object.description.created_at;
-
-                    self.other_asset_store
-                        .add_asset_and_save(other_asset)
-                        .await?;
-                    self.world_object_store.delete_asset_and_save(id).await?;
-
-                    return Ok(());
-                }
-
-                Err("Asset not found".into())
+                migrate_asset_type(self, &self.other_asset_store, other_asset).await
             }
         }
     }
@@ -610,6 +471,120 @@ impl StoreProvider {
 
         Ok(())
     }
+}
+
+async fn migrate_asset_type<T>(
+    provider: &StoreProvider,
+    dest_json_store: &JsonStore<T>,
+    mut asset: T,
+) -> Result<(), String>
+where
+    T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
+{
+    let id = asset.get_id();
+
+    if T::asset_type() != AssetType::Avatar {
+        if let Some(avatar) = provider.avatar_store.get_asset(id).await {
+            asset.get_description_as_mut().created_at = avatar.description.created_at;
+            handle_image_change(
+                &mut asset,
+                &provider.data_dir,
+                avatar.description.image_filename.as_ref(),
+            )
+            .await?;
+
+            dest_json_store.add_asset_and_save(asset).await?;
+            provider.avatar_store.delete_asset_and_save(id).await?;
+
+            return Ok(());
+        }
+    }
+
+    if T::asset_type() != AssetType::AvatarWearable {
+        if let Some(avatar_wearable) = provider.avatar_wearable_store.get_asset(id).await {
+            asset.get_description_as_mut().created_at = avatar_wearable.description.created_at;
+            handle_image_change(
+                &mut asset,
+                &provider.data_dir,
+                avatar_wearable.description.image_filename.as_ref(),
+            )
+            .await?;
+
+            dest_json_store.add_asset_and_save(asset).await?;
+            provider
+                .avatar_wearable_store
+                .delete_asset_and_save(id)
+                .await?;
+
+            return Ok(());
+        }
+    }
+
+    if T::asset_type() != AssetType::WorldObject {
+        if let Some(world_object) = provider.world_object_store.get_asset(id).await {
+            asset.get_description_as_mut().created_at = world_object.description.created_at;
+            handle_image_change(
+                &mut asset,
+                &provider.data_dir,
+                world_object.description.image_filename.as_ref(),
+            )
+            .await?;
+
+            dest_json_store.add_asset_and_save(asset).await?;
+            provider
+                .world_object_store
+                .delete_asset_and_save(id)
+                .await?;
+
+            return Ok(());
+        }
+    }
+
+    if let Some(other_asset) = provider.other_asset_store.get_asset(id).await {
+        asset.get_description_as_mut().created_at = other_asset.description.created_at;
+        handle_image_change(
+            &mut asset,
+            &provider.data_dir,
+            other_asset.description.image_filename.as_ref(),
+        )
+        .await?;
+
+        dest_json_store.add_asset_and_save(asset).await?;
+        provider.other_asset_store.delete_asset_and_save(id).await?;
+
+        return Ok(());
+    }
+
+    Err("Asset not found".into())
+}
+
+async fn handle_image_change<T: AssetTrait>(
+    asset: &mut T,
+    data_dir: &Path,
+    old_image: Option<&String>,
+) -> Result<(), String> {
+    let new_image = asset.get_description().image_filename.as_ref();
+
+    if old_image == new_image {
+        return Ok(());
+    }
+
+    let images_dir = data_dir.join("images");
+
+    if let Some(old_image_filename) = old_image {
+        delete_asset_image(&data_dir.to_path_buf(), old_image_filename).await?;
+    }
+
+    if let Some(new_image_filename) = new_image {
+        let temp_new_image = images_dir.join(new_image_filename);
+        let new_image_path = execute_image_fixation(&temp_new_image).await?;
+
+        if let Some(new_image_filename) = new_image_path {
+            asset.get_description_as_mut().image_filename = Some(new_image_filename);
+        }
+    }
+
+    Ok(())
 }
 
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq, specta::Type)]
