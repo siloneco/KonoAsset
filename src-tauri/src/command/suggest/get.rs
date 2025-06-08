@@ -99,6 +99,32 @@ pub async fn get_creator_names(
             *count += 1;
         });
 
+    basic_store
+        .get_other_asset_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            if !allowed {
+                return;
+            }
+
+            let creator = asset.description.creator.clone();
+            let creator = creator.trim();
+            if creator.is_empty() {
+                return;
+            }
+
+            let count = creators.entry(creator.to_string()).or_insert(0);
+            *count += 1;
+        });
+
     Ok(creators
         .iter()
         .map(|(key, value)| PrioritizedEntry {
