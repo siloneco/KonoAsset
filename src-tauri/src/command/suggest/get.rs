@@ -14,6 +14,128 @@ pub struct PrioritizedEntry {
 
 #[tauri::command]
 #[specta::specta]
+pub async fn get_creator_names(
+    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    allowed_ids: Option<Vec<Uuid>>,
+) -> Result<Vec<PrioritizedEntry>, String> {
+    let basic_store = basic_store.lock().await;
+    let mut creators: HashMap<String, u32> = HashMap::new();
+
+    basic_store
+        .get_avatar_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            if !allowed {
+                return;
+            }
+
+            let creator = asset.description.creator.clone();
+            let creator = creator.trim();
+            if creator.is_empty() {
+                return;
+            }
+
+            let count = creators.entry(creator.to_string()).or_insert(0);
+            *count += 1;
+        });
+
+    basic_store
+        .get_avatar_wearable_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            if !allowed {
+                return;
+            }
+
+            let creator = asset.description.creator.clone();
+            let creator = creator.trim();
+            if creator.is_empty() {
+                return;
+            }
+
+            let count = creators.entry(creator.to_string()).or_insert(0);
+            *count += 1;
+        });
+
+    basic_store
+        .get_world_object_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            if !allowed {
+                return;
+            }
+
+            let creator = asset.description.creator.clone();
+            let creator = creator.trim();
+            if creator.is_empty() {
+                return;
+            }
+
+            let count = creators.entry(creator.to_string()).or_insert(0);
+            *count += 1;
+        });
+
+    basic_store
+        .get_other_asset_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            let allowed = if let Some(allowed_ids) = &allowed_ids {
+                allowed_ids.contains(&asset.id)
+            } else {
+                true
+            };
+
+            if !allowed {
+                return;
+            }
+
+            let creator = asset.description.creator.clone();
+            let creator = creator.trim();
+            if creator.is_empty() {
+                return;
+            }
+
+            let count = creators.entry(creator.to_string()).or_insert(0);
+            *count += 1;
+        });
+
+    Ok(creators
+        .iter()
+        .map(|(key, value)| PrioritizedEntry {
+            priority: *value,
+            value: key.clone(),
+        })
+        .collect())
+}
+
+#[tauri::command]
+#[specta::specta]
 pub async fn get_all_asset_tags(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     allowed_ids: Option<Vec<Uuid>>,

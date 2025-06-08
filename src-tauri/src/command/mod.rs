@@ -32,6 +32,7 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         asset::statistics::execute_volume_statistics_calculation_task,
         asset::statistics::get_volume_statistics_cache,
         // サジェストの取得関連
+        suggest::get::get_creator_names,
         suggest::get::get_all_asset_tags,
         suggest::get::get_avatar_wearable_categories,
         suggest::get::get_avatar_wearable_supported_avatars,
