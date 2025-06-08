@@ -15,6 +15,7 @@ import { AvatarWearableLayout } from './layout/AvatarWearableLayout'
 import { WorldObjectLayout } from './layout/WorldObjectLayout'
 import { useLocalization } from '@/hooks/use-localization'
 import { OtherAssetLayout } from './layout/OtherAssetLayout'
+import TextInputSelect from '@/components/ui/text-input-select'
 
 type Props = {
   form: AssetFormType
@@ -42,6 +43,7 @@ export const ManualInputTab = ({
     setImageFilename,
     imageUrlIndex,
     setImageUrlIndex,
+    creatorCandidates,
   } = useManualInputTabHooks({ form })
 
   return (
@@ -79,11 +81,18 @@ export const ManualInputTab = ({
             </div>
             <div className="space-y-2">
               <Label> {t('addasset:manual-input:shop-name')} </Label>
-              <Input
+              <TextInputSelect
+                options={creatorCandidates}
                 placeholder={t('addasset:manual-input:shop-name:placeholder')}
-                autoComplete="off"
+                emptyIndicator={
+                  <p className="text-center text-lg text-muted-foreground">
+                    {t('addasset:empty-indicator')}
+                  </p>
+                }
                 value={form.watch('creator')}
-                onChange={(e) => form.setValue('creator', e.target.value)}
+                onChange={(value) => {
+                  form.setValue('creator', value)
+                }}
               />
             </div>
           </div>
