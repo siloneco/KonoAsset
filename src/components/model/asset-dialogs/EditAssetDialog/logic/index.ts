@@ -47,7 +47,7 @@ const updateAvatar = async ({
   const dependencies = form.getValues('dependencies')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: Avatar = {
+  const avatar: Avatar = {
     id,
     description: {
       name,
@@ -62,7 +62,7 @@ const updateAvatar = async ({
     },
   }
 
-  return await commands.updateAvatar(asset)
+  return await commands.updateAsset({ avatar })
 }
 
 const updateAvatarWearable = async ({
@@ -80,7 +80,7 @@ const updateAvatarWearable = async ({
   const supportedAvatars = form.getValues('supportedAvatars')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: AvatarWearable = {
+  const avatarWearable: AvatarWearable = {
     id,
     description: {
       name,
@@ -97,7 +97,7 @@ const updateAvatarWearable = async ({
     supportedAvatars,
   }
 
-  return await commands.updateAvatarWearable(asset)
+  return await commands.updateAsset({ avatarWearable })
 }
 
 const updateWorldObject = async ({
@@ -114,7 +114,7 @@ const updateWorldObject = async ({
   const category = form.getValues('category')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: WorldObject = {
+  const worldObject: WorldObject = {
     id,
     description: {
       name,
@@ -130,7 +130,7 @@ const updateWorldObject = async ({
     category,
   }
 
-  return await commands.updateWorldObject(asset)
+  return await commands.updateAsset({ worldObject })
 }
 
 const updateOtherAsset = async ({
@@ -147,7 +147,7 @@ const updateOtherAsset = async ({
   const category = form.getValues('category')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: OtherAsset = {
+  const otherAsset: OtherAsset = {
     id,
     description: {
       name,
@@ -163,7 +163,7 @@ const updateOtherAsset = async ({
     category,
   }
 
-  return await commands.updateOtherAsset(asset)
+  return await commands.updateAsset({ otherAsset })
 }
 
 export const fetchAssetInformation = async (

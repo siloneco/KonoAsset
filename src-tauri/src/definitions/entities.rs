@@ -432,3 +432,12 @@ impl InitialSetup {
         self.require_initial_setup = !self.preference_file.exists();
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub enum AssetUpdatePayload {
+    Avatar(Avatar),
+    AvatarWearable(AvatarWearable),
+    WorldObject(WorldObject),
+    OtherAsset(OtherAsset),
+}

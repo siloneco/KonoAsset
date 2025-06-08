@@ -12,7 +12,9 @@ use uuid::Uuid;
 
 use crate::{
     definitions::{
-        entities::{Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject},
+        entities::{
+            AssetUpdatePayload, Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject,
+        },
         traits::AssetTrait,
     },
     file::{
@@ -122,6 +124,207 @@ impl StoreProvider {
         );
 
         ids
+    }
+
+    pub async fn update_asset_and_save(&self, asset: AssetUpdatePayload) -> Result<(), String> {
+        match asset {
+            AssetUpdatePayload::Avatar(mut avatar) => {
+                if self.avatar_store.get_asset(avatar.id).await.is_some() {
+                    return self.avatar_store.update_asset_and_save(avatar).await;
+                }
+
+                let id = avatar.id.clone();
+
+                if let Some(avatar_wearable) = self.avatar_wearable_store.get_asset(avatar.id).await
+                {
+                    avatar.description.created_at = avatar_wearable.description.created_at;
+
+                    self.avatar_store.add_asset_and_save(avatar).await?;
+                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(world_object) = self.world_object_store.get_asset(avatar.id).await {
+                    avatar.description.created_at = world_object.description.created_at;
+
+                    self.avatar_store.add_asset_and_save(avatar).await?;
+                    self.world_object_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(other_asset) = self.other_asset_store.get_asset(avatar.id).await {
+                    avatar.description.created_at = other_asset.description.created_at;
+
+                    self.avatar_store.add_asset_and_save(avatar).await?;
+                    self.other_asset_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                Err("Asset not found".into())
+            }
+            AssetUpdatePayload::AvatarWearable(mut avatar_wearable) => {
+                if self
+                    .avatar_wearable_store
+                    .get_asset(avatar_wearable.id)
+                    .await
+                    .is_some()
+                {
+                    return self
+                        .avatar_wearable_store
+                        .update_asset_and_save(avatar_wearable)
+                        .await;
+                }
+
+                let id = avatar_wearable.id.clone();
+
+                if let Some(avatar) = self.avatar_store.get_asset(avatar_wearable.id).await {
+                    avatar_wearable.description.created_at = avatar.description.created_at;
+
+                    self.avatar_wearable_store
+                        .add_asset_and_save(avatar_wearable)
+                        .await?;
+                    self.avatar_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(world_object) =
+                    self.world_object_store.get_asset(avatar_wearable.id).await
+                {
+                    avatar_wearable.description.created_at = world_object.description.created_at;
+
+                    self.avatar_wearable_store
+                        .add_asset_and_save(avatar_wearable)
+                        .await?;
+                    self.world_object_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(other_asset) =
+                    self.other_asset_store.get_asset(avatar_wearable.id).await
+                {
+                    avatar_wearable.description.created_at = other_asset.description.created_at;
+
+                    self.avatar_wearable_store
+                        .add_asset_and_save(avatar_wearable)
+                        .await?;
+                    self.other_asset_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                Err("Asset not found".into())
+            }
+            AssetUpdatePayload::WorldObject(mut world_object) => {
+                if self
+                    .world_object_store
+                    .get_asset(world_object.id)
+                    .await
+                    .is_some()
+                {
+                    return self
+                        .world_object_store
+                        .update_asset_and_save(world_object)
+                        .await;
+                }
+
+                let id = world_object.id.clone();
+
+                if let Some(avatar) = self.avatar_store.get_asset(world_object.id).await {
+                    world_object.description.created_at = avatar.description.created_at;
+
+                    self.world_object_store
+                        .add_asset_and_save(world_object)
+                        .await?;
+                    self.avatar_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(avatar_wearable) =
+                    self.avatar_wearable_store.get_asset(world_object.id).await
+                {
+                    world_object.description.created_at = avatar_wearable.description.created_at;
+
+                    self.world_object_store
+                        .add_asset_and_save(world_object)
+                        .await?;
+                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(other_asset) = self.other_asset_store.get_asset(world_object.id).await {
+                    world_object.description.created_at = other_asset.description.created_at;
+
+                    self.world_object_store
+                        .add_asset_and_save(world_object)
+                        .await?;
+                    self.other_asset_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                Err("Asset not found".into())
+            }
+            AssetUpdatePayload::OtherAsset(mut other_asset) => {
+                if self
+                    .other_asset_store
+                    .get_asset(other_asset.id)
+                    .await
+                    .is_some()
+                {
+                    return self
+                        .other_asset_store
+                        .update_asset_and_save(other_asset)
+                        .await;
+                }
+
+                let id = other_asset.id.clone();
+
+                if let Some(avatar) = self.avatar_store.get_asset(other_asset.id).await {
+                    other_asset.description.created_at = avatar.description.created_at;
+
+                    self.other_asset_store
+                        .add_asset_and_save(other_asset)
+                        .await?;
+                    self.avatar_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(avatar_wearable) =
+                    self.avatar_wearable_store.get_asset(other_asset.id).await
+                {
+                    other_asset.description.created_at = avatar_wearable.description.created_at;
+
+                    self.other_asset_store
+                        .add_asset_and_save(other_asset)
+                        .await?;
+                    self.avatar_wearable_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                if let Some(world_object) = self.world_object_store.get_asset(other_asset.id).await
+                {
+                    other_asset.description.created_at = world_object.description.created_at;
+
+                    self.other_asset_store
+                        .add_asset_and_save(other_asset)
+                        .await?;
+                    self.world_object_store.delete_asset_and_save(id).await?;
+
+                    return Ok(());
+                }
+
+                Err("Asset not found".into())
+            }
+        }
     }
 
     pub async fn migrate_data_dir<P>(
@@ -501,7 +704,9 @@ fn is_outdated_timestamp(timestamp: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
+    use std::{collections::BTreeSet, str::FromStr};
+
+    use crate::definitions::entities::AssetDescription;
 
     use super::*;
 
@@ -646,5 +851,177 @@ mod tests {
         prune_old_backup(base).await.unwrap();
 
         assert!(std::fs::exists(path).unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_update_asset_and_save() {
+        let test_dir = "test/temp/update_asset_and_save";
+
+        if std::fs::exists(test_dir).unwrap() {
+            std::fs::remove_dir_all(test_dir).unwrap();
+        }
+        std::fs::create_dir_all(test_dir).unwrap();
+
+        let mut provider = StoreProvider::create(test_dir).unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
+
+        // Test updating existing avatar
+        let avatar_id = Uuid::new_v4();
+        let avatar = Avatar {
+            id: avatar_id,
+            description: AssetDescription {
+                name: "Test Avatar".into(),
+                creator: "Test Creator".into(),
+                image_filename: None,
+                tags: vec!["test".into()],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+        };
+
+        provider
+            .avatar_store
+            .add_asset_and_save(avatar.clone())
+            .await
+            .unwrap();
+
+        let mut updated_avatar = avatar.clone();
+        updated_avatar.description.name = "Updated Avatar".into();
+
+        provider
+            .update_asset_and_save(AssetUpdatePayload::Avatar(updated_avatar.clone()))
+            .await
+            .unwrap();
+
+        let stored_avatar = provider.avatar_store.get_asset(avatar_id).await.unwrap();
+        assert_eq!(stored_avatar.description.name, "Updated Avatar");
+
+        // Test converting from avatar to avatar wearable
+        let avatar_wearable = AvatarWearable {
+            id: avatar_id,
+            description: AssetDescription {
+                name: "Converted Wearable".into(),
+                creator: "Test Creator".into(),
+                image_filename: None,
+                tags: vec!["test".into()],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+            category: "TestCategory".into(),
+            supported_avatars: BTreeSet::new(),
+        };
+
+        provider
+            .update_asset_and_save(AssetUpdatePayload::AvatarWearable(avatar_wearable.clone()))
+            .await
+            .unwrap();
+
+        assert!(provider.avatar_store.get_asset(avatar_id).await.is_none());
+        let stored_wearable = provider
+            .avatar_wearable_store
+            .get_asset(avatar_id)
+            .await
+            .unwrap();
+        assert_eq!(stored_wearable.description.name, "Converted Wearable");
+        assert_eq!(stored_wearable.description.created_at, 1234567890000);
+
+        // Test converting from avatar wearable to world object
+        let world_object = WorldObject {
+            id: avatar_id,
+            description: AssetDescription {
+                name: "Converted World Object".into(),
+                creator: "Test Creator".into(),
+                image_filename: None,
+                tags: vec!["test".into()],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+            category: "TestCategory".into(),
+        };
+
+        provider
+            .update_asset_and_save(AssetUpdatePayload::WorldObject(world_object.clone()))
+            .await
+            .unwrap();
+
+        assert!(provider
+            .avatar_wearable_store
+            .get_asset(avatar_id)
+            .await
+            .is_none());
+        let stored_world = provider
+            .world_object_store
+            .get_asset(avatar_id)
+            .await
+            .unwrap();
+        assert_eq!(stored_world.description.name, "Converted World Object");
+        assert_eq!(stored_world.description.created_at, 1234567890000);
+
+        // Test converting from world object to other asset
+        let other_asset = OtherAsset {
+            id: avatar_id,
+            description: AssetDescription {
+                name: "Converted Other Asset".into(),
+                creator: "Test Creator".into(),
+                image_filename: None,
+                tags: vec!["test".into()],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+            category: "TestCategory".into(),
+        };
+
+        provider
+            .update_asset_and_save(AssetUpdatePayload::OtherAsset(other_asset.clone()))
+            .await
+            .unwrap();
+
+        assert!(provider
+            .world_object_store
+            .get_asset(avatar_id)
+            .await
+            .is_none());
+        let stored_other = provider
+            .other_asset_store
+            .get_asset(avatar_id)
+            .await
+            .unwrap();
+        assert_eq!(stored_other.description.name, "Converted Other Asset");
+        assert_eq!(stored_other.description.created_at, 1234567890000);
+
+        // Test error case - updating non-existent asset
+        let non_existent_id = Uuid::new_v4();
+        let non_existent_avatar = Avatar {
+            id: non_existent_id,
+            description: AssetDescription {
+                name: "Non Existent".into(),
+                creator: "Test Creator".into(),
+                image_filename: None,
+                tags: vec![],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 1234567890000,
+                published_at: None,
+            },
+        };
+
+        let result = provider
+            .update_asset_and_save(AssetUpdatePayload::Avatar(non_existent_avatar))
+            .await;
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Asset not found");
     }
 }

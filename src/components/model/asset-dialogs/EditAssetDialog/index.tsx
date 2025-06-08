@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalization } from '@/hooks/use-localization'
 import { DialogTitle } from '@/components/ui/dialog'
 import { DialogDescription } from '@radix-ui/react-dialog'
+import { AssetTypeSelectorTab } from '../components/tabs/AssetTypeSelector'
 
 type Props = {
   id: string | null
@@ -55,20 +56,28 @@ export const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
         <BoothInputTabForEditDialog
           form={form}
           closeDialog={() => setDialogOpen(false)}
-          goToNextTab={() => setTab('manual-input')}
+          goToNextTab={() => setTab('asset-type-selector')}
           setImageUrls={setImageUrls}
           tabIndex={1}
-          totalTabs={3}
+          totalTabs={4}
+        />
+      </TabsContent>
+      <TabsContent value="asset-type-selector">
+        <AssetTypeSelectorTab
+          form={form}
+          setTab={setTab}
+          tabIndex={2}
+          totalTabs={4}
         />
       </TabsContent>
       <TabsContent value="manual-input">
         <ManualInputTab
           form={form}
           imageUrls={imageUrls}
-          onBackToPreviousTabClicked={() => setTab('booth-input')}
+          onBackToPreviousTabClicked={() => setTab('asset-type-selector')}
           onGoToNextTabClicked={() => setTab('additional-input')}
-          tabIndex={2}
-          totalTabs={3}
+          tabIndex={3}
+          totalTabs={4}
         />
       </TabsContent>
       <TabsContent value="additional-input">
@@ -77,8 +86,8 @@ export const EditAssetDialog = ({ id, dialogOpen, setDialogOpen }: Props) => {
           onBackToPreviousTabClicked={() => setTab('manual-input')}
           onSubmit={onSubmit}
           submitting={submitting}
-          tabIndex={3}
-          totalTabs={3}
+          tabIndex={4}
+          totalTabs={4}
           hideDeleteSourceCheckbox
           submitButtonText={t('addasset:update-asset')}
         />

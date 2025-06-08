@@ -70,33 +70,9 @@ async requestAssetDeletion(id: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async updateAvatar(asset: Avatar) : Promise<Result<boolean, string>> {
+async updateAsset(payload: AssetUpdatePayload) : Promise<Result<boolean, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("update_avatar", { asset }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async updateAvatarWearable(asset: AvatarWearable) : Promise<Result<boolean, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("update_avatar_wearable", { asset }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async updateWorldObject(asset: WorldObject) : Promise<Result<boolean, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("update_world_object", { asset }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async updateOtherAsset(asset: OtherAsset) : Promise<Result<boolean, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("update_other_asset", { asset }) };
+    return { status: "ok", data: await TAURI_INVOKE("update_asset", { payload }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -515,6 +491,7 @@ export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; dele
 export type AssetRegistrationStatistics = { date: string; avatars: number; avatarWearables: number; worldObjects: number; otherAssets: number }
 export type AssetSummary = { id: string; assetType: AssetType; name: string; creator: string; imageFilename: string | null; hasMemo: boolean; dependencies: string[]; boothItemId: number | null; publishedAt: number | null }
 export type AssetType = "Avatar" | "AvatarWearable" | "WorldObject" | "OtherAsset"
+export type AssetUpdatePayload = { avatar: Avatar } | { avatarWearable: AvatarWearable } | { worldObject: WorldObject } | { otherAsset: OtherAsset }
 export type AssetVolumeEstimatedEvent = { type: AssetVolumeEstimatedEventType; data: AssetVolumeStatistics[] }
 export type AssetVolumeEstimatedEventType = "Chunk" | "Completed"
 export type AssetVolumeStatistics = { id: string; assetType: AssetType; name: string; sizeInBytes: number }
