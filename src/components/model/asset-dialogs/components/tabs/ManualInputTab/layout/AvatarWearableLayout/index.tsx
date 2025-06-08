@@ -102,17 +102,9 @@ export const AvatarWearableLayout = ({ form }: Props) => {
                 {t('addasset:empty-indicator')}
               </p>
             }
-            value={form.getValues('supportedAvatars').map((supportedAvatar) => {
-              return {
-                label: supportedAvatar,
-                value: supportedAvatar,
-              }
-            })}
+            value={form.getValues('supportedAvatars')}
             onChange={(value) => {
-              form.setValue(
-                'supportedAvatars',
-                value.map((v) => v.value),
-              )
+              form.setValue('supportedAvatars', value)
             }}
           />
           <p className="text-muted-foreground text-sm">
@@ -155,17 +147,9 @@ export const AvatarWearableLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          value={form.getValues('tags').map((tag) => {
-            return {
-              label: tag,
-              value: tag,
-            }
-          })}
+          value={form.getValues('tags')}
           onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
+            form.setValue('tags', value)
           }}
         />
         <p className="text-muted-foreground text-sm">

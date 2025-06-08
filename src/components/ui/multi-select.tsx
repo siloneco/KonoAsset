@@ -1,7 +1,7 @@
 'use client'
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk'
-import { X } from 'lucide-react'
+import { Ban, X } from 'lucide-react'
 import * as React from 'react'
 import { forwardRef, useEffect } from 'react'
 
@@ -12,6 +12,11 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
 import { useLocalization } from '@/hooks/use-localization'
@@ -19,21 +24,13 @@ import { ScrollArea } from './scroll-area'
 
 export interface Option {
   value: string
-  label: string
   disable?: boolean
   priority?: number
-  /** fixed option that can't be removed. */
-  fixed?: boolean
-  /** Group the options by providing key. */
-  [key: string]: string | number | boolean | undefined
-}
-interface GroupOption {
-  [key: string]: Option[]
 }
 
 interface MultipleSelectorProps {
-  value?: Option[]
-  defaultOptions?: Option[]
+  value?: string[]
+  defaultOptions?: string[]
   /** manually controlled options */
   options?: Option[]
   placeholder?: string
@@ -56,7 +53,7 @@ interface MultipleSelectorProps {
    * i.e.: creatable, groupBy, delay.
    **/
   onSearchSync?: (value: string) => Option[]
-  onChange?: (options: Option[]) => void
+  onChange?: (options: string[]) => void
   /** Limit the maximum number of selected options. */
   maxSelected?: number
   /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
@@ -64,8 +61,6 @@ interface MultipleSelectorProps {
   /** Hide the placeholder when there are options selected. */
   hidePlaceholderWhenSelected?: boolean
   disabled?: boolean
-  /** Group the options base on provided key. */
-  groupBy?: string
   className?: string
   badgeClassName?: string
   /**
@@ -89,7 +84,7 @@ interface MultipleSelectorProps {
 }
 
 export interface MultipleSelectorRef {
-  selectedValue: Option[]
+  selectedValue: string[]
   input: HTMLInputElement
   focus: () => void
   reset: () => void
@@ -109,47 +104,25 @@ export function useDebounce<T>(value: T, delay?: number): T {
   return debouncedValue
 }
 
-function transToGroupOption(options: Option[], groupBy?: string) {
-  if (options.length === 0) {
-    return {}
-  }
-  if (!groupBy) {
-    return {
-      '': options,
-    }
-  }
-
-  const groupOption: GroupOption = {}
-  options.forEach((option) => {
-    const key = (option[groupBy] as string) || ''
-    if (!groupOption[key]) {
-      groupOption[key] = []
-    }
-    groupOption[key].push(option)
-  })
-  return groupOption
+function removePickedOption(options: Option[], picked: string[]) {
+  return options.filter(
+    (val) =>
+      !picked.some((p) => {
+        // Remove leading hyphen from picked value for comparison
+        const cleanPicked = p.startsWith('-') ? p.slice(1) : p
+        return cleanPicked === val.value
+      }),
+  )
 }
 
-function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption
-
-  for (const [key, value] of Object.entries(cloneOption)) {
-    cloneOption[key] = value.filter(
-      (val) => !picked.find((p) => p.value === val.value),
-    )
-  }
-  return cloneOption
-}
-
-function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
-  for (const [, value] of Object.entries(groupOption)) {
-    if (
-      value.some((option) => targetOption.find((p) => p.value === option.value))
-    ) {
-      return true
-    }
-  }
-  return false
+function isOptionsExist(options: Option[], targetOption: string[]) {
+  return options.some((option) =>
+    targetOption.some((target) => {
+      // Remove leading hyphen from target for comparison
+      const cleanTarget = target.startsWith('-') ? target.slice(1) : target
+      return cleanTarget === option.value
+    }),
+  )
 }
 
 /**
@@ -194,7 +167,6 @@ const MultipleSelector = ({
   onMaxSelected,
   hidePlaceholderWhenSelected,
   disabled,
-  groupBy,
   className,
   badgeClassName,
   selectFirstItem = true,
@@ -216,9 +188,9 @@ const MultipleSelector = ({
     'top' | 'bottom'
   >('bottom')
 
-  const [selected, setSelected] = React.useState<Option[]>(value || [])
-  const [options, setOptions] = React.useState<GroupOption>(
-    transToGroupOption(arrayDefaultOptions, groupBy),
+  const [selected, setSelected] = React.useState<string[]>(value || [])
+  const [options, setOptions] = React.useState<Option[]>(
+    arrayDefaultOptions.map((value) => ({ value })),
   )
   const [inputValue, setInputValue] = React.useState('')
   const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
@@ -333,8 +305,8 @@ const MultipleSelector = ({
   }
 
   const handleUnselect = React.useCallback(
-    (option: Option) => {
-      const newOptions = selected.filter((s) => s.value !== option.value)
+    (option: string) => {
+      const newOptions = selected.filter((s) => s !== option)
       setSelected(newOptions)
       onChange?.(newOptions)
     },
@@ -352,16 +324,11 @@ const MultipleSelector = ({
           if (input.value !== '') {
             setIsBackspaceDebounced(true)
           } else if (selected.length > 0 && !isBackspaceDebounced) {
-            const lastSelectOption = selected[selected.length - 1]
-            // If last item is fixed, we should not remove it.
-            if (!lastSelectOption.fixed) {
-              handleUnselect(selected[selected.length - 1])
-
-              setIsBackspaceDebounced(true)
-              setTimeout(() => {
-                setIsBackspaceDebounced(false)
-              }, 300)
-            }
+            handleUnselect(selected[selected.length - 1])
+            setIsBackspaceDebounced(true)
+            setTimeout(() => {
+              setIsBackspaceDebounced(false)
+            }, 300)
           }
         }
         // This is not a default behavior of the <input /> field
@@ -410,18 +377,18 @@ const MultipleSelector = ({
     if (!arrayOptions || onSearch) {
       return
     }
-    const newOption = transToGroupOption(arrayOptions || [], groupBy)
-    if (JSON.stringify(newOption) !== JSON.stringify(options)) {
-      setOptions(newOption)
+    if (JSON.stringify(arrayOptions) !== JSON.stringify(options)) {
+      setOptions(arrayOptions)
     }
-  }, [arrayDefaultOptions, arrayOptions, groupBy, onSearch, options])
+  }, [arrayDefaultOptions, arrayOptions, onSearch, options])
 
   useEffect(() => {
     /** sync search */
-
     const doSearchSync = () => {
       const res = onSearchSync?.(debouncedSearchTerm)
-      setOptions(transToGroupOption(res || [], groupBy))
+      if (res) {
+        setOptions(res)
+      }
     }
 
     const exec = async () => {
@@ -437,15 +404,16 @@ const MultipleSelector = ({
     }
 
     void exec()
-  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearchSync])
+  }, [debouncedSearchTerm, open, triggerSearchOnFocus, onSearchSync])
 
   useEffect(() => {
     /** async search */
-
     const doSearch = async () => {
       setIsLoading(true)
       const res = await onSearch?.(debouncedSearchTerm)
-      setOptions(transToGroupOption(res || [], groupBy))
+      if (res) {
+        setOptions(res)
+      }
       setIsLoading(false)
     }
 
@@ -462,13 +430,19 @@ const MultipleSelector = ({
     }
 
     void exec()
-  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearch])
+  }, [debouncedSearchTerm, open, triggerSearchOnFocus, onSearch])
 
   const CreatableItem = () => {
     if (!creatable) return undefined
+    const isNotDesignation = inputValue.startsWith('-')
+    const cleanInputValue = isNotDesignation ? inputValue.slice(1) : inputValue
     if (
-      isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
-      selected.find((s) => s.value === inputValue)
+      isOptionsExist(options, [cleanInputValue]) ||
+      selected.some((s) => {
+        // Remove leading hyphen from selected value for comparison
+        const cleanSelected = s.startsWith('-') ? s.slice(1) : s
+        return cleanSelected === cleanInputValue
+      })
     ) {
       return undefined
     }
@@ -487,7 +461,9 @@ const MultipleSelector = ({
             return
           }
           setInputValue('')
-          const newOptions = [...selected, { value, label: value }]
+          const isNot = value.startsWith('-')
+          const cleanValue = isNot ? value.slice(1) : value
+          const newOptions = [...selected, cleanValue]
           setSelected(newOptions)
           onChange?.(newOptions)
         }}
@@ -513,7 +489,7 @@ const MultipleSelector = ({
     if (!emptyIndicator) return undefined
 
     // For async search that showing emptyIndicator
-    if (onSearch && !creatable && Object.keys(options).length === 0) {
+    if (onSearch && !creatable && options.length === 0) {
       return (
         <CommandItem value="-" disabled>
           {emptyIndicator}
@@ -524,7 +500,7 @@ const MultipleSelector = ({
     return <CommandEmpty>{emptyIndicator}</CommandEmpty>
   }, [creatable, emptyIndicator, onSearch, options])
 
-  const selectables = React.useMemo<GroupOption>(
+  const selectables = React.useMemo<Option[]>(
     () => removePickedOption(options, selected),
     [options, selected],
   )
@@ -537,11 +513,20 @@ const MultipleSelector = ({
 
     if (creatable) {
       return (value: string, search: string) => {
-        return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1
+        // Remove leading hyphen from search term for comparison
+        const cleanSearch = search.startsWith('-') ? search.slice(1) : search
+        const cleanValue = value.toLowerCase()
+        return cleanValue.includes(cleanSearch.toLowerCase()) ? 1 : -1
       }
     }
-    // Using default filter in `cmdk`. We don't have to provide it.
-    return undefined
+
+    // Custom filter for handling hyphenated search terms
+    return (value: string, search: string) => {
+      // Remove leading hyphen from search term for comparison
+      const cleanSearch = search.startsWith('-') ? search.slice(1) : search
+      const cleanValue = value.toLowerCase()
+      return cleanValue.includes(cleanSearch.toLowerCase()) ? 1 : -1
+    }
   }, [creatable, commandProps?.filter])
 
   return (
@@ -590,28 +575,29 @@ const MultipleSelector = ({
               ref={badgesContainerRef}
             >
               {selected.map((option, index) => {
-                return (
+                const isNot = option.startsWith('-')
+                const displayValue = isNot ? option.slice(1) : option
+                const BadgeContent = (
                   <Badge
-                    key={option.value}
+                    key={option}
                     className={cn(
                       'cursor-default flex shrink select-none',
                       'data-disabled:bg-muted-foreground data-disabled:text-muted data-disabled:hover:bg-muted-foreground overflow-hidden',
-                      'data-fixed:bg-muted-foreground data-fixed:text-muted data-fixed:hover:bg-muted-foreground overflow-hidden',
-                      // Xボタンと重ならないようにする
                       {
                         'mr-6': lastBadgeInFirstRow === index,
+                        'bg-destructive': isNot,
                       },
                       badgeClassName,
                     )}
                     data-badge={true}
-                    data-fixed={option.fixed}
                     data-disabled={disabled || undefined}
                   >
-                    <span className="truncate">{option.label}</span>
+                    {isNot && <Ban className="h-3 w-3" />}
+                    <span className="truncate">{displayValue}</span>
                     <button
                       className={cn(
                         'ml-1 rounded-full outline-hidden ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                        (disabled || option.fixed) && 'hidden',
+                        disabled && 'hidden',
                       )}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -624,10 +610,28 @@ const MultipleSelector = ({
                       }}
                       onClick={() => handleUnselect(option)}
                     >
-                      <X className="h-4 w-4 text-foreground cursor-pointer" />
+                      <X
+                        className={cn(
+                          'h-4 w-4 cursor-pointer text-primary-foregroun',
+                          isNot && 'text-destructive-foreground',
+                        )}
+                      />
                     </button>
                   </Badge>
                 )
+
+                if (isNot) {
+                  return (
+                    <Tooltip key={option}>
+                      <TooltipTrigger asChild>{BadgeContent}</TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t('ui:multi-select:not-selected-tooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                }
+
+                return BadgeContent
               })}
               {/* Avoid having the "Search" Icon */}
               <CommandPrimitive.Input
@@ -646,10 +650,7 @@ const MultipleSelector = ({
                   inputProps?.onBlur?.(event)
 
                   if (inputValue.length > 0) {
-                    const newOptions = [
-                      ...selected,
-                      { value: inputValue, label: inputValue },
-                    ]
+                    const newOptions = [...selected, inputValue]
                     setSelected(newOptions)
                     onChange?.(newOptions)
                     setInputValue('')
@@ -688,15 +689,12 @@ const MultipleSelector = ({
           <button
             type="button"
             onClick={() => {
-              setSelected(selected.filter((s) => s.fixed))
-              onChange?.(selected.filter((s) => s.fixed))
+              setSelected([])
+              onChange?.([])
             }}
             className={cn(
               'absolute top-2 right-2 h-6 w-6 p-0',
-              (hideClearAllButton ||
-                disabled ||
-                selected.length < 1 ||
-                selected.filter((s) => s.fixed).length === selected.length) &&
+              (hideClearAllButton || disabled || selected.length < 1) &&
                 'hidden',
             )}
           >
@@ -738,63 +736,60 @@ const MultipleSelector = ({
                 {!selectFirstItem && (
                   <CommandItem value="-" className="hidden" />
                 )}
-                {Object.entries(selectables).map(([key, dropdowns]) => (
-                  <CommandGroup
-                    key={key}
-                    heading={key}
-                    className="h-full overflow-auto"
-                  >
-                    <>
-                      {dropdowns
-                        .sort((a, b) => {
-                          if (
-                            a.priority !== undefined &&
-                            b.priority !== undefined
-                          ) {
-                            if (a.priority !== b.priority) {
-                              return b.priority - a.priority
-                            }
-                          } else if (a.priority !== undefined) {
-                            return 1
-                          } else if (b.priority !== undefined) {
-                            return -1
-                          }
+                <CommandGroup heading="">
+                  {selectables
+                    .sort((a, b) => {
+                      if (
+                        a.priority !== undefined &&
+                        b.priority !== undefined
+                      ) {
+                        if (a.priority !== b.priority) {
+                          return b.priority - a.priority
+                        }
+                      } else if (a.priority !== undefined) {
+                        return 1
+                      } else if (b.priority !== undefined) {
+                        return -1
+                      }
 
-                          return a.label.localeCompare(b.label, 'ja')
-                        })
-                        .map((option) => {
-                          return (
-                            <CommandItem
-                              key={option.value}
-                              value={option.label}
-                              disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                              }}
-                              onSelect={() => {
-                                if (selected.length >= maxSelected) {
-                                  onMaxSelected?.(selected.length)
-                                  return
-                                }
-                                setInputValue('')
-                                const newOptions = [...selected, option]
-                                setSelected(newOptions)
-                                onChange?.(newOptions)
-                              }}
-                              className={cn(
-                                'cursor-pointer',
-                                option.disable &&
-                                  'cursor-default text-muted-foreground',
-                              )}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          )
-                        })}
-                    </>
-                  </CommandGroup>
-                ))}
+                      return a.value.localeCompare(b.value, 'ja')
+                    })
+                    .map((option) => {
+                      return (
+                        <CommandItem
+                          key={option.value}
+                          value={option.value}
+                          disabled={option.disable}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onSelect={() => {
+                            if (selected.length >= maxSelected) {
+                              onMaxSelected?.(selected.length)
+                              return
+                            }
+                            setInputValue('')
+                            // Preserve the leading hyphen from input if it exists
+                            const isNot = inputValue.startsWith('-')
+                            const newValue = isNot
+                              ? `-${option.value}`
+                              : option.value
+                            const newOptions = [...selected, newValue]
+                            setSelected(newOptions)
+                            onChange?.(newOptions)
+                          }}
+                          className={cn(
+                            'cursor-pointer',
+                            option.disable &&
+                              'cursor-default text-muted-foreground',
+                          )}
+                        >
+                          {option.value}
+                        </CommandItem>
+                      )
+                    })}
+                </CommandGroup>
               </>
             )}
           </CommandList>

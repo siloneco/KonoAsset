@@ -86,9 +86,7 @@ export const MainSidebar = () => {
                   placeholder={t('mainsidebar:filter:tag:placeholder')}
                   candidates={tagCandidates}
                   value={tagValues}
-                  onValueChange={(values) =>
-                    setTagFilter(values.map((v) => v.value))
-                  }
+                  onValueChange={setTagFilter}
                   matchType={tagFilterMatchType}
                   setMatchType={setTagFilterMatchType}
                   inputProps={tagSelectorInputProps}
