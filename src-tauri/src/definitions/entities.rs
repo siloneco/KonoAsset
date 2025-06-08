@@ -131,6 +131,10 @@ impl AssetTrait for Avatar {
         "avatars.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::Avatar
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -195,6 +199,10 @@ impl AssetTrait for AvatarWearable {
         "avatarWearables.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::AvatarWearable
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -248,6 +256,10 @@ impl AssetTrait for WorldObject {
         "worldObjects.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::WorldObject
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -299,6 +311,10 @@ impl OtherAsset {
 impl AssetTrait for OtherAsset {
     fn filename() -> String {
         "otherAssets.json".into()
+    }
+
+    fn asset_type() -> AssetType {
+        AssetType::OtherAsset
     }
 
     fn get_id(&self) -> Uuid {
@@ -431,4 +447,13 @@ impl InitialSetup {
     pub fn update(&mut self) {
         self.require_initial_setup = !self.preference_file.exists();
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub enum AssetUpdatePayload {
+    Avatar(Avatar),
+    AvatarWearable(AvatarWearable),
+    WorldObject(WorldObject),
+    OtherAsset(OtherAsset),
 }
