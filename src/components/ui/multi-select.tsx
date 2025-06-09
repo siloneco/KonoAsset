@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils'
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
 import { useLocalization } from '@/hooks/use-localization'
 import { ScrollArea } from './scroll-area'
+import { Button } from './button'
 
 export interface Option {
   value: string
@@ -798,12 +799,33 @@ const MultipleSelector = ({
                             onChange?.(newOptions)
                           }}
                           className={cn(
-                            'cursor-pointer',
+                            'cursor-pointer group flex items-center justify-between p-0',
                             option.disable &&
                               'cursor-default text-muted-foreground',
                           )}
                         >
-                          {option.value}
+                          <span className="my-1.5 ml-1.5">{option.value}</span>
+                          {negativeSelectable && (
+                            <Button
+                              variant="destructive"
+                              className="mr-1 size-6 opacity-0 group-hover:opacity-100"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                if (selected.length >= maxSelected) {
+                                  onMaxSelected?.(selected.length)
+                                  return
+                                }
+                                setInputValue('')
+                                const newValue = `-${option.value}`
+                                const newOptions = [...selected, newValue]
+                                setSelected(newOptions)
+                                onChange?.(newOptions)
+                              }}
+                            >
+                              <Ban className="size-3 text-destructive-foreground" />
+                            </Button>
+                          )}
                         </CommandItem>
                       )
                     })}
