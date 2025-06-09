@@ -65,11 +65,11 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             .iter()
             .for_each(|asset| {
                 // カテゴリが指定されている場合はアバターにカテゴリの概念がないので全部スキップ
-                if !inclusion_categories.is_empty() || !exclusion_categories.is_empty() {
+                if !inclusion_categories.is_empty() {
                     return;
                 }
                 // 対応アバターが指定されている場合はアバターに対応アバターの概念がないので全部スキップ
-                if !inclusion_avatars.is_empty() || !exclusion_avatars.is_empty() {
+                if !inclusion_avatars.is_empty() {
                     return;
                 }
                 // 文字検索が指定されている場合は、含まれているかを確認
@@ -79,32 +79,29 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     }
                 }
 
-                // タグが指定されている場合
-                if !inclusion_tags.is_empty() || !exclusion_tags.is_empty() {
-                    // Check inclusion tags
-                    if !inclusion_tags.is_empty() {
-                        let mut iter = inclusion_tags.iter();
-                        if req.tag_match_type == MatchType::AND {
-                            // タグ検索がANDの場合
-                            if !iter.all(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        } else if req.tag_match_type == MatchType::OR {
-                            // タグ検索がORの場合
-                            if !iter.any(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        }
-                    }
-
-                    // Check exclusion tags
-                    if !exclusion_tags.is_empty() {
-                        if exclusion_tags
-                            .iter()
-                            .any(|tag| asset.description.tags.contains(tag))
-                        {
+                // Check inclusion tags
+                if !inclusion_tags.is_empty() {
+                    let mut iter = inclusion_tags.iter();
+                    if req.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
+                    } else if req.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(tag)) {
+                            return;
+                        }
+                    }
+                }
+
+                // Check exclusion tags
+                if !exclusion_tags.is_empty() {
+                    if exclusion_tags
+                        .iter()
+                        .any(|tag| asset.description.tags.contains(tag))
+                    {
+                        return;
                     }
                 }
 
@@ -126,84 +123,75 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     }
                 }
 
-                // カテゴリが指定されている場合
-                if !inclusion_categories.is_empty() || !exclusion_categories.is_empty() {
-                    // Check inclusion categories
-                    if !inclusion_categories.is_empty() {
-                        if !inclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+                // Check inclusion categories
+                if !inclusion_categories.is_empty() {
+                    if !inclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check exclusion categories
+                if !exclusion_categories.is_empty() {
+                    if exclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check inclusion avatars
+                if !inclusion_avatars.is_empty() {
+                    let mut iter = inclusion_avatars.iter();
+                    if req.supported_avatar_match_type == MatchType::AND {
+                        // 対応アバター検索がANDの場合
+                        if !iter.all(|avatar| asset.supported_avatars.contains(avatar)) {
                             return;
                         }
-                    }
-
-                    // Check exclusion categories
-                    if !exclusion_categories.is_empty() {
-                        if exclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+                    } else if req.supported_avatar_match_type == MatchType::OR {
+                        // 対応アバター検索がORの場合
+                        if !iter.any(|avatar| asset.supported_avatars.contains(avatar)) {
                             return;
                         }
                     }
                 }
 
-                // 対応アバターが指定されている場合
-                if !inclusion_avatars.is_empty() || !exclusion_avatars.is_empty() {
-                    // Check inclusion avatars
-                    if !inclusion_avatars.is_empty() {
-                        let mut iter = inclusion_avatars.iter();
-                        if req.supported_avatar_match_type == MatchType::AND {
-                            // 対応アバター検索がANDの場合
-                            if !iter.all(|avatar| asset.supported_avatars.contains(avatar)) {
-                                return;
-                            }
-                        } else if req.supported_avatar_match_type == MatchType::OR {
-                            // 対応アバター検索がORの場合
-                            if !iter.any(|avatar| asset.supported_avatars.contains(avatar)) {
-                                return;
-                            }
-                        }
+                // Check exclusion avatars
+                if !exclusion_avatars.is_empty() {
+                    if exclusion_avatars
+                        .iter()
+                        .any(|avatar| asset.supported_avatars.contains(avatar))
+                    {
+                        return;
                     }
+                }
 
-                    // Check exclusion avatars
-                    if !exclusion_avatars.is_empty() {
-                        if exclusion_avatars
-                            .iter()
-                            .any(|avatar| asset.supported_avatars.contains(avatar))
-                        {
+                // Check inclusion tags
+                if !inclusion_tags.is_empty() {
+                    let mut iter = inclusion_tags.iter();
+                    if req.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(tag)) {
+                            return;
+                        }
+                    } else if req.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
                     }
                 }
 
-                // タグが指定されている場合
-                if !inclusion_tags.is_empty() || !exclusion_tags.is_empty() {
-                    // Check inclusion tags
-                    if !inclusion_tags.is_empty() {
-                        let mut iter = inclusion_tags.iter();
-                        if req.tag_match_type == MatchType::AND {
-                            // タグ検索がANDの場合
-                            if !iter.all(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        } else if req.tag_match_type == MatchType::OR {
-                            // タグ検索がORの場合
-                            if !iter.any(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        }
-                    }
-
-                    // Check exclusion tags
-                    if !exclusion_tags.is_empty() {
-                        if exclusion_tags
-                            .iter()
-                            .any(|tag| asset.description.tags.contains(tag))
-                        {
-                            return;
-                        }
+                // Check exclusion tags
+                if !exclusion_tags.is_empty() {
+                    if exclusion_tags
+                        .iter()
+                        .any(|tag| asset.description.tags.contains(tag))
+                    {
+                        return;
                     }
                 }
 
@@ -219,7 +207,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             .iter()
             .for_each(|asset| {
                 // 対応アバターが指定されている場合は、ワールドアセットに対応アバターの概念がないので全部スキップ
-                if !inclusion_avatars.is_empty() || !exclusion_avatars.is_empty() {
+                if !inclusion_avatars.is_empty() {
                     return;
                 }
                 // 文字検索が指定されている場合は、含まれているかを確認
@@ -229,53 +217,49 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                     }
                 }
                 // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
-                if !inclusion_categories.is_empty() || !exclusion_categories.is_empty() {
-                    // Check inclusion categories
-                    if !inclusion_categories.is_empty() {
-                        if !inclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+                // Check inclusion categories
+                if !inclusion_categories.is_empty() {
+                    if !inclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check exclusion categories
+                if !exclusion_categories.is_empty() {
+                    if exclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check inclusion tags
+                if !inclusion_tags.is_empty() {
+                    let mut iter = inclusion_tags.iter();
+                    if req.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
-                    }
-
-                    // Check exclusion categories
-                    if !exclusion_categories.is_empty() {
-                        if exclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+                    } else if req.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
                     }
                 }
-                // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if !inclusion_tags.is_empty() || !exclusion_tags.is_empty() {
-                    // Check inclusion tags
-                    if !inclusion_tags.is_empty() {
-                        let mut iter = inclusion_tags.iter();
-                        if req.tag_match_type == MatchType::AND {
-                            // タグ検索がANDの場合
-                            if !iter.all(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        } else if req.tag_match_type == MatchType::OR {
-                            // タグ検索がORの場合
-                            if !iter.any(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        }
-                    }
 
-                    // Check exclusion tags
-                    if !exclusion_tags.is_empty() {
-                        if exclusion_tags
-                            .iter()
-                            .any(|tag| asset.description.tags.contains(tag))
-                        {
-                            return;
-                        }
+                // Check exclusion tags
+                if !exclusion_tags.is_empty() {
+                    if exclusion_tags
+                        .iter()
+                        .any(|tag| asset.description.tags.contains(tag))
+                    {
+                        return;
                     }
                 }
 
@@ -291,7 +275,7 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
             .iter()
             .for_each(|asset| {
                 // 対応アバターが指定されている場合は、その他のアセットタイプに対応アバターの概念がないので全部スキップ
-                if !inclusion_avatars.is_empty() || !exclusion_avatars.is_empty() {
+                if !inclusion_avatars.is_empty() {
                     return;
                 }
                 // 文字検索が指定されている場合は、含まれているかを確認
@@ -300,54 +284,50 @@ pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
                         return;
                     }
                 }
-                // カテゴリが指定されている場合は、そのカテゴリが設定されているかを確認
-                if !inclusion_categories.is_empty() || !exclusion_categories.is_empty() {
-                    // Check inclusion categories
-                    if !inclusion_categories.is_empty() {
-                        if !inclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+
+                // Check inclusion categories
+                if !inclusion_categories.is_empty() {
+                    if !inclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check exclusion categories
+                if !exclusion_categories.is_empty() {
+                    if exclusion_categories
+                        .iter()
+                        .any(|category| asset.category.contains(category))
+                    {
+                        return;
+                    }
+                }
+
+                // Check inclusion tags
+                if !inclusion_tags.is_empty() {
+                    let mut iter = inclusion_tags.iter();
+                    if req.tag_match_type == MatchType::AND {
+                        // タグ検索がANDの場合
+                        if !iter.all(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
-                    }
-
-                    // Check exclusion categories
-                    if !exclusion_categories.is_empty() {
-                        if exclusion_categories
-                            .iter()
-                            .any(|category| asset.category.contains(category))
-                        {
+                    } else if req.tag_match_type == MatchType::OR {
+                        // タグ検索がORの場合
+                        if !iter.any(|tag| asset.description.tags.contains(tag)) {
                             return;
                         }
                     }
                 }
-                // タグが指定されている場合は、そのタグが全て設定されているかを確認
-                if !inclusion_tags.is_empty() || !exclusion_tags.is_empty() {
-                    // Check inclusion tags
-                    if !inclusion_tags.is_empty() {
-                        let mut iter = inclusion_tags.iter();
-                        if req.tag_match_type == MatchType::AND {
-                            // タグ検索がANDの場合
-                            if !iter.all(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        } else if req.tag_match_type == MatchType::OR {
-                            // タグ検索がORの場合
-                            if !iter.any(|tag| asset.description.tags.contains(tag)) {
-                                return;
-                            }
-                        }
-                    }
 
-                    // Check exclusion tags
-                    if !exclusion_tags.is_empty() {
-                        if exclusion_tags
-                            .iter()
-                            .any(|tag| asset.description.tags.contains(tag))
-                        {
-                            return;
-                        }
+                // Check exclusion tags
+                if !exclusion_tags.is_empty() {
+                    if exclusion_tags
+                        .iter()
+                        .any(|tag| asset.description.tags.contains(tag))
+                    {
+                        return;
                     }
                 }
 
