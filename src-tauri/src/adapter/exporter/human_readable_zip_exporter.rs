@@ -66,7 +66,7 @@ where
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
-                        format!("{}Booth.url", item_path).into(),
+                        format!("{}BOOTH.url", item_path).into(),
                         Compression::Stored,
                     ),
                     &create_link_file_data(booth_id),
@@ -205,7 +205,7 @@ where
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
-                        format!("{}Booth.url", item_path).into(),
+                        format!("{}BOOTH.url", item_path).into(),
                         Compression::Stored,
                     ),
                     &create_link_file_data(booth_id),
@@ -331,10 +331,10 @@ mod tests {
         let other_asset =
             format!("{extracted}/OtherAssets/TestOtherAssetCategory/Test Other Asset");
 
-        assert!(std::fs::exists(format!("{avatar}/Booth.url")).unwrap());
-        assert!(std::fs::exists(format!("{avatar_wearable}/Booth.url")).unwrap());
-        assert!(std::fs::exists(format!("{world_object}/Booth.url")).unwrap());
-        assert!(std::fs::exists(format!("{other_asset}/Booth.url")).unwrap());
+        assert!(std::fs::exists(format!("{avatar}/BOOTH.url")).unwrap());
+        assert!(std::fs::exists(format!("{avatar_wearable}/BOOTH.url")).unwrap());
+        assert!(std::fs::exists(format!("{world_object}/BOOTH.url")).unwrap());
+        assert!(std::fs::exists(format!("{other_asset}/BOOTH.url")).unwrap());
 
         assert!(std::fs::exists(format!("{avatar}/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{avatar_wearable}/dummy.txt")).unwrap());
@@ -342,7 +342,7 @@ mod tests {
         assert!(std::fs::exists(format!("{other_asset}/dummy.txt")).unwrap());
 
         assert_eq!(
-            std::fs::read_to_string(format!("{avatar}/Booth.url"))
+            std::fs::read_to_string(format!("{avatar}/BOOTH.url"))
                 .unwrap()
                 .trim(),
             r#"
