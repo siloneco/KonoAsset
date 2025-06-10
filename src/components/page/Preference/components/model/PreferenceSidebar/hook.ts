@@ -19,9 +19,14 @@ export const usePreferenceSidebar = (): ReturnProps => {
   const { t } = useLocalization()
 
   const backToTopPage = () => {
+    const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? undefined
+      : { types: ['default-transition'] }
+
     navigate({
       to: TopPageRoute.to,
-      viewTransition: { types: ['default-transition'] },
+      viewTransition,
     })
   }
 

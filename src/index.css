@@ -48,6 +48,11 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  --animation-duration-fast: 300ms;
+  --animation-duration-normal: 400ms;
+  --animation-duration-slow: 500ms;
+  --animation-duration-long: 800ms;
 }
 
 .dark {
@@ -222,10 +227,12 @@
 
   html:active-view-transition-type(setup-to-main) {
     &::view-transition-old(main-content) {
-      animation: 500ms cubic-bezier(0.4, 0, 0.2, 1) both setup-to-main-fade-out;
+      animation: var(--animation-duration-slow) cubic-bezier(0.4, 0, 0.2, 1)
+        both setup-to-main-fade-out;
     }
     &::view-transition-new(main-content) {
-      animation: 800ms cubic-bezier(0.4, 0, 0.2, 1) both setup-to-main-fade-in;
+      animation: var(--animation-duration-long) cubic-bezier(0.4, 0, 0.2, 1)
+        both setup-to-main-fade-in;
     }
   }
 
@@ -253,17 +260,21 @@
 
   html:active-view-transition-type(default-transition) {
     &::view-transition-old(main-content) {
-      animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both default-fade-out;
+      animation: var(--animation-duration-fast) cubic-bezier(0.4, 0, 0.2, 1)
+        both default-fade-out;
     }
     &::view-transition-new(main-content) {
-      animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both default-fade-in;
+      animation: var(--animation-duration-fast) cubic-bezier(0.4, 0, 0.2, 1)
+        both default-fade-in;
     }
 
     &::view-transition-old(sidebar) {
-      animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both sidebar-fade-out;
+      animation: var(--animation-duration-normal) cubic-bezier(0.4, 0, 0.2, 1)
+        both sidebar-fade-out;
     }
     &::view-transition-new(sidebar) {
-      animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both sidebar-fade-in;
+      animation: var(--animation-duration-normal) cubic-bezier(0.4, 0, 0.2, 1)
+        both sidebar-fade-in;
     }
   }
 

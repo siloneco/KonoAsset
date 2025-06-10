@@ -25,7 +25,13 @@ export const SetupPage: FC = () => {
   const onLastButtonClicked = async () => {
     // preference.json が無い場合フォールバックされてしまうため、セーブする
     await setPreference(preference, true)
-    navigate({ to: '/', viewTransition: { types: ['setup-to-main'] } })
+
+    const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? undefined
+      : { types: ['setup-to-main'] }
+
+    navigate({ to: '/', viewTransition })
   }
 
   return (

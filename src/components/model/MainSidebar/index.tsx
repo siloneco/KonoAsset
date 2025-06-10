@@ -59,12 +59,18 @@ export const MainSidebar: FC = () => {
               variant="outline"
               size="icon"
               className="ml-auto mr-4 flex relative"
-              onClick={() =>
+              onClick={() => {
+                const viewTransition = window.matchMedia(
+                  '(prefers-reduced-motion: reduce)',
+                ).matches
+                  ? undefined
+                  : { types: ['default-transition'] }
+
                 navigate({
                   to: PreferenceRoute.to,
-                  viewTransition: { types: ['default-transition'] },
+                  viewTransition,
                 })
-              }
+              }}
             >
               <Settings />
             </Button>
