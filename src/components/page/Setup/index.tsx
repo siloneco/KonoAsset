@@ -25,11 +25,17 @@ export const SetupPage: FC = () => {
   const onLastButtonClicked = async () => {
     // preference.json が無い場合フォールバックされてしまうため、セーブする
     await setPreference(preference, true)
-    navigate({ to: '/' })
+
+    const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? undefined
+      : { types: ['setup-to-main'] }
+
+    navigate({ to: '/', viewTransition })
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background selection:bg-primary selection:text-primary-foreground">
+    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background selection:bg-primary selection:text-primary-foreground [view-transition-name:main-content]">
       <div className="w-full max-w-[1000px] mx-10 p-6 bg-card rounded-2xl border-2 border-accent">
         <h1 className="flex justify-center items-center text-2xl">
           {t('setup:welcome')}

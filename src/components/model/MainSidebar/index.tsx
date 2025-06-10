@@ -19,8 +19,9 @@ import { useLocalization } from '@/hooks/use-localization'
 import { AllTypeFilter } from './layout/AllTypeFilter'
 import { useMainSidebar } from './hook'
 import { OtherAssetFilter } from './layout/OtherAssetFilter'
+import { FC } from 'react'
 
-export const MainSidebar = () => {
+export const MainSidebar: FC = () => {
   const {
     textSearchMode,
     setTextSearchMode,
@@ -45,7 +46,10 @@ export const MainSidebar = () => {
   const { t } = useLocalization()
 
   return (
-    <Sidebar collapsible="none" className="w-64 border-r-2">
+    <Sidebar
+      collapsible="none"
+      className="w-64 border-r-2 [view-transition-name:sidebar]"
+    >
       <SidebarContent className="w-64">
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center m-4 mr-0">
@@ -55,7 +59,18 @@ export const MainSidebar = () => {
               variant="outline"
               size="icon"
               className="ml-auto mr-4 flex relative"
-              onClick={() => navigate({ to: PreferenceRoute.to })}
+              onClick={() => {
+                const viewTransition = window.matchMedia(
+                  '(prefers-reduced-motion: reduce)',
+                ).matches
+                  ? undefined
+                  : { types: ['default-transition'] }
+
+                navigate({
+                  to: PreferenceRoute.to,
+                  viewTransition,
+                })
+              }}
             >
               <Settings />
             </Button>
