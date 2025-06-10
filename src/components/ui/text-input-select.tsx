@@ -3,7 +3,12 @@
 import { Command as CommandPrimitive } from 'cmdk'
 import * as React from 'react'
 import { forwardRef, useEffect } from 'react'
-import { Command, CommandItem, CommandList } from '@/components/ui/command'
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 import { cn } from '@/lib/utils'
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
 import { useLocalization } from '@/hooks/use-localization'
@@ -388,42 +393,44 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
                     <CommandEmpty>{emptyIndicator}</CommandEmpty>
                   )}
                   <CreatableItem />
-                  {suggestions
-                    .sort((a, b) => {
-                      if (
-                        a.priority !== undefined &&
-                        b.priority !== undefined
-                      ) {
-                        if (a.priority !== b.priority) {
-                          return b.priority - a.priority
+                  <CommandGroup heading="" className="p-0">
+                    {suggestions
+                      .sort((a, b) => {
+                        if (
+                          a.priority !== undefined &&
+                          b.priority !== undefined
+                        ) {
+                          if (a.priority !== b.priority) {
+                            return b.priority - a.priority
+                          }
+                        } else if (a.priority !== undefined) {
+                          return 1
+                        } else if (b.priority !== undefined) {
+                          return -1
                         }
-                      } else if (a.priority !== undefined) {
-                        return 1
-                      } else if (b.priority !== undefined) {
-                        return -1
-                      }
 
-                      return a.value.localeCompare(b.value, 'ja')
-                    })
-                    .map((option) => (
-                      <CommandItem
-                        key={option.value}
-                        value={option.value}
-                        disabled={option.disable}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        onSelect={() => handleSelect(option)}
-                        className={cn(
-                          'cursor-pointer px-2 py-1.5',
-                          option.disable &&
-                            'cursor-default text-muted-foreground',
-                        )}
-                      >
-                        {option.value}
-                      </CommandItem>
-                    ))}
+                        return a.value.localeCompare(b.value, 'ja')
+                      })
+                      .map((option) => (
+                        <CommandItem
+                          key={option.value}
+                          value={option.value}
+                          disabled={option.disable}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onSelect={() => handleSelect(option)}
+                          className={cn(
+                            'cursor-pointer px-2 py-1.5',
+                            option.disable &&
+                              'cursor-default text-muted-foreground',
+                          )}
+                        >
+                          {option.value}
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
                 </>
               )}
             </CommandList>
