@@ -102,12 +102,7 @@ export const WorldObjectLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
-          }}
+          onChange={(value) => form.setValue('tags', value)}
         />
         <p className="text-muted-foreground text-sm">
           {t('addasset:tag:explanation-text')}

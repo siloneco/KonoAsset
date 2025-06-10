@@ -1,8 +1,14 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { X } from 'lucide-react'
+import { CircleHelp, X } from 'lucide-react'
 import { FC, RefObject } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 type Props = {
   onSwitchModeClicked: () => void
@@ -28,7 +34,19 @@ export const AdvancedTextSearch: FC<Props> = ({
   return (
     <div className="mb-4">
       <div className="flex flex-row">
-        <Label className="text-base">{t('mainsidebar:text-search')}</Label>
+        <div className="flex flex-row items-center">
+          <Label className="text-base">{t('mainsidebar:text-search')}</Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CircleHelp className="size-4 ml-1 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t('mainsidebar:help:word-exclude-feature-tips')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div
           className="w-fit bg-primary text-primary-foreground px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
           onClick={onSwitchModeClicked}

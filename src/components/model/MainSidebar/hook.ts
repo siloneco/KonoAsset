@@ -18,7 +18,7 @@ type ReturnProps = {
   filteredAssetType: AssetType | 'All'
 
   tagCandidates: Option[]
-  tagValues: Option[]
+  tagValues: string[]
   setTagFilter: (filter: string[]) => void
   tagFilterMatchType: MatchType
   setTagFilterMatchType: (matchType: MatchType) => void
@@ -49,11 +49,6 @@ export const useMainSidebar = (): ReturnProps => {
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
   const [tagSelectorFocused, setTagSelectorFocused] = useState(false)
 
-  const tagValues: Option[] = tagFilter.map((tag) => ({
-    value: tag,
-    label: tag,
-  }))
-
   const updateTagCandidates = useCallback(async () => {
     setTagCandidates(await fetchAllTags(filteredIds))
   }, [filteredIds])
@@ -77,7 +72,7 @@ export const useMainSidebar = (): ReturnProps => {
     filteredAssetType: assetType,
 
     tagCandidates,
-    tagValues,
+    tagValues: tagFilter,
     setTagFilter,
     tagFilterMatchType,
     setTagFilterMatchType,

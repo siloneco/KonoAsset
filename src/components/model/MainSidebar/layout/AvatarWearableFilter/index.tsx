@@ -30,17 +30,6 @@ export const AvatarWearableFilter = () => {
     setSupportedAvatarFilterMatchType,
   } = useContext(PersistentContext)
 
-  const categoryValues: Option[] = categoryFilter.map((category) => ({
-    value: category,
-    label: category,
-  }))
-  const supportedAvatarValues: Option[] = supportedAvatarFilter.map(
-    (avatar) => ({
-      value: avatar,
-      label: avatar,
-    }),
-  )
-
   const updateCandidates = useCallback(async () => {
     if (!isCategoryFocused) {
       setCategoryCandidates(await fetchAvatarWearableCategories(filteredIds))
@@ -60,10 +49,8 @@ export const AvatarWearableFilter = () => {
         label={t('general:category')}
         placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
-        value={categoryValues}
-        onValueChange={(values) =>
-          setCategoryFilter(values.map((v) => v.value))
-        }
+        value={categoryFilter}
+        onValueChange={setCategoryFilter}
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
           onBlur: () => setIsCategoryFocused(false),
@@ -75,10 +62,8 @@ export const AvatarWearableFilter = () => {
           'mainsidebar:avatar-wearable-filter:supported-avatars:placeholder',
         )}
         candidates={supportedAvatarCandidates}
-        value={supportedAvatarValues}
-        onValueChange={(values) =>
-          setSupportedAvatarFilter(values.map((v) => v.value))
-        }
+        value={supportedAvatarFilter}
+        onValueChange={setSupportedAvatarFilter}
         matchType={supportedAvatarFilterMatchType}
         setMatchType={setSupportedAvatarFilterMatchType}
         inputProps={{

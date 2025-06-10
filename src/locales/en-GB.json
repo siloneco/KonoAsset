@@ -174,6 +174,8 @@
     "mainsidebar:asset-type": "Asset type",
     "mainsidebar:filter:category:placeholder": "Select categories...",
     "mainsidebar:filter:tag:placeholder": "Select tags...",
+    "mainsidebar:help:word-exclude-feature-tips": "You can exclude specific words from search by prefixing them with a '-'!",
+    "mainsidebar:help:attribute-exclude-feature-tips": "You can exclude attributes from search by prefixing them with a '-'!",
 
     "resetdialog:reset": "Reset",
     "resetdialog:reset-confirm": "Are you sure you want to reset?",
@@ -352,6 +354,6 @@
     "setup:button:done": "Get Started!",
 
     "ui:multi-select:create-new": "Create new",
-    "ui:multi-select:select-all": "Select all"
+    "ui:multi-select:not-selected-tooltip": "Assets with this attribute will not be displayed"
   }
 }

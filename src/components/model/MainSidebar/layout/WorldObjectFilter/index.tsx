@@ -15,11 +15,6 @@ export const WorldObjectFilter = () => {
   const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
   const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
 
-  const categoryValues: Option[] = categoryFilter.map((category) => ({
-    value: category,
-    label: category,
-  }))
-
   const updateCategoriesAndTags = useCallback(async () => {
     if (!isCategoryFocused) {
       setCategoryCandidates(await fetchAllCategories(filteredIds))
@@ -36,10 +31,8 @@ export const WorldObjectFilter = () => {
         label={t('general:category')}
         placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
-        value={categoryValues}
-        onValueChange={(values) =>
-          setCategoryFilter(values.map((v) => v.value))
-        }
+        value={categoryFilter}
+        onValueChange={setCategoryFilter}
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
           onBlur: () => setIsCategoryFocused(false),

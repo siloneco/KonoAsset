@@ -55,18 +55,8 @@ export const AvatarLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          value={form.getValues('tags').map((tag) => {
-            return {
-              label: tag,
-              value: tag,
-            }
-          })}
-          onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
-          }}
+          value={form.getValues('tags')}
+          onChange={(value) => form.setValue('tags', value)}
         />
         <p className="text-muted-foreground text-sm">
           {t('addasset:tag:explanation-text')}

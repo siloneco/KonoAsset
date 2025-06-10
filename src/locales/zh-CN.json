@@ -337,7 +337,6 @@
 
     "setup:button:done": "开始使用！",
 
-    "ui:multi-select:create-new": "新建",
-    "ui:multi-select:select-all": "全选"
+    "ui:multi-select:create-new": "新建"
   }
 }

@@ -88,13 +88,33 @@ export const createFilterRequest = ({
       const queries = []
 
       for (const splitted of queryTextFilterForName.split(' ')) {
-        if (splitted.length > 0) {
+        if (splitted.length === 0) {
+          continue
+        }
+
+        if (splitted.startsWith('-')) {
+          if (splitted.length === 1) {
+            continue
+          }
+
+          queries.push(`-name:${splitted.slice(1)}`)
+        } else {
           queries.push(`name:${splitted}`)
         }
       }
 
       for (const splitted of queryTextFilterForCreator.split(' ')) {
-        if (splitted.length > 0) {
+        if (splitted.length === 0) {
+          continue
+        }
+
+        if (splitted.startsWith('-')) {
+          if (splitted.length === 1) {
+            continue
+          }
+
+          queries.push(`-creator:${splitted.slice(1)}`)
+        } else {
           queries.push(`creator:${splitted}`)
         }
       }
