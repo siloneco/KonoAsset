@@ -19,7 +19,10 @@ export const usePreferenceSidebar = (): ReturnProps => {
   const { t } = useLocalization()
 
   const backToTopPage = () => {
-    navigate({ to: TopPageRoute.to })
+    navigate({
+      to: TopPageRoute.to,
+      viewTransition: { types: ['default-transition'] },
+    })
   }
 
   const onVersionClick = async () => {

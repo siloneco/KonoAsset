@@ -219,4 +219,95 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html:active-view-transition-type(setup-to-main) {
+    &::view-transition-old(main-content) {
+      animation: 500ms cubic-bezier(0.4, 0, 0.2, 1) both setup-to-main-fade-out;
+    }
+    &::view-transition-new(main-content) {
+      animation: 800ms cubic-bezier(0.4, 0, 0.2, 1) both setup-to-main-fade-in;
+    }
+  }
+
+  @keyframes setup-to-main-fade-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-70%);
+    }
+  }
+
+  @keyframes setup-to-main-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  html:active-view-transition-type(default-transition) {
+    &::view-transition-old(main-content) {
+      animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both default-fade-out;
+    }
+    &::view-transition-new(main-content) {
+      animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both default-fade-in;
+    }
+
+    &::view-transition-old(sidebar) {
+      animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both sidebar-fade-out;
+    }
+    &::view-transition-new(sidebar) {
+      animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both sidebar-fade-in;
+    }
+  }
+
+  @keyframes default-fade-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  @keyframes default-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes sidebar-fade-out {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-3%);
+    }
+  }
+
+  @keyframes sidebar-fade-in {
+    from {
+      opacity: 0;
+      transform: translateX(3%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }

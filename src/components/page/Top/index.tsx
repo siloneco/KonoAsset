@@ -41,7 +41,7 @@ export const TopPage = () => {
   )
 
   return (
-    <div className="flex selection:bg-primary selection:text-primary-foreground">
+    <div className="flex selection:bg-primary selection:text-primary-foreground [view-transition-name:main-content]">
       <AssetContextProvider>
         <SidebarProvider>
           <MainSidebar />
