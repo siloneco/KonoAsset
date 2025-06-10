@@ -42,7 +42,7 @@ export const AdvancedTextSearch: FC<Props> = ({
                 <CircleHelp className="size-4 ml-1 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>{t('mainsidebar:help:not-feature-tips')}</p>
+                <p>{t('mainsidebar:help:word-exclude-feature-tips')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

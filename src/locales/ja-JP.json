@@ -174,7 +174,8 @@
     "mainsidebar:asset-type": "アセットタイプ",
     "mainsidebar:filter:category:placeholder": "カテゴリを選択...",
     "mainsidebar:filter:tag:placeholder": "タグを選択...",
-    "mainsidebar:help:not-feature-tips": "先頭に-を付けると除外検索できます！",
+    "mainsidebar:help:word-exclude-feature-tips": "先頭に-を付けると除外検索できます！",
+    "mainsidebar:help:attribute-exclude-feature-tips": "先頭に-を付けると除外検索できます！",
 
     "resetdialog:reset": "初期化する",
     "resetdialog:reset-confirm": "本当に初期化しますか？",

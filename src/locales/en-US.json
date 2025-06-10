@@ -174,7 +174,8 @@
     "mainsidebar:asset-type": "Asset type",
     "mainsidebar:filter:category:placeholder": "Select categories...",
     "mainsidebar:filter:tag:placeholder": "Select tags...",
-    "mainsidebar:help:not-feature-tips": "You can exclude attributes from search by prefixing them with a '-'!",
+    "mainsidebar:help:word-exclude-feature-tips": "You can exclude specific words from search by prefixing them with a '-'!",
+    "mainsidebar:help:attribute-exclude-feature-tips": "You can exclude attributes from search by prefixing them with a '-'!",
 
     "resetdialog:reset": "Reset",
     "resetdialog:reset-confirm": "Are you sure you want to reset?",
