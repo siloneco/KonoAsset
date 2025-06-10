@@ -47,6 +47,11 @@ export const AssetPathSelectorTab = ({
     }
   }
 
+  const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+    .matches
+    ? undefined
+    : { types: ['default-transition'] }
+
   return (
     <>
       <DialogHeader>
@@ -85,7 +90,11 @@ export const AssetPathSelectorTab = ({
               <>
                 {t('addasset:select-path:zip-text:disabled')}
                 <span className="ml-1">(</span>
-                <Link to={PreferencePage.to} className="text-primary">
+                <Link
+                  to={PreferencePage.to}
+                  className="text-primary"
+                  viewTransition={viewTransition}
+                >
                   {t(
                     'addasset:select-path:zip-text:disabled:move-to-preference-page',
                   )}
