@@ -23,10 +23,15 @@ export const usePreferenceContext = (): ReturnProps => {
 
     didInit = true
 
-    getPreferences().then((pref) => {
-      setPreference(pref)
-      setLoaded(true)
-    })
+    getPreferences()
+      .then((pref) => {
+        setPreference(pref)
+        setLoaded(true)
+      })
+      .catch((error) => {
+        console.error('Failed to fetch preferences:', error)
+        setLoaded(false)
+      })
   }, [])
 
   const setPreferenceWithSave = async (
