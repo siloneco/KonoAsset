@@ -14,6 +14,7 @@ export const usePreferenceContext = (): ReturnProps => {
   const [preference, setPreference] = useState<PreferenceStore>(
     getDefaultPreferences(),
   )
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     if (didInit) {
@@ -24,6 +25,7 @@ export const usePreferenceContext = (): ReturnProps => {
 
     getPreferences().then((pref) => {
       setPreference(pref)
+      setLoaded(true)
     })
   }, [])
 
@@ -47,6 +49,7 @@ export const usePreferenceContext = (): ReturnProps => {
   const preferenceContextValue: PreferenceContextType = {
     preference,
     setPreference: setPreferenceWithSave,
+    loaded,
   }
 
   return { preferenceContextValue }

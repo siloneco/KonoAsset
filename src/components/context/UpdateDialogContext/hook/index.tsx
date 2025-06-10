@@ -2,8 +2,9 @@ import { buttonVariants } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { ToastAction } from '@radix-ui/react-toast'
 import { useLocalization } from '@/hooks/use-localization'
-import { useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { checkForUpdate, dismissUpdate, downloadUpdate } from '../logic'
+import { PreferenceContext } from '../../PreferenceContext'
 
 type ReturnProps = {
   updateDialogOpen: boolean
@@ -15,17 +16,23 @@ type ReturnProps = {
 export const useUpdateDialogContext = (): ReturnProps => {
   const { toast } = useToast()
   const { t } = useLocalization()
+  const { loaded } = useContext(PreferenceContext)
+
   const [updateDownloadTaskId, setUpdateDownloadTaskId] = useState<
     string | null
   >(null)
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false)
 
-  const startUpdateDownloadingAndOpenDialog = async () => {
+  const startUpdateDownloadingAndOpenDialog = useCallback(async () => {
     await downloadUpdate(setUpdateDownloadTaskId)
     setUpdateDialogOpen(true)
-  }
+  }, [setUpdateDownloadTaskId, setUpdateDialogOpen])
 
-  const executeUpdateCheck = async () => {
+  const executeUpdateCheck = useCallback(async () => {
+    if (!loaded) {
+      return
+    }
+
     const updateAvailable = await checkForUpdate()
 
     if (!updateAvailable) {
@@ -58,7 +65,7 @@ export const useUpdateDialogContext = (): ReturnProps => {
         </div>
       ),
     })
-  }
+  }, [t, toast, startUpdateDownloadingAndOpenDialog, loaded])
 
   return {
     updateDialogOpen,
