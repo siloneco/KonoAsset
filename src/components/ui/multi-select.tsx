@@ -625,7 +625,7 @@ const MultipleSelector = ({
                     >
                       <X
                         className={cn(
-                          'h-4 w-4 cursor-pointer text-primary-foregroun',
+                          'size-4 cursor-pointer text-primary-foreground',
                           isNot &&
                             negativeSelectable &&
                             'text-destructive-foreground',

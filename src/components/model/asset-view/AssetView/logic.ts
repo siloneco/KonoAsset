@@ -135,7 +135,5 @@ export const createFilterRequest = ({
     supportedAvatarMatchType: supportedAvatarMatchType,
   }
 
-  console.log(filterReq)
-
   return filterReq
 }
