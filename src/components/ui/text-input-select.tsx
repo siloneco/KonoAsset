@@ -265,9 +265,12 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
       (option: Option) => {
         const newValue = option.value.trim()
         setInputValue(newValue)
-        onChange?.(newValue)
-        setOpen(false)
-        inputRef.current?.blur()
+        // Ensure the input value is updated before calling onChange
+        requestAnimationFrame(() => {
+          onChange?.(newValue)
+          setOpen(false)
+          inputRef.current?.blur()
+        })
       },
       [onChange],
     )
