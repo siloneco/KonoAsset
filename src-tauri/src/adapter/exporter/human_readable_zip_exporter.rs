@@ -284,6 +284,8 @@ mod tests {
 
     use super::*;
 
+    const BOOTH_SHORTCUT_FILENAME: &str = "BOOTH.url";
+
     #[tokio::test]
     async fn test_human_readable_export_fn() {
         let dest = "test/temp/export/human_readable";
@@ -331,10 +333,10 @@ mod tests {
         let other_asset =
             format!("{extracted}/OtherAssets/TestOtherAssetCategory/Test Other Asset");
 
-        assert!(std::fs::exists(format!("{avatar}/BOOTH.url")).unwrap());
-        assert!(std::fs::exists(format!("{avatar_wearable}/BOOTH.url")).unwrap());
-        assert!(std::fs::exists(format!("{world_object}/BOOTH.url")).unwrap());
-        assert!(std::fs::exists(format!("{other_asset}/BOOTH.url")).unwrap());
+        assert!(std::fs::exists(format!("{avatar}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{avatar_wearable}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{world_object}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{other_asset}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
 
         assert!(std::fs::exists(format!("{avatar}/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{avatar_wearable}/dummy.txt")).unwrap());
@@ -342,7 +344,7 @@ mod tests {
         assert!(std::fs::exists(format!("{other_asset}/dummy.txt")).unwrap());
 
         assert_eq!(
-            std::fs::read_to_string(format!("{avatar}/BOOTH.url"))
+            std::fs::read_to_string(format!("{avatar}/{BOOTH_SHORTCUT_FILENAME}"))
                 .unwrap()
                 .trim(),
             r#"
