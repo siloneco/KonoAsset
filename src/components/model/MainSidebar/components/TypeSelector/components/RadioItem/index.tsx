@@ -7,15 +7,13 @@ type Props = {
   text: string
 }
 
-const TypeSelectorRadioItem = ({ id, value, text }: Props) => {
+export const TypeSelectorRadioItem = ({ id, value, text }: Props) => {
   return (
     <div className="flex items-center space-x-2">
       <RadioGroupItem value={value} id={id} />
-      <Label htmlFor={id} className="text-base">
+      <Label htmlFor={id} className="text-base cursor-pointer">
         {text}
       </Label>
     </div>
   )
 }
-
-export default TypeSelectorRadioItem

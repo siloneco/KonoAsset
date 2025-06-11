@@ -1,5 +1,6 @@
 import { AssetCardSize } from '@/components/context/PersistentContext'
 import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
+import { extractBoothItemId } from '@/lib/utils'
 
 const SMALL_CARD_WIDTH = 160
 const MEDIUM_CARD_WIDTH = 200
@@ -69,8 +70,11 @@ export const createFilterRequest = ({
   }
 
   if (queryTextMode === 'general') {
-    if (queryTextMode.length > 0) {
-      requestQuery = generalQueryText
+    if (generalQueryText.length > 0) {
+      requestQuery = generalQueryText.replace(/\S+/g, (token) => {
+        const extracted = extractBoothItemId(token)
+        return extracted.status === 'ok' ? `${extracted.data}` : token
+      })
     } else {
       requestQuery = null
     }
@@ -84,13 +88,33 @@ export const createFilterRequest = ({
       const queries = []
 
       for (const splitted of queryTextFilterForName.split(' ')) {
-        if (splitted.length > 0) {
+        if (splitted.length === 0) {
+          continue
+        }
+
+        if (splitted.startsWith('-')) {
+          if (splitted.length === 1) {
+            continue
+          }
+
+          queries.push(`-name:${splitted.slice(1)}`)
+        } else {
           queries.push(`name:${splitted}`)
         }
       }
 
       for (const splitted of queryTextFilterForCreator.split(' ')) {
-        if (splitted.length > 0) {
+        if (splitted.length === 0) {
+          continue
+        }
+
+        if (splitted.startsWith('-')) {
+          if (splitted.length === 1) {
+            continue
+          }
+
+          queries.push(`-creator:${splitted.slice(1)}`)
+        } else {
           queries.push(`creator:${splitted}`)
         }
       }

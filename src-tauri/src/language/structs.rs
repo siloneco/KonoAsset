@@ -11,30 +11,19 @@ pub enum LanguageCode {
     EnUs,
     #[serde(rename = "en-GB", alias = "enGb")] // alias is for legacy support
     EnGb,
+    #[serde(rename = "zh-CN")]
+    ZhCn,
     #[serde(rename = "user-provided")]
     UserProvided(String),
 }
 
 impl LanguageCode {
-    pub fn json_str(&self) -> &str {
-        match self {
-            LanguageCode::JaJp => include_str!("../../../locales/ja-JP.json"),
-            LanguageCode::EnUs => include_str!("../../../locales/en-US.json"),
-            LanguageCode::EnGb => include_str!("../../../locales/en-GB.json"),
-            LanguageCode::UserProvided(_) => {
-                log::error!("User-provided language code does not have a JSON string");
-
-                // fallback to en-US
-                include_str!("../../../locales/en-US.json")
-            }
-        }
-    }
-
     pub fn code(&self) -> &str {
         match self {
             LanguageCode::JaJp => "ja-JP",
             LanguageCode::EnUs => "en-US",
             LanguageCode::EnGb => "en-GB",
+            LanguageCode::ZhCn => "zh-CN",
             LanguageCode::UserProvided(code) => code,
         }
     }
@@ -43,6 +32,7 @@ impl LanguageCode {
         match self {
             LanguageCode::JaJp => "ja",
             LanguageCode::EnUs | LanguageCode::EnGb => "en",
+            LanguageCode::ZhCn => "zh-cn",
             LanguageCode::UserProvided(_) => "en",
         }
     }
@@ -53,6 +43,15 @@ impl LanguageCode {
 pub struct LocalizationData {
     pub language: LanguageCode,
     pub data: HashMap<String, String>,
+}
+
+impl Default for LocalizationData {
+    fn default() -> Self {
+        Self {
+            language: LanguageCode::EnUs,
+            data: HashMap::new(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone)]

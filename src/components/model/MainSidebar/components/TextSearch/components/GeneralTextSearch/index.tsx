@@ -1,8 +1,14 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { X } from 'lucide-react'
+import { CircleHelp, X } from 'lucide-react'
 import { FC, RefObject } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 type Props = {
   onSwitchModeClicked: () => void
@@ -13,7 +19,7 @@ type Props = {
   ref: RefObject<HTMLInputElement | null>
 }
 
-const GeneralTextSearch: FC<Props> = ({
+export const GeneralTextSearch: FC<Props> = ({
   onSwitchModeClicked,
   general,
   setGeneral,
@@ -24,9 +30,21 @@ const GeneralTextSearch: FC<Props> = ({
   return (
     <div className="mb-4">
       <div className="flex flex-row">
-        <Label className="text-base">{t('mainsidebar:text-search')}</Label>
+        <div className="flex flex-row items-center">
+          <Label className="text-base">{t('mainsidebar:text-search')}</Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CircleHelp className="size-4 ml-1 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t('mainsidebar:help:word-exclude-feature-tips')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div
-          className="w-fit bg-background text-foreground border-2 border-border px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
+          className="w-fit bg-sidebar text-sidebar-foreground border-2 border-sidebar-border px-4 ml-auto rounded-full text-[12px] flex items-center justify-center cursor-pointer select-none"
           onClick={onSwitchModeClicked}
         >
           {t('mainsidebar:advanced-search')}
@@ -53,5 +71,3 @@ const GeneralTextSearch: FC<Props> = ({
     </div>
   )
 }
-
-export default GeneralTextSearch

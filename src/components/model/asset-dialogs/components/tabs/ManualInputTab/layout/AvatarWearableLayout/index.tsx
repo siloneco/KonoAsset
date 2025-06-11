@@ -1,34 +1,40 @@
 import { Label } from '@/components/ui/label'
-import MultipleSelector, { Option } from '@/components/ui/multi-select'
 
 import { Separator } from '@/components/ui/separator'
-import TextInputSelect from '@/components/ui/text-input-select'
+import TextInputSelect, {
+  Option as TextInputSelectOption,
+} from '@/components/ui/text-input-select'
 import { commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { useEffect, useState } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import MultipleSelector, {
+  Option as MultiSelectOption,
+} from '@/components/ui/multi-select'
 
 type Props = {
   form: AssetFormType
 }
 
-const AvatarWearableLayout = ({ form }: Props) => {
+export const AvatarWearableLayout = ({ form }: Props) => {
   const { t } = useLocalization()
-  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
-  const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
-    Option[]
+  const [categoryCandidates, setCategoryCandidates] = useState<
+    TextInputSelectOption[]
   >([])
-  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+  const [supportedAvatarCandidates, setSupportedAvatarCandidates] = useState<
+    MultiSelectOption[]
+  >([])
+  const [tagCandidates, setTagCandidates] = useState<MultiSelectOption[]>([])
 
   const fetchSupportedAvatars = async () => {
-    const result = await commands.getAllSupportedAvatarValues()
+    const result = await commands.getAvatarWearableSupportedAvatars(null)
 
     if (result.status === 'error') {
       console.error(result.error)
       return
     }
 
-    const options: Option[] = result.data.map((entry) => {
+    const options: MultiSelectOption[] = result.data.map((entry) => {
       const value = entry.value
       return { label: value, value, priority: entry.priority }
     })
@@ -37,7 +43,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
   }
 
   const fetchExistingCategories = async () => {
-    const result = await commands.getAvatarWearableCategories()
+    const result = await commands.getAvatarWearableCategories(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -46,7 +52,6 @@ const AvatarWearableLayout = ({ form }: Props) => {
 
     setCategoryCandidates(
       result.data.map((entry) => ({
-        label: entry.value,
         value: entry.value,
         priority: entry.priority,
       })),
@@ -54,7 +59,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags()
+    const result = await commands.getAllAssetTags(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -80,20 +85,16 @@ const AvatarWearableLayout = ({ form }: Props) => {
     return <div>Loading...</div>
   }
 
-  const rawCategory = form.watch('category')
-  const categoryValue = rawCategory
-    ? { label: rawCategory, value: rawCategory }
-    : null
-
   return (
     <div className="mb-4">
-      <div className="w-full flex flex-row space-x-2">
+      <div className="w-full flex flex-row space-x-2 space-y-4">
         <div className="w-1/2 space-y-2">
           <Label> {t('general:supported-avatars')} </Label>
           <MultipleSelector
             options={supportedAvatarCandidates}
             placeholder={t('addasset:supported-avatars:placeholder')}
             className="max-w-72"
+            badgeClassName="max-w-58"
             hidePlaceholderWhenSelected
             creatable
             emptyIndicator={
@@ -101,17 +102,9 @@ const AvatarWearableLayout = ({ form }: Props) => {
                 {t('addasset:empty-indicator')}
               </p>
             }
-            value={form.getValues('supportedAvatars').map((supportedAvatar) => {
-              return {
-                label: supportedAvatar,
-                value: supportedAvatar,
-              }
-            })}
+            value={form.getValues('supportedAvatars')}
             onChange={(value) => {
-              form.setValue(
-                'supportedAvatars',
-                value.map((v) => v.value),
-              )
+              form.setValue('supportedAvatars', value)
             }}
           />
           <p className="text-muted-foreground text-sm">
@@ -125,19 +118,14 @@ const AvatarWearableLayout = ({ form }: Props) => {
             options={categoryCandidates}
             placeholder={t('addasset:category:placeholder')}
             className="max-w-72"
-            creatable
             emptyIndicator={
               <p className="text-center text-lg text-muted-foreground">
                 {t('addasset:empty-indicator')}
               </p>
             }
-            value={categoryValue}
+            value={form.watch('category')}
             onChange={(value) => {
-              if (value === null) {
-                form.setValue('category', '')
-              } else {
-                form.setValue('category', value.value)
-              }
+              form.setValue('category', value)
             }}
           />
           <p className="text-muted-foreground text-sm">
@@ -151,6 +139,7 @@ const AvatarWearableLayout = ({ form }: Props) => {
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}
           className="max-w-72"
+          badgeClassName="max-w-58"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
@@ -158,17 +147,9 @@ const AvatarWearableLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          value={form.getValues('tags').map((tag) => {
-            return {
-              label: tag,
-              value: tag,
-            }
-          })}
+          value={form.getValues('tags')}
           onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
+            form.setValue('tags', value)
           }}
         />
         <p className="text-muted-foreground text-sm">
@@ -178,5 +159,3 @@ const AvatarWearableLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default AvatarWearableLayout

@@ -1,8 +1,8 @@
-import ResetDialog from '@/components/model/ResetDialog'
+import { ResetDialog } from '@/components/model/ResetDialog'
 import { Label } from '@/components/ui/label'
 import { useLocalization } from '@/hooks/use-localization'
 
-const ResetButton = () => {
+export const ResetButton = () => {
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center">
@@ -19,5 +19,3 @@ const ResetButton = () => {
     </div>
   )
 }
-
-export default ResetButton

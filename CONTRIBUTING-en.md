@@ -127,5 +127,5 @@ pnpm run type-check
 Run the following command to create an executable:
 
 ```
-pnpm run build --no-bundle
+pnpm tauri build --no-bundle
 ```

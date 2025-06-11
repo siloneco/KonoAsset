@@ -13,7 +13,7 @@ type Props = {
   id: PreferenceTabIDs
 }
 
-const AboutTab: FC<Props> = ({ id }) => {
+export const AboutTab: FC<Props> = ({ id }) => {
   const { t } = useLocalization()
   const [version, setVersion] = useState('X.X.X')
 
@@ -32,7 +32,7 @@ const AboutTab: FC<Props> = ({ id }) => {
         <div className="grid grid-cols-8 w-[600px]">
           <div className="col-span-1" />
           <div className="col-span-6 flex justify-center items-center">
-            <img src="/logo.png" className="w-12 h-12" />
+            <img src="/logo.png" className="w-12 h-12 select-none" />
             <h1 className="text-4xl ml-2">
               KonoAsset
               <span className="ml-2 text-base text-muted-foreground">
@@ -40,23 +40,22 @@ const AboutTab: FC<Props> = ({ id }) => {
               </span>
             </h1>
           </div>
-          <div className="col-span-1 flex justify-end">
-            {/* TODO: implement */}
-            {/* <Button variant="secondary">更新を確認</Button> */}
-          </div>
+          <div className="col-span-1" />
         </div>
-        <Separator className="w-[600px] mt-6" />
+        <div className="w-[600px] mt-6">
+          <Separator />
+        </div>
         <div className="mt-6 text-foreground">
           {t('preference:about:description')}
         </div>
         <div className="w-[600px] flex flex-row mt-6">
           <div className="w-1/2 flex flex-col items-center">
-            <div className="flex flex-row items-center space-x-4 mb-4">
-              <Separator className="w-16" />
-              <p className="text-foreground">
+            <div className="flex flex-row items-center space-x-4 mb-4 w-[280px]">
+              <Separator className="flex shrink" />
+              <p className="text-foreground flex shrink-0">
                 {t('preference:about:related-links')}
               </p>
-              <Separator className="w-16" />
+              <Separator className="flex shrink" />
             </div>
             <div className="flex flex-row space-x-6">
               <a
@@ -76,10 +75,12 @@ const AboutTab: FC<Props> = ({ id }) => {
             </div>
           </div>
           <div className="w-1/2 flex flex-col items-center">
-            <div className="flex flex-row items-center space-x-4 mb-4">
-              <Separator className="w-16" />
-              <p className="text-foreground">{t('preference:about:changes')}</p>
-              <Separator className="w-16" />
+            <div className="flex flex-row items-center space-x-4 mb-4 w-[280px]">
+              <Separator className="flex shrink" />
+              <p className="text-foreground flex shrink-0">
+                {t('preference:about:changes')}
+              </p>
+              <Separator className="flex shrink" />
             </div>
             <div className="flex flex-row space-x-6">
               <a
@@ -96,10 +97,12 @@ const AboutTab: FC<Props> = ({ id }) => {
           </div>
         </div>
         <div className="flex flex-col items-center mt-6 space-y-4">
-          <div className="flex flex-row items-center space-x-4">
-            <Separator className="w-52" />
-            <p className="text-foreground">{t('preference:about:members')}</p>
-            <Separator className="w-52" />
+          <div className="flex flex-row items-center space-x-4 w-[600px]">
+            <Separator className="flex shrink" />
+            <p className="text-foreground text-nowrap flex shrink-0">
+              {t('preference:about:members')}
+            </p>
+            <Separator className="flex shrink" />
           </div>
           <div className="flex flex-row space-x-10">
             <UserProfile
@@ -131,10 +134,12 @@ const AboutTab: FC<Props> = ({ id }) => {
           </p>
         </div>
         <div className="flex flex-col items-center mt-6 space-y-4">
-          <div className="flex flex-row items-center space-x-4">
-            <Separator className="w-52" />
-            <p className="text-foreground">{t('preference:about:support')}</p>
-            <Separator className="w-52" />
+          <div className="flex flex-row items-center space-x-4 w-[600px]">
+            <Separator className="flex shrink" />
+            <p className="text-foreground flex shrink-0">
+              {t('preference:about:support')}
+            </p>
+            <Separator className="flex shrink" />
           </div>
           <div className="flex flex-col items-center text-muted-foreground">
             <p>{t('preference:about:support-text-1')}</p>
@@ -147,5 +152,3 @@ const AboutTab: FC<Props> = ({ id }) => {
     </TabsContent>
   )
 }
-
-export default AboutTab

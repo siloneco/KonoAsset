@@ -1,4 +1,3 @@
-import { AssetSummary, commands, SortBy } from '@/lib/bindings'
 import { Event } from '@tauri-apps/api/event'
 import { DragDropEvent } from '@tauri-apps/api/webview'
 
@@ -15,44 +14,4 @@ export const onFileDrop = (
   } else {
     setDragAndHover(false)
   }
-}
-
-export const refreshAssets = async (
-  sortBy: SortBy,
-  setAssetDisplaySortedList: (assets: AssetSummary[]) => void,
-) => {
-  const result = await commands.getSortedAssetsForDisplay(sortBy)
-
-  if (result.status === 'error') {
-    console.error(result.error)
-    return
-  }
-
-  setAssetDisplaySortedList(result.data)
-}
-
-export const checkForUpdate = async (): Promise<boolean> => {
-  const result = await commands.checkForUpdate()
-
-  if (result.status === 'error') {
-    console.error(result.error)
-    return false
-  }
-
-  return result.data
-}
-
-export const downloadUpdate = async (setTaskId: (taskId: string) => void) => {
-  const result = await commands.downloadUpdate()
-
-  if (result.status === 'ok') {
-    setTaskId(result.data)
-    return
-  }
-
-  console.error(result.error)
-}
-
-export const dismissUpdate = async () => {
-  await commands.doNotNotifyUpdate()
 }

@@ -132,5 +132,5 @@ pnpm run type-check
 以下のコマンドで exe の作成が可能です。
 
 ```
-pnpm run build --no-bundle
+pnpm tauri build --no-bundle
 ```

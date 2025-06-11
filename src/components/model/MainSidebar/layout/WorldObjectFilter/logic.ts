@@ -1,8 +1,10 @@
 import { Option } from '@/components/ui/multi-select'
 import { commands } from '@/lib/bindings'
 
-export const fetchAllCategories = async (): Promise<Option[]> => {
-  const result = await commands.getWorldObjectCategories()
+export const fetchAllCategories = async (
+  allowedIds: string[] | null,
+): Promise<Option[]> => {
+  const result = await commands.getWorldObjectCategories(allowedIds)
 
   if (result.status === 'error') {
     console.error(result.error)

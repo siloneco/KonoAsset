@@ -32,7 +32,7 @@ export const ExportSection: FC = () => {
     <div className="pb-12">
       <Label className="text-xl flex flex-row items-center">
         {t('preference:adapter:export')}
-        <FolderOutput className="text-foreground/50 ml-2" />
+        <FolderOutput className="text-foreground/50" />
       </Label>
       <p className="mt-1 text-sm text-muted-foreground">
         {t('preference:adapter:export:description')}
@@ -94,7 +94,11 @@ export const ExportSection: FC = () => {
                 value={exportDestination ?? ''}
                 disabled
               />
-              <Button variant="secondary" onClick={selectExportDestination}>
+              <Button
+                variant="secondary"
+                className="h-10"
+                onClick={selectExportDestination}
+              >
                 {t('general:button:select')}
               </Button>
             </div>

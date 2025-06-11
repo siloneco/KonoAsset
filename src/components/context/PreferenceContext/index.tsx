@@ -7,18 +7,20 @@ import { getDefaultPreferences } from '@/lib/utils'
 export type PreferenceContextType = {
   preference: PreferenceStore
   setPreference: (preference: PreferenceStore, save: boolean) => Promise<void>
+  loaded: boolean
 }
 
 export const PreferenceContext = createContext<PreferenceContextType>({
   preference: getDefaultPreferences(),
   setPreference: async () => {},
+  loaded: false,
 })
 
 type Props = {
   children: React.ReactNode
 }
 
-const PreferenceContextProvider: FC<Props> = ({ children }) => {
+export const PreferenceContextProvider: FC<Props> = ({ children }) => {
   const { preferenceContextValue } = usePreferenceContext()
   const { setTheme } = useTheme()
 
@@ -30,5 +32,3 @@ const PreferenceContextProvider: FC<Props> = ({ children }) => {
     </PreferenceContext.Provider>
   )
 }
-
-export default PreferenceContextProvider

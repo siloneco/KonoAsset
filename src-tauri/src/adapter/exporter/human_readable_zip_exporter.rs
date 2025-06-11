@@ -36,10 +36,12 @@ where
     let avatars = category_based_assets.avatars;
     let avatar_wearables = category_based_assets.avatar_wearables;
     let world_objects = category_based_assets.world_objects;
+    let other_assets = category_based_assets.other_assets;
 
     let total_assets = avatars.len()
         + avatar_wearables.values().flatten().count()
-        + world_objects.values().flatten().count();
+        + world_objects.values().flatten().count()
+        + other_assets.values().flatten().count();
 
     let mut processed_assets: usize = 0;
 
@@ -64,7 +66,7 @@ where
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
-                        format!("{}Booth.url", item_path).into(),
+                        format!("{}BOOTH.url", item_path).into(),
                         Compression::Stored,
                     ),
                     &create_link_file_data(booth_id),
@@ -138,6 +140,36 @@ where
         .await?;
     }
 
+    new_zip_dir(&mut writer, "OtherAssets/").await?;
+    for key in other_assets.keys() {
+        let category = if !key.is_empty() {
+            key
+        } else {
+            "Uncategorized"
+        };
+
+        write_categorized_assets(
+            &mut writer,
+            category,
+            other_assets.get(key).unwrap(),
+            "OtherAssets/",
+            |name| {
+                if app.is_none() {
+                    return;
+                }
+                let app = app.unwrap();
+
+                let percentage = ((processed_assets as f32) / (total_assets as f32)) * 100f32;
+                if let Err(e) = ProgressEvent::new(percentage, name).emit(app) {
+                    log::error!("Failed to emit progress event: {:?}", e);
+                }
+
+                processed_assets += 1;
+            },
+        )
+        .await?;
+    }
+
     writer.close().await.map_err(|e| e.to_string())?;
 
     cleanup.mark_as_completed();
@@ -173,7 +205,7 @@ where
             writer
                 .write_entry_whole(
                     ZipEntryBuilder::new(
-                        format!("{}Booth.url", item_path).into(),
+                        format!("{}BOOTH.url", item_path).into(),
                         Compression::Stored,
                     ),
                     &create_link_file_data(booth_id),
@@ -252,6 +284,8 @@ mod tests {
 
     use super::*;
 
+    const BOOTH_SHORTCUT_FILENAME: &str = "BOOTH.url";
+
     #[tokio::test]
     async fn test_human_readable_export_fn() {
         let dest = "test/temp/export/human_readable";
@@ -275,7 +309,7 @@ mod tests {
         .unwrap();
 
         let mut provider = StoreProvider::create(&provider).unwrap();
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
 
         let provider = Arc::new(Mutex::new(provider));
 
@@ -289,23 +323,28 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(std::fs::read_dir(&extracted).unwrap().count(), 3);
+        assert_eq!(std::fs::read_dir(&extracted).unwrap().count(), 4);
 
         let avatar = format!("{extracted}/Avatars/Test Avatar");
         let avatar_wearable =
             format!("{extracted}/AvatarWearables/TestAvatarWearableCategory/Test Avatar Wearable");
-        let world_object = format!("{extracted}/WorldObjects/TestCategory/Test World Object");
+        let world_object =
+            format!("{extracted}/WorldObjects/TestWorldObjectCategory/Test World Object");
+        let other_asset =
+            format!("{extracted}/OtherAssets/TestOtherAssetCategory/Test Other Asset");
 
-        assert!(std::fs::exists(format!("{avatar}/Booth.url")).unwrap());
-        assert!(std::fs::exists(format!("{avatar_wearable}/Booth.url")).unwrap());
-        assert!(std::fs::exists(format!("{world_object}/Booth.url")).unwrap());
+        assert!(std::fs::exists(format!("{avatar}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{avatar_wearable}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{world_object}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
+        assert!(std::fs::exists(format!("{other_asset}/{BOOTH_SHORTCUT_FILENAME}")).unwrap());
 
         assert!(std::fs::exists(format!("{avatar}/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{avatar_wearable}/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{world_object}/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{other_asset}/dummy.txt")).unwrap());
 
         assert_eq!(
-            std::fs::read_to_string(format!("{avatar}/Booth.url"))
+            std::fs::read_to_string(format!("{avatar}/{BOOTH_SHORTCUT_FILENAME}"))
                 .unwrap()
                 .trim(),
             r#"

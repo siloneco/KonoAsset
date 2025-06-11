@@ -19,7 +19,7 @@ const logVariants = cva('w-[270px] border-l-4 pl-1', {
   },
 })
 
-const LogTray: FC<Props> = ({ log }) => {
+export const LogTray: FC<Props> = ({ log }) => {
   return (
     <div className="flex flex-row items-center whitespace-nowrap">
       <p
@@ -35,5 +35,3 @@ const LogTray: FC<Props> = ({ log }) => {
     </div>
   )
 }
-
-export default LogTray

@@ -23,7 +23,7 @@ type Props = {
   totalTabs: number
 }
 
-const BoothInputTabForEditDialog = ({
+export const BoothInputTabForEditDialog = ({
   form,
   closeDialog,
   goToNextTab,
@@ -56,8 +56,7 @@ const BoothInputTabForEditDialog = ({
       <div className="my-8 space-y-6">
         <div>
           <Label className="text-base ml-1">
-            {' '}
-            {t('addasset:booth-edit:overwrite')}{' '}
+            {t('addasset:booth-edit:overwrite')}
           </Label>
           <div className="flex flex-row items-center mt-1 space-x-2">
             <Input
@@ -69,6 +68,7 @@ const BoothInputTabForEditDialog = ({
             <Button
               disabled={fetching || !isBoothURL(boothUrlInput)}
               onClick={() => getAssetDescriptionFromBooth()}
+              className="h-10 gap-1"
             >
               {!fetching && <ChevronRight size={16} />}
               {fetching && <Loader2 size={16} className="animate-spin" />}
@@ -95,5 +95,3 @@ const BoothInputTabForEditDialog = ({
     </>
   )
 }
-
-export default BoothInputTabForEditDialog

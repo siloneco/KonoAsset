@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AssetFormType } from '@/lib/form'
-import { AssetType } from '@/lib/bindings'
+import { AssetType, commands } from '@/lib/bindings'
+import { Option as TextInputSelectOption } from '@/components/ui/text-input-select'
 
 export type Props = {
   form: AssetFormType
@@ -12,10 +13,29 @@ type ReturnProps = {
   setImageFilename: (path: string | null) => void
   imageUrlIndex: number
   setImageUrlIndex: (index: number) => void
+  creatorCandidates: TextInputSelectOption[]
 }
 
 export const useManualInputTabHooks = ({ form }: Props): ReturnProps => {
   const [imageUrlIndex, setImageUrlIndex] = useState(0)
+  const [creatorCandidates, setCreatorCandidates] = useState<
+    TextInputSelectOption[]
+  >([])
+
+  useEffect(() => {
+    const fetchCreatorCandidates = async () => {
+      const result = await commands.getCreatorNames(null)
+
+      if (result.status === 'error') {
+        console.error(result.error)
+        return
+      }
+
+      setCreatorCandidates(result.data)
+    }
+
+    fetchCreatorCandidates()
+  }, [])
 
   return {
     assetType: form.watch('assetType'),
@@ -24,5 +44,6 @@ export const useManualInputTabHooks = ({ form }: Props): ReturnProps => {
       form.setValue('imageFilename', path),
     imageUrlIndex,
     setImageUrlIndex,
+    creatorCandidates,
   }
 }

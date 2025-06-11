@@ -19,11 +19,3 @@ body:
         Describe the feature briefly.
     validations:
       required: true
-
-  - type: checkboxes
-    attributes:
-      label: 変更箇所 (Changes)
-      options:
-        - label: Frontend (UI)
-        - label: Backend (Rust)
-        - label: Localization (i18n)

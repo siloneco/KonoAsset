@@ -5,7 +5,8 @@ use tauri_specta::Event;
 use uuid::Uuid;
 
 use crate::loader::{
-    HashSetVersionedLoader, VersionedAvatarWearables, VersionedAvatars, VersionedWorldObjects,
+    HashSetVersionedLoader, VersionedAvatarWearables, VersionedAvatars, VersionedOtherAssets,
+    VersionedWorldObjects,
 };
 
 use super::traits::AssetTrait;
@@ -72,6 +73,22 @@ impl From<&WorldObject> for AssetSummary {
     }
 }
 
+impl From<&OtherAsset> for AssetSummary {
+    fn from(asset: &OtherAsset) -> Self {
+        Self {
+            id: asset.id,
+            asset_type: AssetType::OtherAsset,
+            name: asset.description.name.clone(),
+            creator: asset.description.creator.clone(),
+            image_filename: asset.description.image_filename.clone(),
+            has_memo: asset.description.memo.is_some(),
+            dependencies: asset.description.dependencies.clone(),
+            booth_item_id: asset.description.booth_item_id,
+            published_at: asset.description.published_at,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct AssetDescription {
@@ -112,6 +129,10 @@ impl Avatar {
 impl AssetTrait for Avatar {
     fn filename() -> String {
         "avatars.json".into()
+    }
+
+    fn asset_type() -> AssetType {
+        AssetType::Avatar
     }
 
     fn get_id(&self) -> Uuid {
@@ -178,6 +199,10 @@ impl AssetTrait for AvatarWearable {
         "avatarWearables.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::AvatarWearable
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -231,6 +256,10 @@ impl AssetTrait for WorldObject {
         "worldObjects.json".into()
     }
 
+    fn asset_type() -> AssetType {
+        AssetType::WorldObject
+    }
+
     fn get_id(&self) -> Uuid {
         self.id
     }
@@ -252,11 +281,69 @@ impl HashSetVersionedLoader<WorldObject> for WorldObject {
     type VersionedType = VersionedWorldObjects;
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, specta::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, specta::Type)]
+pub struct OtherAsset {
+    pub id: Uuid,
+    pub description: AssetDescription,
+    pub category: String,
+}
+
+impl OtherAsset {
+    pub fn create(mut description: AssetDescription, mut category: String) -> Self {
+        description.name = description.name.trim().to_string();
+        description.creator = description.creator.trim().to_string();
+        description.tags = description
+            .tags
+            .iter()
+            .map(|tag| tag.trim().to_string())
+            .collect();
+
+        category = category.trim().to_string();
+
+        Self {
+            id: Uuid::new_v4(),
+            description,
+            category,
+        }
+    }
+}
+
+impl AssetTrait for OtherAsset {
+    fn filename() -> String {
+        "otherAssets.json".into()
+    }
+
+    fn asset_type() -> AssetType {
+        AssetType::OtherAsset
+    }
+
+    fn get_id(&self) -> Uuid {
+        self.id
+    }
+
+    fn set_id(&mut self, id: Uuid) {
+        self.id = id;
+    }
+
+    fn get_description(&self) -> &AssetDescription {
+        &self.description
+    }
+
+    fn get_description_as_mut(&mut self) -> &mut AssetDescription {
+        &mut self.description
+    }
+}
+
+impl HashSetVersionedLoader<OtherAsset> for OtherAsset {
+    type VersionedType = VersionedOtherAssets;
+}
+
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq, specta::Type)]
 pub enum AssetType {
     Avatar,
     AvatarWearable,
     WorldObject,
+    OtherAsset,
 }
 
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq, specta::Type)]
@@ -360,4 +447,13 @@ impl InitialSetup {
     pub fn update(&mut self) {
         self.require_initial_setup = !self.preference_file.exists();
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub enum AssetUpdatePayload {
+    Avatar(Avatar),
+    AvatarWearable(AvatarWearable),
+    WorldObject(WorldObject),
+    OtherAsset(OtherAsset),
 }

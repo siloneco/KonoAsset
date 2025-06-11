@@ -1,78 +1,230 @@
 [
   {
-    "version": "1.1.3",
+    "version": "1.2.0-rc.0",
+    "preRelease": true,
     "features": [
       {
-        "text": "重複登録の警告にファイル管理ダイアログを開くボタンを追加",
+        "text": "Added a statistics page",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Added button to open file management dialog in duplicate registration warning"
+            "lang": ["ja-JP"],
+            "text": "統計ページを実装"
           }
         ]
       },
       {
-        "text": "存在しないパスでアセットを登録しようとしたときに警告を出す機能を追加",
+        "text": "Added a new \"other\" asset type",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Added warning when trying to register an asset with a non-existent path"
+            "lang": ["ja-JP"],
+            "text": "新しいアセットタイプ「その他」を追加"
           }
         ]
       },
       {
-        "text": "言語ファイルを指定して適用する機能を追加",
+        "text": "You can now change asset types via the 'Edit Information' button",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Added ability to specify and apply language files"
+            "lang": ["ja-JP"],
+            "text": "「情報を編集」からアセットタイプを変更できるように"
           }
         ]
       },
       {
-        "text": "対応アバターやタグのサジェストが登録個数の多い順に表示されるように",
+        "text": "Added a NOT search for categories and text filtering",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Suggestions for supported avatars and tags now display in order of most registered"
+            "lang": ["ja-JP"],
+            "text": "テキスト検索やカテゴリ等のフィルタにNOT検索を実装"
+          }
+        ]
+      },
+      {
+        "text": "Text search now supports lookup by BOOTH URLs",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "テキスト検索でBOOTHの商品URLを指定して検索できるように"
+          }
+        ]
+      },
+      {
+        "text": "Added suggestions for shop names",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ショップ名のサジェストを表示するように"
+          }
+        ]
+      },
+      {
+        "text": "Improved suggestion order for category, avatar support, and tag filters",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "フィルタのカテゴリ、対応アバター、タグのサジェストの並びを改善"
           }
         ]
       }
     ],
     "fixes": [
       {
-        "text": "ログの横スクロールバーが見切れる問題を修正",
+        "text": "Fixed an issue where prerequisite assets overflowed outside the dialog",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Horizontal scrollbar in logs was cut off"
+            "lang": ["ja-JP"],
+            "text": "前提アセット選択欄がダイアログからはみ出ることがある問題を修正"
           }
         ]
       },
       {
-        "text": "タグや対応アバターの入力欄の文字の削除における挙動を改善",
+        "text": "Fixed an issue where files were unable to be added by D&D",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Improved behavior when deleting characters in tag and supported avatar input fields"
+            "lang": ["ja-JP"],
+            "text": "ドラッグアンドドロップでファイルを追加できなくなることがある問題を修正"
           }
         ]
       },
       {
-        "text": "タグや対応アバターの入力欄の入力テキストが見えやすいように改善",
+        "text": "Fixed an issue where the update dialog was unable to be opened from the settings page",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Improved visibility of input text in tag and supported avatar input fields"
+            "lang": ["ja-JP"],
+            "text": "設定画面でアップデートダイアログが開けないバグを修正"
           }
         ]
       },
       {
-        "text": "変更履歴が長すぎると最後まで読めない問題を修正",
+        "text": "Fixed an issue where updates were unnecessarily downloaded multiple times",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Changelog couldn't be read to the end when it was too long"
+            "lang": ["ja-JP"],
+            "text": "アップデートを無駄に重複ダウンロードしてしまうことがある問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Improved UI layout",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "UIの見た目を改善"
+          }
+        ]
+      },
+      {
+        "text": "Improved the progress bar for ZIP files",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ZIP展開時のプログレスバーの挙動を改善"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.1.4",
+    "features": [
+      {
+        "text": "Added Simplified Chinese language setting (Thanks to Fallen-ice)",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "言語設定に簡体字を追加 ( Thanks to Fallen-ice )"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed issue where unicode brackets were overlapping",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "全角括弧が重なって表示される問題を修正"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.1.3",
+    "features": [
+      {
+        "text": "Added button to open file management dialog in duplicate registration warning",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "重複登録の警告にファイル管理ダイアログを開くボタンを追加"
+          }
+        ]
+      },
+      {
+        "text": "Added warning when trying to register an asset with a non-existent path",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "存在しないパスでアセットを登録しようとしたときに警告を出す機能を追加"
+          }
+        ]
+      },
+      {
+        "text": "Added ability to specify and apply language files",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "言語ファイルを指定して適用する機能を追加"
+          }
+        ]
+      },
+      {
+        "text": "Suggestions for supported avatars and tags now display in order of most registered",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "対応アバターやタグのサジェストが登録個数の多い順に表示されるように"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Horizontal scrollbar in logs was cut off",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ログの横スクロールバーが見切れる問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Improved behavior when deleting characters in tag and supported avatar input fields",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "タグや対応アバターの入力欄の文字の削除における挙動を改善"
+          }
+        ]
+      },
+      {
+        "text": "Improved visibility of input text in tag and supported avatar input fields",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "タグや対応アバターの入力欄の入力テキストが見えやすいように改善"
+          }
+        ]
+      },
+      {
+        "text": "Changelog couldn't be read to the end when it was too long",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "変更履歴が長すぎると最後まで読めない問題を修正"
           }
         ]
       }
@@ -82,58 +234,58 @@
     "version": "1.1.2",
     "features": [
       {
-        "text": "アセット追加用DeepLinkで複数のファイルを指定できるように",
+        "text": "Support multiple files in add asset DeepLink",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Support multiple files in add asset DeepLink"
+            "lang": ["ja-JP"],
+            "text": "アセット追加用DeepLinkで複数のファイルを指定できるように"
           }
         ]
       }
     ],
     "fixes": [
       {
-        "text": "エクスポート時に一時画像ファイルが含まれてしまう問題を修正",
+        "text": "Temp images included in exported zip",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Temp images included in exported zip"
+            "lang": ["ja-JP"],
+            "text": "エクスポート時に一時画像ファイルが含まれてしまう問題を修正"
           }
         ]
       },
       {
-        "text": "対応アバターやタグが増えすぎるとダイアログが見切れる問題を修正",
+        "text": "Dialog overflow when adding multiple supported avatars or tags",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Dialog overflow when adding multiple supported avatars or tags"
+            "lang": ["ja-JP"],
+            "text": "対応アバターやタグが増えすぎるとダイアログが見切れる問題を修正"
           }
         ]
       },
       {
-        "text": "拡張子に大文字が含まれる unitypackage が表示されない問題を修正",
+        "text": "Unitypackages with uppercase extension names not showing",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Unitypackages with uppercase extension names not showing"
+            "lang": ["ja-JP"],
+            "text": "拡張子に大文字が含まれる unitypackage が表示されない問題を修正"
           }
         ]
       },
       {
-        "text": "ウィンドウを最小化した状態でDeepLinkを踏んだ時に手前に表示されない問題を修正",
+        "text": "Minimized window not focusing on DeepLink click",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Minimized window not focusing on DeepLink click"
+            "lang": ["ja-JP"],
+            "text": "ウィンドウを最小化した状態でDeepLinkを踏んだ時に手前に表示されない問題を修正"
           }
         ]
       },
       {
-        "text": "言語設定が英語の場合でも日本語のBOOTHページを開いてしまう問題を修正",
+        "text": "Japanese BOOTH pages opening even when app language is set to English",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Japanese BOOTH pages opening even when app language is set to English"
+            "lang": ["ja-JP"],
+            "text": "言語設定が英語の場合でも日本語のBOOTHページを開いてしまう問題を修正"
           }
         ]
       }
@@ -143,31 +295,31 @@
     "version": "1.1.1",
     "fixes": [
       {
-        "text": "アセット追加時に画像を選ぶとエラーになることがある問題を修正",
+        "text": "Choosing image when adding assets caused error",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Choosing image when adding assets caused error"
+            "lang": ["ja-JP"],
+            "text": "アセット追加時に画像を選ぶとエラーになることがある問題を修正"
           }
         ]
       },
       {
-        "text": "KonoAsset形式でエクスポートしたzipが破損する問題を修正",
+        "text": "Exported zip was corrupted",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Exported zip was corrupted"
+            "lang": ["ja-JP"],
+            "text": "KonoAsset形式でエクスポートしたzipが破損する問題を修正"
           }
         ]
       }
     ],
     "others": [
       {
-        "text": "変更履歴のGitHubリンクを CHANGELOG.md に変更",
+        "text": "Changed GitHub link in change history to CHANGELOG.md",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Changed GitHub link in change history to CHANGELOG.md"
+            "lang": ["ja-JP"],
+            "text": "変更履歴のGitHubリンクを CHANGELOG.md に変更"
           }
         ]
       }
@@ -177,139 +329,139 @@
     "version": "1.1.0",
     "features": [
       {
-        "text": "アセットデータのインポート/エクスポート機能を追加",
+        "text": "Import/export function for asset data",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Import/export function for asset data"
+            "lang": ["ja-JP"],
+            "text": "アセットデータのインポート/エクスポート機能を追加"
           }
         ]
       },
       {
-        "text": "アセット追加ダイアログを開くための Deep Link をサポート",
+        "text": "Deep Link to open the asset add dialog",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Deep Link to open the asset add dialog"
+            "lang": ["ja-JP"],
+            "text": "アセット追加ダイアログを開くための Deep Link をサポート"
           }
         ]
       },
       {
-        "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装",
+        "text": "Display progress bar and change history when updating",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Display progress bar and change history when updating"
+            "lang": ["ja-JP"],
+            "text": "アップデート時にプログレスバーと変更履歴を表示する機能を実装"
           }
         ]
       },
       {
-        "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装",
+        "text": "Change the display size of assets and display in list format",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Change the display size of assets and display in list format"
+            "lang": ["ja-JP"],
+            "text": "アセットの表示サイズの変更機能とリスト形式での表示を実装"
           }
         ]
       }
     ],
     "fixes": [
       {
-        "text": "アセット削除時に前提アセットの紐づけが解除されない問題を修正",
+        "text": "Association of prerequisite assets was not removed when an asset was deleted",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Association of prerequisite assets was not removed when an asset was deleted"
+            "lang": ["ja-JP"],
+            "text": "アセット削除時に前提アセットの紐づけが解除されない問題を修正"
           }
         ]
       },
       {
-        "text": "アセットタイプの表示が改行されることがある問題を修正",
+        "text": "Asset type display was sometimes wrapped",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Asset type display was sometimes wrapped"
+            "lang": ["ja-JP"],
+            "text": "アセットタイプの表示が改行されることがある問題を修正"
           }
         ]
       },
       {
-        "text": "全てのアセットタイプを表示しているときにワールドカテゴリが候補として表示されない問題を修正",
+        "text": "World categories were not displayed as candidates when displaying all asset types",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "World categories were not displayed as candidates when displaying all asset types"
+            "lang": ["ja-JP"],
+            "text": "全てのアセットタイプを表示しているときにワールドカテゴリが候補として表示されない問題を修正"
           }
         ]
       },
       {
-        "text": "画面をリロードするまでカテゴリ等の候補が更新されない問題を修正",
+        "text": "Candidates for categories etc. were not updated until the screen was reloaded",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Candidates for categories etc. were not updated until the screen was reloaded"
+            "lang": ["ja-JP"],
+            "text": "画面をリロードするまでカテゴリ等の候補が更新されない問題を修正"
           }
         ]
       },
       {
-        "text": "en-US の翻訳の一部を修正",
+        "text": "Incorrect translation in en-US",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Incorrect translation in en-US"
+            "lang": ["ja-JP"],
+            "text": "en-US の翻訳の一部を修正"
           }
         ]
       },
       {
-        "text": "エラーがログファイルに記録されないことがある問題を修正",
+        "text": "Errors were not recorded in the log file",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Errors were not recorded in the log file"
+            "lang": ["ja-JP"],
+            "text": "エラーがログファイルに記録されないことがある問題を修正"
           }
         ]
       },
       {
-        "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正",
+        "text": "Some toast text was not translated on the initial settings page",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Some toast text was not translated on the initial settings page"
+            "lang": ["ja-JP"],
+            "text": "初期設定ページで一部トーストの文字が翻訳されていなかった問題を修正"
           }
         ]
       },
       {
-        "text": "トーストのタイトルの一貫性を向上",
+        "text": "Improved consistency of toast titles",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Improved consistency of toast titles"
+            "lang": ["ja-JP"],
+            "text": "トーストのタイトルの一貫性を向上"
           }
         ]
       },
       {
-        "text": "フィルタの候補が見づらく選択しづらい問題を修正",
+        "text": "Issue where the filter candidates were difficult to see and select",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Issue where the filter candidates were difficult to see and select"
+            "lang": ["ja-JP"],
+            "text": "フィルタの候補が見づらく選択しづらい問題を修正"
           }
         ]
       },
       {
-        "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正",
+        "text": "Language file was not loaded when the setting file failed to load",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Language file was not loaded when the setting file failed to load"
+            "lang": ["ja-JP"],
+            "text": "設定ファイルのロードに失敗した時、言語ファイルが読み込まれない問題を修正"
           }
         ]
       },
       {
-        "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正",
+        "text": "Changed \"Booth\" notation to \"BOOTH\" notation",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Changed \"Booth\" notation to \"BOOTH\" notation"
+            "lang": ["ja-JP"],
+            "text": "\"Booth\" 表記を \"BOOTH\" 表記に修正"
           }
         ]
       }
@@ -319,11 +471,11 @@
     "version": "1.0.2",
     "others": [
       {
-        "text": "インポート後の削除機能をデフォルトでOFFに変更",
+        "text": "Default setting of the delete function after import to OFF",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Default setting of the delete function after import to OFF"
+            "lang": ["ja-JP"],
+            "text": "インポート後の削除機能をデフォルトでOFFに変更"
           }
         ]
       }
@@ -333,11 +485,11 @@
     "version": "1.0.1",
     "fixes": [
       {
-        "text": "場合によってBOOTHの画像が保存できないバグを修正",
+        "text": "BOOTH images could not be saved in some cases",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "BOOTH images could not be saved in some cases"
+            "lang": ["ja-JP"],
+            "text": "場合によってBOOTHの画像が保存できないバグを修正"
           }
         ]
       }
@@ -347,11 +499,11 @@
     "version": "1.0.0",
     "features": [
       {
-        "text": "初回リリース",
+        "text": "Initial release",
         "langs": [
           {
-            "lang": ["en-US", "en-GB"],
-            "text": "Initial release"
+            "lang": ["ja-JP"],
+            "text": "初回リリース"
           }
         ]
       }
