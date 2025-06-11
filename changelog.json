@@ -1,5 +1,132 @@
 [
   {
+    "version": "1.2.0-rc.0",
+    "preRelease": true,
+    "features": [
+      {
+        "text": "Added a statistics page",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "統計ページを実装"
+          }
+        ]
+      },
+      {
+        "text": "Added a new \"other\" asset type",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "新しいアセットタイプ「その他」を追加"
+          }
+        ]
+      },
+      {
+        "text": "You can now change asset types via the 'Edit Information' button",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "「情報を編集」からアセットタイプを変更できるように"
+          }
+        ]
+      },
+      {
+        "text": "Added a NOT search for categories and text filtering",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "テキスト検索やカテゴリ等のフィルタにNOT検索を実装"
+          }
+        ]
+      },
+      {
+        "text": "Text search now supports lookup by BOOTH URLs",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "テキスト検索でBOOTHの商品URLを指定して検索できるように"
+          }
+        ]
+      },
+      {
+        "text": "Added suggestions for shop names",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ショップ名のサジェストを表示するように"
+          }
+        ]
+      },
+      {
+        "text": "Improved suggestion order for category, avatar support, and tag filters",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "フィルタのカテゴリ、対応アバター、タグのサジェストの並びを改善"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed an issue where prerequisite assets overflowed outside the dialog",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "前提アセット選択欄がダイアログからはみ出ることがある問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where files were unable to be added by D&D",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ドラッグアンドドロップでファイルを追加できなくなることがある問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where the update dialog was unable to be opened from the settings page",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "設定画面でアップデートダイアログが開けないバグを修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where updates were unnecessarily downloaded multiple times",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アップデートを無駄に重複ダウンロードしてしまうことがある問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Improved UI layout",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "UIの見た目を改善"
+          }
+        ]
+      },
+      {
+        "text": "Improved the progress bar for ZIP files",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ZIP展開時のプログレスバーの挙動を改善"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.1.4",
     "features": [
       {
