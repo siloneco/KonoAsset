@@ -65,6 +65,15 @@
             "text": "フィルタのカテゴリ、対応アバター、タグのサジェストの並びを改善"
           }
         ]
+      },
+      {
+        "text": "Added a setting to disable automatic extraction of ZIP files",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ZIPファイルを自動で展開しない設定を追加"
+          }
+        ]
       }
     ],
     "fixes": [
