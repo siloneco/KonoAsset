@@ -392,7 +392,7 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
                 <>{loadingIndicator}</>
               ) : (
                 <>
-                  {suggestions.length === 0 && (
+                  {suggestions.length === 0 && !inputValue.trim() && (
                     <CommandEmpty>{emptyIndicator}</CommandEmpty>
                   )}
                   <CreatableItem />
