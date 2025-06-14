@@ -95,7 +95,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             />
             <Area
               dataKey="avatars"
-              type="natural"
+              type="linear"
               fill="var(--color-avatar)"
               fillOpacity={0.7}
               stroke="var(--color-avatar)"
@@ -103,7 +103,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             />
             <Area
               dataKey="avatarWearables"
-              type="natural"
+              type="linear"
               fill="var(--color-avatar-wearable)"
               fillOpacity={0.7}
               stroke="var(--color-avatar-wearable)"
@@ -111,7 +111,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             />
             <Area
               dataKey="worldObjects"
-              type="natural"
+              type="linear"
               fill="var(--color-world-object)"
               fillOpacity={0.7}
               stroke="var(--color-world-object)"
@@ -119,7 +119,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             />
             <Area
               dataKey="otherAssets"
-              type="natural"
+              type="linear"
               fill="var(--color-other-asset)"
               fillOpacity={0.7}
               stroke="var(--color-other-asset)"

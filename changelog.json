@@ -1,5 +1,29 @@
 [
   {
+    "version": "1.2.0-rc.1",
+    "preRelease": true,
+    "fixes": [
+      {
+        "text": "Fixed an issue where suggestion content for shop names was displaying duplicates",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ショップ名やカテゴリ入力において表示が重複する問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where statistics page charts were sometimes displaying negative values",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "統計ページのチャートがマイナスに表示されることがある問題を修正"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.0-rc.0",
     "preRelease": true,
     "features": [
@@ -63,6 +87,15 @@
           {
             "lang": ["ja-JP"],
             "text": "フィルタのカテゴリ、対応アバター、タグのサジェストの並びを改善"
+          }
+        ]
+      },
+      {
+        "text": "Added a setting to disable automatic extraction of ZIP files",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ZIPファイルを自動で展開しない設定を追加"
           }
         ]
       }
