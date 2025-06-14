@@ -32,7 +32,7 @@ export const AdvancedTextSearch: FC<Props> = ({
   const { t } = useLocalization()
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 space-y-2">
       <div className="flex flex-row">
         <div className="flex flex-row items-center">
           <Label className="text-base">{t('mainsidebar:text-search')}</Label>
@@ -54,14 +54,13 @@ export const AdvancedTextSearch: FC<Props> = ({
           {t('mainsidebar:advanced-search')}
         </div>
       </div>
-      <div className="mt-2">
+      <div className="mt-2 space-y-2">
         <Label>{t('mainsidebar:advanced-search:asset-name')}</Label>
         <div className="relative w-full max-w-sm">
           <Input
             placeholder={t(
               'mainsidebar:advanced-search:asset-name:placeholder',
             )}
-            className="mt-1"
             value={name}
             onChange={(e) => setName(e.target.value)}
             ref={ref}
@@ -77,12 +76,11 @@ export const AdvancedTextSearch: FC<Props> = ({
           )}
         </div>
       </div>
-      <div className="mt-2">
+      <div className="space-y-2">
         <Label>{t('mainsidebar:advanced-search:shop-name')}</Label>
         <div className="relative w-full max-w-sm">
           <Input
             placeholder={t('mainsidebar:advanced-search:shop-name:placeholder')}
-            className="mt-1"
             value={creator}
             onChange={(e) => setCreator(e.target.value)}
           />
