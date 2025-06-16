@@ -96,15 +96,14 @@ runs:
       shell: bash
       run: |
         mkdir -p upload/manifests upload/installer
-        cp changelog.json ./upload/manifests/changelog.json
         mv latest.json ./upload/manifests/${{ inputs.releaseChannel }}.json
         mv ./src-tauri/target/release/bundle/nsis/* ./upload/installer/
 
-    - name: Update pre-release.json on stable release
-      if: ${{ inputs.releaseChannel == 'stable' }}
-      shell: bash
-      run: |
-        cp ./upload/manifests/stable.json ./upload/manifests/pre-release.json
+    #    - name: Update pre-release.json on stable release
+    #      if: ${{ inputs.releaseChannel == 'stable' }}
+    #      shell: bash
+    #      run: |
+    #        cp ./upload/manifests/stable.json ./upload/manifests/pre-release.json
 
     - name: Upload artifacts
       uses: ryand56/r2-upload-action@b801a390acbdeb034c5e684ff5e1361c06639e7c # v1.4
