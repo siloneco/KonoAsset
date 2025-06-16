@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog'
-import { FC, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalization } from '@/hooks/use-localization'
@@ -24,7 +24,11 @@ type Props = {
 
 const URL_REGEX = /https?:\/\/[^\s]+/g
 
-const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
+export const MemoDialog: FC<Props> = ({
+  assetId,
+  dialogOpen,
+  setDialogOpen,
+}) => {
   const [name, setName] = useState('')
   const [memo, setMemo] = useState('')
   const [loading, setLoading] = useState(false)
@@ -54,6 +58,10 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
         const world = result.data.worldObject!
         setName(world.description.name ?? '')
         setMemo(world.description.memo ?? '')
+      } else if (result.data.assetType === 'OtherAsset') {
+        const other = result.data.otherAsset!
+        setName(other.description.name ?? '')
+        setMemo(other.description.memo ?? '')
       }
     } finally {
       setLoading(false)
@@ -86,17 +94,17 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
         )}
         {!loading && (
           <ScrollArea className="max-h-96 pr-4">
-            <pre className="whitespace-pre-wrap text-base break-words max-w-[435px] font-sans">
+            <pre className="whitespace-pre-wrap text-base break-words max-w-[650px] font-sans">
               {memo.split('\n').map((line) => {
                 let buffer: string[] = []
 
                 return (
                   <p className="space-x-1" key={line}>
-                    {line.split(' ').map((text) => {
+                    {line.split(' ').map((text, index) => {
                       if (URL_REGEX.test(text)) {
                         const linkComponent = (
                           <a
-                            key={text}
+                            key={`url-${text}-${index}`}
                             href={text}
                             className="text-blue-600 dark:text-blue-400 underline"
                             target="_blank"
@@ -114,7 +122,7 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
                         buffer = []
 
                         return (
-                          <span key={bufferedText}>
+                          <span key={`text-url-${index}`}>
                             <span>{bufferedText}</span>
                             {linkComponent}
                           </span>
@@ -123,10 +131,10 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
 
                       buffer = [...buffer, text]
 
-                      return <></>
+                      return <Fragment key={`empty-${index}`}></Fragment>
                     })}
                     {buffer.length > 0 && (
-                      <span key={buffer.join(' ')}>{buffer.join(' ')}</span>
+                      <span key={`buffer-${line}`}>{buffer.join(' ')}</span>
                     )}
                   </p>
                 )
@@ -145,5 +153,3 @@ const MemoDialog: FC<Props> = ({ assetId, dialogOpen, setDialogOpen }) => {
     </Dialog>
   )
 }
-
-export default MemoDialog

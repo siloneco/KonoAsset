@@ -34,6 +34,11 @@ pub async fn get_asset(
         return Ok(GetAssetResult::world_object(asset));
     }
 
+    let other_asset = basic_store.get_other_asset_store().get_asset(id).await;
+    if let Some(asset) = other_asset {
+        return Ok(GetAssetResult::other_asset(asset));
+    }
+
     let err = format!("Asset not found: {:?}", id);
     log::error!("{}", err);
     Err(err)
@@ -41,7 +46,7 @@ pub async fn get_asset(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn get_sorted_assets_for_display(
+pub async fn get_sorted_asset_summaries(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     sort_by: SortBy,
 ) -> Result<Vec<AssetSummary>, String> {
@@ -81,6 +86,20 @@ pub async fn get_sorted_assets_for_display(
 
         basic_store
             .get_world_object_store()
+            .get_all()
+            .await
+            .iter()
+            .for_each(|asset| {
+                let description = &asset.description;
+                result.push(AssetSummary::from(asset));
+
+                if sort_by == SortBy::CreatedAt {
+                    created_at_map.insert(asset.id, description.created_at);
+                }
+            });
+
+        basic_store
+            .get_other_asset_store()
             .get_all()
             .await
             .iter()
@@ -146,6 +165,17 @@ pub async fn get_asset_displays_by_booth_id(
 
     basic_store
         .get_world_object_store()
+        .get_all()
+        .await
+        .iter()
+        .for_each(|asset| {
+            if asset.description.booth_item_id == Some(booth_item_id) {
+                result.push(AssetSummary::from(asset));
+            }
+        });
+
+    basic_store
+        .get_other_asset_store()
         .get_all()
         .await
         .iter()

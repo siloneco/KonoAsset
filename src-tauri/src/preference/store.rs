@@ -22,6 +22,7 @@ pub struct PreferenceStore {
     pub language: LanguageCode,
 
     pub delete_on_import: bool,
+    pub zip_extraction: bool,
     pub use_unitypackage_selected_open: bool,
 
     pub update_channel: UpdateChannel,
@@ -74,6 +75,7 @@ impl PreferenceStore {
             language: LanguageCode::JaJp,
 
             delete_on_import: false,
+            zip_extraction: true,
             use_unitypackage_selected_open: true,
 
             update_channel: UpdateChannel::Stable,
@@ -127,6 +129,7 @@ impl PreferenceStore {
         self.data_dir_path = other.data_dir_path.clone();
         self.theme = other.theme;
         self.delete_on_import = other.delete_on_import;
+        self.zip_extraction = other.zip_extraction;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
         self.update_channel = other.update_channel;
 
@@ -169,6 +172,7 @@ mod tests {
         assert_eq!(preference_store.theme, Theme::System);
         assert_eq!(preference_store.language, LanguageCode::JaJp);
         assert_eq!(preference_store.delete_on_import, false);
+        assert_eq!(preference_store.zip_extraction, true);
         assert_eq!(preference_store.use_unitypackage_selected_open, true);
         assert_eq!(preference_store.update_channel, UpdateChannel::Stable);
         assert_eq!(
@@ -182,12 +186,13 @@ mod tests {
     fn test_load_preference_store() {
         let json_data = r#"
         {
-            "version": 4,
+            "version": 5,
             "data": {
                 "dataDirPath": "C:\\fake-path\\KonoAsset",
                 "theme": "dark",
                 "language": "ja-JP",
                 "deleteOnImport": true,
+                "zipExtraction": true,
                 "useUnitypackageSelectedOpen": true,
                 "updateChannel": "Stable"
             }
@@ -211,6 +216,7 @@ mod tests {
         assert_eq!(preference.theme, Theme::Dark);
         assert_eq!(preference.language, LanguageCode::JaJp);
         assert_eq!(preference.delete_on_import, true);
+        assert_eq!(preference.zip_extraction, true);
         assert_eq!(preference.use_unitypackage_selected_open, true);
         assert_eq!(preference.update_channel, UpdateChannel::Stable);
         assert_eq!(preference.file_path.to_string_lossy(), path);
@@ -232,6 +238,7 @@ mod tests {
             language: LanguageCode::EnUs,
 
             delete_on_import: false,
+            zip_extraction: true,
             use_unitypackage_selected_open: false,
 
             update_channel: UpdateChannel::PreRelease,
@@ -243,12 +250,13 @@ mod tests {
 
         let expected_content = r#"
         {
-            "version": 4,
+            "version": 5,
             "data": {
                 "dataDirPath": "C:\\fake-path\\KonoAsset",
                 "theme": "light",
                 "language": "en-US",
                 "deleteOnImport": false,
+                "zipExtraction": true,
                 "useUnitypackageSelectedOpen": false,
                 "updateChannel": "PreRelease"
             }

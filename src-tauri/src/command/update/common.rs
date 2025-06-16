@@ -52,8 +52,6 @@ pub async fn download_update(
     let cloned_update_handler = (*update_handler).clone();
 
     let task = task_container.lock().await.run(async move {
-        log::info!("Downloading update...");
-
         let mut handler = cloned_update_handler.lock().await;
 
         handler

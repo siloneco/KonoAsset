@@ -45,7 +45,8 @@ export const getDefaultPreferences = (): PreferenceStore => {
     dataDirPath: '',
     theme: 'system',
     useUnitypackageSelectedOpen: true,
-    deleteOnImport: true,
+    zipExtraction: true,
+    deleteOnImport: false,
     updateChannel: 'Stable',
     language: 'en-US',
   }

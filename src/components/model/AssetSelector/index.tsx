@@ -3,7 +3,7 @@ import { AssetSummary } from '@/lib/bindings'
 import { cn } from '@/lib/utils'
 import { PlusCircle, Search } from 'lucide-react'
 import { FC } from 'react'
-import SlimAssetDetail from '../SlimAssetDetail'
+import { SlimAssetDetail } from '../SlimAssetDetail'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAssetSelector } from './hook'
@@ -52,7 +52,7 @@ export const AssetSelector: FC<Props> = ({
         <Search className="absolute top-2 left-2 text-foreground/50" />
         <div
           className={cn(
-            'absolute z-10 w-[calc(100%-16px)] h-96 top-12 bg-background rounded-lg mx-2',
+            'absolute z-10 w-[calc(100%-16px)] h-96 top-12 bg-background rounded-lg border-2 border-border overflow-hidden',
             'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
             !open && 'hidden',
           )}

@@ -1,6 +1,6 @@
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
 import { commands, FilterRequest } from '@/lib/bindings'
-import { RefObject, useEffect, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
 type Props = {
   onSelected: (assetId: string) => void
@@ -29,7 +29,7 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
   const { getElementProperty } = useGetElementProperty(inputRef)
 
   // suggestの高さを適切に設定する
-  const updateMaxHeight = () => {
+  const updateMaxHeight = useCallback(() => {
     const windowHeight = window.innerHeight
     const inputDivBottom = getElementProperty('bottom')
     const maxHeight = Math.min(
@@ -38,18 +38,16 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
     )
 
     setPopoverMaxHeight(maxHeight)
-  }
+  }, [getElementProperty])
 
   useEffect(() => {
     updateMaxHeight()
-  }, [open])
 
-  useEffect(() => {
     window.addEventListener('resize', updateMaxHeight)
     return () => window.removeEventListener('resize', updateMaxHeight)
-  }, [])
+  }, [updateMaxHeight])
 
-  const updateFiltered = async () => {
+  const updateFiltered = useCallback(async () => {
     if (searchInput.length <= 0) {
       setFiltered([])
       return
@@ -70,11 +68,11 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
     if (result.status === 'ok') {
       setFiltered(result.data)
     }
-  }
+  }, [searchInput])
 
   useEffect(() => {
     updateFiltered()
-  }, [searchInput])
+  }, [updateFiltered])
 
   const onFocus = () => {
     setOpen(true)

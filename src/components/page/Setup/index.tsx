@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react'
 
-import LoadErrorPage from '../LoadError'
 import { Separator } from '@/components/ui/separator'
 import { SetupProgressContent } from './components/SetupProgressContent'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -26,11 +25,17 @@ export const SetupPage: FC = () => {
   const onLastButtonClicked = async () => {
     // preference.json が無い場合フォールバックされてしまうため、セーブする
     await setPreference(preference, true)
-    navigate({ to: '/' })
+
+    const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? undefined
+      : { types: ['setup-to-main'] }
+
+    navigate({ to: '/', viewTransition })
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background">
+    <div className="h-screen w-screen flex flex-col items-center justify-center px-10 bg-slate-100 dark:bg-background selection:bg-primary selection:text-primary-foreground [view-transition-name:main-content]">
       <div className="w-full max-w-[1000px] mx-10 p-6 bg-card rounded-2xl border-2 border-accent">
         <h1 className="flex justify-center items-center text-2xl">
           {t('setup:welcome')}
@@ -47,8 +52,10 @@ export const SetupPage: FC = () => {
               {t('setup:sidebar:3')}
             </SetupProgressContent>
           </div>
-          <Separator orientation="vertical" className="h-96" />
-          <div className="flex flex-grow flex-col">
+          <div className="h-96">
+            <Separator orientation="vertical" />
+          </div>
+          <div className="flex grow flex-col">
             <Tabs value={tabIndex + ''} className="h-96">
               <TabsContent value="1">
                 <AppAppearanceTab />
@@ -105,5 +112,3 @@ export const SetupPage: FC = () => {
     </div>
   )
 }
-
-export default LoadErrorPage

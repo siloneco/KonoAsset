@@ -19,7 +19,15 @@ export const usePreferenceSidebar = (): ReturnProps => {
   const { t } = useLocalization()
 
   const backToTopPage = () => {
-    navigate({ to: TopPageRoute.to })
+    const viewTransition = window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches
+      ? undefined
+      : { types: ['default-transition'] }
+
+    navigate({
+      to: TopPageRoute.to,
+      viewTransition,
+    })
   }
 
   const onVersionClick = async () => {
@@ -31,13 +39,8 @@ export const usePreferenceSidebar = (): ReturnProps => {
     })
   }
 
-  const getVersionAndSet = async () => {
-    const v = await getVersion()
-    setVersion(v)
-  }
-
   useEffect(() => {
-    getVersionAndSet()
+    getVersion().then(setVersion)
   }, [])
 
   return {

@@ -1,6 +1,6 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { AssetSelector } from '@/components/model/AssetSelector'
-import SlimAssetDetail from '@/components/model/SlimAssetDetail'
+import { SlimAssetDetail } from '@/components/model/SlimAssetDetail'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
 import { Label } from '@/components/ui/label'
@@ -49,7 +49,7 @@ export const DependencyInput: FC<Props> = ({
                   <SlimAssetDetail
                     key={asset.id}
                     asset={asset}
-                    className="w-full bg-background border-0 border-b"
+                    className="w-full max-w-[588px] bg-background border-0 border-b"
                   >
                     <Button
                       className="w-10 h-10"

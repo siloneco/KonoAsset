@@ -26,7 +26,7 @@ type Props = {
   submitButtonText: string
 }
 
-const AdditionalInputTab = ({
+export const AdditionalInputTab = ({
   form,
   onBackToPreviousTabClicked,
   onSubmit,
@@ -78,12 +78,13 @@ const AdditionalInputTab = ({
             {!hideDeleteSourceCheckbox && (
               <div className="flex items-center mr-4">
                 <Checkbox
+                  className="cursor-pointer disabled:cursor-not-allowed"
                   checked={deleteSourceChecked}
                   onCheckedChange={setDeleteSourceChecked}
                   disabled={submitting}
                 />
                 <Label
-                  className="ml-2"
+                  className="ml-2 cursor-pointer"
                   onClick={() => setDeleteSourceChecked(!deleteSourceChecked)}
                 >
                   {t('addasset:additional-input:delete-source')}
@@ -100,5 +101,3 @@ const AdditionalInputTab = ({
     </div>
   )
 }
-
-export default AdditionalInputTab

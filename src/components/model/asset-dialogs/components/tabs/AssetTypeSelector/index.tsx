@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import SelectTypeButton from './selector/SelectTypeButton'
+import { SelectTypeButton } from './selector/SelectTypeButton'
 import { AssetFormType } from '@/lib/form'
 import { useLocalization } from '@/hooks/use-localization'
 
@@ -17,7 +17,12 @@ type Props = {
   totalTabs: number
 }
 
-const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
+export const AssetTypeSelectorTab = ({
+  form,
+  setTab,
+  tabIndex,
+  totalTabs,
+}: Props) => {
   const { t } = useLocalization()
   const backToBoothInput = () => {
     setTab('booth-input')
@@ -39,7 +44,7 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
           {t('addasset:select-type:explanation-text')}
         </DialogDescription>
       </DialogHeader>
-      <div className="my-8 space-y-6 flex flex-col items-center">
+      <div className="my-8 space-y-4 flex flex-col items-center">
         <SelectTypeButton
           text={t('general:typeavatar')}
           onClick={() => {
@@ -61,6 +66,13 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
           }}
           selected={assetType === 'WorldObject'}
         />
+        <SelectTypeButton
+          text={t('general:typeotherasset')}
+          onClick={() => {
+            form.setValue('assetType', 'OtherAsset')
+          }}
+          selected={assetType === 'OtherAsset'}
+        />
       </div>
       <DialogFooter>
         <Button
@@ -70,12 +82,10 @@ const AssetTypeSelectorTab = ({ form, setTab, tabIndex, totalTabs }: Props) => {
         >
           {t('general:button:back')}
         </Button>
-        <Button className="mr-auto" onClick={moveToManualInputTab}>
+        <Button onClick={moveToManualInputTab}>
           {t('general:button:next')}
         </Button>
       </DialogFooter>
     </>
   )
 }
-
-export default AssetTypeSelectorTab

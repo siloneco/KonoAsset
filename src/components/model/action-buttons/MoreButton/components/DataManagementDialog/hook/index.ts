@@ -1,12 +1,12 @@
 import {
   DragDropContext,
-  DragDropUser,
+  DragDropRegisterConfig,
 } from '@/components/context/DragDropContext'
 import { commands, SimplifiedDirEntry } from '@/lib/bindings'
-import { UnlistenFn } from '@tauri-apps/api/event'
-import { getCurrentWindow } from '@tauri-apps/api/window'
+import { Event } from '@tauri-apps/api/event'
+import { DragDropEvent } from '@tauri-apps/api/window'
 import { open } from '@tauri-apps/plugin-dialog'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 type Props = {
   assetId: string | null
@@ -46,7 +46,7 @@ const refetchEntries = async (
   }
 }
 
-const useDataManagementDialog = ({
+export const useDataManagementDialog = ({
   assetId,
   dialogOpen,
 }: Props): ReturnProps => {
@@ -58,27 +58,13 @@ const useDataManagementDialog = ({
   const [refreshButtonCheckMarked, setRefreshButtonCheckMarked] =
     useState(false)
 
-  const { current, lock } = useContext(DragDropContext)
+  const { register } = useContext(DragDropContext)
 
-  const currentDragDropUser = useRef<DragDropUser | null>(null)
   const ongoingImportsRef = useRef<OngoingImportEntry[]>(ongoingImports)
-
-  useEffect(() => {
-    currentDragDropUser.current = current
-    ongoingImportsRef.current = ongoingImports
-  }, [current, ongoingImports])
-
-  useEffect(() => {
-    if (!dialogOpen) {
-      return
-    }
-
-    const unlock = lock('AssetDataManagementDialog')
-
-    return () => {
-      unlock()
-    }
-  }, [assetId, dialogOpen])
+  const dialogOpenRef = useRef<boolean>(dialogOpen)
+  const startImportingRef = useRef<
+    (path: string[]) => Promise<void> | undefined
+  >(async () => {})
 
   const refresh = async (checkReloadButton: boolean) => {
     await refetchEntries(assetId, setEntries)
@@ -100,7 +86,7 @@ const useDataManagementDialog = ({
   }
 
   useEffect(() => {
-    if (!dialogOpen) {
+    if (!dialogOpen && ongoingImports.length > 0) {
       ongoingImports.forEach((entry) => {
         commands.cancelTaskRequest(entry.taskId)
       })
@@ -108,14 +94,20 @@ const useDataManagementDialog = ({
       setOngoingImports([])
       ongoingImportsRef.current = []
     }
-  }, [dialogOpen])
+  }, [dialogOpen, ongoingImports])
 
-  useEffect(() => {
+  const [prevAssetId, setPrevAssetId] = useState<string | null>(assetId)
+  const [prevDialogOpen, setPrevDialogOpen] = useState<boolean>(dialogOpen)
+
+  if (prevAssetId !== assetId || prevDialogOpen !== dialogOpen) {
+    setPrevAssetId(assetId)
+    setPrevDialogOpen(dialogOpen)
+
     setOngoingImports([])
     ongoingImportsRef.current = []
     setFinishedImportTaskIDs([])
     refresh(false)
-  }, [assetId, dialogOpen])
+  }
 
   const markOngoingImportAsFinished = (taskId: string) => {
     setFinishedImportTaskIDs((prevIDs) => {
@@ -124,30 +116,39 @@ const useDataManagementDialog = ({
     })
   }
 
-  const startImporting = async (paths: string[]) => {
-    if (assetId === null) {
-      return
-    }
-
-    const result = await commands.importFileEntriesToAsset(assetId, paths)
-
-    if (result.status === 'ok') {
-      const ongoing: OngoingImportEntry[] = []
-
-      for (let i = 0; i < paths.length; i++) {
-        ongoing.push({
-          taskId: result.data[i],
-          path: paths[i],
-        })
+  const startImporting = useCallback(
+    async (paths: string[]) => {
+      if (assetId === null) {
+        return
       }
 
-      setOngoingImports((prev) => {
-        return [...prev, ...ongoing]
-      })
-    } else {
-      console.error(result.error)
-    }
-  }
+      const result = await commands.importFileEntriesToAsset(assetId, paths)
+
+      if (result.status === 'ok') {
+        const ongoing: OngoingImportEntry[] = []
+
+        for (let i = 0; i < paths.length; i++) {
+          ongoing.push({
+            taskId: result.data[i],
+            path: paths[i],
+          })
+        }
+
+        setOngoingImports((prev) => {
+          return [...prev, ...ongoing]
+        })
+      } else {
+        console.error(result.error)
+      }
+    },
+    [assetId],
+  )
+
+  useEffect(() => {
+    dialogOpenRef.current = dialogOpen
+    ongoingImportsRef.current = ongoingImports
+    startImportingRef.current = startImporting
+  }, [dialogOpen, ongoingImports, startImporting])
 
   const onAddButtonClicked = async (isDir: boolean) => {
     if (assetId === null) {
@@ -166,42 +167,37 @@ const useDataManagementDialog = ({
     await startImporting(paths)
   }
 
-  useEffect(() => {
-    let isCancelled = false
-    let unlistenFn: UnlistenFn | undefined = undefined
-
-    const setupListener = async () => {
-      unlistenFn = await getCurrentWindow().onDragDropEvent((event) => {
-        if (isCancelled) return
-        if (currentDragDropUser.current !== 'AssetDataManagementDialog') return
-
-        const type = event.payload.type
-
-        if (type !== 'drop') {
-          return
-        }
-
-        const paths = event.payload.paths
-        if (paths.length === 0) {
-          return
-        }
-
-        startImporting(paths)
-      })
-
-      if (isCancelled) {
-        unlistenFn()
-        return
+  const eventHandlingFn = useCallback(
+    async (event: Event<DragDropEvent>): Promise<boolean> => {
+      if (!dialogOpenRef.current) {
+        return false
       }
+
+      const type = event.payload.type
+
+      if (type !== 'drop') {
+        return false
+      }
+
+      const paths = event.payload.paths
+      if (paths.length === 0) {
+        return false
+      }
+
+      await startImportingRef.current(paths)
+      return true
+    },
+    [],
+  )
+
+  useEffect(() => {
+    const eventHandlingConfig: DragDropRegisterConfig = {
+      uniqueId: 'data-management-dialog',
+      priority: 90,
     }
 
-    setupListener()
-
-    return () => {
-      isCancelled = true
-      unlistenFn?.()
-    }
-  }, [assetId])
+    register(eventHandlingConfig, eventHandlingFn)
+  }, [eventHandlingFn, register])
 
   return {
     entries,
@@ -212,5 +208,3 @@ const useDataManagementDialog = ({
     refreshButtonCheckMarked,
   }
 }
-
-export default useDataManagementDialog

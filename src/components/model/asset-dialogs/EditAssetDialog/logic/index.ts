@@ -4,6 +4,7 @@ import {
   AvatarWearable,
   commands,
   GetAssetResult,
+  OtherAsset,
   Result,
   WorldObject,
 } from '@/lib/bindings'
@@ -26,6 +27,8 @@ export const updateAsset = async ({
     return await updateAvatarWearable({ id, form })
   } else if (assetType === 'WorldObject') {
     return await updateWorldObject({ id, form })
+  } else if (assetType === 'OtherAsset') {
+    return await updateOtherAsset({ id, form })
   }
 
   return { status: 'error', error: 'Invalid asset type' }
@@ -44,7 +47,7 @@ const updateAvatar = async ({
   const dependencies = form.getValues('dependencies')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: Avatar = {
+  const avatar: Avatar = {
     id,
     description: {
       name,
@@ -59,7 +62,7 @@ const updateAvatar = async ({
     },
   }
 
-  return await commands.updateAvatar(asset)
+  return await commands.updateAsset({ avatar })
 }
 
 const updateAvatarWearable = async ({
@@ -77,7 +80,7 @@ const updateAvatarWearable = async ({
   const supportedAvatars = form.getValues('supportedAvatars')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: AvatarWearable = {
+  const avatarWearable: AvatarWearable = {
     id,
     description: {
       name,
@@ -94,7 +97,7 @@ const updateAvatarWearable = async ({
     supportedAvatars,
   }
 
-  return await commands.updateAvatarWearable(asset)
+  return await commands.updateAsset({ avatarWearable })
 }
 
 const updateWorldObject = async ({
@@ -111,7 +114,7 @@ const updateWorldObject = async ({
   const category = form.getValues('category')
   const publishedAt = form.getValues('publishedAt')
 
-  const asset: WorldObject = {
+  const worldObject: WorldObject = {
     id,
     description: {
       name,
@@ -127,7 +130,40 @@ const updateWorldObject = async ({
     category,
   }
 
-  return await commands.updateWorldObject(asset)
+  return await commands.updateAsset({ worldObject })
+}
+
+const updateOtherAsset = async ({
+  id,
+  form,
+}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+  const name = form.getValues('name')
+  const creator = form.getValues('creator')
+  const imageFilename = form.getValues('imageFilename')
+  const boothItemId = form.getValues('boothItemId')
+  const tags = form.getValues('tags')
+  const memo = form.getValues('memo')
+  const dependencies = form.getValues('dependencies')
+  const category = form.getValues('category')
+  const publishedAt = form.getValues('publishedAt')
+
+  const otherAsset: OtherAsset = {
+    id,
+    description: {
+      name,
+      creator,
+      imageFilename,
+      boothItemId,
+      tags,
+      memo,
+      dependencies,
+      createdAt: 0, // unused on updating
+      publishedAt,
+    },
+    category,
+  }
+
+  return await commands.updateAsset({ otherAsset })
 }
 
 export const fetchAssetInformation = async (

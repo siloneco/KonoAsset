@@ -107,7 +107,7 @@ export const MoreButton = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" className="my-auto w-10 h-10">
+        <Button variant="secondary" className="my-auto size-10">
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
@@ -151,7 +151,7 @@ export const MoreButton = ({
               {t('general:button:delete')}
             </DropdownMenuItem>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="max-w-[500px]">
             <AlertDialogHeader>
               <AlertDialogTitle>
                 {t('assetcard:more-button:delete-confirm')}

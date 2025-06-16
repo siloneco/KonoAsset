@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::{
     data_store::provider::StoreProvider,
     definitions::{
-        entities::{Avatar, AvatarWearable, ProgressEvent, WorldObject},
+        entities::{Avatar, AvatarWearable, OtherAsset, ProgressEvent, WorldObject},
         traits::AssetTrait,
     },
     file::{
@@ -159,7 +159,7 @@ where
     }
 
     let mut provider = StoreProvider::create(&path.to_path_buf())?;
-    provider.load_all_assets_from_files(false).await?;
+    provider.load_all_assets_from_files().await?;
 
     Ok(provider)
 }
@@ -182,8 +182,13 @@ where
     let avatar_file = metadata_dir.join(Avatar::filename());
     let avatar_wearable_file = metadata_dir.join(AvatarWearable::filename());
     let world_object_file = metadata_dir.join(WorldObject::filename());
+    let other_asset_file = metadata_dir.join(OtherAsset::filename());
 
-    if !avatar_file.exists() && !avatar_wearable_file.exists() && !world_object_file.exists() {
+    if !avatar_file.exists()
+        && !avatar_wearable_file.exists()
+        && !world_object_file.exists()
+        && !other_asset_file.exists()
+    {
         return Err(format!(
             "Invalid data store directory. Missing metadata files: {}",
             metadata_dir.display()
@@ -241,7 +246,7 @@ mod tests {
         .unwrap();
 
         let mut provider = StoreProvider::create(dest).unwrap();
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
 
         assert_eq!(provider.get_avatar_store().get_all().await.len(), 1);
         assert_eq!(
@@ -249,6 +254,7 @@ mod tests {
             1
         );
         assert_eq!(provider.get_world_object_store().get_all().await.len(), 1);
+        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 1);
 
         import_data_store_from_directory(&mut provider, src, None)
             .await
@@ -260,5 +266,6 @@ mod tests {
             2
         );
         assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
+        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 2);
     }
 }

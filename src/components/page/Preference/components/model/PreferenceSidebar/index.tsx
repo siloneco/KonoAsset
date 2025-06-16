@@ -7,7 +7,15 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, Home, Import, Info, Logs, Settings } from 'lucide-react'
+import {
+  BarChart,
+  ChevronLeft,
+  Home,
+  Import,
+  Info,
+  Logs,
+  Settings,
+} from 'lucide-react'
 import { PreferenceTabIDs } from '../../../hook'
 import { FC } from 'react'
 import { usePreferenceSidebar } from './hook'
@@ -23,7 +31,10 @@ export const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
   const { version, backToTopPage, onVersionClick } = usePreferenceSidebar()
 
   return (
-    <Sidebar collapsible="none" className="h-screen w-64 border-r-2 py-4">
+    <Sidebar
+      collapsible="none"
+      className="h-screen w-64 border-r-2 py-4 [view-transition-name:sidebar]"
+    >
       <SidebarHeader className="w-64">
         <Button
           className="w-full rounded-full"
@@ -55,6 +66,16 @@ export const PreferenceSidebar: FC<Props> = ({ activeTab, setActiveTab }) => {
             >
               <Import />
               {t('preference:adapter')}
+            </PreferenceSidebarButton>
+          </SidebarGroupContent>
+          <SidebarGroupContent className="p-2">
+            <PreferenceSidebarButton
+              id="statistics"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            >
+              <BarChart />
+              {t('preference:statistics')}
             </PreferenceSidebarButton>
           </SidebarGroupContent>
           <SidebarGroupContent className="p-2">

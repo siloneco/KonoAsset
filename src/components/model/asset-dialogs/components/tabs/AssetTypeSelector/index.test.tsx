@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import AssetTypeSelectorTab from '.'
+import { AssetTypeSelectorTab } from '.'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 vi.mock('@/hooks/use-localization', () => {
@@ -84,18 +84,18 @@ describe('AssetTypeSelector', () => {
 
     // Check Avatar button has border
     const avatar = screen.getByText('general:typeavatar')
-    expect(avatar.classList).toContain('border-primary')
+    expect(avatar.classList).toContain('border-ring')
     expect(avatar.classList).toContain('border-2')
 
     // Check other buttons do not have border
     const avatarWearable = screen.getByText(
       'addasset:select-type:avatar-wearable',
     )
-    expect(avatarWearable.classList).not.toContain('border-primary')
+    expect(avatarWearable.classList).not.toContain('border-ring')
     expect(avatarWearable.classList).not.toContain('border-2')
 
     const worldObject = screen.getByText('general:typeworldobject')
-    expect(worldObject.classList).not.toContain('border-primary')
+    expect(worldObject.classList).not.toContain('border-ring')
     expect(worldObject.classList).not.toContain('border-2')
   })
 
@@ -122,16 +122,16 @@ describe('AssetTypeSelector', () => {
     const avatarWearable = screen.getByText(
       'addasset:select-type:avatar-wearable',
     )
-    expect(avatarWearable.classList).toContain('border-primary')
+    expect(avatarWearable.classList).toContain('border-ring')
     expect(avatarWearable.classList).toContain('border-2')
 
     // Check other buttons do not have border
     const avatar = screen.getByText('general:typeavatar')
-    expect(avatar.classList).not.toContain('border-primary')
+    expect(avatar.classList).not.toContain('border-ring')
     expect(avatar.classList).not.toContain('border-2')
 
     const worldObject = screen.getByText('general:typeworldobject')
-    expect(worldObject.classList).not.toContain('border-primary')
+    expect(worldObject.classList).not.toContain('border-ring')
     expect(worldObject.classList).not.toContain('border-2')
   })
 
@@ -156,18 +156,18 @@ describe('AssetTypeSelector', () => {
 
     // Check WorldObject button has border
     const worldObject = screen.getByText('general:typeworldobject')
-    expect(worldObject.classList).toContain('border-primary')
+    expect(worldObject.classList).toContain('border-ring')
     expect(worldObject.classList).toContain('border-2')
 
     // Check other buttons do not have border
     const avatar = screen.getByText('general:typeavatar')
-    expect(avatar.classList).not.toContain('border-primary')
+    expect(avatar.classList).not.toContain('border-ring')
     expect(avatar.classList).not.toContain('border-2')
 
     const avatarWearable = screen.getByText(
       'addasset:select-type:avatar-wearable',
     )
-    expect(avatarWearable.classList).not.toContain('border-primary')
+    expect(avatarWearable.classList).not.toContain('border-ring')
     expect(avatarWearable.classList).not.toContain('border-2')
   })
 })

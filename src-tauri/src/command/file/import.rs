@@ -4,6 +4,7 @@ use tauri::{async_runtime::Mutex, State};
 use uuid::Uuid;
 
 use crate::{
+    preference::store::PreferenceStore,
     data_store::provider::StoreProvider,
     file::modify_guard::{self, FileTransferGuard},
     importer::import_wrapper::import_additional_data,
@@ -15,16 +16,19 @@ use crate::{
 pub async fn import_file_entries_to_asset(
     basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     asset_id: Uuid,
     paths: Vec<String>,
 ) -> Result<Vec<Uuid>, String> {
     let mut task_ids = vec![];
 
+    let zip_extraction = (*preference.lock().await).zip_extraction;
+
     for path in paths {
         let basic_store = (*basic_store).clone();
 
         let id = task_container.lock().await.run(async move {
-            let result = import_additional_data(basic_store, asset_id, path).await;
+            let result = import_additional_data(basic_store, asset_id, path, zip_extraction).await;
 
             if let Err(e) = result {
                 log::error!("Failed to import additional data: {:?}", e);

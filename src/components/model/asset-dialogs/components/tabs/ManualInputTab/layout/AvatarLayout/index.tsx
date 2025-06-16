@@ -10,12 +10,12 @@ type Props = {
   form: AssetFormType
 }
 
-const AvatarLayout = ({ form }: Props) => {
+export const AvatarLayout = ({ form }: Props) => {
   const { t } = useLocalization()
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags()
+    const result = await commands.getAllAssetTags(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -47,6 +47,7 @@ const AvatarLayout = ({ form }: Props) => {
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}
           className="max-w-[600px]"
+          badgeClassName="max-w-[540px]"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
@@ -54,18 +55,8 @@ const AvatarLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          value={form.getValues('tags').map((tag) => {
-            return {
-              label: tag,
-              value: tag,
-            }
-          })}
-          onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
-          }}
+          value={form.getValues('tags')}
+          onChange={(value) => form.setValue('tags', value)}
         />
         <p className="text-muted-foreground text-sm">
           {t('addasset:tag:explanation-text')}
@@ -74,5 +65,3 @@ const AvatarLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default AvatarLayout

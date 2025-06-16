@@ -1,8 +1,12 @@
 import { Separator } from '@/components/ui/separator'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import TextInputSelect from '@/components/ui/text-input-select'
-import MultipleSelector, { Option } from '@/components/ui/multi-select'
+import TextInputSelect, {
+  Option as TextInputSelectOption,
+} from '@/components/ui/text-input-select'
+import MultipleSelector, {
+  Option as MultiSelectOption,
+} from '@/components/ui/multi-select'
 import { AssetFormType } from '@/lib/form'
 import { commands } from '@/lib/bindings'
 import { Label } from '@/components/ui/label'
@@ -12,13 +16,15 @@ type Props = {
   form: AssetFormType
 }
 
-const WorldObjectLayout = ({ form }: Props) => {
+export const WorldObjectLayout = ({ form }: Props) => {
   const { t } = useLocalization()
-  const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
-  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
+  const [categoryCandidates, setCategoryCandidates] = useState<
+    TextInputSelectOption[]
+  >([])
+  const [tagCandidates, setTagCandidates] = useState<MultiSelectOption[]>([])
 
   const fetchExistingCategories = async () => {
-    const result = await commands.getWorldObjectCategories()
+    const result = await commands.getWorldObjectCategories(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -27,7 +33,6 @@ const WorldObjectLayout = ({ form }: Props) => {
 
     setCategoryCandidates(
       result.data.map((entry) => ({
-        label: entry.value,
         value: entry.value,
         priority: entry.priority,
       })),
@@ -35,7 +40,7 @@ const WorldObjectLayout = ({ form }: Props) => {
   }
 
   const fetchTagCandidates = async () => {
-    const result = await commands.getAllAssetTags()
+    const result = await commands.getAllAssetTags(null)
 
     if (result.status === 'error') {
       console.error(result.error)
@@ -60,28 +65,22 @@ const WorldObjectLayout = ({ form }: Props) => {
     return <div>Loading...</div>
   }
 
-  const rawCategory = form.watch('category')
-  const categoryValue = rawCategory
-    ? { label: rawCategory, value: rawCategory }
-    : null
-
   return (
-    <div className="w-full flex flex-row space-x-2">
+    <div className="w-full flex flex-row space-x-2 mb-4">
       <div className="w-1/2 space-y-2">
         <Label> {t('general:category')} </Label>
         <TextInputSelect
           options={categoryCandidates}
           placeholder={t('addasset:category:placeholder')}
           className="max-w-72"
-          creatable
           emptyIndicator={
             <p className="text-center text-lg text-muted-foreground">
               {t('addasset:empty-indicator')}
             </p>
           }
-          value={categoryValue}
+          value={form.watch('category')}
           onChange={(value) => {
-            form.setValue('category', value?.value as string)
+            form.setValue('category', value)
           }}
         />
         <p className="text-muted-foreground text-sm">
@@ -95,6 +94,7 @@ const WorldObjectLayout = ({ form }: Props) => {
           options={tagCandidates}
           placeholder={t('addasset:tag:placeholder')}
           className="max-w-72"
+          badgeClassName="max-w-58"
           hidePlaceholderWhenSelected
           creatable
           emptyIndicator={
@@ -102,12 +102,7 @@ const WorldObjectLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
-          onChange={(value) => {
-            form.setValue(
-              'tags',
-              value.map((v) => v.value),
-            )
-          }}
+          onChange={(value) => form.setValue('tags', value)}
         />
         <p className="text-muted-foreground text-sm">
           {t('addasset:tag:explanation-text')}
@@ -116,5 +111,3 @@ const WorldObjectLayout = ({ form }: Props) => {
     </div>
   )
 }
-
-export default WorldObjectLayout

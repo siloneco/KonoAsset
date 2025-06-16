@@ -37,10 +37,10 @@ export const LayoutPopover: FC = () => {
           variant="outline"
           className="flex flex-row text-muted-foreground"
         >
-          <div className="flex flex-row [&_svg]:size-6">
-            <Proportions />
-            <Minus className="rotate-90" />
-            <ArrowDownAz />
+          <div className="flex flex-row">
+            <Proportions className="size-6" />
+            <Minus className="rotate-90 size-6" />
+            <ArrowDownAz className="size-6" />
           </div>
           <ChevronDown />
         </Button>

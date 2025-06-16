@@ -21,7 +21,7 @@ export const ImportSection = () => {
     <div>
       <Label className="text-xl flex flex-row items-center">
         {t('preference:adapter:import')}
-        <FolderInput className="text-foreground/50 ml-2" />
+        <FolderInput className="text-foreground/50" />
       </Label>
       <p className="mt-1 text-sm text-muted-foreground">
         {t('preference:adapter:import:description')}

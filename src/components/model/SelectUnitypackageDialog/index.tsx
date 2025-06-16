@@ -1,7 +1,7 @@
 import { commands, FileInfo } from '@/lib/bindings'
 import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import UnitypackageSelector from './components/UnitypackageSelector'
+import { UnitypackageSelector } from './components/UnitypackageSelector'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -17,7 +17,7 @@ type Props = {
   unitypackageFiles: { [x: string]: FileInfo[] }
 }
 
-const SelectUnitypackageDialog = ({
+export const SelectUnitypackageDialog = ({
   assetId,
   dialogOpen,
   setDialogOpen,
@@ -53,14 +53,14 @@ const SelectUnitypackageDialog = ({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {t('assetcard:select-unitypackage:select-file')}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-96 pr-4">
-          <div className="space-y-4 max-w-[446px]">
+          <div className="space-y-4 max-w-[534px]">
             {Object.keys(unitypackageFiles)
               .sort((a, b) => a.localeCompare(b))
               .map((path) => (
@@ -77,8 +77,8 @@ const SelectUnitypackageDialog = ({
           className="my-2 w-fit mx-auto flex items-center"
           onClick={() => setSkipDialogAndSave(!skipDialog)}
         >
-          <Checkbox checked={skipDialog} />
-          <Label className="ml-2">
+          <Checkbox checked={skipDialog} className="cursor-pointer" />
+          <Label className="ml-2 cursor-pointer">
             {t('assetcard:select-unitypackage:always-open-dir')}
           </Label>
         </div>
@@ -98,5 +98,3 @@ const SelectUnitypackageDialog = ({
     </Dialog>
   )
 }
-
-export default SelectUnitypackageDialog

@@ -1,7 +1,7 @@
 import { setupAndRender } from '@/test/init'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import SelectTypeButton from '.'
+import { SelectTypeButton } from '.'
 
 describe('SelectTypeButton', () => {
   afterEach(() => {
@@ -18,7 +18,7 @@ describe('SelectTypeButton', () => {
     )
     const target = screen.getByText(text)
 
-    expect(target.classList.contains('border-primary')).toBe(true)
+    expect(target.classList.contains('border-ring')).toBe(true)
     expect(target.classList.contains('border-2')).toBe(true)
     expect(target.querySelector('.lucide-chevrons-right')).not.toBeNull()
   })

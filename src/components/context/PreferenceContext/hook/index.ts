@@ -8,15 +8,30 @@ type ReturnProps = {
   preferenceContextValue: PreferenceContextType
 }
 
+let didInit = false
+
 export const usePreferenceContext = (): ReturnProps => {
   const [preference, setPreference] = useState<PreferenceStore>(
     getDefaultPreferences(),
   )
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    getPreferences().then((pref) => {
-      setPreference(pref)
-    })
+    if (didInit) {
+      return
+    }
+
+    didInit = true
+
+    getPreferences()
+      .then((pref) => {
+        setPreference(pref)
+        setLoaded(true)
+      })
+      .catch((error) => {
+        console.error('Failed to fetch preferences:', error)
+        setLoaded(false)
+      })
   }, [])
 
   const setPreferenceWithSave = async (
@@ -39,6 +54,7 @@ export const usePreferenceContext = (): ReturnProps => {
   const preferenceContextValue: PreferenceContextType = {
     preference,
     setPreference: setPreferenceWithSave,
+    loaded,
   }
 
   return { preferenceContextValue }

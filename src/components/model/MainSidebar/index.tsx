@@ -4,72 +4,73 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
-
-import TypeSelector from './components/TypeSelector'
-import AvatarWearableFilter from './layout/AvatarWearableFilter'
+import { TypeSelector } from './components/TypeSelector'
+import { AvatarWearableFilter } from './layout/AvatarWearableFilter'
 import { Button } from '@/components/ui/button'
 import { Settings } from 'lucide-react'
 import { Label } from '@/components/ui/label'
-import { useContext, useEffect, useState } from 'react'
-import WorldObjectFilter from './layout/WorldObjectFilter'
-import MultiFilterItemSelector from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
-import { Option } from '@/components/ui/multi-select'
-import { fetchAllTags } from './logic'
-import { PersistentContext } from '@/components/context/PersistentContext'
+import { WorldObjectFilter } from './layout/WorldObjectFilter'
+import { MultiFilterItemSelector } from '@/components/model/MainSidebar/components/MultiFilterItemSelector'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from '@tanstack/react-router'
 import { Route as PreferenceRoute } from '@/routes/preference'
-import TextSearch from './components/TextSearch'
+import { TextSearch } from './components/TextSearch'
 import { useLocalization } from '@/hooks/use-localization'
-import AllTypeFilter from './layout/AllTypeFilter'
-import { AssetContext } from '@/components/context/AssetContext'
+import { AllTypeFilter } from './layout/AllTypeFilter'
+import { useMainSidebar } from './hook'
+import { OtherAssetFilter } from './layout/OtherAssetFilter'
+import { FC } from 'react'
 
-const MainSidebar = () => {
-  const navigate = useNavigate()
-  const { assetDisplaySortedList } = useContext(AssetContext)
+export const MainSidebar: FC = () => {
   const {
-    assetType,
-    queryTextMode,
-    setQueryTextMode,
+    textSearchMode,
+    setTextSearchMode,
     generalQueryTextFilter,
     setGeneralQueryTextFilter,
     queryTextFilterForName,
     setQueryTextFilterForName,
     queryTextFilterForCreator,
     setQueryTextFilterForCreator,
-    tagFilter,
+
+    filteredAssetType,
+
+    tagCandidates,
+    tagValues,
     setTagFilter,
     tagFilterMatchType,
     setTagFilterMatchType,
-  } = useContext(PersistentContext)
+    tagSelectorInputProps,
+  } = useMainSidebar()
 
-  const [tagCandidates, setTagCandidates] = useState<Option[]>([])
-  const tagValues: Option[] = tagFilter.map((tag) => ({
-    value: tag,
-    label: tag,
-  }))
-
-  const updateCategoriesAndTags = async () => {
-    setTagCandidates(await fetchAllTags())
-  }
+  const navigate = useNavigate()
   const { t } = useLocalization()
 
-  useEffect(() => {
-    updateCategoriesAndTags()
-  }, [assetDisplaySortedList])
-
   return (
-    <Sidebar collapsible="none" className="w-64 border-r-2">
+    <Sidebar
+      collapsible="none"
+      className="w-64 border-r-2 [view-transition-name:sidebar]"
+    >
       <SidebarContent className="w-64">
         <ScrollArea className="h-screen">
           <div className="flex flex-row items-center m-4 mr-0">
-            <img src="/logo.png" alt="logo" className="w-10 h-10" />
+            <img src="/logo.png" alt="logo" className="w-10 h-10 select-none" />
             <div className="text-xl ml-2">KonoAsset</div>
             <Button
               variant="outline"
               size="icon"
-              className="ml-auto mr-2 flex relative"
-              onClick={() => navigate({ to: PreferenceRoute.to })}
+              className="ml-auto mr-4 flex relative"
+              onClick={() => {
+                const viewTransition = window.matchMedia(
+                  '(prefers-reduced-motion: reduce)',
+                ).matches
+                  ? undefined
+                  : { types: ['default-transition'] }
+
+                navigate({
+                  to: PreferenceRoute.to,
+                  viewTransition,
+                })
+              }}
             >
               <Settings />
             </Button>
@@ -77,8 +78,8 @@ const MainSidebar = () => {
           <SidebarGroup>
             <SidebarGroupContent className="p-2">
               <TextSearch
-                mode={queryTextMode}
-                setMode={setQueryTextMode}
+                mode={textSearchMode}
+                setMode={setTextSearchMode}
                 general={generalQueryTextFilter}
                 setGeneral={setGeneralQueryTextFilter}
                 name={queryTextFilterForName}
@@ -88,20 +89,22 @@ const MainSidebar = () => {
               />
               <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
-              {assetType === 'All' && <AllTypeFilter />}
-              {assetType === 'AvatarWearable' && <AvatarWearableFilter />}
-              {assetType === 'WorldObject' && <WorldObjectFilter />}
+              {filteredAssetType === 'All' && <AllTypeFilter />}
+              {filteredAssetType === 'AvatarWearable' && (
+                <AvatarWearableFilter />
+              )}
+              {filteredAssetType === 'WorldObject' && <WorldObjectFilter />}
+              {filteredAssetType === 'OtherAsset' && <OtherAssetFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
                   label={t('general:tag')}
                   placeholder={t('mainsidebar:filter:tag:placeholder')}
                   candidates={tagCandidates}
                   value={tagValues}
-                  onValueChange={(values) =>
-                    setTagFilter(values.map((v) => v.value))
-                  }
+                  onValueChange={setTagFilter}
                   matchType={tagFilterMatchType}
                   setMatchType={setTagFilterMatchType}
+                  inputProps={tagSelectorInputProps}
                 />
               </div>
             </SidebarGroupContent>
@@ -111,5 +114,3 @@ const MainSidebar = () => {
     </Sidebar>
   )
 }
-
-export default MainSidebar

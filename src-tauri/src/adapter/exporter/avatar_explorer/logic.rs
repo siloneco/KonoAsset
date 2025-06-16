@@ -84,10 +84,12 @@ where
     let avatars = category_based_assets.avatars;
     let avatar_wearables = category_based_assets.avatar_wearables;
     let world_objects = category_based_assets.world_objects;
+    let other_assets = category_based_assets.other_assets;
 
     let total_assets = avatars.len()
         + avatar_wearables.values().flatten().count()
-        + world_objects.values().flatten().count();
+        + world_objects.values().flatten().count()
+        + other_assets.values().flatten().count();
 
     let mut processed_assets: usize = 0;
 
@@ -305,6 +307,78 @@ where
         processed_assets += 1;
     }
 
+    for item in other_assets.into_values().flatten() {
+        let name = &item.asset.description.name;
+        let booth_id = item.asset.description.booth_item_id;
+        let image_file_path = item.image_path.as_ref();
+        let sanitized_name = sanitize_filename::sanitize(name);
+
+        let dest = unique_destination(&items_dir, &sanitized_name);
+
+        modify_guard::copy_dir(
+            item.data_dir.clone(),
+            dest.clone(),
+            false,
+            FileTransferGuard::dest(path),
+            |progress, filename| {
+                if app.is_none() {
+                    return;
+                }
+
+                let percentage =
+                    ((processed_assets as f32 + progress) / (total_assets as f32)) * 100f32;
+                let result = ProgressEvent::new(percentage, format!("{}: {}", name, filename))
+                    .emit(app.unwrap());
+
+                if let Err(e) = result {
+                    log::error!("Failed to emit progress event: {:?}", e);
+                }
+            },
+        )
+        .await
+        .map_err(|e| {
+            format!(
+                "Failed to copy asset data directory ({}): {}",
+                item.data_dir.display(),
+                e
+            )
+        })?;
+
+        if booth_id.is_some() && image_file_path.is_some() {
+            let booth_id = booth_id.unwrap();
+            let image_file_path = image_file_path.unwrap();
+
+            modify_guard::copy_file(
+                image_file_path,
+                &thumbnail_dir.join(format!("{}.png", booth_id)),
+                false,
+                FileTransferGuard::dest(path),
+            )
+            .await
+            .map_err(|e| {
+                format!(
+                    "Failed to copy asset image file ({}): {}",
+                    image_file_path.display(),
+                    e
+                )
+            })?;
+        }
+
+        let relative_item_path = dest
+            .strip_prefix(path)
+            .map_err(|e| e.to_string())?
+            .to_string_lossy()
+            .to_string();
+
+        let builder: AvatarExplorerItemBuilder = item.asset.into();
+        let item = builder
+            .set_relative_item_path(format!("Datas{}{}", MAIN_SEPARATOR_STR, relative_item_path))
+            .build()?;
+
+        avatar_explorer_items.push(item);
+        processed_assets += 1;
+    }
+
     let custom_categories =
         avatar_explorer_items
             .iter()
@@ -440,7 +514,7 @@ mod tests {
         .unwrap();
 
         let mut provider = StoreProvider::create(store_path).unwrap();
-        provider.load_all_assets_from_files(false).await.unwrap();
+        provider.load_all_assets_from_files().await.unwrap();
         let provider = Arc::new(Mutex::new(provider));
 
         export_as_avatar_explorer_compatible_structure(provider, &exported_path, None)
@@ -461,19 +535,25 @@ mod tests {
         assert!(std::fs::exists(format!("{items_dir}/Test Avatar/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{items_dir}/Test Avatar Wearable/dummy.txt")).unwrap());
         assert!(std::fs::exists(format!("{items_dir}/Test World Object/dummy.txt")).unwrap());
+        assert!(std::fs::exists(format!("{items_dir}/Test Other Asset/dummy.txt")).unwrap());
 
         assert!(std::fs::exists(format!("{thumbnail_dir}/6641548.png")).unwrap());
 
         assert_eq!(
             std::fs::read_to_string(custom_category_txt).unwrap(),
-            "TestAvatarWearableCategory\nWorld: TestCategory"
+            vec![
+                "TestAvatarWearableCategory",
+                "TestOtherAssetCategory",
+                "World: TestWorldObjectCategory",
+            ]
+            .join("\n")
         );
         assert_eq!(std::fs::read_to_string(common_avatar_json).unwrap(), "[]");
 
         let parsed: Vec<AvatarExplorerItem> =
             serde_json::from_str(&std::fs::read_to_string(items_data_json).unwrap()).unwrap();
 
-        assert_eq!(parsed.len(), 3);
+        assert_eq!(parsed.len(), 4);
 
         assert_eq!(parsed[0].title, "Test Avatar");
         assert_eq!(parsed[0].author_name, "Test Avatar Creator");
@@ -521,9 +601,26 @@ mod tests {
         assert_eq!(parsed[2].author_image_url, "");
         assert_eq!(parsed[2].author_image_file_path, "");
         assert_eq!(parsed[2].item_type, 9);
-        assert_eq!(parsed[2].custom_category, "World: TestCategory");
+        assert_eq!(parsed[2].custom_category, "World: TestWorldObjectCategory");
         assert_eq!(parsed[2].supported_avatar, Vec::<String>::new());
         assert_eq!(parsed[2].created_date, "2025-04-02 15:00:00");
         assert_eq!(parsed[2].updated_date, "2025-04-02 15:00:00");
+
+        assert_eq!(parsed[3].title, "Test Other Asset");
+        assert_eq!(parsed[3].author_name, "Test Other Asset Creator");
+        assert_eq!(parsed[3].item_memo, "Test Other Asset Memo");
+        assert_eq!(parsed[3].author_id, "");
+        assert_eq!(parsed[3].booth_id, 6641548);
+        assert_eq!(parsed[3].item_path, "Datas\\Items\\Test Other Asset");
+        assert_eq!(parsed[3].material_path, "");
+        assert_eq!(parsed[3].thumbnail_url, "");
+        assert_eq!(parsed[3].image_path, ".\\Datas\\Thumbnail\\6641548.png");
+        assert_eq!(parsed[3].author_image_url, "");
+        assert_eq!(parsed[3].author_image_file_path, "");
+        assert_eq!(parsed[3].item_type, 9);
+        assert_eq!(parsed[3].custom_category, "TestOtherAssetCategory");
+        assert_eq!(parsed[3].supported_avatar, Vec::<String>::new());
+        assert_eq!(parsed[3].created_date, "2025-04-02 15:00:00");
+        assert_eq!(parsed[3].updated_date, "2025-04-02 15:00:00");
     }
 }
