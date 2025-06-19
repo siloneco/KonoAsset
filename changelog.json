@@ -1,5 +1,19 @@
 [
   {
+    "version": "1.2.1",
+    "others": [
+      {
+        "text": "Updated Simplified Chinese localization by Fallen-ice",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "簡体字の翻訳ファイルを更新 ( by Fallen-ice )"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.0",
     "features": [
       {
