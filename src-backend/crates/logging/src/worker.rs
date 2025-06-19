@@ -5,11 +5,11 @@
  */
 
 use std::io::Write;
+use std::path::Path;
 use std::sync::Mutex;
-use std::{path::PathBuf, sync::mpsc};
+use std::sync::mpsc;
 
 use ringbuffer::{ConstGenericRingBuffer, RingBuffer};
-use tauri::{AppHandle, Manager};
 
 use super::definitions::{LogChannelMessage, LogEntry, Logger};
 
@@ -18,14 +18,14 @@ const LOG_RETENTION_DAYS: i64 = 14;
 static LOG_BUFFER: Mutex<ConstGenericRingBuffer<LogEntry, 256>> =
     Mutex::new(ConstGenericRingBuffer::new());
 
-pub fn initialize_logger(app_handle: &AppHandle) {
+pub fn initialize_logger<P: AsRef<Path>>(log_dir: P) {
+    let logs_dir = log_dir.as_ref();
+
     let (sender, receiver) = mpsc::channel::<LogChannelMessage>();
     let logger = Logger { sender };
 
     log::set_max_level(log::LevelFilter::Debug);
     log::set_boxed_logger(Box::new(logger)).expect("error while setting logger");
-
-    let logs_dir = app_handle.path().app_log_dir().unwrap();
 
     start_logging_thread(receiver, &logs_dir);
     purge_outdated_logs(&logs_dir).ok();
@@ -36,7 +36,7 @@ pub fn get_logs() -> Vec<LogEntry> {
     buffer.iter().cloned().collect()
 }
 
-fn start_logging_thread(receiver: mpsc::Receiver<LogChannelMessage>, logs_dir: &PathBuf) {
+fn start_logging_thread(receiver: mpsc::Receiver<LogChannelMessage>, logs_dir: &Path) {
     if !logs_dir.exists() {
         std::fs::create_dir_all(&logs_dir).ok();
     }
@@ -116,7 +116,7 @@ fn logging_thread_main(
     }
 }
 
-fn purge_outdated_logs(logs_dir: &PathBuf) -> Result<(), std::io::Error> {
+fn purge_outdated_logs(logs_dir: &Path) -> Result<(), std::io::Error> {
     let readdir = logs_dir.read_dir()?;
 
     for entry in readdir {

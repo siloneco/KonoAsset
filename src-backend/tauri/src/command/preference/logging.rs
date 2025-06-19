@@ -1,4 +1,4 @@
-use crate::logging::{self, LogEntry};
+use logging::LogEntry;
 
 #[tauri::command]
 #[specta::specta]

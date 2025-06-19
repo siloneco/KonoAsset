@@ -27,6 +27,7 @@ language.workspace = true
 model.workspace = true
 task.workspace = true
 zip.workspace = true
+logging.workspace = true
 
 tauri.workspace = true
 tauri-plugin-shell.workspace = true
@@ -34,7 +35,6 @@ tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 log.workspace = true
-ringbuffer.workspace = true
 uuid.workspace = true
 chrono.workspace = true
 tauri-plugin-dialog.workspace = true

@@ -28,7 +28,6 @@ mod deep_link;
 mod definitions;
 mod importer;
 mod loader;
-mod logging;
 mod preference;
 mod statistics;
 mod updater;
@@ -80,7 +79,7 @@ pub fn run() {
         .manage(arc_mutex(LocalizationData::default()))
         .manage(arc_mutex(AssetVolumeStatisticsCache::new()))
         .setup(move |app| {
-            logging::initialize_logger(&app.handle());
+            logging::initialize_logger(app.path().app_log_dir().unwrap());
             builder.mount_events(app);
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
