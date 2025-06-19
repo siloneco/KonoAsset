@@ -8,8 +8,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::zip::extractor::extract_zip;
-
 pub async fn execute_image_fixation<P>(src: P) -> Result<Option<String>, String>
 where
     P: AsRef<Path>,
@@ -119,7 +117,7 @@ where
             };
 
             tokio::fs::create_dir_all(&destination).await?;
-            extract_zip(&src.to_path_buf(), &destination, progress_callback).await?;
+            zip::extract_zip(&src.to_path_buf(), &destination, progress_callback).await?;
 
             if let Some(mut delete_on_drop) = delete_on_drop {
                 delete_on_drop.mark_as_completed();

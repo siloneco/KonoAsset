@@ -159,7 +159,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_extract_normal_zip() {
-        let src = "test/zip/normal.zip";
+        let src = "test/normal.zip";
         let dest = "test/temp/extracted-normal-zip";
 
         if std::fs::exists(dest).unwrap() {
@@ -182,7 +182,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_extract_shift_jis_zip() {
-        let src = "test/zip/shift-jis.zip";
+        let src = "test/shift-jis.zip";
         let dest = "test/temp/extracted-shift-jis-zip";
 
         if std::fs::exists(dest).unwrap() {
@@ -193,8 +193,12 @@ mod tests {
 
         extract_zip(src, dest, progress_callback).await.unwrap();
 
-        let dummy1_txt_path = format!("{dest}/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル1.txt");
-        let dummy2_txt_path = format!("{dest}/確認用フォルダ/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル2.txt");
+        let dummy1_txt_path = format!(
+            "{dest}/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル1.txt"
+        );
+        let dummy2_txt_path = format!(
+            "{dest}/確認用フォルダ/これはShift-JISでエンコードされたファイル名が正しくデコードされるかを確認するためのファイル2.txt"
+        );
 
         assert!(std::fs::exists(&dummy1_txt_path).unwrap());
         assert!(std::fs::exists(&dummy2_txt_path).unwrap());

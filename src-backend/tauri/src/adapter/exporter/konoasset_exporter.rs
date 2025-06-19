@@ -114,8 +114,6 @@ where
 mod tests {
     use file::modify_guard::{self, FileTransferGuard};
 
-    use crate::zip::extractor;
-
     use super::*;
 
     fn trim_base<B: AsRef<Path>>(path_vec: Vec<PathBuf>, base: B) -> Vec<String> {
@@ -167,9 +165,7 @@ mod tests {
             .await
             .unwrap();
 
-        extractor::extract_zip(&zip, &extracted, |_, _| {})
-            .await
-            .unwrap();
+        zip::extract_zip(&zip, &extracted, |_, _| {}).await.unwrap();
 
         let src_entries = trim_base(
             get_flattened_dir_entries(provider.clone()).await.unwrap(),

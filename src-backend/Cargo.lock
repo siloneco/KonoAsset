@@ -2195,12 +2195,10 @@ dependencies = [
 name = "konoasset"
 version = "1.2.1"
 dependencies = [
- "async-read-progress",
  "async_zip",
  "booth",
  "changelog",
  "chrono",
- "encoding_rs",
  "file",
  "kanaria",
  "language",
@@ -2224,8 +2222,8 @@ dependencies = [
  "tauri-plugin-updater",
  "tauri-specta",
  "tokio",
- "tokio-util",
  "uuid",
+ "zip 0.0.0",
 ]
 
 [[package]]
@@ -4796,7 +4794,7 @@ dependencies = [
  "tokio",
  "url",
  "windows-sys 0.59.0",
- "zip",
+ "zip 2.4.2",
 ]
 
 [[package]]
@@ -6401,6 +6399,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.103",
+]
+
+[[package]]
+name = "zip"
+version = "0.0.0"
+dependencies = [
+ "async-read-progress",
+ "async_zip",
+ "encoding_rs",
+ "log",
+ "sanitize-filename",
+ "tokio",
+ "tokio-util",
 ]
 
 [[package]]

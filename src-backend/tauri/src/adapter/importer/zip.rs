@@ -5,10 +5,7 @@ use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
 
-use crate::{
-    data_store::provider::StoreProvider, definitions::entities::ProgressEvent,
-    zip::extractor::extract_zip,
-};
+use crate::{data_store::provider::StoreProvider, definitions::entities::ProgressEvent};
 
 use super::directory::internal_import_data_store_from_directory;
 
@@ -41,7 +38,7 @@ where
     let temp_dir = temp_dir().join(format!("KonoAsset-temp-zip-extract-{}", Uuid::new_v4()));
     let _cleanup = DeleteOnDrop::new(temp_dir.clone());
 
-    extract_zip(path, temp_dir.clone(), |progress, filename| {
+    zip::extract_zip(path, temp_dir.clone(), |progress, filename| {
         let app_handle = app_handle.clone();
 
         if app_handle.is_none() {

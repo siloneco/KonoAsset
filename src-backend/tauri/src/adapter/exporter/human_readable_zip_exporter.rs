@@ -279,8 +279,6 @@ URL=";
 mod tests {
     use file::modify_guard::{self, FileTransferGuard};
 
-    use crate::zip::extractor;
-
     use super::*;
 
     const BOOTH_SHORTCUT_FILENAME: &str = "BOOTH.url";
@@ -318,9 +316,7 @@ mod tests {
 
         assert!(std::fs::exists(&zip).unwrap());
 
-        extractor::extract_zip(&zip, &extracted, |_, _| {})
-            .await
-            .unwrap();
+        zip::extract_zip(&zip, &extracted, |_, _| {}).await.unwrap();
 
         assert_eq!(std::fs::read_dir(&extracted).unwrap().count(), 4);
 

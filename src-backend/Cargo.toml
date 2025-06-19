@@ -17,6 +17,7 @@ file = { path = "./crates/file", version = "0.0.0" }
 language = { path = "./crates/language", version = "0.0.0" }
 model = { path = "./crates/model", version = "0.0.0" }
 task = { path = "./crates/task", version = "0.0.0" }
+zip = { path = "./crates/zip", version = "0.0.0" }
 
 # Crates for building Tauri app
 tauri-build = { version = "2", features = [] }
@@ -25,7 +26,6 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2.2.2", features = ["protocol-asset"] }
 tauri-plugin-shell = "2"
 tokio = { version = "1", features = ["process", "macros"] }
-tokio-util = { version = "0.7.13", features = ["compat"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 log = { version = "0.4.22", features = ["std"] }
@@ -38,12 +38,10 @@ monostate = "0.1.13"
 kanaria = "0.2.0"
 async_zip = { version = "0.0.17", features = ["full"] }
 sanitize-filename = "0.6.0"
-encoding_rs = "0.8.35"
 specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
 specta-typescript = "0.0.9"
 tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "typescript"] }
 tauri-plugin-deep-link = "2"
-async-read-progress = "0.2.0"
 
 # [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = {version = "2", features = ["deep-link"] }
