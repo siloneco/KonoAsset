@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "KonoAsset",
+  "version": "1.2.1",
+  "identifier": "dev.konoasset.app",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "konoasset",
+        "width": 1200,
+        "height": 700,
+        "minHeight": 400,
+        "minWidth": 900
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost https://media.konoasset.dev/",
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "nsis",
+    "createUpdaterArtifacts": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["English", "Japanese", "Korean"]
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVENjIwRUZCQjg1Rjk0RjUKUldUMWxGKzQrdzVpN1hlT0hrcEpaK0Q1RXFKVzF2YXMzNFJZVDBVSHh6djJNNU1zQ2hMR05oTHYK",
+      "endpoints": ["https://releases.konoasset.dev/manifests/latest.json"]
+    },
+    "deep-link": {
+      "desktop": {
+        "schemes": ["konoasset"]
+      }
+    }
+  }
+}

@@ -61,7 +61,7 @@ jobs:
       - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
         with:
           prefix-key: "v0-rust-${{ runner.os }}"
-          workspaces: "./src-tauri -> target"
+          workspaces: "./src-backend -> target"
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'

@@ -1,0 +1,24 @@
+[package]
+name = "changelog"
+version = "0.0.0"
+repository.workspace = true
+description = "Changelog fetcher and parser implementation"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+semver = "1.0.26"
+
+# Local crates
+language.workspace = true
+
+# External crates
+tokio.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+specta.workspace = true
+log.workspace = true

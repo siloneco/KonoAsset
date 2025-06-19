@@ -1,0 +1,15 @@
+[package]
+name = "model"
+version = "0.0.0"
+repository.workspace = true
+description = "Core structs and traits for the KonoAsset"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+serde.workspace = true
+specta.workspace = true
+uuid.workspace = true

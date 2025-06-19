@@ -2,7 +2,7 @@ name: Cargo Test
 on:
   push:
     paths:
-      - "src-tauri/**"
+      - "src-backend/**"
       - "changelog.json"
       - ".github/workflows/cargo-test.yml"
     branches:
@@ -15,7 +15,7 @@ on:
       - opened
       - synchronize
     paths:
-      - "src-tauri/**"
+      - "src-backend/**"
       - "changelog.json"
       - ".github/workflows/cargo-test.yml"
 
@@ -51,7 +51,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
         with:
-          workspaces: "./src-tauri -> target"
+          workspaces: "./src-backend -> target"
 
       - name: install dependencies (Ubuntu)
         if: matrix.platform == 'ubuntu-22.04'
@@ -60,5 +60,5 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Run Test
-        working-directory: src-tauri
+        working-directory: src-backend
         run: cargo test --all-features
