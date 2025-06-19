@@ -3,7 +3,7 @@
   "data": {
     "general:button:forward": "前进",
     "general:button:back": "后退",
-    "general:button:next": "下一个",
+    "general:button:next": "下一步",
     "general:button:close": "关闭",
     "general:button:cancel": "取消",
     "general:button:delete": "删除",
@@ -14,12 +14,12 @@
     "general:or": "或",
     "general:error": "错误",
     "general:complete": "完成",
-    "general:cancelled": "取消",
-    "general:toast-error-description": "发生了一个错误",
+    "general:cancelled": "已取消",
+    "general:toast-error-description": "发生错误",
     "general:failed": "失败",
     "general:select:placeholder": "选择...",
-    "general:count": " 资产",
-    "general:clear-filter": "清除筛选",
+    "general:count": " 项资产",
+    "general:clear-filter": "清除筛选条件",
     "general:show-all": "显示全部",
 
     "general:typeavatar": "虚拟形象",
@@ -28,6 +28,8 @@
     "general:typeavatarwearable-multiple": "虚拟形象相关",
     "general:typeworldobject": "世界预制件",
     "general:typeworldobject-multiple": "世界预制件",
+    "general:typeotherasset": "其他",
+    "general:typeotherasset-multiple": "其他",
 
     "general:supported-avatars": "支持的虚拟形象",
     "general:category": "分类",
@@ -38,7 +40,7 @@
     "general:metadata": "元数据",
     "general:metadata:subtext": "资产信息",
     "general:assetdata": "资产数据",
-    "general:assetdata:subtext": "主要资产数据",
+    "general:assetdata:subtext": "主资产数据",
     "general:prerequisite-assets": "前置资产",
 
     "addasset:success-toast": "资产添加成功！",
@@ -48,7 +50,7 @@
     "addasset:import-error-toast": "数据导入失败",
     "addasset:import-start-error-toast": "启动数据导入失败",
     "addasset:prerequisite-assets:empty": "未选择",
-    "addasset:prerequisite-assets:explanation-text": "设置前提资产后，可通过打开按钮旁边的下拉箭头访问它们",
+    "addasset:prerequisite-assets:explanation-text": "设置前置资产后，可通过打开按钮旁边的下拉箭头访问它们",
     "addasset:supported-avatars:placeholder": "添加支持的虚拟形象...",
     "addasset:supported-avatars:explanation-text": "支持通过虚拟形象筛选列表",
     "addasset:category:placeholder": "选择分类...",
@@ -73,7 +75,7 @@
     "addasset:select-type:explanation-text": "请选择资产类型！",
     "addasset:select-type:avatar-wearable": "虚拟形象相关（服装、配件、机关等）",
     "addasset:booth-input": "获取资产信息",
-    "addasset:booth-input:explanation-text": "输入BOOTH链接自动填充资产信息！",
+    "addasset:booth-input:explanation-text": "输入BOOTH链接以自动填充资产信息！",
     "addasset:booth-input:representative-file": "文件或文件夹名称：",
     "addasset:booth-input:multi-import:foretext": "和",
     "addasset:booth-input:multi-import:posttext": "个其他项目",
@@ -87,7 +89,7 @@
     "addasset:booth-edit:overwrite": "用BOOTH信息覆盖",
     "addasset:booth-edit:do-not-change": "跳过",
     "addasset:duplicate-warning": "重复确认",
-    "addasset:duplicate-warning:explanation-text": "您正在尝试添加已注册的资产？",
+    "addasset:duplicate-warning:explanation-text": "您正在尝试添加已注册的资产",
     "addasset:duplicate-warning:warning-text": "已存在相同BOOTH链接的资产！",
     "addasset:duplicate-warning:proceed": "继续添加",
     "addasset:empty-indicator": "开始输入以添加",
@@ -122,7 +124,7 @@
     "assetcard:more-button:data-management:add-file-or-folder": "添加文件或文件夹：",
     "assetcard:more-button:data-management:explanation-text-2": "也可通过拖放文件到窗口添加新文件或文件夹",
     "assetcard:more-button:open-booth": "在BOOTH中打开",
-    "assetcard:more-button:open-booth:error-text": "未设置BOOTH链接！",
+    "assetcard:more-button:open-booth:error-text": "未设置BOOTH URL！",
     "assetcard:more-button:edit-info": "编辑信息",
     "assetcard:more-button:data": "数据管理",
     "assetcard:more-button:delete-confirm": "确认删除此资产？",
@@ -172,6 +174,8 @@
     "mainsidebar:asset-type": "资产类型",
     "mainsidebar:filter:category:placeholder": "选择分类...",
     "mainsidebar:filter:tag:placeholder": "选择标签...",
+    "mainsidebar:help:word-exclude-feature-tips": "在文本前添加'-'可将其排除在搜索结果之外！",
+    "mainsidebar:help:attribute-exclude-feature-tips": "在标签前添加'-'可将其排除在搜索结果之外！",
 
     "resetdialog:reset": "重置",
     "resetdialog:reset-confirm": "确认要重置吗？",
@@ -205,10 +209,11 @@
     "preference:back-to-top": "返回主界面",
     "preference:settings": "通用设置",
     "preference:adapter": "数据迁移",
+    "preference:statistics": "统计信息",
     "preference:logs": "查看日志",
     "preference:about": "关于本应用",
 
-    "preference:about:description": "为VRChat打造的资产整理工具，让资产选择更轻松",
+    "preference:about:description": "为VRChat打造的资产管理工具，让资产选择更轻松。",
     "preference:about:related-links": "相关链接",
     "preference:about:changes": "更新日志",
     "preference:about:changes-github": "在GitHub查看",
@@ -249,6 +254,17 @@
     "preference:adapter:export:completed": "导出完成！",
     "preference:adapter:export:failed": "导出失败",
     "preference:adapter:export:cancelled": "导出已取消",
+
+    "preference:statistics:total": "资产总数",
+    "preference:statistics:unit": "项",
+    "preference:statistics:asset-count-pie-chart:title": "按类型统计资产数量",
+    "preference:statistics:asset-count-pie-chart:description": "按类型分类的资产数量",
+    "preference:statistics:asset-count-pie-chart:unit": "项资产",
+    "preference:statistics:asset-count-area-chart:title": "资产注册历史",
+    "preference:statistics:asset-count-area-chart:description": "资产注册的历史趋势",
+    "preference:statistics:volume-bar-chart:title": "各资产磁盘空间占用",
+    "preference:statistics:volume-bar-chart:description": "已注册资产文件占用的总磁盘空间",
+    "preference:statistics:volume-bar-chart:size": "大小",
 
     "preference:logs:open-logs-folder": "打开日志文件夹",
 
@@ -337,6 +353,7 @@
 
     "setup:button:done": "开始使用！",
 
-    "ui:multi-select:create-new": "新建"
+    "ui:multi-select:create-new": "新建",
+    "ui:multi-select:not-selected-tooltip": "具有此属性的资产将不会显示"
   }
 }
