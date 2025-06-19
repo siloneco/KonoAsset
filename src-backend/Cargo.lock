@@ -2193,7 +2193,7 @@ dependencies = [
 
 [[package]]
 name = "konoasset"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "async-read-progress",
  "async_zip",
