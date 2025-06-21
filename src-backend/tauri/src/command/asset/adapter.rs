@@ -1,6 +1,6 @@
 use std::{path::PathBuf, sync::Arc};
 
-use data_store::provider::StoreProvider;
+use storage::asset_storage::AssetStorage;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
@@ -10,7 +10,7 @@ use crate::adapter;
 #[tauri::command]
 #[specta::specta]
 pub async fn import_from_other_data_store(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     handle: State<'_, AppHandle>,
     path: PathBuf,
@@ -64,7 +64,7 @@ pub async fn import_from_other_data_store(
 #[tauri::command]
 #[specta::specta]
 pub async fn export_as_konoasset_zip(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     handle: State<'_, AppHandle>,
     path: PathBuf,
@@ -107,7 +107,7 @@ pub async fn export_as_konoasset_zip(
 #[tauri::command]
 #[specta::specta]
 pub async fn export_for_avatar_explorer(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     handle: State<'_, AppHandle>,
     path: PathBuf,
@@ -153,7 +153,7 @@ pub async fn export_for_avatar_explorer(
 #[tauri::command]
 #[specta::specta]
 pub async fn export_as_human_readable_zip(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     handle: State<'_, AppHandle>,
     path: PathBuf,

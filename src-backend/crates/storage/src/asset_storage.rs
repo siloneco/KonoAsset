@@ -19,25 +19,28 @@ use crate::{
     definitions::AssetUpdatePayload, delete::delete_asset_image, utils::execute_image_fixation,
 };
 
-use super::json_store::JsonStore;
+use super::json_asset_container::JsonAssetContainer;
 
-pub struct StoreProvider {
+pub struct AssetStorage {
     data_dir: PathBuf,
 
-    avatar_store: JsonStore<Avatar>,
-    avatar_wearable_store: JsonStore<AvatarWearable>,
-    world_object_store: JsonStore<WorldObject>,
-    other_asset_store: JsonStore<OtherAsset>,
+    avatar_store: JsonAssetContainer<Avatar>,
+    avatar_wearable_store: JsonAssetContainer<AvatarWearable>,
+    world_object_store: JsonAssetContainer<WorldObject>,
+    other_asset_store: JsonAssetContainer<OtherAsset>,
 }
 
-impl StoreProvider {
+impl AssetStorage {
     pub fn create<T: AsRef<Path>>(data_dir: T) -> Result<Self, String> {
         let data_dir = data_dir.as_ref().to_path_buf();
 
-        let avatar_store: JsonStore<Avatar> = JsonStore::create(&data_dir)?;
-        let avatar_wearable_store: JsonStore<AvatarWearable> = JsonStore::create(&data_dir)?;
-        let world_object_store: JsonStore<WorldObject> = JsonStore::create(&data_dir)?;
-        let other_asset_store: JsonStore<OtherAsset> = JsonStore::create(&data_dir)?;
+        let avatar_store: JsonAssetContainer<Avatar> = JsonAssetContainer::create(&data_dir)?;
+        let avatar_wearable_store: JsonAssetContainer<AvatarWearable> =
+            JsonAssetContainer::create(&data_dir)?;
+        let world_object_store: JsonAssetContainer<WorldObject> =
+            JsonAssetContainer::create(&data_dir)?;
+        let other_asset_store: JsonAssetContainer<OtherAsset> =
+            JsonAssetContainer::create(&data_dir)?;
 
         Ok(Self {
             data_dir,
@@ -73,19 +76,19 @@ impl StoreProvider {
         Ok(())
     }
 
-    pub fn get_avatar_store(&self) -> &JsonStore<Avatar> {
+    pub fn get_avatar_store(&self) -> &JsonAssetContainer<Avatar> {
         &self.avatar_store
     }
 
-    pub fn get_avatar_wearable_store(&self) -> &JsonStore<AvatarWearable> {
+    pub fn get_avatar_wearable_store(&self) -> &JsonAssetContainer<AvatarWearable> {
         &self.avatar_wearable_store
     }
 
-    pub fn get_world_object_store(&self) -> &JsonStore<WorldObject> {
+    pub fn get_world_object_store(&self) -> &JsonAssetContainer<WorldObject> {
         &self.world_object_store
     }
 
-    pub fn get_other_asset_store(&self) -> &JsonStore<OtherAsset> {
+    pub fn get_other_asset_store(&self) -> &JsonAssetContainer<OtherAsset> {
         &self.other_asset_store
     }
 
@@ -342,7 +345,7 @@ impl StoreProvider {
 
     pub async fn merge_from(
         &mut self,
-        external: &StoreProvider,
+        external: &AssetStorage,
         reassign_map: &HashMap<Uuid, Uuid>,
     ) -> Result<(), String> {
         self.avatar_store
@@ -367,10 +370,10 @@ impl StoreProvider {
     {
         let new_path = new_path.as_ref().to_path_buf();
 
-        self.avatar_store = JsonStore::create(&new_path)?;
-        self.avatar_wearable_store = JsonStore::create(&new_path)?;
-        self.world_object_store = JsonStore::create(&new_path)?;
-        self.other_asset_store = JsonStore::create(&new_path)?;
+        self.avatar_store = JsonAssetContainer::create(&new_path)?;
+        self.avatar_wearable_store = JsonAssetContainer::create(&new_path)?;
+        self.world_object_store = JsonAssetContainer::create(&new_path)?;
+        self.other_asset_store = JsonAssetContainer::create(&new_path)?;
 
         self.data_dir = new_path;
 
@@ -442,8 +445,8 @@ impl StoreProvider {
 }
 
 async fn migrate_asset_type<T>(
-    provider: &StoreProvider,
-    dest_json_store: &JsonStore<T>,
+    storage: &AssetStorage,
+    dest_json_store: &JsonAssetContainer<T>,
     mut asset: T,
 ) -> Result<(), String>
 where
@@ -452,34 +455,34 @@ where
     let id = asset.get_id();
 
     if T::asset_type() != AssetType::Avatar {
-        if let Some(avatar) = provider.avatar_store.get_asset(id).await {
+        if let Some(avatar) = storage.avatar_store.get_asset(id).await {
             asset.get_description_as_mut().created_at = avatar.description.created_at;
             handle_image_change(
                 &mut asset,
-                &provider.data_dir,
+                &storage.data_dir,
                 avatar.description.image_filename.as_ref(),
             )
             .await?;
 
             dest_json_store.add_asset_and_save(asset).await?;
-            provider.avatar_store.delete_asset_and_save(id).await?;
+            storage.avatar_store.delete_asset_and_save(id).await?;
 
             return Ok(());
         }
     }
 
     if T::asset_type() != AssetType::AvatarWearable {
-        if let Some(avatar_wearable) = provider.avatar_wearable_store.get_asset(id).await {
+        if let Some(avatar_wearable) = storage.avatar_wearable_store.get_asset(id).await {
             asset.get_description_as_mut().created_at = avatar_wearable.description.created_at;
             handle_image_change(
                 &mut asset,
-                &provider.data_dir,
+                &storage.data_dir,
                 avatar_wearable.description.image_filename.as_ref(),
             )
             .await?;
 
             dest_json_store.add_asset_and_save(asset).await?;
-            provider
+            storage
                 .avatar_wearable_store
                 .delete_asset_and_save(id)
                 .await?;
@@ -489,36 +492,33 @@ where
     }
 
     if T::asset_type() != AssetType::WorldObject {
-        if let Some(world_object) = provider.world_object_store.get_asset(id).await {
+        if let Some(world_object) = storage.world_object_store.get_asset(id).await {
             asset.get_description_as_mut().created_at = world_object.description.created_at;
             handle_image_change(
                 &mut asset,
-                &provider.data_dir,
+                &storage.data_dir,
                 world_object.description.image_filename.as_ref(),
             )
             .await?;
 
             dest_json_store.add_asset_and_save(asset).await?;
-            provider
-                .world_object_store
-                .delete_asset_and_save(id)
-                .await?;
+            storage.world_object_store.delete_asset_and_save(id).await?;
 
             return Ok(());
         }
     }
 
-    if let Some(other_asset) = provider.other_asset_store.get_asset(id).await {
+    if let Some(other_asset) = storage.other_asset_store.get_asset(id).await {
         asset.get_description_as_mut().created_at = other_asset.description.created_at;
         handle_image_change(
             &mut asset,
-            &provider.data_dir,
+            &storage.data_dir,
             other_asset.description.image_filename.as_ref(),
         )
         .await?;
 
         dest_json_store.add_asset_and_save(asset).await?;
-        provider.other_asset_store.delete_asset_and_save(id).await?;
+        storage.other_asset_store.delete_asset_and_save(id).await?;
 
         return Ok(());
     }
@@ -671,11 +671,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_store_provider() {
+    async fn test_asset_storage() {
         let from_one = "../../test/example_root_dir/sample1";
         let from_two = "../../test/example_root_dir/sample2";
 
-        let base_dest = "test/temp/store_provider";
+        let base_dest = "test/temp/asset_storage";
 
         let target_one = format!("{base_dest}/one");
         let target_two = format!("{base_dest}/two");
@@ -683,11 +683,11 @@ mod tests {
         setup_dir(from_one, &target_one).await;
         setup_dir(from_two, &target_two).await;
 
-        let mut provider = StoreProvider::create(&target_one).unwrap();
+        let mut storage = AssetStorage::create(&target_one).unwrap();
 
-        provider.load_all_assets_from_files().await.unwrap();
+        storage.load_all_assets_from_files().await.unwrap();
 
-        let ids = provider.get_used_ids().await;
+        let ids = storage.get_used_ids().await;
 
         assert_eq!(ids.len(), 4);
         assert!(ids.contains(&Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap()));
@@ -695,11 +695,8 @@ mod tests {
         assert!(ids.contains(&Uuid::from_str("c155488e-53bf-4c98-92e5-e5c8f66a1667").unwrap()));
         assert!(ids.contains(&Uuid::from_str("b2003e9a-86c1-4ab6-9e6b-4388497e2226").unwrap()));
 
-        let mut external_provider = StoreProvider::create(&target_two).unwrap();
-        external_provider
-            .load_all_assets_from_files()
-            .await
-            .unwrap();
+        let mut external_storage = AssetStorage::create(&target_two).unwrap();
+        external_storage.load_all_assets_from_files().await.unwrap();
 
         let mut duplicate_ids = HashMap::new();
         duplicate_ids.insert(
@@ -707,21 +704,18 @@ mod tests {
             Uuid::from_str("c4b56003-0a93-405d-a4ed-054cb06fb778").unwrap(),
         );
 
-        provider
-            .merge_from(&external_provider, &duplicate_ids)
+        storage
+            .merge_from(&external_storage, &duplicate_ids)
             .await
             .unwrap();
 
-        assert_eq!(provider.get_used_ids().await.len(), 8);
-        assert_eq!(provider.get_avatar_store().get_all().await.len(), 2);
-        assert_eq!(
-            provider.get_avatar_wearable_store().get_all().await.len(),
-            2
-        );
-        assert_eq!(provider.get_world_object_store().get_all().await.len(), 2);
-        assert_eq!(provider.get_other_asset_store().get_all().await.len(), 2);
+        assert_eq!(storage.get_used_ids().await.len(), 8);
+        assert_eq!(storage.get_avatar_store().get_all().await.len(), 2);
+        assert_eq!(storage.get_avatar_wearable_store().get_all().await.len(), 2);
+        assert_eq!(storage.get_world_object_store().get_all().await.len(), 2);
+        assert_eq!(storage.get_other_asset_store().get_all().await.len(), 2);
 
-        let mut avatars = provider.get_avatar_store().get_all().await.into_iter();
+        let mut avatars = storage.get_avatar_store().get_all().await.into_iter();
         assert_ne!(
             avatars.next().unwrap().get_id(),
             avatars.next().unwrap().get_id()
@@ -729,22 +723,19 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_store_provider_migration() {
+    async fn test_asset_storage_migration() {
         let from = "../../test/example_root_dir/sample1";
-        let current_path = "../../test/temp/store_provider_migration/current";
-        let new_path = "test/temp/store_provider_migration/new";
+        let current_path = "../../test/temp/asset_storage_migration/current";
+        let new_path = "test/temp/asset_storage_migration/new";
 
         setup_dir(from, current_path).await;
         std::fs::create_dir_all(new_path).unwrap();
 
-        let mut provider = StoreProvider::create(&current_path).unwrap();
+        let mut storage = AssetStorage::create(&current_path).unwrap();
 
-        provider.load_all_assets_from_files().await.unwrap();
+        storage.load_all_assets_from_files().await.unwrap();
 
-        let result = provider
-            .migrate_data_dir(new_path, |_, _| {})
-            .await
-            .unwrap();
+        let result = storage.migrate_data_dir(new_path, |_, _| {}).await.unwrap();
 
         assert_eq!(result, MigrateResult::Migrated);
     }
@@ -805,8 +796,8 @@ mod tests {
         }
         std::fs::create_dir_all(test_dir).unwrap();
 
-        let mut provider = StoreProvider::create(test_dir).unwrap();
-        provider.load_all_assets_from_files().await.unwrap();
+        let mut storage = AssetStorage::create(test_dir).unwrap();
+        storage.load_all_assets_from_files().await.unwrap();
 
         // Test updating existing avatar
         let avatar_id = Uuid::new_v4();
@@ -825,7 +816,7 @@ mod tests {
             },
         };
 
-        provider
+        storage
             .avatar_store
             .add_asset_and_save(avatar.clone())
             .await
@@ -834,12 +825,12 @@ mod tests {
         let mut updated_avatar = avatar.clone();
         updated_avatar.description.name = "Updated Avatar".into();
 
-        provider
+        storage
             .update_asset_and_save(AssetUpdatePayload::Avatar(updated_avatar.clone()))
             .await
             .unwrap();
 
-        let stored_avatar = provider.avatar_store.get_asset(avatar_id).await.unwrap();
+        let stored_avatar = storage.avatar_store.get_asset(avatar_id).await.unwrap();
         assert_eq!(stored_avatar.description.name, "Updated Avatar");
 
         // Test converting from avatar to avatar wearable
@@ -860,13 +851,13 @@ mod tests {
             supported_avatars: BTreeSet::new(),
         };
 
-        provider
+        storage
             .update_asset_and_save(AssetUpdatePayload::AvatarWearable(avatar_wearable.clone()))
             .await
             .unwrap();
 
-        assert!(provider.avatar_store.get_asset(avatar_id).await.is_none());
-        let stored_wearable = provider
+        assert!(storage.avatar_store.get_asset(avatar_id).await.is_none());
+        let stored_wearable = storage
             .avatar_wearable_store
             .get_asset(avatar_id)
             .await
@@ -891,19 +882,19 @@ mod tests {
             category: "TestCategory".into(),
         };
 
-        provider
+        storage
             .update_asset_and_save(AssetUpdatePayload::WorldObject(world_object.clone()))
             .await
             .unwrap();
 
         assert!(
-            provider
+            storage
                 .avatar_wearable_store
                 .get_asset(avatar_id)
                 .await
                 .is_none()
         );
-        let stored_world = provider
+        let stored_world = storage
             .world_object_store
             .get_asset(avatar_id)
             .await
@@ -928,19 +919,19 @@ mod tests {
             category: "TestCategory".into(),
         };
 
-        provider
+        storage
             .update_asset_and_save(AssetUpdatePayload::OtherAsset(other_asset.clone()))
             .await
             .unwrap();
 
         assert!(
-            provider
+            storage
                 .world_object_store
                 .get_asset(avatar_id)
                 .await
                 .is_none()
         );
-        let stored_other = provider
+        let stored_other = storage
             .other_asset_store
             .get_asset(avatar_id)
             .await
@@ -965,7 +956,7 @@ mod tests {
             },
         };
 
-        let result = provider
+        let result = storage
             .update_asset_and_save(AssetUpdatePayload::Avatar(non_existent_avatar))
             .await;
         assert!(result.is_err());

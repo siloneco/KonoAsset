@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use data_store::provider::StoreProvider;
+use storage::asset_storage::AssetStorage;
 use tauri::State;
 use tokio::sync::Mutex;
 use uuid::Uuid;
@@ -8,7 +8,7 @@ use uuid::Uuid;
 #[tauri::command]
 #[specta::specta]
 pub async fn delete_entry_from_asset_data_dir(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     asset_id: Uuid,
     entry_name: String,
 ) -> Result<(), String> {

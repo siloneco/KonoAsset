@@ -1,8 +1,8 @@
 use std::{path::PathBuf, sync::Arc};
 
-use data_store::provider::StoreProvider;
 use file::modify_guard::{self, FileTransferGuard};
 use model::preference::PreferenceStore;
+use storage::asset_storage::AssetStorage;
 use task::TaskContainer;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
@@ -12,7 +12,7 @@ use crate::importer::import_wrapper::import_additional_data;
 #[tauri::command]
 #[specta::specta]
 pub async fn import_file_entries_to_asset(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     asset_id: Uuid,
@@ -45,7 +45,7 @@ pub async fn import_file_entries_to_asset(
 #[tauri::command]
 #[specta::specta]
 pub async fn copy_image_file_to_images(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     path: PathBuf,
     temporary: bool,
 ) -> Result<String, String> {

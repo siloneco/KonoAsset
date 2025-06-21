@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
-use data_store::provider::StoreProvider;
 use model::AssetSummary;
+use storage::asset_storage::AssetStorage;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
@@ -10,7 +10,7 @@ use crate::definitions::{entities::SortBy, results::GetAssetResult};
 #[tauri::command]
 #[specta::specta]
 pub async fn get_asset(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     id: Uuid,
 ) -> Result<GetAssetResult, String> {
     let basic_store = basic_store.lock().await;
@@ -43,7 +43,7 @@ pub async fn get_asset(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_sorted_asset_summaries(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     sort_by: SortBy,
 ) -> Result<Vec<AssetSummary>, String> {
     let mut created_at_map: HashMap<Uuid, i64> = HashMap::new();
@@ -131,7 +131,7 @@ pub async fn get_sorted_asset_summaries(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_asset_displays_by_booth_id(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     booth_item_id: u64,
 ) -> Result<Vec<AssetSummary>, String> {
     let basic_store = basic_store.lock().await;

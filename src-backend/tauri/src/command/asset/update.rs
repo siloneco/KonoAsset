@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use data_store::{definitions::AssetUpdatePayload, provider::StoreProvider};
+use storage::{asset_storage::AssetStorage, definitions::AssetUpdatePayload};
 use tauri::{State, async_runtime::Mutex};
 
 #[tauri::command]
 #[specta::specta]
 pub async fn update_asset(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     payload: AssetUpdatePayload,
 ) -> Result<bool, String> {
     let cloned_payload = payload.clone();

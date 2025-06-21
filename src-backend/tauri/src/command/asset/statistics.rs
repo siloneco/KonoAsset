@@ -1,5 +1,5 @@
-use data_store::provider::StoreProvider;
 use std::sync::Arc;
+use storage::asset_storage::AssetStorage;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
@@ -12,7 +12,7 @@ use crate::statistics::{
 #[tauri::command]
 #[specta::specta]
 pub async fn get_registration_statistics(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
 ) -> Result<Vec<AssetRegistrationStatistics>, String> {
     let basic_store = basic_store.lock().await;
 
@@ -30,7 +30,7 @@ pub async fn get_registration_statistics(
 #[tauri::command]
 #[specta::specta]
 pub async fn execute_volume_statistics_calculation_task(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     statistics_cache: State<'_, Arc<Mutex<AssetVolumeStatisticsCache>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     app_handle: State<'_, AppHandle>,

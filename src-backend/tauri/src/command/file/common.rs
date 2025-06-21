@@ -1,11 +1,11 @@
 use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
 use booth::PximgResolver;
-use data_store::{
-    find::{FileInfo, find_unitypackage},
-    provider::{MigrateResult, StoreProvider},
-};
 use model::preference::PreferenceStore;
+use storage::{
+    asset_storage::{AssetStorage, MigrateResult},
+    find::{FileInfo, find_unitypackage},
+};
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use tauri_specta::Event;
@@ -16,7 +16,7 @@ use crate::definitions::entities::ProgressEvent;
 #[tauri::command]
 #[specta::specta]
 pub async fn get_directory_path(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     id: Uuid,
 ) -> Result<String, String> {
     let mut app_dir = basic_store.lock().await.data_dir();
@@ -36,7 +36,7 @@ pub async fn get_directory_path(
 #[tauri::command]
 #[specta::specta]
 pub async fn list_unitypackage_files(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     id: Uuid,
 ) -> Result<HashMap<String, Vec<FileInfo>>, String> {
     let mut dir = basic_store.lock().await.data_dir();
@@ -56,7 +56,7 @@ pub async fn list_unitypackage_files(
 #[specta::specta]
 pub async fn migrate_data_dir(
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     pximg_resolver: State<'_, Arc<Mutex<PximgResolver>>>,
     handle: State<'_, AppHandle>,
@@ -157,7 +157,7 @@ pub async fn migrate_data_dir(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_image_absolute_path(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     filename: String,
 ) -> Result<String, String> {
     let mut path = basic_store.lock().await.data_dir();

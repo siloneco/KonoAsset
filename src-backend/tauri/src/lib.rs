@@ -2,7 +2,6 @@ use std::{path::PathBuf, sync::Arc};
 
 use booth::{BoothFetcher, PximgResolver};
 use command::generate_tauri_specta_builder;
-use data_store::{delete::delete_temporary_images, provider::StoreProvider};
 use deep_link::{
     definitions::{AddAssetDeepLink, StartupDeepLinkStore},
     execute_deep_links, parse_args_to_deep_links,
@@ -12,6 +11,7 @@ use file::modify_guard::{self, FileTransferGuard};
 use language::LocalizationData;
 use model::preference::{PreferenceStore, UpdateChannel};
 use statistics::{AssetVolumeEstimatedEvent, AssetVolumeStatisticsCache};
+use storage::{asset_storage::AssetStorage, delete::delete_temporary_images};
 use task::{TaskContainer, TaskStatusChanged};
 use tauri::{AppHandle, Manager, async_runtime::Mutex};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -203,8 +203,8 @@ fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
 fn load_store_provider(
     data_dir: &PathBuf,
     app_local_dir: &PathBuf,
-) -> Result<StoreProvider, String> {
-    let result = StoreProvider::create(data_dir);
+) -> Result<AssetStorage, String> {
+    let result = AssetStorage::create(data_dir);
 
     if let Err(err) = result {
         return Err(format!("Failed to create store provider: {}", err));
@@ -234,7 +234,7 @@ fn load_store_provider(
 }
 
 async fn migrate_legacy_backup_dir(
-    provider: &StoreProvider,
+    provider: &AssetStorage,
     metadata_backup_dir: &PathBuf,
 ) -> Result<(), String> {
     let data_dir = provider.data_dir();

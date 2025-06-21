@@ -1,11 +1,11 @@
 use std::{collections::HashMap, path::Path};
 
-use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, FileTransferGuard},
 };
 use model::{AssetTrait, Avatar, AvatarWearable, OtherAsset, WorldObject};
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
@@ -13,7 +13,7 @@ use uuid::Uuid;
 use crate::definitions::entities::ProgressEvent;
 
 pub async fn import_data_store_from_directory<P>(
-    data_store_provider: &mut StoreProvider,
+    data_store_provider: &mut AssetStorage,
     path: P,
     app_handle: Option<AppHandle>,
 ) -> Result<(), String>
@@ -40,7 +40,7 @@ where
 }
 
 pub async fn internal_import_data_store_from_directory<P>(
-    data_store_provider: &mut StoreProvider,
+    data_store_provider: &mut AssetStorage,
     path: P,
     progress_callback: impl Fn(f32, String) + Send + Sync + 'static,
 ) -> Result<(), String>
@@ -139,7 +139,7 @@ where
     Ok(())
 }
 
-pub async fn read_dir_as_data_store_provider<P>(path: P) -> Result<StoreProvider, String>
+pub async fn read_dir_as_data_store_provider<P>(path: P) -> Result<AssetStorage, String>
 where
     P: AsRef<Path>,
 {
@@ -154,7 +154,7 @@ where
         ));
     }
 
-    let mut provider = StoreProvider::create(&path.to_path_buf())?;
+    let mut provider = AssetStorage::create(&path.to_path_buf())?;
     provider.load_all_assets_from_files().await?;
 
     Ok(provider)
@@ -241,7 +241,7 @@ mod tests {
         .await
         .unwrap();
 
-        let mut provider = StoreProvider::create(dest).unwrap();
+        let mut provider = AssetStorage::create(dest).unwrap();
         provider.load_all_assets_from_files().await.unwrap();
 
         assert_eq!(provider.get_avatar_store().get_all().await.len(), 1);

@@ -1,14 +1,14 @@
 use std::{collections::HashMap, sync::Arc};
 
 use async_zip::{Compression, ZipEntryBuilder, tokio::write::ZipFileWriter};
-use data_store::provider::StoreProvider;
 use model::{Avatar, AvatarWearable, OtherAsset, WorldObject};
+use storage::asset_storage::AssetStorage;
 use tokio::{fs::File, sync::Mutex};
 
 use super::definitions::{AssetExportOverview, CategoryBasedAssets};
 
 pub async fn get_category_based_assets(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
 ) -> CategoryBasedAssets {
     let (data_dir, avatars, avatar_wearables, world_objects, other_assets) = {
         let store_provider = store_provider.lock().await;
@@ -90,8 +90,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use data_store::provider::StoreProvider;
     use file::modify_guard::{self, FileTransferGuard};
+    use storage::asset_storage::AssetStorage;
 
     use super::*;
 
@@ -114,7 +114,7 @@ mod tests {
         .await
         .unwrap();
 
-        let mut provider = StoreProvider::create(provider).unwrap();
+        let mut provider = AssetStorage::create(provider).unwrap();
         provider.load_all_assets_from_files().await.unwrap();
 
         let provider = Arc::new(Mutex::new(provider));

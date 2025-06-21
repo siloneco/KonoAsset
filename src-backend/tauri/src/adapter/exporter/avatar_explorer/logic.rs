@@ -3,11 +3,11 @@ use std::{
     sync::Arc,
 };
 
-use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, FileTransferGuard},
 };
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::{
@@ -23,7 +23,7 @@ use crate::{
 use super::builder::AvatarExplorerItemBuilder;
 
 pub async fn export_as_avatar_explorer_compatible_structure<P>(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
     path: P,
     app: Option<&AppHandle>,
 ) -> Result<(), String>
@@ -512,7 +512,7 @@ mod tests {
         .await
         .unwrap();
 
-        let mut provider = StoreProvider::create(store_path).unwrap();
+        let mut provider = AssetStorage::create(store_path).unwrap();
         provider.load_all_assets_from_files().await.unwrap();
         let provider = Arc::new(Mutex::new(provider));
 

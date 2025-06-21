@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, Local, NaiveDate, Utc};
-use data_store::provider::StoreProvider;
 use serde::Serialize;
 use std::collections::HashMap;
+use storage::asset_storage::AssetStorage;
 
 #[derive(Debug, Serialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -14,7 +14,7 @@ pub struct AssetRegistrationStatistics {
 }
 
 pub async fn get_asset_registration_statistics(
-    provider: &StoreProvider,
+    provider: &AssetStorage,
 ) -> Result<Vec<AssetRegistrationStatistics>, String> {
     let avatars = provider.get_avatar_store().get_all().await;
     let avatar_wearables = provider.get_avatar_wearable_store().get_all().await;

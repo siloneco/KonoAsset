@@ -22,12 +22,12 @@ tauri-build.workspace = true
 # Local crates
 booth.workspace = true
 changelog.workspace = true
-data-store.workspace = true
 file.workspace = true
 language.workspace = true
 loader.workspace = true
 logging.workspace = true
 model.workspace = true
+storage.workspace = true
 task.workspace = true
 zip.workspace = true
 

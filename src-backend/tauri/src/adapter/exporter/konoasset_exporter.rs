@@ -3,8 +3,8 @@ use std::sync::Arc;
 
 use async_zip::base::write::ZipFileWriter;
 use async_zip::{Compression, ZipEntryBuilder};
-use data_store::provider::StoreProvider;
 use file::DeleteOnDrop;
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::fs::File;
@@ -15,7 +15,7 @@ use crate::definitions::entities::ProgressEvent;
 use super::util::new_zip_dir;
 
 pub async fn export_as_konoasset_structured_zip<P>(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
     path: P,
     app: Option<&AppHandle>,
 ) -> Result<(), String>
@@ -156,7 +156,7 @@ mod tests {
         .await
         .unwrap();
 
-        let mut store_provider = StoreProvider::create(&provider).unwrap();
+        let mut store_provider = AssetStorage::create(&provider).unwrap();
         store_provider.load_all_assets_from_files().await.unwrap();
 
         let store_provider = Arc::new(Mutex::new(store_provider));

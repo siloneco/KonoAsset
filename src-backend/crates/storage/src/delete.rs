@@ -6,22 +6,22 @@ use model::AssetTrait;
 use serde::{Serialize, de::DeserializeOwned};
 use uuid::Uuid;
 
-use super::{json_store::JsonStore, provider::StoreProvider};
+use super::{asset_storage::AssetStorage, json_asset_container::JsonAssetContainer};
 
-pub async fn delete_asset(provider: &StoreProvider, id: Uuid) -> Result<(), String> {
-    let app_dir = provider.data_dir();
+pub async fn delete_asset(storage: &AssetStorage, id: Uuid) -> Result<(), String> {
+    let app_dir = storage.data_dir();
 
-    let deleted = delete_asset_from_store(&app_dir, &provider.get_avatar_store(), id).await?
-        || delete_asset_from_store(&app_dir, &provider.get_avatar_wearable_store(), id).await?
-        || delete_asset_from_store(&app_dir, &provider.get_world_object_store(), id).await?
-        || delete_asset_from_store(&app_dir, &provider.get_other_asset_store(), id).await?;
+    let deleted = delete_asset_from_store(&app_dir, &storage.get_avatar_store(), id).await?
+        || delete_asset_from_store(&app_dir, &storage.get_avatar_wearable_store(), id).await?
+        || delete_asset_from_store(&app_dir, &storage.get_world_object_store(), id).await?
+        || delete_asset_from_store(&app_dir, &storage.get_other_asset_store(), id).await?;
 
     if !deleted {
         return Err("Asset not found".into());
     }
 
     // すべてのアセットの依存アセットからアイテムを削除
-    provider.remove_all_dependencies(id).await?;
+    storage.remove_all_dependencies(id).await?;
 
     return Ok(());
 }
@@ -30,7 +30,7 @@ async fn delete_asset_from_store<
     T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
 >(
     app_dir: &PathBuf,
-    store: &JsonStore<T>,
+    store: &JsonAssetContainer<T>,
     id: Uuid,
 ) -> Result<bool, String> {
     let asset = store.get_asset(id).await;
@@ -232,9 +232,9 @@ mod tests {
     async fn test_delete_asset_from_store() {
         let app_dir = setup_test_dir("test/temp/delete_asset_from_store").await;
 
-        // Create a test provider and store
-        let provider = StoreProvider::create(&app_dir).unwrap();
-        let store = provider.get_avatar_store();
+        // Create a test storage
+        let storage = AssetStorage::create(&app_dir).unwrap();
+        let store = storage.get_avatar_store();
 
         // Create a test asset with an image
         let asset_id = Uuid::new_v4();

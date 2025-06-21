@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use data_store::provider::StoreProvider;
 use model::preference::PreferenceStore;
+use storage::asset_storage::AssetStorage;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
@@ -18,7 +18,7 @@ use crate::{
 #[tauri::command]
 #[specta::specta]
 pub async fn request_avatar_import(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
@@ -52,7 +52,7 @@ pub async fn request_avatar_import(
 #[tauri::command]
 #[specta::specta]
 pub async fn request_avatar_wearable_import(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
@@ -92,7 +92,7 @@ pub async fn request_avatar_wearable_import(
 #[tauri::command]
 #[specta::specta]
 pub async fn request_world_object_import(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,
@@ -126,7 +126,7 @@ pub async fn request_world_object_import(
 #[tauri::command]
 #[specta::specta]
 pub async fn request_other_asset_import(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     handle: State<'_, AppHandle>,

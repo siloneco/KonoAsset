@@ -1,5 +1,5 @@
 [package]
-name = "data-store"
+name = "storage"
 version = "0.0.0"
 repository.workspace = true
 description = "Data storage library"

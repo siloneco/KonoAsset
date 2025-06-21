@@ -1,13 +1,13 @@
-use data_store::provider::StoreProvider;
 use file::{SimplifiedDirEntry, list_top_files_and_directories};
 use std::sync::Arc;
+use storage::asset_storage::AssetStorage;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
 #[tauri::command]
 #[specta::specta]
 pub async fn list_asset_dir_entry(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     id: Uuid,
 ) -> Result<Vec<SimplifiedDirEntry>, String> {
     let dir = {

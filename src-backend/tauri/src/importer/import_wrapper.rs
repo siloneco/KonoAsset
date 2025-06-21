@@ -5,12 +5,12 @@ use std::{
     sync::Arc,
 };
 
-use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, DeletionGuard},
 };
 use model::{AssetTrait, Avatar, AvatarWearable, OtherAsset, WorldObject};
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::sync::Mutex;
@@ -24,7 +24,7 @@ use crate::definitions::{
 use super::fileutils::{self, execute_image_fixation};
 
 async fn import_asset<T, F>(
-    basic_store: &StoreProvider,
+    basic_store: &AssetStorage,
     mut request: AssetImportRequest<T>,
     app_handle: Option<&AppHandle>,
     register_fn: F,
@@ -33,7 +33,7 @@ async fn import_asset<T, F>(
 where
     T: PreAsset,
     F: FnOnce(
-        &StoreProvider,
+        &AssetStorage,
         T::AssetType,
     ) -> Pin<Box<dyn Future<Output = Result<(), String>> + Send + '_>>,
 {
@@ -113,7 +113,7 @@ where
 }
 
 pub async fn import_avatar(
-    basic_store: &StoreProvider,
+    basic_store: &AssetStorage,
     request: AssetImportRequest<PreAvatar>,
     app_handle: &AppHandle,
     zip_extraction: bool,
@@ -122,7 +122,7 @@ pub async fn import_avatar(
         basic_store,
         request,
         Some(app_handle),
-        |provider: &'_ StoreProvider, asset: Avatar| {
+        |provider: &'_ AssetStorage, asset: Avatar| {
             Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
         },
         zip_extraction,
@@ -131,7 +131,7 @@ pub async fn import_avatar(
 }
 
 pub async fn import_avatar_wearable<T>(
-    basic_store: &StoreProvider,
+    basic_store: &AssetStorage,
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
@@ -143,7 +143,7 @@ where
         basic_store,
         request,
         Some(app_handle),
-        |provider: &'_ StoreProvider, asset: AvatarWearable| {
+        |provider: &'_ AssetStorage, asset: AvatarWearable| {
             Box::pin(async {
                 provider
                     .get_avatar_wearable_store()
@@ -157,7 +157,7 @@ where
 }
 
 pub async fn import_world_object<T>(
-    basic_store: &StoreProvider,
+    basic_store: &AssetStorage,
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
@@ -169,7 +169,7 @@ where
         basic_store,
         request,
         Some(app_handle),
-        |provider: &'_ StoreProvider, asset: WorldObject| {
+        |provider: &'_ AssetStorage, asset: WorldObject| {
             Box::pin(async {
                 provider
                     .get_world_object_store()
@@ -183,7 +183,7 @@ where
 }
 
 pub async fn import_other_asset<T>(
-    basic_store: &StoreProvider,
+    basic_store: &AssetStorage,
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
@@ -195,7 +195,7 @@ where
         basic_store,
         request,
         Some(app_handle),
-        |provider: &'_ StoreProvider, asset: OtherAsset| {
+        |provider: &'_ AssetStorage, asset: OtherAsset| {
             Box::pin(async {
                 provider
                     .get_other_asset_store()
@@ -209,7 +209,7 @@ where
 }
 
 pub async fn import_additional_data<P>(
-    basic_store: Arc<Mutex<StoreProvider>>,
+    basic_store: Arc<Mutex<AssetStorage>>,
     id: Uuid,
     path: P,
     zip_extraction: bool,
@@ -287,7 +287,7 @@ mod tests {
             std::fs::remove_dir_all(test_root_dir).unwrap();
         }
 
-        let provider = StoreProvider::create(&data_dir).unwrap();
+        let provider = AssetStorage::create(&data_dir).unwrap();
 
         std::fs::create_dir_all(format!("{data_dir}/images")).unwrap();
         std::fs::write(format!("{data_dir}/images/temp_image.png"), b"").unwrap();
@@ -328,7 +328,7 @@ mod tests {
             &provider,
             request,
             None,
-            |provider: &'_ StoreProvider, asset: Avatar| {
+            |provider: &'_ AssetStorage, asset: Avatar| {
                 Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
             },
             true,

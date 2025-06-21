@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
-use data_store::provider::StoreProvider;
 use serde::Serialize;
+use storage::asset_storage::AssetStorage;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
@@ -14,7 +14,7 @@ pub struct PrioritizedEntry {
 #[tauri::command]
 #[specta::specta]
 pub async fn get_creator_names(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let basic_store = basic_store.lock().await;
@@ -136,7 +136,7 @@ pub async fn get_creator_names(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_all_asset_tags(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let basic_store = basic_store.lock().await;
@@ -246,7 +246,7 @@ pub async fn get_all_asset_tags(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_categories(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut categories: HashMap<String, u32> = HashMap::new();
@@ -292,7 +292,7 @@ pub async fn get_avatar_wearable_categories(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_world_object_categories(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut categories: HashMap<String, u32> = HashMap::new();
@@ -338,7 +338,7 @@ pub async fn get_world_object_categories(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_other_asset_categories(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut categories: HashMap<String, u32> = HashMap::new();
@@ -384,7 +384,7 @@ pub async fn get_other_asset_categories(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_avatar_wearable_supported_avatars(
-    basic_store: State<'_, Arc<Mutex<StoreProvider>>>,
+    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     allowed_ids: Option<Vec<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
     let mut supported_avatars: HashMap<String, u32> = HashMap::new();

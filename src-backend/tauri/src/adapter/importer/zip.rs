@@ -1,7 +1,7 @@
 use std::{env::temp_dir, ffi::OsStr, path::Path};
 
-use data_store::provider::StoreProvider;
 use file::DeleteOnDrop;
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
@@ -11,7 +11,7 @@ use crate::definitions::entities::ProgressEvent;
 use super::directory::internal_import_data_store_from_directory;
 
 pub async fn import_data_store_from_zip<P>(
-    data_store_provider: &mut StoreProvider,
+    data_store_provider: &mut AssetStorage,
     path: P,
     app_handle: Option<AppHandle>,
 ) -> Result<(), String>
@@ -121,7 +121,7 @@ mod tests {
         .await
         .unwrap();
 
-        let mut provider = StoreProvider::create(dest).unwrap();
+        let mut provider = AssetStorage::create(dest).unwrap();
         provider.load_all_assets_from_files().await.unwrap();
 
         assert_eq!(provider.get_avatar_store().get_all().await.len(), 1);

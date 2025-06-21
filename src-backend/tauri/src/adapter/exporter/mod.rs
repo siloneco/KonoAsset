@@ -4,13 +4,13 @@ mod human_readable_zip_exporter;
 mod konoasset_exporter;
 mod util;
 
-use data_store::provider::StoreProvider;
 use std::{path::Path, sync::Arc};
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tokio::sync::Mutex;
 
 pub async fn export_as_avatar_explorer_compatible_structure<P>(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
     path: P,
     app: &AppHandle,
 ) -> Result<(), String>
@@ -22,7 +22,7 @@ where
 }
 
 pub async fn export_as_human_readable_structured_zip<P>(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
     path: P,
     app: &AppHandle,
 ) -> Result<(), String>
@@ -38,7 +38,7 @@ where
 }
 
 pub async fn export_as_konoasset_structured_zip<P>(
-    store_provider: Arc<Mutex<StoreProvider>>,
+    store_provider: Arc<Mutex<AssetStorage>>,
     path: P,
     app: &AppHandle,
 ) -> Result<(), String>

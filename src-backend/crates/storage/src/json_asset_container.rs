@@ -15,7 +15,7 @@ use crate::utils::execute_image_fixation;
 
 use super::delete::delete_asset_image;
 
-pub struct JsonStore<
+pub struct JsonAssetContainer<
     T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
 > {
     data_dir: PathBuf,
@@ -23,7 +23,7 @@ pub struct JsonStore<
 }
 
 impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash>
-    JsonStore<T>
+    JsonAssetContainer<T>
 {
     pub fn create<P: AsRef<Path>>(data_dir: P) -> Result<Self, String> {
         let data_dir = data_dir.as_ref();
@@ -180,7 +180,7 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
 
     pub async fn merge_from(
         &self,
-        other: &JsonStore<T>,
+        other: &JsonAssetContainer<T>,
         reassign_map: &HashMap<Uuid, Uuid>,
     ) -> Result<(), String> {
         {
@@ -248,7 +248,7 @@ mod tests {
         .await
         .unwrap();
 
-        let store: JsonStore<Avatar> = JsonStore::create(data_dir).unwrap();
+        let store: JsonAssetContainer<Avatar> = JsonAssetContainer::create(data_dir).unwrap();
         store.load().await.unwrap();
 
         let existing_avatar_id = Uuid::from_str("72e89e43-2d29-4910-b24e-9550a6ea7152").unwrap();

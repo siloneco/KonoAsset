@@ -4,9 +4,9 @@ use uuid::Uuid;
 
 use crate::definitions::{FilterRequest, MatchType};
 
-use super::provider::StoreProvider;
+use super::asset_storage::AssetStorage;
 
-pub async fn filter(store: &StoreProvider, req: &FilterRequest) -> Vec<Uuid> {
+pub async fn filter(store: &AssetStorage, req: &FilterRequest) -> Vec<Uuid> {
     let mut results = Vec::new();
 
     let text_filters: Option<Vec<&str>> = match &req.query_text {

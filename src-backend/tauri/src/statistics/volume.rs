@@ -1,8 +1,8 @@
 use std::{collections::HashSet, path::PathBuf, sync::Arc};
 
-use data_store::provider::StoreProvider;
 use model::{AssetTrait, AssetType};
 use serde::Serialize;
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::sync::Mutex;
@@ -32,7 +32,7 @@ pub struct AssetVolumeEstimatedEvent {
 }
 
 pub async fn calculate_asset_volumes(
-    provider: Arc<Mutex<StoreProvider>>,
+    provider: Arc<Mutex<AssetStorage>>,
     app_handle: &AppHandle,
 ) -> Result<Vec<AssetVolumeStatistics>, String> {
     let (data_dir, avatars, wearables, world_objects, other_assets) = {

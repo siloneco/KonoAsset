@@ -1,12 +1,12 @@
 mod directory;
 mod zip;
 
-use data_store::provider::StoreProvider;
 use std::path::Path;
+use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
 
 pub async fn import_data_store_from_directory<P>(
-    data_store_provider: &mut StoreProvider,
+    data_store_provider: &mut AssetStorage,
     path: P,
     app_handle: AppHandle,
 ) -> Result<(), String>
@@ -17,7 +17,7 @@ where
 }
 
 pub async fn import_data_store_from_zip<P>(
-    data_store_provider: &mut StoreProvider,
+    data_store_provider: &mut AssetStorage,
     path: P,
     app_handle: AppHandle,
 ) -> Result<(), String>
