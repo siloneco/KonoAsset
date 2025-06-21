@@ -3,13 +3,13 @@ use std::sync::Arc;
 
 use async_zip::base::write::ZipFileWriter;
 use async_zip::{Compression, ZipEntryBuilder};
+use data_store::provider::StoreProvider;
 use file::DeleteOnDrop;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::fs::File;
 use tokio::sync::Mutex;
 
-use crate::data_store::provider::StoreProvider;
 use crate::definitions::entities::ProgressEvent;
 
 use super::util::new_zip_dir;
@@ -147,7 +147,7 @@ mod tests {
         std::fs::create_dir_all(&extracted).unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../test/example_root_dir/sample1",
             provider.clone(),
             false,
             FileTransferGuard::none(),

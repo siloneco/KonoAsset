@@ -5,6 +5,7 @@ use std::{
     sync::Arc,
 };
 
+use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, DeletionGuard},
@@ -15,12 +16,9 @@ use tauri_specta::Event;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
-use crate::{
-    data_store::provider::StoreProvider,
-    definitions::{
-        entities::ProgressEvent,
-        import_request::{AssetImportRequest, PreAsset, PreAvatar},
-    },
+use crate::definitions::{
+    entities::ProgressEvent,
+    import_request::{AssetImportRequest, PreAsset, PreAvatar},
 };
 
 use super::fileutils::{self, execute_image_fixation};

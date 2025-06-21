@@ -10,17 +10,13 @@ use file::{
     DeleteOnDrop,
     modify_guard::{self, DeletionGuard, FileTransferGuard},
 };
+use loader::HashSetVersionedLoader;
 use model::{AssetTrait, AssetType, Avatar, AvatarWearable, OtherAsset, WorldObject};
 use serde::{Serialize, de::DeserializeOwned};
-use tauri::AppHandle;
-use tauri_specta::Event;
 use uuid::Uuid;
 
 use crate::{
-    data_store::delete::delete_asset_image,
-    definitions::entities::{AssetUpdatePayload, ProgressEvent},
-    importer::execute_image_fixation,
-    loader::HashSetVersionedLoader,
+    definitions::AssetUpdatePayload, delete::delete_asset_image, utils::execute_image_fixation,
 };
 
 use super::json_store::JsonStore;
@@ -185,19 +181,8 @@ impl StoreProvider {
 
     pub async fn migrate_data_dir<P>(
         &mut self,
-        app: &AppHandle,
         new_path: P,
-    ) -> Result<MigrateResult, String>
-    where
-        P: AsRef<Path>,
-    {
-        self.internal_migrate_data_dir(Some(app), new_path).await
-    }
-
-    async fn internal_migrate_data_dir<P>(
-        &mut self,
-        app: Option<&AppHandle>,
-        new_path: P,
+        progress_callback: impl Fn(f32, String),
     ) -> Result<MigrateResult, String>
     where
         P: AsRef<Path>,
@@ -246,15 +231,11 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    if let Some(app) = app {
-                        // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
-                        // progress は 0 - 1 の範囲であるため、10倍して % に変換する
-                        let percentage = progress * 10f32;
+                    // プログレスバーのうち 1/10 をメタデータのコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = progress * 10f32;
 
-                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                            log::error!("Failed to emit progress event: {:?}", e);
-                        }
-                    }
+                    progress_callback(percentage, filename);
                 },
             )
             .await
@@ -282,15 +263,11 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    if let Some(app) = app {
-                        // プログレスバーのうち 8/10 をデータのコピーとして扱う
-                        // progress は 0 - 1 の範囲であるため、80倍して % に変換する
-                        let percentage = 10f32 + (progress * 80f32);
+                    // プログレスバーのうち 8/10 をデータのコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、80倍して % に変換する
+                    let percentage = 10f32 + (progress * 80f32);
 
-                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                            log::error!("Failed to emit progress event: {:?}", e);
-                        }
-                    }
+                    progress_callback(percentage, filename);
                 },
             )
             .await
@@ -318,15 +295,11 @@ impl StoreProvider {
                 false,
                 FileTransferGuard::both(&old_path, &new_path.to_path_buf()),
                 |progress, filename| {
-                    if let Some(app) = app {
-                        // プログレスバーのうち 1/10 を画像のコピーとして扱う
-                        // progress は 0 - 1 の範囲であるため、10倍して % に変換する
-                        let percentage = 90f32 + (progress * 10f32);
+                    // プログレスバーのうち 1/10 を画像のコピーとして扱う
+                    // progress は 0 - 1 の範囲であるため、10倍して % に変換する
+                    let percentage = 90f32 + (progress * 10f32);
 
-                        if let Err(e) = ProgressEvent::new(percentage, filename).emit(app) {
-                            log::error!("Failed to emit progress event: {:?}", e);
-                        }
-                    }
+                    progress_callback(percentage, filename);
                 },
             )
             .await
@@ -699,8 +672,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_store_provider() {
-        let from_one = "test/example_root_dir/sample1";
-        let from_two = "test/example_root_dir/sample2";
+        let from_one = "../../test/example_root_dir/sample1";
+        let from_two = "../../test/example_root_dir/sample2";
 
         let base_dest = "test/temp/store_provider";
 
@@ -757,8 +730,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_store_provider_migration() {
-        let from = "test/example_root_dir/sample1";
-        let current_path = "test/temp/store_provider_migration/current";
+        let from = "../../test/example_root_dir/sample1";
+        let current_path = "../../test/temp/store_provider_migration/current";
         let new_path = "test/temp/store_provider_migration/new";
 
         setup_dir(from, current_path).await;
@@ -769,7 +742,7 @@ mod tests {
         provider.load_all_assets_from_files().await.unwrap();
 
         let result = provider
-            .internal_migrate_data_dir(None, new_path)
+            .migrate_data_dir(new_path, |_, _| {})
             .await
             .unwrap();
 

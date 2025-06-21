@@ -605,8 +605,8 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 name = "changelog"
 version = "0.0.0"
 dependencies = [
- "language",
  "log",
+ "model",
  "reqwest",
  "semver",
  "serde",
@@ -854,6 +854,24 @@ dependencies = [
  "darling_core",
  "quote",
  "syn 2.0.103",
+]
+
+[[package]]
+name = "data-store"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "file",
+ "kanaria",
+ "loader",
+ "log",
+ "model",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "specta",
+ "tokio",
+ "uuid",
 ]
 
 [[package]]
@@ -2199,13 +2217,13 @@ dependencies = [
  "booth",
  "changelog",
  "chrono",
+ "data-store",
  "file",
- "kanaria",
  "language",
+ "loader",
  "log",
  "logging",
  "model",
- "monostate",
  "reqwest",
  "sanitize-filename",
  "serde",
@@ -2244,6 +2262,7 @@ name = "language"
 version = "0.0.0"
 dependencies = [
  "log",
+ "model",
  "serde",
  "serde_json",
  "specta",
@@ -2337,6 +2356,18 @@ name = "litemap"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "241eaef5fd12c88705a01fc1066c48c4b36e0dd4377dcdc7ec3942cea7a69956"
+
+[[package]]
+name = "loader"
+version = "0.0.0"
+dependencies = [
+ "log",
+ "model",
+ "monostate",
+ "serde",
+ "serde_json",
+ "uuid",
+]
 
 [[package]]
 name = "lock_api"

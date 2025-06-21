@@ -3,6 +3,7 @@ use std::{
     sync::Arc,
 };
 
+use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, FileTransferGuard},
@@ -16,8 +17,7 @@ use tokio::{
 };
 
 use crate::{
-    adapter::exporter::util::get_category_based_assets, data_store::provider::StoreProvider,
-    definitions::entities::ProgressEvent,
+    adapter::exporter::util::get_category_based_assets, definitions::entities::ProgressEvent,
 };
 
 use super::builder::AvatarExplorerItemBuilder;
@@ -503,7 +503,7 @@ mod tests {
         std::fs::create_dir_all(&exported_path).unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../test/example_root_dir/sample1",
             store_path.clone(),
             false,
             FileTransferGuard::none(),

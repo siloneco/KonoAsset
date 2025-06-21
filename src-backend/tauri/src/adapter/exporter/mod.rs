@@ -4,7 +4,7 @@ mod human_readable_zip_exporter;
 mod konoasset_exporter;
 mod util;
 
-use crate::data_store::provider::StoreProvider;
+use data_store::provider::StoreProvider;
 use std::{path::Path, sync::Arc};
 use tauri::AppHandle;
 use tokio::sync::Mutex;

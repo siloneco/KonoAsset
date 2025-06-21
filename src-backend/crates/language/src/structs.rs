@@ -1,42 +1,7 @@
 use std::collections::HashMap;
 
+use model::preference::LanguageCode;
 use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub enum LanguageCode {
-    #[serde(rename = "ja-JP", alias = "jaJp")] // alias is for legacy support
-    JaJp,
-    #[serde(rename = "en-US", alias = "enUs")] // alias is for legacy support
-    EnUs,
-    #[serde(rename = "en-GB", alias = "enGb")] // alias is for legacy support
-    EnGb,
-    #[serde(rename = "zh-CN")]
-    ZhCn,
-    #[serde(rename = "user-provided")]
-    UserProvided(String),
-}
-
-impl LanguageCode {
-    pub fn code(&self) -> &str {
-        match self {
-            LanguageCode::JaJp => "ja-JP",
-            LanguageCode::EnUs => "en-US",
-            LanguageCode::EnGb => "en-GB",
-            LanguageCode::ZhCn => "zh-CN",
-            LanguageCode::UserProvided(code) => code,
-        }
-    }
-
-    pub fn booth_lang_code(&self) -> &str {
-        match self {
-            LanguageCode::JaJp => "ja",
-            LanguageCode::EnUs | LanguageCode::EnGb => "en",
-            LanguageCode::ZhCn => "zh-cn",
-            LanguageCode::UserProvided(_) => "en",
-        }
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]

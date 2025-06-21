@@ -5,12 +5,13 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use loader::HashSetVersionedLoader;
 use model::AssetTrait;
 use serde::{Serialize, de::DeserializeOwned};
-use tauri::async_runtime::Mutex;
+use tokio::sync::Mutex;
 use uuid::Uuid;
 
-use crate::{importer::execute_image_fixation, loader::HashSetVersionedLoader};
+use crate::utils::execute_image_fixation;
 
 use super::delete::delete_asset_image;
 
@@ -238,7 +239,7 @@ mod tests {
         std::fs::create_dir_all(data_dir).unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../../test/example_root_dir/sample1",
             data_dir,
             false,
             FileTransferGuard::none(),

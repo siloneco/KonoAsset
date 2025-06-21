@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
-use tauri::{async_runtime::Mutex, State};
+use model::preference::PreferenceStore;
+use tauri::{State, async_runtime::Mutex};
 
-use crate::{definitions::entities::InitialSetup, preference::store::PreferenceStore};
+use crate::definitions::entities::InitialSetup;
 
 #[tauri::command]
 #[specta::specta]
@@ -42,7 +43,7 @@ pub async fn set_preferences(
     }
 
     preference.overwrite(&new_preference);
-    preference.save().map_err(|e| {
+    loader::wrapper::save_preference_store(&preference).map_err(|e| {
         let err = format!("Failed to save preferences: {}", e);
         log::error!("{}", err);
         err

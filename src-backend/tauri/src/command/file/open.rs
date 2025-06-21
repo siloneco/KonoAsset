@@ -1,8 +1,8 @@
 use std::{path::PathBuf, sync::Arc};
 
+use data_store::provider::StoreProvider;
+use model::preference::PreferenceStore;
 use tauri::{AppHandle, Manager, State, async_runtime::Mutex};
-
-use crate::{data_store::provider::StoreProvider, preference::store::PreferenceStore};
 
 #[tauri::command]
 #[specta::specta]

@@ -1,10 +1,6 @@
-use language::LanguageCode;
+use model::preference::{LanguageCode, PreferenceStore, Theme, UpdateChannel};
 use std::path::PathBuf;
 
-use crate::{
-    preference::store::{PreferenceStore, Theme},
-    updater::update_handler::UpdateChannel,
-};
 use monostate::MustBe;
 use serde::{Deserialize, Serialize};
 

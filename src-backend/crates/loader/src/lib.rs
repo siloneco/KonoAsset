@@ -7,8 +7,8 @@ mod preferences;
 mod traits;
 mod world_objects;
 
+pub mod wrapper;
 pub use traits::HashSetVersionedLoader;
-// pub use traits::VersionedLoader;
 
 pub use avatar::VersionedAvatars;
 pub use avatar_wearables::VersionedAvatarWearables;

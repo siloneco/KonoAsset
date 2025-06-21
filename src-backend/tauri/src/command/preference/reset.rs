@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
 use file::modify_guard::{self, DeletionGuard};
+use model::preference::PreferenceStore;
 use serde::Deserialize;
 use tauri::{AppHandle, Manager, State, async_runtime::Mutex};
-
-use crate::preference::store::PreferenceStore;
 
 #[tauri::command]
 #[specta::specta]

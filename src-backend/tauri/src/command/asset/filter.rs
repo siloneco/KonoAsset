@@ -1,12 +1,8 @@
 use std::sync::Arc;
 
-use tauri::{async_runtime::Mutex, State};
+use data_store::{definitions::FilterRequest, provider::StoreProvider, search};
+use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
-
-use crate::{
-    data_store::{provider::StoreProvider, search},
-    definitions::entities::FilterRequest,
-};
 
 #[tauri::command]
 #[specta::specta]

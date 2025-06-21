@@ -2,7 +2,7 @@ use kanaria::{string::UCSStr, utils::ConvertTarget};
 use model::{AssetDescription, AssetTrait, AssetType};
 use uuid::Uuid;
 
-use crate::definitions::entities::{FilterRequest, MatchType};
+use crate::definitions::{FilterRequest, MatchType};
 
 use super::provider::StoreProvider;
 

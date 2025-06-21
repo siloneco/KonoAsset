@@ -1,13 +1,11 @@
 use std::{collections::HashMap, sync::Arc};
 
+use data_store::provider::StoreProvider;
 use model::AssetSummary;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
-use crate::{
-    data_store::provider::StoreProvider,
-    definitions::{entities::SortBy, results::GetAssetResult},
-};
+use crate::definitions::{entities::SortBy, results::GetAssetResult};
 
 #[tauri::command]
 #[specta::specta]

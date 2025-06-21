@@ -1,18 +1,17 @@
 use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
 use booth::PximgResolver;
+use data_store::{
+    find::{FileInfo, find_unitypackage},
+    provider::{MigrateResult, StoreProvider},
+};
+use model::preference::PreferenceStore;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
+use tauri_specta::Event;
 use uuid::Uuid;
 
-use crate::{
-    data_store::{
-        find::find_unitypackage,
-        provider::{MigrateResult, StoreProvider},
-    },
-    definitions::entities::FileInfo,
-    preference::store::PreferenceStore,
-};
+use crate::definitions::entities::ProgressEvent;
 
 #[tauri::command]
 #[specta::specta]
@@ -103,8 +102,14 @@ pub async fn migrate_data_dir(
         if migrate_data {
             log::info!("Migrating data to new path: {}", new_path.display());
 
+            let progress_callback = |percentage: f32, filename: String| {
+                if let Err(e) = ProgressEvent::new(percentage, filename).emit(&cloned_app_handle) {
+                    log::error!("Failed to emit progress event: {:?}", e);
+                }
+            };
+
             let result = basic_store
-                .migrate_data_dir(&cloned_app_handle, &new_path)
+                .migrate_data_dir(&new_path, progress_callback)
                 .await
                 .map_err(|e| {
                     let msg = format!("Failed to migrate data: {:?}", e);
@@ -124,7 +129,7 @@ pub async fn migrate_data_dir(
         new_preference.set_data_dir(new_path.clone());
 
         preference.overwrite(&new_preference);
-        preference.save().map_err(|e| e.to_string())?;
+        loader::wrapper::save_preference_store(&preference).map_err(|e| e.to_string())?;
 
         cloned_pximg_resolver
             .lock()

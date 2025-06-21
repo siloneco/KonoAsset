@@ -1,7 +1,7 @@
 mod directory;
 mod zip;
 
-use crate::data_store::provider::StoreProvider;
+use data_store::provider::StoreProvider;
 use std::path::Path;
 use tauri::AppHandle;
 

@@ -1,8 +1,24 @@
 use std::{collections::HashMap, ffi::OsStr, path::Path};
 
-use crate::definitions::entities::FileInfo;
+use serde::{Deserialize, Serialize};
 
 const IGNORE_DIRECTORY_NAMES: [&str; 1] = ["__MACOSX"];
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct FileInfo {
+    pub file_name: String,
+    pub absolute_path: String,
+}
+
+impl FileInfo {
+    pub fn new(file_name: String, absolute_path: String) -> Self {
+        Self {
+            file_name,
+            absolute_path,
+        }
+    }
+}
 
 pub fn find_unitypackage<P: AsRef<Path>>(dir: P) -> Result<HashMap<String, Vec<FileInfo>>, String> {
     let dir = dir.as_ref();

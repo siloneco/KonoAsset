@@ -1,10 +1,11 @@
 use std::{path::PathBuf, sync::Arc};
 
+use data_store::provider::StoreProvider;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
 
-use crate::{adapter, data_store::provider::StoreProvider};
+use crate::adapter;
 
 #[tauri::command]
 #[specta::specta]

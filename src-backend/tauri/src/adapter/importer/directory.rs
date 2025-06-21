@@ -1,5 +1,6 @@
 use std::{collections::HashMap, path::Path};
 
+use data_store::provider::StoreProvider;
 use file::{
     DeleteOnDrop,
     modify_guard::{self, FileTransferGuard},
@@ -9,7 +10,7 @@ use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
 
-use crate::{data_store::provider::StoreProvider, definitions::entities::ProgressEvent};
+use crate::definitions::entities::ProgressEvent;
 
 pub async fn import_data_store_from_directory<P>(
     data_store_provider: &mut StoreProvider,
@@ -221,7 +222,7 @@ mod tests {
         std::fs::create_dir_all(dest).unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample2",
+            "../test/example_root_dir/sample2",
             src,
             false,
             FileTransferGuard::none(),
@@ -231,7 +232,7 @@ mod tests {
         .unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../test/example_root_dir/sample1",
             dest,
             false,
             FileTransferGuard::none(),

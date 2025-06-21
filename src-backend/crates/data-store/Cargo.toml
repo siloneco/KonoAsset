@@ -1,8 +1,8 @@
 [package]
-name = "changelog"
+name = "data-store"
 version = "0.0.0"
 repository.workspace = true
-description = "Changelog fetcher and parser implementation"
+description = "Data storage library"
 
 rust-version.workspace = true
 edition.workspace = true
@@ -10,15 +10,18 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
-semver = "1.0.26"
-
 # Local crates
 model.workspace = true
+file.workspace = true
+loader.workspace = true
 
 # External crates
-tokio.workspace = true
-reqwest.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-specta.workspace = true
+reqwest.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+tokio.workspace = true
 log.workspace = true
+specta.workspace = true
+kanaria = "0.2.0"

@@ -1,12 +1,11 @@
 use std::sync::Arc;
 
-use crate::{
-    preference::store::PreferenceStore,
-    updater::update_handler::{UpdateChannel, UpdateHandler},
-};
 use changelog::{LocalizedChanges, fetch_and_parse_changelog, pick_changes_in_preferred_lang};
+use model::preference::{PreferenceStore, UpdateChannel};
 use tauri::State;
 use tokio::sync::Mutex;
+
+use crate::updater::update_handler::UpdateHandler;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 

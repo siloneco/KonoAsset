@@ -2,6 +2,8 @@ mod asset_trait;
 mod base;
 mod summary;
 
+pub mod preference;
+
 pub use base::AssetType;
 
 pub use base::AssetDescription;

@@ -10,25 +10,22 @@ use deep_link::{
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use file::modify_guard::{self, FileTransferGuard};
 use language::LocalizationData;
-use preference::store::PreferenceStore;
+use model::preference::{PreferenceStore, UpdateChannel};
 use statistics::{AssetVolumeEstimatedEvent, AssetVolumeStatisticsCache};
 use task::{TaskContainer, TaskStatusChanged};
 use tauri::{AppHandle, Manager, async_runtime::Mutex};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_specta::{Event, collect_events};
-use updater::update_handler::{UpdateChannel, UpdateHandler, UpdateProgress};
+use updater::update_handler::{UpdateHandler, UpdateProgress};
 
 #[cfg(debug_assertions)]
 use specta_typescript::{BigIntExportBehavior, Typescript};
 
 mod adapter;
 mod command;
-mod data_store;
 mod deep_link;
 mod definitions;
 mod importer;
-mod loader;
-mod preference;
 mod statistics;
 mod updater;
 
@@ -184,7 +181,14 @@ fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler 
 }
 
 fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
-    let pref_store = PreferenceStore::load(app);
+    let preference_path = app
+        .path()
+        .app_local_data_dir()
+        .unwrap()
+        .join("preference.json");
+    let document_dir = app.path().document_dir().unwrap();
+
+    let pref_store = loader::wrapper::load_preference_store(preference_path, document_dir);
 
     if let Err(err) = pref_store {
         return Err(format!(
@@ -193,19 +197,7 @@ fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
         ));
     }
 
-    let pref_store = pref_store.unwrap();
-
-    if let Some(pref_store) = pref_store {
-        return Ok(pref_store);
-    }
-
-    let default_pref = PreferenceStore::default(&app);
-
-    if let Err(err) = default_pref {
-        return Err(format!("Failed to create default preference: {}", err));
-    }
-
-    Ok(default_pref.unwrap())
+    Ok(pref_store.unwrap())
 }
 
 fn load_store_provider(

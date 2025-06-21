@@ -1,9 +1,8 @@
 use std::sync::Arc;
 
-use tauri::{async_runtime::Mutex, State};
+use data_store::{delete::delete_asset, provider::StoreProvider};
+use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
-
-use crate::data_store::{delete::delete_asset, provider::StoreProvider};
 
 #[tauri::command]
 #[specta::specta]

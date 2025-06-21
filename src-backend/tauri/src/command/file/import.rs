@@ -1,14 +1,13 @@
 use std::{path::PathBuf, sync::Arc};
 
+use data_store::provider::StoreProvider;
 use file::modify_guard::{self, FileTransferGuard};
+use model::preference::PreferenceStore;
 use task::TaskContainer;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
-use crate::{
-    data_store::provider::StoreProvider, importer::import_wrapper::import_additional_data,
-    preference::store::PreferenceStore,
-};
+use crate::importer::import_wrapper::import_additional_data;
 
 #[tauri::command]
 #[specta::specta]

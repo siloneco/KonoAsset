@@ -1,14 +1,12 @@
+use data_store::provider::StoreProvider;
 use std::sync::Arc;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
 
-use crate::{
-    data_store::provider::StoreProvider,
-    statistics::{
-        AssetRegistrationStatistics, AssetVolumeStatistics, AssetVolumeStatisticsCache,
-        calculate_asset_volumes, get_asset_registration_statistics,
-    },
+use crate::statistics::{
+    AssetRegistrationStatistics, AssetVolumeStatistics, AssetVolumeStatisticsCache,
+    calculate_asset_volumes, get_asset_registration_statistics,
 };
 
 #[tauri::command]

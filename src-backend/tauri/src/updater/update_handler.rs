@@ -1,5 +1,6 @@
 use changelog::ChangelogVersion;
-use serde::{Deserialize, Serialize};
+use model::preference::UpdateChannel;
+use serde::Serialize;
 use tauri::{AppHandle, Url};
 use tauri_plugin_updater::{Update, UpdaterExt};
 use tauri_specta::Event;
@@ -177,20 +178,5 @@ impl UpdateHandler {
 
     pub async fn set_show_notification(&mut self, show_notification: bool) {
         self.show_notification = show_notification;
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, specta::Type)]
-pub enum UpdateChannel {
-    Stable,
-    PreRelease,
-}
-
-impl UpdateChannel {
-    pub fn as_str(&self) -> &str {
-        match self {
-            UpdateChannel::Stable => "stable",
-            UpdateChannel::PreRelease => "pre-release",
-        }
     }
 }

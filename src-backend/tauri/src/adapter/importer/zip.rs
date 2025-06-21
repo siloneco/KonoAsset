@@ -1,11 +1,12 @@
 use std::{env::temp_dir, ffi::OsStr, path::Path};
 
+use data_store::provider::StoreProvider;
 use file::DeleteOnDrop;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use uuid::Uuid;
 
-use crate::{data_store::provider::StoreProvider, definitions::entities::ProgressEvent};
+use crate::definitions::entities::ProgressEvent;
 
 use super::directory::internal_import_data_store_from_directory;
 
@@ -102,7 +103,7 @@ mod tests {
         std::fs::create_dir_all(root).unwrap();
 
         modify_guard::copy_file(
-            "test/example_root_dir/sample2.zip",
+            "../test/example_root_dir/sample2.zip",
             src,
             false,
             FileTransferGuard::none(),
@@ -111,7 +112,7 @@ mod tests {
         .unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../test/example_root_dir/sample1",
             dest,
             false,
             FileTransferGuard::none(),

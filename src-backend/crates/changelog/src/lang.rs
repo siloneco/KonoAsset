@@ -1,4 +1,4 @@
-use language::LanguageCode;
+use model::preference::LanguageCode;
 use semver::Version;
 
 use super::definitions::{ChangelogEntry, ChangelogVersion, LocalizedChanges};

@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
+use data_store::provider::StoreProvider;
 use tauri::State;
 use tokio::sync::Mutex;
 use uuid::Uuid;
-
-use crate::data_store::provider::StoreProvider;
 
 #[tauri::command]
 #[specta::specta]

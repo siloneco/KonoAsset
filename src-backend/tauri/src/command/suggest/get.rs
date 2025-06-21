@@ -1,10 +1,9 @@
 use std::{collections::HashMap, sync::Arc};
 
+use data_store::provider::StoreProvider;
 use serde::Serialize;
-use tauri::{async_runtime::Mutex, State};
+use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
-
-use crate::data_store::provider::StoreProvider;
 
 #[derive(Serialize, Clone, Debug, PartialEq, Eq, specta::Type)]
 pub struct PrioritizedEntry {

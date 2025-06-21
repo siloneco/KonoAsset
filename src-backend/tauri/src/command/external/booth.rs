@@ -1,9 +1,8 @@
 use std::sync::Arc;
 
 use booth::{BoothAssetInfo, BoothFetcher, PximgResolver};
+use model::preference::PreferenceStore;
 use tauri::{State, async_runtime::Mutex};
-
-use crate::preference::store::PreferenceStore;
 
 #[tauri::command]
 #[specta::specta]

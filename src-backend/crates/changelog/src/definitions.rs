@@ -1,4 +1,4 @@
-use language::LanguageCode;
+use model::preference::LanguageCode;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Debug, Clone, specta::Type)]

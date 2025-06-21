@@ -1,18 +1,18 @@
 use std::sync::Arc;
 
+use data_store::provider::StoreProvider;
+use model::preference::PreferenceStore;
 use task::TaskContainer;
 use tauri::{AppHandle, State, async_runtime::Mutex};
 use uuid::Uuid;
 
 use crate::{
-    data_store::provider::StoreProvider,
     definitions::import_request::{
         AssetImportRequest, PreAvatar, PreAvatarWearable, PreOtherAsset, PreWorldObject,
     },
     importer::import_wrapper::{
         import_avatar, import_avatar_wearable, import_other_asset, import_world_object,
     },
-    preference::store::PreferenceStore,
 };
 
 #[tauri::command]

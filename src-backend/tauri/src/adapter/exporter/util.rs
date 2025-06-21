@@ -1,10 +1,9 @@
 use std::{collections::HashMap, sync::Arc};
 
 use async_zip::{Compression, ZipEntryBuilder, tokio::write::ZipFileWriter};
+use data_store::provider::StoreProvider;
 use model::{Avatar, AvatarWearable, OtherAsset, WorldObject};
 use tokio::{fs::File, sync::Mutex};
-
-use crate::data_store::provider::StoreProvider;
 
 use super::definitions::{AssetExportOverview, CategoryBasedAssets};
 
@@ -91,6 +90,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use data_store::provider::StoreProvider;
     use file::modify_guard::{self, FileTransferGuard};
 
     use super::*;
@@ -105,7 +105,7 @@ mod tests {
         std::fs::create_dir_all(provider).unwrap();
 
         modify_guard::copy_dir(
-            "test/example_root_dir/sample1",
+            "../test/example_root_dir/sample1",
             provider,
             false,
             FileTransferGuard::none(),

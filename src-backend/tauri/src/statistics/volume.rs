@@ -1,13 +1,12 @@
 use std::{collections::HashSet, path::PathBuf, sync::Arc};
 
+use data_store::provider::StoreProvider;
 use model::{AssetTrait, AssetType};
 use serde::Serialize;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::sync::Mutex;
 use uuid::Uuid;
-
-use crate::data_store::provider::StoreProvider;
 
 #[derive(Debug, Serialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]

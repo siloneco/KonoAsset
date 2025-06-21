@@ -1,11 +1,10 @@
 use std::{hash::Hash, path::PathBuf};
 
 use file::modify_guard::{self, DeletionGuard};
+use loader::HashSetVersionedLoader;
 use model::AssetTrait;
 use serde::{Serialize, de::DeserializeOwned};
 use uuid::Uuid;
-
-use crate::loader::HashSetVersionedLoader;
 
 use super::{json_store::JsonStore, provider::StoreProvider};
 

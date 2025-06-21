@@ -1,9 +1,8 @@
+use data_store::provider::StoreProvider;
 use file::{SimplifiedDirEntry, list_top_files_and_directories};
 use std::sync::Arc;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
-
-use crate::data_store::provider::StoreProvider;
 
 #[tauri::command]
 #[specta::specta]

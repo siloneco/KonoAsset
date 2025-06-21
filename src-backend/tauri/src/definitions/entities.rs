@@ -1,29 +1,8 @@
 use std::path::PathBuf;
 
-use model::{AssetType, Avatar, AvatarWearable, OtherAsset, WorldObject};
+use model::{Avatar, AvatarWearable, OtherAsset, WorldObject};
 use serde::{Deserialize, Serialize};
 use tauri_specta::Event;
-
-use crate::loader::{
-    HashSetVersionedLoader, VersionedAvatarWearables, VersionedAvatars, VersionedOtherAssets,
-    VersionedWorldObjects,
-};
-
-impl HashSetVersionedLoader<Avatar> for Avatar {
-    type VersionedType = VersionedAvatars;
-}
-
-impl HashSetVersionedLoader<AvatarWearable> for AvatarWearable {
-    type VersionedType = VersionedAvatarWearables;
-}
-
-impl HashSetVersionedLoader<WorldObject> for WorldObject {
-    type VersionedType = VersionedWorldObjects;
-}
-
-impl HashSetVersionedLoader<OtherAsset> for OtherAsset {
-    type VersionedType = VersionedOtherAssets;
-}
 
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq, specta::Type)]
 pub enum SortBy {
@@ -31,40 +10,6 @@ pub enum SortBy {
     Creator,
     CreatedAt,
     PublishedAt,
-}
-
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone, specta::Type)]
-pub enum MatchType {
-    AND,
-    OR,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct FilterRequest {
-    pub asset_type: Option<AssetType>,
-    pub query_text: Option<String>,
-    pub categories: Option<Vec<String>>,
-    pub tags: Option<Vec<String>>,
-    pub tag_match_type: MatchType,
-    pub supported_avatars: Option<Vec<String>>,
-    pub supported_avatar_match_type: MatchType,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub struct FileInfo {
-    pub file_name: String,
-    pub absolute_path: String,
-}
-
-impl FileInfo {
-    pub fn new(file_name: String, absolute_path: String) -> Self {
-        Self {
-            file_name,
-            absolute_path,
-        }
-    }
 }
 
 #[derive(Serialize, Clone, specta::Type)]
