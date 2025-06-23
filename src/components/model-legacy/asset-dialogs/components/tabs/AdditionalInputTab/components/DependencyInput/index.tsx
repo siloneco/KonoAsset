@@ -1,4 +1,3 @@
-import { AssetContext } from '@/components/context/AssetContext'
 import { AssetSelector } from '@/components/model-legacy/AssetSelector'
 import { SlimAssetDetail } from '@/components/model-legacy/SlimAssetDetail'
 import { Button } from '@/components/ui/button'
@@ -6,7 +5,8 @@ import { useLocalization } from '@/hooks/use-localization'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { XCircle } from 'lucide-react'
-import { FC, useContext } from 'react'
+import { FC } from 'react'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   dependencies: string[]
@@ -18,14 +18,16 @@ export const DependencyInput: FC<Props> = ({
   setDependencies,
 }) => {
   const { t } = useLocalization()
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const sortedAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.sortedAssetSummaries,
+  )
 
   return (
     <div className="w-full flex flex-row mb-4">
       <div className="w-full space-y-2">
         <Label>{t('general:prerequisite-assets')}</Label>
         <AssetSelector
-          assets={assetDisplaySortedList}
+          assets={sortedAssetSummaries}
           slimAssetDetailClassName="max-w-[570px]"
           ignoredAssetIds={dependencies}
           onSelected={(id) => {
@@ -40,7 +42,7 @@ export const DependencyInput: FC<Props> = ({
           )}
           {dependencies.length > 0 && (
             <ScrollArea className="w-full h-full pr-2">
-              {assetDisplaySortedList.map((asset) => {
+              {sortedAssetSummaries.map((asset) => {
                 if (!dependencies.includes(asset.id)) {
                   return null
                 }

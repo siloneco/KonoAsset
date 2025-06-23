@@ -15,6 +15,8 @@ import {
   isFilterEnforced,
 } from './logic'
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useShallow } from 'zustand/react/shallow'
 
 type Props = {
   setShowingAssetCount: (count: number) => void
@@ -74,8 +76,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   )
 
   const {
-    reverseOrder,
-    assetCardSize,
     assetType,
     queryTextMode,
     generalQueryTextFilter,
@@ -87,7 +87,27 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     supportedAvatarFilter,
     supportedAvatarFilterMatchType,
   } = useContext(PersistentContext)
-  const { assetDisplaySortedList, setFilteredIds } = useContext(AssetContext)
+  const { setFilteredIds } = useContext(AssetContext)
+
+  const {
+    sortedAssetSummaries,
+    reverseOrder,
+    assetViewStyle,
+    refreshAssetSummaries,
+  } = useAssetSummaryViewStore(
+    useShallow((state) => {
+      return {
+        sortedAssetSummaries: state.sortedAssetSummaries,
+        reverseOrder: state.reverseOrder,
+        assetViewStyle: state.assetViewStyle,
+        refreshAssetSummaries: state.refreshAssetSummaries,
+      }
+    }),
+  )
+
+  useEffect(() => {
+    refreshAssetSummaries()
+  }, [refreshAssetSummaries])
 
   const updateSortedAssetSummary = useCallback(async () => {
     const filterRequest: FilterRequest = createFilterRequest({
@@ -107,13 +127,11 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
 
     if (!currentFilterEnforced) {
       setSortedAssetSummary(
-        reverseOrder
-          ? assetDisplaySortedList.reverse()
-          : assetDisplaySortedList,
+        reverseOrder ? sortedAssetSummaries.reverse() : sortedAssetSummaries,
       )
 
       setFilteredIds(null)
-      setShowingAssetCount(assetDisplaySortedList.length)
+      setShowingAssetCount(sortedAssetSummaries.length)
       return
     }
 
@@ -126,7 +144,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
 
     const assetIds = result.data
 
-    const sortedAssets = assetDisplaySortedList.filter((asset) =>
+    const sortedAssets = sortedAssetSummaries.filter((asset) =>
       assetIds.includes(asset.id),
     )
 
@@ -134,7 +152,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setFilteredIds(assetIds)
     setShowingAssetCount(sortedAssets.length)
   }, [
-    assetDisplaySortedList,
+    sortedAssetSummaries,
     assetType,
     categoryFilter,
     generalQueryTextFilter,
@@ -161,18 +179,18 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
 
   const updateColumns = useCallback(() => {
     setGridColumnCount(
-      assetCardSize !== 'List'
-        ? calculateColumnCount(getElementProperty('width'), assetCardSize)
+      assetViewStyle !== 'List'
+        ? calculateColumnCount(getElementProperty('width'), assetViewStyle)
         : 1,
     )
-  }, [assetCardSize, getElementProperty])
+  }, [assetViewStyle, getElementProperty])
 
   useEffect(() => {
     updateColumns()
 
     window.addEventListener('resize', updateColumns)
     return () => window.removeEventListener('resize', updateColumns)
-  }, [assetCardSize, updateColumns])
+  }, [assetViewStyle, updateColumns])
 
   const openSelectUnitypackageDialog = (
     assetId: string,
@@ -198,8 +216,8 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     sortedAssetSummary,
     layoutDivRef,
     gridColumnCount,
-    displayStyle: assetCardSize === 'List' ? 'List' : 'Grid',
-    background: assetDisplaySortedList.length === 0 ? 'NoAssets' : 'NoResults',
+    displayStyle: assetViewStyle === 'List' ? 'List' : 'Grid',
+    background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,
     openMemoDialog,

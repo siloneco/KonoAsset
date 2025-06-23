@@ -2,14 +2,14 @@ import { MainSidebar } from '@/components/model-legacy/MainSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { useTopPage } from './hook'
-import { NavBar } from '../../components/model-legacy/MainNavBar'
 import { AddAssetDialog } from '@/components/model-legacy/asset-dialogs/AddAssetDialog'
 import { EditAssetDialog } from '@/components/model-legacy/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetView } from '@/components/model-legacy/asset-view/AssetView'
 import { DataManagementDialog } from '@/components/model-legacy/action-buttons/MoreButton/components/DataManagementDialog'
 import { AssetContextProvider } from '@/components/context/AssetContext'
 import { useCallback } from 'react'
+import { NavBar } from '@/components/model-legacy/MainNavBar'
+import { AssetView } from '@/components/model-legacy/asset-view/AssetView'
 
 export const TopPage = () => {
   const {

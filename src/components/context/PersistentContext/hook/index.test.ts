@@ -6,24 +6,6 @@ describe('PersistentContext Hook', () => {
   it('executes usePersistentContext function correctly', async () => {
     const { result } = renderHook(() => usePersistentContext())
 
-    // Test setSortBy works correctly
-    const sortBy = 'Creator'
-    expect(result.current.persistentContextValue.sortBy).not.toEqual(sortBy)
-    act(() => result.current.persistentContextValue.setSortBy(sortBy))
-    expect(result.current.persistentContextValue.sortBy).toEqual(sortBy)
-
-    // Test setReverseOrder works correctly
-    const reverseOrder = !result.current.persistentContextValue.reverseOrder
-    expect(result.current.persistentContextValue.reverseOrder).not.toEqual(
-      reverseOrder,
-    )
-    act(() =>
-      result.current.persistentContextValue.setReverseOrder(reverseOrder),
-    )
-    expect(result.current.persistentContextValue.reverseOrder).toEqual(
-      reverseOrder,
-    )
-
     // Test textFilter works correctly
     const textFilter = 'test'
     expect(

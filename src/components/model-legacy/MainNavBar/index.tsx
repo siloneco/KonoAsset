@@ -1,12 +1,12 @@
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { Card } from '@/components/ui/card'
 
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 
-import { AssetContext } from '@/components/context/AssetContext'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
 import { LayoutPopover } from './components/LayoutPopover'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   displayAssetCount?: number
@@ -14,11 +14,19 @@ type Props = {
 
 export const NavBar = ({ displayAssetCount }: Props) => {
   const { clearFilters } = useContext(PersistentContext)
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const sortedAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.sortedAssetSummaries,
+  )
 
   const { t } = useLocalization()
-  const totalAssetCount = assetDisplaySortedList.length
-  const showingCount = displayAssetCount ?? totalAssetCount
+  const totalAssetCount = useMemo(
+    () => sortedAssetSummaries.length,
+    [sortedAssetSummaries],
+  )
+  const showingCount = useMemo(
+    () => displayAssetCount ?? totalAssetCount,
+    [displayAssetCount, totalAssetCount],
+  )
 
   return (
     <div className="p-4">

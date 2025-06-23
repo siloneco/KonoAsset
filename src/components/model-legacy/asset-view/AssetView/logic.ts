@@ -1,6 +1,6 @@
-import { AssetCardSize } from '@/components/context/PersistentContext'
 import { AssetType, FilterRequest, MatchType } from '@/lib/bindings'
 import { extractBoothItemId } from '@/lib/utils'
+import { AssetViewStyle } from '@/stores/AssetSummaryViewStore'
 
 const SMALL_CARD_WIDTH = 160
 const MEDIUM_CARD_WIDTH = 200
@@ -8,7 +8,7 @@ const LARGE_CARD_WIDTH = 260
 
 export const calculateColumnCount = (
   width: number,
-  size: Omit<AssetCardSize, 'List'>,
+  size: Omit<AssetViewStyle, 'List'>,
 ) => {
   if (size === 'Small') {
     return Math.floor(width / SMALL_CARD_WIDTH)

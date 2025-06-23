@@ -11,13 +11,13 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog'
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { AssetContext } from '@/components/context/AssetContext'
 import { SlimAssetDetail } from '../SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetCardOpenButton } from '../action-buttons/AssetCardOpenButton'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   assetName: string | null
@@ -43,20 +43,22 @@ export const DependencyDialog: FC<Props> = ({
   const [loading, setLoading] = useState(false)
 
   const { t } = useLocalization()
-  const { assetDisplaySortedList } = useContext(AssetContext)
+  const sortedAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.sortedAssetSummaries,
+  )
 
   const updateDependencies = useCallback(() => {
     setLoading(true)
     try {
       setDependencies(
-        assetDisplaySortedList.filter((asset) =>
+        sortedAssetSummaries.filter((asset) =>
           dependencyIds.includes(asset.id),
         ),
       )
     } finally {
       setLoading(false)
     }
-  }, [assetDisplaySortedList, dependencyIds])
+  }, [sortedAssetSummaries, dependencyIds])
 
   useEffect(() => {
     if (dialogOpen) {

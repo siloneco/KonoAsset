@@ -1,8 +1,4 @@
-import { FC, useContext } from 'react'
-import {
-  AssetCardSize,
-  PersistentContext,
-} from '@/components/context/PersistentContext'
+import { FC, useCallback, useMemo } from 'react'
 import {
   Popover,
   PopoverContent,
@@ -14,21 +10,43 @@ import { convertToSelectID, handleSortByChange } from './logic'
 import { OrderSelector } from '../OrderSelector'
 import { Separator } from '@/components/ui/separator'
 import { SizeSelector } from '../SizeSelector'
+import {
+  AssetViewStyle,
+  useAssetSummaryViewStore,
+} from '@/stores/AssetSummaryViewStore'
+
+import { useShallow } from 'zustand/react/shallow'
 
 export const LayoutPopover: FC = () => {
-  const {
-    sortBy,
-    setSortBy,
-    assetCardSize,
-    setAssetCardSize,
-    reverseOrder,
-    setReverseOrder,
-  } = useContext(PersistentContext)
+  const { sortBy, reverseOrder, setSort, assetViewStyle, setAssetViewStyle } =
+    useAssetSummaryViewStore(
+      useShallow((state) => ({
+        sortBy: state.sortBy,
+        reverseOrder: state.reverseOrder,
+        setSort: state.setSort,
+        assetViewStyle: state.assetViewStyle,
+        setAssetViewStyle: state.setAssetViewStyle,
+      })),
+    )
 
-  const currentOrder = convertToSelectID(sortBy, reverseOrder)
-  const setOrder = (value: string) => {
-    handleSortByChange({ value, setSortBy, setReverseOrder })
-  }
+  const currentOrder = useMemo(
+    () => convertToSelectID(sortBy, reverseOrder),
+    [sortBy, reverseOrder],
+  )
+
+  const setOrder = useCallback(
+    (value: string) => {
+      handleSortByChange({ value, setSort })
+    },
+    [setSort],
+  )
+
+  const setViewStyle = useCallback(
+    (value: string) => {
+      setAssetViewStyle(value as AssetViewStyle)
+    },
+    [setAssetViewStyle],
+  )
 
   return (
     <Popover>
@@ -46,10 +64,7 @@ export const LayoutPopover: FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit mr-2 p-2 flex flex-row">
-        <SizeSelector
-          current={assetCardSize}
-          setValue={(value) => setAssetCardSize(value as AssetCardSize)}
-        />
+        <SizeSelector current={assetViewStyle} setValue={setViewStyle} />
         <Separator orientation="vertical" className="h-52 mx-2 my-auto" />
         <OrderSelector current={currentOrder} setValue={setOrder} />
       </PopoverContent>

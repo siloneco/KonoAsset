@@ -10,6 +10,7 @@ import { AssetCardOpenButton } from '@/components/model-legacy/action-buttons/As
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   asset: AssetSummary
@@ -34,12 +35,12 @@ export const AssetCard = ({
   openMemoDialog,
   openDependencyDialog,
 }: Props) => {
-  const {
-    assetCardSize,
-    setAssetType,
-    setQueryTextMode,
-    setQueryTextFilterForCreator,
-  } = useContext(PersistentContext)
+  const { setAssetType, setQueryTextMode, setQueryTextFilterForCreator } =
+    useContext(PersistentContext)
+
+  const assetViewStyle = useAssetSummaryViewStore(
+    (state) => state.assetViewStyle,
+  )
 
   const onShopNameClicked = () => {
     setQueryTextMode('advanced')
@@ -75,7 +76,7 @@ export const AssetCard = ({
           <CardTitle
             className={cn(
               'text-lg mt-2 break-words whitespace-pre-wrap',
-              assetCardSize === 'Small' && 'text-base',
+              assetViewStyle === 'Small' && 'text-base',
             )}
           >
             {asset.name}
@@ -91,7 +92,7 @@ export const AssetCard = ({
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
-            displayOpenButtonText={assetCardSize !== 'Small'}
+            displayOpenButtonText={assetViewStyle !== 'Small'}
             openDependencyDialog={() =>
               openDependencyDialog(asset.name, asset.dependencies)
             }

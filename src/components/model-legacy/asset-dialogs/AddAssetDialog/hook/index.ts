@@ -1,4 +1,3 @@
-import { AssetContext } from '@/components/context/AssetContext'
 import {
   DragDropContext,
   DragDropRegisterConfig,
@@ -23,6 +22,7 @@ import { AddAssetDialogContextType } from '..'
 import { createPreAsset, sendAssetImportRequest } from '../logic'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   dialogOpen: boolean
@@ -69,7 +69,9 @@ export const useAddAssetDialog = ({
   const { toast } = useToast()
   const { t } = useLocalization()
 
-  const { refreshAssets } = useContext(AssetContext)
+  const refreshAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.refreshAssetSummaries,
+  )
   const { register } = useContext(DragDropContext)
   const { preference } = useContext(PreferenceContext)
 
@@ -234,7 +236,7 @@ export const useAddAssetDialog = ({
 
     setTab('empty')
     setDialogOpen(false)
-    refreshAssets()
+    refreshAssetSummaries()
   }
 
   const onTaskCancelled = () => {

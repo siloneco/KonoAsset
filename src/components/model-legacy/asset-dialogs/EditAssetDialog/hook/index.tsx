@@ -1,13 +1,13 @@
 import { AssetDescription, AssetType } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { fetchAssetInformation, updateAsset } from '../logic'
 import { useToast } from '@/hooks/use-toast'
-import { AssetContext } from '@/components/context/AssetContext'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 const setDescriptionToForm = (
   form: AssetFormType,
@@ -50,7 +50,9 @@ export const useEditAssetDialog = ({
   const [loadingAssetData, setLoadingAssetData] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
-  const { refreshAssets } = useContext(AssetContext)
+  const refreshAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.refreshAssetSummaries,
+  )
 
   const { t } = useLocalization()
   const { toast } = useToast()
@@ -195,7 +197,7 @@ export const useEditAssetDialog = ({
 
       if (result.status === 'ok') {
         if (result.data === true) {
-          await refreshAssets()
+          await refreshAssetSummaries()
 
           setDialogOpen(false)
           toast({

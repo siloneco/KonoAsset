@@ -24,7 +24,7 @@ import {
   Folder,
   Trash2,
 } from 'lucide-react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   TooltipProvider,
   Tooltip,
@@ -34,8 +34,8 @@ import {
 import { cn } from '@/lib/utils'
 import { useLocalization } from '@/hooks/use-localization'
 import { commands } from '@/lib/bindings'
-import { AssetContext } from '@/components/context/AssetContext'
 import { useToast } from '@/hooks/use-toast'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
   id: string
@@ -55,13 +55,15 @@ export const MoreButton = ({
   const [boothUrl, setBoothUrl] = useState<string | undefined>(undefined)
 
   const { toast } = useToast()
-  const { deleteAssetById } = useContext(AssetContext)
+  const deleteAssetSummaryFromFrontend = useAssetSummaryViewStore(
+    (state) => state.deleteAssetSummaryFromFrontend,
+  )
 
   const deleteAsset = async () => {
     const result = await commands.requestAssetDeletion(id)
 
     if (result.status === 'ok') {
-      deleteAssetById(id)
+      deleteAssetSummaryFromFrontend(id)
 
       toast({
         title: t('assetcard:more-button:success-delete-toast'),

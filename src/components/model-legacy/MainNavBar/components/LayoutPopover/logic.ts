@@ -2,47 +2,37 @@ import { SortBy } from '@/lib/bindings'
 
 type HandleSortByChangeProps = {
   value: string
-  setSortBy: (sortBy: SortBy) => void
-  setReverseOrder: (reverseOrder: boolean) => void
+  setSort: (sortBy: SortBy, reverseOrder: boolean) => void
 }
 
 export const handleSortByChange = ({
   value,
-  setSortBy,
-  setReverseOrder,
+  setSort,
 }: HandleSortByChangeProps) => {
   switch (value) {
     case 'CreatedAtDesc':
-      setSortBy('CreatedAt')
-      setReverseOrder(true)
+      setSort('CreatedAt', true)
       break
     case 'CreatedAtAsc':
-      setSortBy('CreatedAt')
-      setReverseOrder(false)
+      setSort('CreatedAt', false)
       break
     case 'NameAsc':
-      setSortBy('Name')
-      setReverseOrder(false)
+      setSort('Name', false)
       break
     case 'NameDesc':
-      setSortBy('Name')
-      setReverseOrder(true)
+      setSort('Name', true)
       break
     case 'CreatorAsc':
-      setSortBy('Creator')
-      setReverseOrder(false)
+      setSort('Creator', false)
       break
     case 'CreatorDesc':
-      setSortBy('Creator')
-      setReverseOrder(true)
+      setSort('Creator', true)
       break
     case 'PublishedAtDesc':
-      setSortBy('PublishedAt')
-      setReverseOrder(true)
+      setSort('PublishedAt', true)
       break
     case 'PublishedAtAsc':
-      setSortBy('PublishedAt')
-      setReverseOrder(false)
+      setSort('PublishedAt', false)
       break
   }
 }

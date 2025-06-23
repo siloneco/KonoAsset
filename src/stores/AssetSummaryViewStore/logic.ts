@@ -1,13 +1,13 @@
-import { AssetSummary, commands, SortBy } from '@/lib/bindings'
+import { SortBy, AssetSummary, commands } from '@/lib/bindings'
 
-export const refreshAssets = async (
+export const refreshAssetSummaries = async (
   sortBy: SortBy,
-): Promise<AssetSummary[] | null> => {
+): Promise<AssetSummary[]> => {
   const result = await commands.getSortedAssetSummaries(sortBy)
 
   if (result.status === 'error') {
     console.error(result.error)
-    return null
+    return []
   }
 
   return result.data

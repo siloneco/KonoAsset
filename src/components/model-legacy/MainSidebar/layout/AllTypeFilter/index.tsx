@@ -6,6 +6,7 @@ import { MultiFilterItemSelector } from '@/components/model-legacy/MainSidebar/c
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { AssetContext } from '@/components/context/AssetContext'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 export const AllTypeFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
@@ -17,7 +18,7 @@ export const AllTypeFilter = () => {
     useState(false)
   const { t } = useLocalization()
 
-  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
+  const { filteredIds } = useContext(AssetContext)
   const {
     categoryFilter,
     setCategoryFilter,
@@ -26,6 +27,10 @@ export const AllTypeFilter = () => {
     supportedAvatarFilterMatchType,
     setSupportedAvatarFilterMatchType,
   } = useContext(PersistentContext)
+
+  const sortedAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.sortedAssetSummaries,
+  )
 
   const updateCandidates = useCallback(async () => {
     if (!isCategoryFocused) {
@@ -38,7 +43,7 @@ export const AllTypeFilter = () => {
 
   useEffect(() => {
     updateCandidates()
-  }, [assetDisplaySortedList, updateCandidates])
+  }, [sortedAssetSummaries, updateCandidates])
 
   return (
     <div className="mt-4 space-y-4">

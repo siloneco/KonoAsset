@@ -4,6 +4,7 @@ import { Option } from '@/components/ui/multi-select'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { fetchAllTags } from './logic'
 import { AssetType, MatchType } from '@/lib/bindings'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type ReturnProps = {
   textSearchMode: 'general' | 'advanced'
@@ -29,7 +30,7 @@ type ReturnProps = {
 }
 
 export const useMainSidebar = (): ReturnProps => {
-  const { assetDisplaySortedList, filteredIds } = useContext(AssetContext)
+  const { filteredIds } = useContext(AssetContext)
   const {
     assetType,
     queryTextMode,
@@ -46,6 +47,10 @@ export const useMainSidebar = (): ReturnProps => {
     setTagFilterMatchType,
   } = useContext(PersistentContext)
 
+  const sortedAssetSummaries = useAssetSummaryViewStore(
+    (state) => state.sortedAssetSummaries,
+  )
+
   const [tagCandidates, setTagCandidates] = useState<Option[]>([])
   const [tagSelectorFocused, setTagSelectorFocused] = useState(false)
 
@@ -57,7 +62,7 @@ export const useMainSidebar = (): ReturnProps => {
     if (!tagSelectorFocused) {
       updateTagCandidates()
     }
-  }, [assetDisplaySortedList, tagSelectorFocused, updateTagCandidates])
+  }, [sortedAssetSummaries, tagSelectorFocused, updateTagCandidates])
 
   return {
     textSearchMode: queryTextMode,
