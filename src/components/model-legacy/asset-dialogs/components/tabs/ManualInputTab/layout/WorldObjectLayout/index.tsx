@@ -102,6 +102,7 @@ export const WorldObjectLayout = ({ form }: Props) => {
               {t('addasset:empty-indicator')}
             </p>
           }
+          value={form.watch('tags')}
           onChange={(value) => form.setValue('tags', value)}
         />
         <p className="text-muted-foreground text-sm">
