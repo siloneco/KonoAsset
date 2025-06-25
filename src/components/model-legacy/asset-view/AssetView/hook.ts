@@ -1,10 +1,8 @@
-import { AssetContext } from '@/components/context/AssetContext'
-import { PersistentContext } from '@/components/context/PersistentContext'
-import { AssetSummary, commands, FileInfo, FilterRequest } from '@/lib/bindings'
-import { useCallback, useContext, useEffect, useState } from 'react'
-import { createFilterRequest, isFilterEnforced } from './logic'
+import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { useCallback, useEffect, useState } from 'react'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useShallow } from 'zustand/react/shallow'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 type Props = {
   setShowingAssetCount: (count: number) => void
@@ -57,23 +55,10 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const [dependencyDialogDependencies, setDependencyDialogDependencies] =
     useState<string[]>([])
 
-  const [sortedAssetSummary, setSortedAssetSummary] = useState<AssetSummary[]>(
-    [],
-  )
-
-  const {
-    assetType,
-    queryTextMode,
-    generalQueryTextFilter,
-    queryTextFilterForName,
-    queryTextFilterForCreator,
-    categoryFilter,
-    tagFilter,
-    tagFilterMatchType,
-    supportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-  } = useContext(PersistentContext)
-  const { setFilteredIds } = useContext(AssetContext)
+  const [
+    filterAppliedSortedAssetSummaries,
+    setFilterAppliedSortedAssetSummaries,
+  ] = useState<AssetSummary[]>([])
 
   const {
     sortedAssetSummaries,
@@ -91,68 +76,33 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     }),
   )
 
+  const filteredIds = useAssetFilterStore((state) => state.filteredIds)
+
   useEffect(() => {
     refreshAssetSummaries()
   }, [refreshAssetSummaries])
 
   const updateSortedAssetSummary = useCallback(async () => {
-    const filterRequest: FilterRequest = createFilterRequest({
-      assetType: assetType,
-      queryTextMode: queryTextMode,
-      generalQueryText: generalQueryTextFilter,
-      queryTextFilterForName: queryTextFilterForName,
-      queryTextFilterForCreator: queryTextFilterForCreator,
-      categories: categoryFilter,
-      tags: tagFilter,
-      tagMatchType: tagFilterMatchType,
-      supportedAvatars: supportedAvatarFilter,
-      supportedAvatarMatchType: supportedAvatarFilterMatchType,
-    })
-
-    const currentFilterEnforced = isFilterEnforced(filterRequest)
-
-    if (!currentFilterEnforced) {
-      setSortedAssetSummary(
-        reverseOrder ? sortedAssetSummaries.reverse() : sortedAssetSummaries,
+    if (filteredIds === null) {
+      setFilterAppliedSortedAssetSummaries(
+        reverseOrder
+          ? [...sortedAssetSummaries].reverse()
+          : sortedAssetSummaries,
       )
 
-      setFilteredIds(null)
       setShowingAssetCount(sortedAssetSummaries.length)
       return
     }
 
-    const result = await commands.getFilteredAssetIds(filterRequest)
-
-    if (result.status === 'error') {
-      console.error(result.error)
-      return
-    }
-
-    const assetIds = result.data
-
-    const sortedAssets = sortedAssetSummaries.filter((asset) =>
-      assetIds.includes(asset.id),
+    const filterApplied = sortedAssetSummaries.filter((asset) =>
+      filteredIds.includes(asset.id),
     )
 
-    setSortedAssetSummary(reverseOrder ? sortedAssets.reverse() : sortedAssets)
-    setFilteredIds(assetIds)
-    setShowingAssetCount(sortedAssets.length)
-  }, [
-    sortedAssetSummaries,
-    assetType,
-    categoryFilter,
-    generalQueryTextFilter,
-    queryTextFilterForCreator,
-    queryTextFilterForName,
-    queryTextMode,
-    reverseOrder,
-    setFilteredIds,
-    setShowingAssetCount,
-    supportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-    tagFilter,
-    tagFilterMatchType,
-  ])
+    setFilterAppliedSortedAssetSummaries(
+      reverseOrder ? filterApplied.reverse() : filterApplied,
+    )
+    setShowingAssetCount(filterApplied.length)
+  }, [filteredIds, reverseOrder, setShowingAssetCount, sortedAssetSummaries])
 
   useEffect(() => {
     updateSortedAssetSummary()
@@ -179,7 +129,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   }
 
   return {
-    sortedAssetSummary,
+    sortedAssetSummary: filterAppliedSortedAssetSummaries,
     displayStyle: assetViewStyle === 'List' ? 'List' : 'Grid',
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 

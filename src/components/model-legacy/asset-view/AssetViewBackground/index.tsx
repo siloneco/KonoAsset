@@ -1,8 +1,8 @@
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { Button } from '@/components/ui/button'
 import { FolderSearch, Sprout } from 'lucide-react'
-import { FC, useContext } from 'react'
+import { FC } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 type Props = {
   type: 'NoAssets' | 'NoResults'
@@ -11,7 +11,7 @@ type Props = {
 
 export const AssetViewBackground: FC<Props> = ({ type, openDialog }) => {
   const { t } = useLocalization()
-  const { clearFilters } = useContext(PersistentContext)
+  const clearFilters = useAssetFilterStore((state) => state.clearFilters)
 
   if (type === 'NoAssets') {
     return (

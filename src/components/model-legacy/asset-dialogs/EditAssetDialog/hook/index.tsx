@@ -8,6 +8,7 @@ import { fetchAssetInformation, updateAsset } from '../logic'
 import { useToast } from '@/hooks/use-toast'
 import { useLocalization } from '@/hooks/use-localization'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 const setDescriptionToForm = (
   form: AssetFormType,
@@ -52,6 +53,9 @@ export const useEditAssetDialog = ({
 
   const refreshAssetSummaries = useAssetSummaryViewStore(
     (state) => state.refreshAssetSummaries,
+  )
+  const refreshFilteredIds = useAssetFilterStore(
+    (state) => state.refreshFilteredIds,
   )
 
   const { t } = useLocalization()
@@ -197,7 +201,7 @@ export const useEditAssetDialog = ({
 
       if (result.status === 'ok') {
         if (result.data === true) {
-          await refreshAssetSummaries()
+          await Promise.all([refreshAssetSummaries(), refreshFilteredIds()])
 
           setDialogOpen(false)
           toast({

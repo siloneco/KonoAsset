@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CircleHelp, X } from 'lucide-react'
-import { FC, RefObject } from 'react'
+import { FC, RefObject, useCallback } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
 import {
   Tooltip,
@@ -9,23 +9,44 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { useShallow } from 'zustand/react/shallow'
 
 type Props = {
-  onSwitchModeClicked: () => void
-
-  general: string
-  setGeneral: (general: string) => void
-
   ref: RefObject<HTMLInputElement | null>
 }
 
-export const GeneralTextSearch: FC<Props> = ({
-  onSwitchModeClicked,
-  general,
-  setGeneral,
-  ref,
-}) => {
+export const GeneralTextSearch: FC<Props> = ({ ref }) => {
   const { t } = useLocalization()
+
+  const { filters, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      filters: state.filters,
+      updateFilter: state.updateFilter,
+    })),
+  )
+
+  const onSwitchModeClicked = useCallback(() => {
+    updateFilter({
+      text: {
+        mode: 'advanced',
+        generalQuery: '',
+      },
+    })
+  }, [updateFilter])
+
+  const general = filters.text.generalQuery
+
+  const setGeneral = useCallback(
+    (general: string) => {
+      updateFilter({
+        text: {
+          generalQuery: general,
+        },
+      })
+    },
+    [updateFilter],
+  )
 
   return (
     <div className="mb-4">

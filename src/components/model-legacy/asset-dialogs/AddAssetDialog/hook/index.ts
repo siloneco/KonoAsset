@@ -23,6 +23,7 @@ import { createPreAsset, sendAssetImportRequest } from '../logic'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 type Props = {
   dialogOpen: boolean
@@ -72,6 +73,10 @@ export const useAddAssetDialog = ({
   const refreshAssetSummaries = useAssetSummaryViewStore(
     (state) => state.refreshAssetSummaries,
   )
+  const refreshFilteredIds = useAssetFilterStore(
+    (state) => state.refreshFilteredIds,
+  )
+
   const { register } = useContext(DragDropContext)
   const { preference } = useContext(PreferenceContext)
 
@@ -237,6 +242,7 @@ export const useAddAssetDialog = ({
     setTab('empty')
     setDialogOpen(false)
     refreshAssetSummaries()
+    refreshFilteredIds()
   }
 
   const onTaskCancelled = () => {

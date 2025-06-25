@@ -1,15 +1,15 @@
 import { Option } from '@/components/ui/multi-select'
 
-import { useState, useEffect, useContext, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   fetchAllSupportedAvatars,
   fetchAvatarWearableCategories,
 } from './logic'
 import { MultiFilterItemSelector } from '@/components/model-legacy/MainSidebar/components/MultiFilterItemSelector'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetContext } from '@/components/context/AssetContext'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useShallow } from 'zustand/react/shallow'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 export const AvatarWearableFilter = () => {
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
@@ -21,15 +21,13 @@ export const AvatarWearableFilter = () => {
     useState(false)
   const { t } = useLocalization()
 
-  const { filteredIds } = useContext(AssetContext)
-  const {
-    categoryFilter,
-    setCategoryFilter,
-    supportedAvatarFilter,
-    setSupportedAvatarFilter,
-    supportedAvatarFilterMatchType,
-    setSupportedAvatarFilterMatchType,
-  } = useContext(PersistentContext)
+  const { filteredIds, filters, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      filteredIds: state.filteredIds,
+      filters: state.filters,
+      updateFilter: state.updateFilter,
+    })),
+  )
 
   const sortedAssetSummaries = useAssetSummaryViewStore(
     (state) => state.sortedAssetSummaries,
@@ -54,8 +52,12 @@ export const AvatarWearableFilter = () => {
         label={t('general:category')}
         placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
-        value={categoryFilter}
-        onValueChange={setCategoryFilter}
+        value={filters.category}
+        onValueChange={(value) =>
+          updateFilter({
+            category: value,
+          })
+        }
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
           onBlur: () => setIsCategoryFocused(false),
@@ -67,10 +69,16 @@ export const AvatarWearableFilter = () => {
           'mainsidebar:avatar-wearable-filter:supported-avatars:placeholder',
         )}
         candidates={supportedAvatarCandidates}
-        value={supportedAvatarFilter}
-        onValueChange={setSupportedAvatarFilter}
-        matchType={supportedAvatarFilterMatchType}
-        setMatchType={setSupportedAvatarFilterMatchType}
+        value={filters.supportedAvatar.filters}
+        onValueChange={(value) =>
+          updateFilter({
+            supportedAvatar: {
+              filters: value,
+            },
+          })
+        }
+        matchType={filters.supportedAvatar.type}
+        setMatchType={(type) => updateFilter({ supportedAvatar: { type } })}
         inputProps={{
           onFocus: () => setIsSupportedAvatarFocused(true),
           onBlur: () => setIsSupportedAvatarFocused(false),

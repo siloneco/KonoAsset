@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CircleHelp, X } from 'lucide-react'
-import { FC, RefObject } from 'react'
+import { FC, RefObject, useCallback } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
 import {
   Tooltip,
@@ -9,27 +9,56 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { useShallow } from 'zustand/react/shallow'
 
 type Props = {
-  onSwitchModeClicked: () => void
-
-  name: string
-  setName: (name: string) => void
-  creator: string
-  setCreator: (creator: string) => void
-
   ref: RefObject<HTMLInputElement | null>
 }
 
-export const AdvancedTextSearch: FC<Props> = ({
-  onSwitchModeClicked,
-  name,
-  setName,
-  creator,
-  setCreator,
-  ref,
-}) => {
+export const AdvancedTextSearch: FC<Props> = ({ ref }) => {
   const { t } = useLocalization()
+
+  const { filters, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      filters: state.filters,
+      updateFilter: state.updateFilter,
+    })),
+  )
+
+  const onSwitchModeClicked = useCallback(() => {
+    updateFilter({
+      text: {
+        mode: 'general',
+        advancedNameQuery: '',
+        advancedCreatorQuery: '',
+      },
+    })
+  }, [updateFilter])
+
+  const name = filters.text.advancedNameQuery
+  const setName = useCallback(
+    (name: string) => {
+      updateFilter({
+        text: {
+          advancedNameQuery: name,
+        },
+      })
+    },
+    [updateFilter],
+  )
+
+  const creator = filters.text.advancedCreatorQuery
+  const setCreator = useCallback(
+    (creator: string) => {
+      updateFilter({
+        text: {
+          advancedCreatorQuery: creator,
+        },
+      })
+    },
+    [updateFilter],
+  )
 
   return (
     <div className="mb-4 space-y-2">

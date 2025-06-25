@@ -20,30 +20,20 @@ import { AllTypeFilter } from './layout/AllTypeFilter'
 import { useMainSidebar } from './hook'
 import { OtherAssetFilter } from './layout/OtherAssetFilter'
 import { FC } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 export const MainSidebar: FC = () => {
-  const {
-    textSearchMode,
-    setTextSearchMode,
-    generalQueryTextFilter,
-    setGeneralQueryTextFilter,
-    queryTextFilterForName,
-    setQueryTextFilterForName,
-    queryTextFilterForCreator,
-    setQueryTextFilterForCreator,
-
-    filteredAssetType,
-
-    tagCandidates,
-    tagValues,
-    setTagFilter,
-    tagFilterMatchType,
-    setTagFilterMatchType,
-    tagSelectorInputProps,
-  } = useMainSidebar()
+  const { tagCandidates, tagSelectorInputProps } = useMainSidebar()
 
   const navigate = useNavigate()
   const { t } = useLocalization()
+  const { filters, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      filters: state.filters,
+      updateFilter: state.updateFilter,
+    })),
+  )
 
   return (
     <Sidebar
@@ -77,33 +67,30 @@ export const MainSidebar: FC = () => {
           </div>
           <SidebarGroup>
             <SidebarGroupContent className="p-2">
-              <TextSearch
-                mode={textSearchMode}
-                setMode={setTextSearchMode}
-                general={generalQueryTextFilter}
-                setGeneral={setGeneralQueryTextFilter}
-                name={queryTextFilterForName}
-                setName={setQueryTextFilterForName}
-                creator={queryTextFilterForCreator}
-                setCreator={setQueryTextFilterForCreator}
-              />
+              <TextSearch />
               <Label className="text-base">{t('mainsidebar:asset-type')}</Label>
               <TypeSelector />
-              {filteredAssetType === 'All' && <AllTypeFilter />}
-              {filteredAssetType === 'AvatarWearable' && (
+              {filters.assetType === 'All' && <AllTypeFilter />}
+              {filters.assetType === 'AvatarWearable' && (
                 <AvatarWearableFilter />
               )}
-              {filteredAssetType === 'WorldObject' && <WorldObjectFilter />}
-              {filteredAssetType === 'OtherAsset' && <OtherAssetFilter />}
+              {filters.assetType === 'WorldObject' && <WorldObjectFilter />}
+              {filters.assetType === 'OtherAsset' && <OtherAssetFilter />}
               <div className="mt-4">
                 <MultiFilterItemSelector
                   label={t('general:tag')}
                   placeholder={t('mainsidebar:filter:tag:placeholder')}
                   candidates={tagCandidates}
-                  value={tagValues}
-                  onValueChange={setTagFilter}
-                  matchType={tagFilterMatchType}
-                  setMatchType={setTagFilterMatchType}
+                  value={filters.tag.filters}
+                  onValueChange={(value) =>
+                    updateFilter({
+                      tag: {
+                        filters: value,
+                      },
+                    })
+                  }
+                  matchType={filters.tag.type}
+                  setMatchType={(type) => updateFilter({ tag: { type } })}
                   inputProps={tagSelectorInputProps}
                 />
               </div>

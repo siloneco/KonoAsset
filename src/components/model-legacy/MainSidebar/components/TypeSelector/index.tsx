@@ -1,13 +1,18 @@
 import { RadioGroup } from '@/components/ui/radio-group'
-import { useContext } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { TypeSelectorRadioItem } from './components/RadioItem'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { useShallow } from 'zustand/react/shallow'
 
 export const TypeSelector = () => {
-  const { assetType, setAssetType } = useContext(PersistentContext)
+  const { assetType, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      assetType: state.filters.assetType,
+      updateFilter: state.updateFilter,
+    })),
+  )
 
   const { t } = useLocalization()
   const onValueChange = (value: string) => {
@@ -18,9 +23,13 @@ export const TypeSelector = () => {
       value === 'WorldObject' ||
       value === 'OtherAsset'
     ) {
-      setAssetType(value)
+      updateFilter({
+        assetType: value as AssetType,
+      })
     } else {
-      setAssetType('All')
+      updateFilter({
+        assetType: 'All',
+      })
     }
   }
 

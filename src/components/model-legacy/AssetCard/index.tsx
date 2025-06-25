@@ -2,15 +2,15 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { MoreButton } from '../action-buttons/MoreButton'
 import { AssetBadge } from '@/components/model-legacy/AssetBadge'
 import { Label } from '@/components/ui/label'
-import { RefObject, useContext } from 'react'
+import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
 import { AssetCardOpenButton } from '@/components/model-legacy/action-buttons/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 type Props = {
   asset: AssetSummary
@@ -35,17 +35,20 @@ export const AssetCard = ({
   openMemoDialog,
   openDependencyDialog,
 }: Props) => {
-  const { setAssetType, setQueryTextMode, setQueryTextFilterForCreator } =
-    useContext(PersistentContext)
+  const updateFilter = useAssetFilterStore((state) => state.updateFilter)
 
   const assetViewStyle = useAssetSummaryViewStore(
     (state) => state.assetViewStyle,
   )
 
-  const onShopNameClicked = () => {
-    setQueryTextMode('advanced')
-    setQueryTextFilterForCreator(asset.creator)
-  }
+  const onShopNameClicked = useCallback(() => {
+    updateFilter({
+      text: {
+        mode: 'advanced',
+        advancedCreatorQuery: asset.creator,
+      },
+    })
+  }, [updateFilter, asset.creator])
 
   return (
     <Card className="w-full bg-card m-1 py-0" ref={ref}>
@@ -60,7 +63,7 @@ export const AssetCard = ({
               <AssetBadge
                 type={asset.assetType}
                 className="select-none cursor-pointer w-full"
-                onClick={() => setAssetType(asset.assetType)}
+                onClick={() => updateFilter({ assetType: asset.assetType })}
               />
             </div>
             {asset.hasMemo && (

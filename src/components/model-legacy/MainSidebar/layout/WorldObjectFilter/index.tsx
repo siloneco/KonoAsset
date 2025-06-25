@@ -1,20 +1,25 @@
 import { Option } from '@/components/ui/multi-select'
 
-import { useState, useEffect, useContext, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fetchAllCategories } from './logic'
 import { MultiFilterItemSelector } from '@/components/model-legacy/MainSidebar/components/MultiFilterItemSelector'
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetContext } from '@/components/context/AssetContext'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useShallow } from 'zustand/react/shallow'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 export const WorldObjectFilter = () => {
   const { t } = useLocalization()
   const [categoryCandidates, setCategoryCandidates] = useState<Option[]>([])
   const [isCategoryFocused, setIsCategoryFocused] = useState(false)
 
-  const { filteredIds } = useContext(AssetContext)
-  const { categoryFilter, setCategoryFilter } = useContext(PersistentContext)
+  const { filteredIds, filters, updateFilter } = useAssetFilterStore(
+    useShallow((state) => ({
+      filteredIds: state.filteredIds,
+      filters: state.filters,
+      updateFilter: state.updateFilter,
+    })),
+  )
 
   const sortedAssetSummaries = useAssetSummaryViewStore(
     (state) => state.sortedAssetSummaries,
@@ -36,8 +41,12 @@ export const WorldObjectFilter = () => {
         label={t('general:category')}
         placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
-        value={categoryFilter}
-        onValueChange={setCategoryFilter}
+        value={filters.category}
+        onValueChange={(value) =>
+          updateFilter({
+            category: value,
+          })
+        }
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
           onBlur: () => setIsCategoryFocused(false),

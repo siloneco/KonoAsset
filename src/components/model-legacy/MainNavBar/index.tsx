@@ -1,19 +1,17 @@
-import { PersistentContext } from '@/components/context/PersistentContext'
 import { Card } from '@/components/ui/card'
-
-import { useContext, useMemo } from 'react'
-
+import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
 import { LayoutPopover } from './components/LayoutPopover'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 
 type Props = {
   displayAssetCount?: number
 }
 
 export const NavBar = ({ displayAssetCount }: Props) => {
-  const { clearFilters } = useContext(PersistentContext)
+  const clearFilters = useAssetFilterStore((state) => state.clearFilters)
   const sortedAssetSummaries = useAssetSummaryViewStore(
     (state) => state.sortedAssetSummaries,
   )

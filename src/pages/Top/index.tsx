@@ -6,7 +6,6 @@ import { AddAssetDialog } from '@/components/model-legacy/asset-dialogs/AddAsset
 import { EditAssetDialog } from '@/components/model-legacy/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { DataManagementDialog } from '@/components/model-legacy/action-buttons/MoreButton/components/DataManagementDialog'
-import { AssetContextProvider } from '@/components/context/AssetContext'
 import { useCallback } from 'react'
 import { NavBar } from '@/components/model-legacy/MainNavBar'
 import { AssetView } from '@/components/model-legacy/asset-view/AssetView'
@@ -42,39 +41,37 @@ export const TopPage = () => {
 
   return (
     <div className="flex selection:bg-primary selection:text-primary-foreground [view-transition-name:main-content]">
-      <AssetContextProvider>
-        <SidebarProvider>
-          <MainSidebar />
-          <main className="w-full h-screen flex flex-col">
-            <NavBar displayAssetCount={showingAssetCount} />
-            <AssetView
-              openAddAssetDialog={() => setAddAssetDialogOpen(true)}
-              openEditAssetDialog={openEditAssetDialog}
-              openDataManagementDialog={openDataManagementDialog}
-              setShowingAssetCount={setShowingAssetCount}
-            />
-            <AddAssetDialog
-              dialogOpen={addAssetDialogOpen}
-              setDialogOpen={setAddAssetDialogOpen}
-              openEditDialog={openEditAssetDialog}
-              openDataManagementDialog={(id) => {
-                setAddAssetDialogOpen(false)
-                openDataManagementDialog(id)
-              }}
-            />
-            <EditAssetDialog
-              id={editAssetDialogAssetId}
-              dialogOpen={editAssetDialogOpen}
-              setDialogOpen={setEditAssetDialogOpen}
-            />
-            <DataManagementDialog
-              assetId={dataManagementDialogAssetId}
-              open={dataManagementDialogOpen}
-              onOpenChange={setDataManagementDialogOpen}
-            />
-          </main>
-        </SidebarProvider>
-      </AssetContextProvider>
+      <SidebarProvider>
+        <MainSidebar />
+        <main className="w-full h-screen flex flex-col">
+          <NavBar displayAssetCount={showingAssetCount} />
+          <AssetView
+            openAddAssetDialog={() => setAddAssetDialogOpen(true)}
+            openEditAssetDialog={openEditAssetDialog}
+            openDataManagementDialog={openDataManagementDialog}
+            setShowingAssetCount={setShowingAssetCount}
+          />
+          <AddAssetDialog
+            dialogOpen={addAssetDialogOpen}
+            setDialogOpen={setAddAssetDialogOpen}
+            openEditDialog={openEditAssetDialog}
+            openDataManagementDialog={(id) => {
+              setAddAssetDialogOpen(false)
+              openDataManagementDialog(id)
+            }}
+          />
+          <EditAssetDialog
+            id={editAssetDialogAssetId}
+            dialogOpen={editAssetDialogOpen}
+            setDialogOpen={setEditAssetDialogOpen}
+          />
+          <DataManagementDialog
+            assetId={dataManagementDialogAssetId}
+            open={dataManagementDialogOpen}
+            onOpenChange={setDataManagementDialogOpen}
+          />
+        </main>
+      </SidebarProvider>
       <div
         className={cn(
           'fixed h-full w-full opacity-0 z-60 pointer-events-none transition-opacity',
