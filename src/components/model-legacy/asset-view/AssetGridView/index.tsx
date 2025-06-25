@@ -2,10 +2,14 @@ import { AssetCard } from '../../AssetCard'
 
 import { cn } from '@/lib/utils'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
+
+const SMALL_CARD_WIDTH = 135
+const MEDIUM_CARD_WIDTH = 180
+const LARGE_CARD_WIDTH = 240
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
-  columnCount: number
   openSelectUnitypackageDialog: (
     assetId: string,
     data: {
@@ -20,18 +24,32 @@ type Props = {
 
 export const AssetGridView = ({
   sortedAssetSummary,
-  columnCount,
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
   openMemoDialog,
   openDependencyDialog,
 }: Props) => {
+  const assetViewStyle = useAssetSummaryViewStore(
+    (state) => state.assetViewStyle,
+  )
+
+  let columnWidth: number
+  if (assetViewStyle === 'Small') {
+    columnWidth = SMALL_CARD_WIDTH
+  } else if (assetViewStyle === 'Medium') {
+    columnWidth = MEDIUM_CARD_WIDTH
+  } else if (assetViewStyle === 'Large') {
+    columnWidth = LARGE_CARD_WIDTH
+  } else {
+    columnWidth = MEDIUM_CARD_WIDTH
+  }
+
   return (
     <div
       className={cn(`grid gap-4 mx-6 pb-24`)}
       style={{
-        gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(auto-fill, minmax(${columnWidth}px, 1fr))`,
       }}
     >
       {sortedAssetSummary.map((asset) => (

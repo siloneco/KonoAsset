@@ -1,20 +1,8 @@
 import { AssetContext } from '@/components/context/AssetContext'
 import { PersistentContext } from '@/components/context/PersistentContext'
 import { AssetSummary, commands, FileInfo, FilterRequest } from '@/lib/bindings'
-import {
-  RefObject,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import {
-  calculateColumnCount,
-  createFilterRequest,
-  isFilterEnforced,
-} from './logic'
-import { useGetElementProperty } from '@/hooks/use-get-element-property'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { createFilterRequest, isFilterEnforced } from './logic'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -24,8 +12,6 @@ type Props = {
 
 type ReturnProps = {
   sortedAssetSummary: AssetSummary[]
-  layoutDivRef: RefObject<HTMLDivElement | null>
-  gridColumnCount: number
   displayStyle: 'Grid' | 'List'
   background: 'NoAssets' | 'NoResults'
 
@@ -172,26 +158,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     updateSortedAssetSummary()
   }, [updateSortedAssetSummary])
 
-  const layoutDivRef = useRef<HTMLDivElement>(null)
-  const [gridColumnCount, setGridColumnCount] = useState(1)
-
-  const { getElementProperty } = useGetElementProperty(layoutDivRef)
-
-  const updateColumns = useCallback(() => {
-    setGridColumnCount(
-      assetViewStyle !== 'List'
-        ? calculateColumnCount(getElementProperty('width'), assetViewStyle)
-        : 1,
-    )
-  }, [assetViewStyle, getElementProperty])
-
-  useEffect(() => {
-    updateColumns()
-
-    window.addEventListener('resize', updateColumns)
-    return () => window.removeEventListener('resize', updateColumns)
-  }, [assetViewStyle, updateColumns])
-
   const openSelectUnitypackageDialog = (
     assetId: string,
     data: { [x: string]: FileInfo[] },
@@ -214,8 +180,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
 
   return {
     sortedAssetSummary,
-    layoutDivRef,
-    gridColumnCount,
     displayStyle: assetViewStyle === 'List' ? 'List' : 'Grid',
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 

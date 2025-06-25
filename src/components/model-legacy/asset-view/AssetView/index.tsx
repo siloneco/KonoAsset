@@ -23,8 +23,6 @@ export const AssetView: FC<Props> = ({
 }) => {
   const {
     sortedAssetSummary,
-    layoutDivRef,
-    gridColumnCount,
     displayStyle,
     background,
 
@@ -49,7 +47,7 @@ export const AssetView: FC<Props> = ({
   })
 
   return (
-    <ScrollArea ref={layoutDivRef} className="h-[calc(100vh-72px)]">
+    <ScrollArea className="h-[calc(100vh-72px)]">
       {sortedAssetSummary.length === 0 && (
         <AssetViewBackground
           type={background}
@@ -60,7 +58,6 @@ export const AssetView: FC<Props> = ({
         {displayStyle === 'Grid' && (
           <AssetGridView
             sortedAssetSummary={sortedAssetSummary}
-            columnCount={gridColumnCount}
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
