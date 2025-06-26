@@ -1,5 +1,5 @@
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useShallow } from 'zustand/react/shallow'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
@@ -55,11 +55,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const [dependencyDialogDependencies, setDependencyDialogDependencies] =
     useState<string[]>([])
 
-  const [
-    filterAppliedSortedAssetSummaries,
-    setFilterAppliedSortedAssetSummaries,
-  ] = useState<AssetSummary[]>([])
-
   const {
     sortedAssetSummaries,
     reverseOrder,
@@ -76,37 +71,31 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     }),
   )
 
-  const filteredIds = useAssetFilterStore((state) => state.filteredIds)
-
   useEffect(() => {
     refreshAssetSummaries()
   }, [refreshAssetSummaries])
 
-  const updateSortedAssetSummary = useCallback(async () => {
-    if (filteredIds === null) {
-      setFilterAppliedSortedAssetSummaries(
-        reverseOrder
-          ? [...sortedAssetSummaries].reverse()
-          : sortedAssetSummaries,
-      )
+  const filteredIds = useAssetFilterStore((state) => state.filteredIds)
 
-      setShowingAssetCount(sortedAssetSummaries.length)
-      return
+  const filterAppliedSortedAssetSummaries = useMemo(() => {
+    if (filteredIds === null) {
+      return reverseOrder
+        ? [...sortedAssetSummaries].reverse()
+        : sortedAssetSummaries
     }
 
     const filterApplied = sortedAssetSummaries.filter((asset) =>
       filteredIds.includes(asset.id),
     )
 
-    setFilterAppliedSortedAssetSummaries(
-      reverseOrder ? filterApplied.reverse() : filterApplied,
-    )
-    setShowingAssetCount(filterApplied.length)
-  }, [filteredIds, reverseOrder, setShowingAssetCount, sortedAssetSummaries])
+    return reverseOrder ? filterApplied.reverse() : filterApplied
+  }, [filteredIds, reverseOrder, sortedAssetSummaries])
 
-  useEffect(() => {
-    updateSortedAssetSummary()
-  }, [updateSortedAssetSummary])
+  const [prevShowingAssetCount, setPrevShowingAssetCount] = useState(-1)
+  if (prevShowingAssetCount !== filterAppliedSortedAssetSummaries.length) {
+    setShowingAssetCount(filterAppliedSortedAssetSummaries.length)
+    setPrevShowingAssetCount(filterAppliedSortedAssetSummaries.length)
+  }
 
   const openSelectUnitypackageDialog = (
     assetId: string,
