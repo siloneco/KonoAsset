@@ -1,5 +1,20 @@
 [
   {
+    "version": "1.2.3-rc.0",
+    "preRelease": true,
+    "others": [
+      {
+        "text": "Improved asset rendering performance",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アセット一覧の表示パフォーマンスを改善"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.2",
     "fixes": [
       {
