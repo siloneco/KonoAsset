@@ -1,5 +1,34 @@
 [
   {
+    "version": "1.2.3-rc.0",
+    "preRelease": true,
+    "others": [
+      {
+        "text": "Improved asset rendering performance",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アセット一覧の表示パフォーマンスを改善"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.2.2",
+    "fixes": [
+      {
+        "text": "Fixed tag input field not displaying correctly when adding assets or updating information",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アセット追加時や情報変更時にタグ入力欄が正常に表示されないことがある問題を修正"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.1",
     "others": [
       {

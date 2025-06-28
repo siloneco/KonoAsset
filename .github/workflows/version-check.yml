@@ -3,8 +3,8 @@ on:
   push:
     paths:
       - "package.json"
-      - "src-tauri/Cargo.toml"
-      - "src-tauri/tauri.conf.json"
+      - "src-backend/tauri/Cargo.toml"
+      - "src-backend/tauri/tauri.conf.json"
       - ".github/workflows/version-check.yml"
     branches:
       - "main"
@@ -17,8 +17,8 @@ on:
       - synchronize
     paths:
       - "package.json"
-      - "src-tauri/Cargo.toml"
-      - "src-tauri/tauri.conf.json"
+      - "src-backend/tauri/Cargo.toml"
+      - "src-backend/tauri/tauri.conf.json"
       - ".github/workflows/version-check.yml"
 
 permissions:
@@ -37,11 +37,11 @@ jobs:
       - id: cargo-toml
         uses: mikefarah/yq@b534aa9ee5d38001fba3cd8fe254a037e4847b37 # v4.45.4
         with:
-          cmd: yq -oy '.package.version' src-tauri/Cargo.toml
+          cmd: yq -oy '.package.version' src-backend/tauri/Cargo.toml
       - id: tauri-conf-json
         uses: mikefarah/yq@b534aa9ee5d38001fba3cd8fe254a037e4847b37 # v4.45.4
         with:
-          cmd: yq -oy '.version' src-tauri/tauri.conf.json
+          cmd: yq -oy '.version' src-backend/tauri/tauri.conf.json
       - name: Check Version Consistency
         run: |
           echo "Package.json version: ${{ steps.package-json.outputs.result }}"

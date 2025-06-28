@@ -1,5 +1,5 @@
 import { createContext, ReactNode } from 'react'
-import { UpdateDialog } from '@/components/model/UpdateDialog'
+import { UpdateDialog } from '@/components/model-legacy/UpdateDialog'
 import { useUpdateDialogContext } from './hook'
 
 export type UpdateDialogContextType = {

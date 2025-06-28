@@ -1,0 +1,24 @@
+[package]
+name = "booth"
+version = "0.0.0"
+repository.workspace = true
+description = "BOOTH API and pximg client"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+# Local crates
+model.workspace = true
+
+# External crates
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+tokio.workspace = true
+log.workspace = true
+specta.workspace = true

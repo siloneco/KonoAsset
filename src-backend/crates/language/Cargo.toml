@@ -1,0 +1,18 @@
+[package]
+name = "language"
+version = "0.0.0"
+repository.workspace = true
+description = "Language definitions and loaders"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+model.workspace = true
+
+serde.workspace = true
+serde_json.workspace = true
+specta.workspace = true
+log.workspace = true

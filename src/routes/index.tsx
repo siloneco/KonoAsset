@@ -1,5 +1,5 @@
-import { LoadErrorPage } from '@/components/page/LoadError'
-import { TopPage } from '@/components/page/Top'
+import { LoadErrorPage } from '@/pages/LoadError'
+import { TopPage } from '@/pages/Top'
 import { commands } from '@/lib/bindings'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
