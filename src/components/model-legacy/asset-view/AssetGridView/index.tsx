@@ -1,12 +1,7 @@
 import { AssetCard } from '../../AssetCard'
-
-import { cn } from '@/lib/utils'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
-
-const SMALL_CARD_WIDTH = 135
-const MEDIUM_CARD_WIDTH = 180
-const LARGE_CARD_WIDTH = 240
+import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
+import { useAssetGridView } from './hook'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
@@ -30,29 +25,18 @@ export const AssetGridView = ({
   openMemoDialog,
   openDependencyDialog,
 }: Props) => {
-  const assetViewStyle = useAssetSummaryViewStore(
-    (state) => state.assetViewStyle,
-  )
+  const { assetRows, gridColumnCount, divRef } = useAssetGridView({
+    sortedAssetSummary,
+  })
 
-  let columnWidth: number
-  if (assetViewStyle === 'Small') {
-    columnWidth = SMALL_CARD_WIDTH
-  } else if (assetViewStyle === 'Medium') {
-    columnWidth = MEDIUM_CARD_WIDTH
-  } else if (assetViewStyle === 'Large') {
-    columnWidth = LARGE_CARD_WIDTH
-  } else {
-    columnWidth = MEDIUM_CARD_WIDTH
-  }
-
-  return (
+  const renderAssetRow = (assetRow: AssetSummary[]) => (
     <div
-      className={cn(`grid gap-4 mx-6 pb-24`)}
+      className="grid gap-4 w-full"
       style={{
-        gridTemplateColumns: `repeat(auto-fill, minmax(${columnWidth}px, 1fr))`,
+        gridTemplateColumns: `repeat(${gridColumnCount}, minmax(0, 1fr))`,
       }}
     >
-      {sortedAssetSummary.map((asset) => (
+      {assetRow.map((asset) => (
         <AssetCard
           key={asset.id}
           asset={asset}
@@ -63,6 +47,18 @@ export const AssetGridView = ({
           openDependencyDialog={openDependencyDialog}
         />
       ))}
+    </div>
+  )
+
+  return (
+    <div className="h-full" ref={divRef}>
+      <RowVirtualScroll
+        items={assetRows}
+        renderItem={renderAssetRow}
+        estimateSize={350}
+        className="h-full"
+        innerDivClassName="pb-24"
+      />
     </div>
   )
 }

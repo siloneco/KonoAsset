@@ -52,6 +52,7 @@ export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
         <img
           src={convertFileSrc(fixedPath)}
           alt={ALT}
+          loading="lazy"
           className="w-full bg-white"
           onError={onError}
         />
@@ -65,7 +66,12 @@ export const DisplayPanel: FC<Props> = ({ filename, assetType, onError }) => {
 
   return (
     <div className="bg-white">
-      <img src={defaultImagePath} alt={ALT} className="opacity-60 w-full" />
+      <img
+        src={defaultImagePath}
+        alt={ALT}
+        className="opacity-60 w-full"
+        loading="lazy"
+      />
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { SelectUnitypackageDialog } from '../../SelectUnitypackageDialog'
 import { MemoDialog } from '../../MemoDialog'
 import { DependencyDialog } from '../../DependencyDialog'
@@ -47,14 +46,14 @@ export const AssetView: FC<Props> = ({
   })
 
   return (
-    <ScrollArea className="h-[calc(100vh-72px)]">
+    <div className="h-[calc(100vh-72px)] flex flex-col">
       {sortedAssetSummary.length === 0 && (
         <AssetViewBackground
           type={background}
           openDialog={openAddAssetDialog}
         />
       )}
-      <div>
+      <div className="flex-1 min-h-0">
         {displayStyle === 'Grid' && (
           <AssetGridView
             sortedAssetSummary={sortedAssetSummary}
@@ -95,6 +94,6 @@ export const AssetView: FC<Props> = ({
         openDependencyDialog={openDependencyDialog}
         openSelectUnitypackageDialog={openSelectUnitypackageDialog}
       />
-    </ScrollArea>
+    </div>
   )
 }
