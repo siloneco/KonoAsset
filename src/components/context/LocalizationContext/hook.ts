@@ -16,6 +16,15 @@ const LANGUAGE_DATA_MAP = {
   'zh-CN': zhCn['data'],
 }
 
+export const getLocalizationData = (
+  code: Exclude<LanguageCode, { 'user-provided': string }>,
+): LocalizationData => {
+  return {
+    language: code,
+    data: LANGUAGE_DATA_MAP[code],
+  }
+}
+
 export const useLocalizationContext = (): LocalizationContextType => {
   const [localizationData, setLocalizationData] = useState<LocalizationData>({
     language: 'en-US',

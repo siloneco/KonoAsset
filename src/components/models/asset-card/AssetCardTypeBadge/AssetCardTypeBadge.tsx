@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge'
 import { AssetType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
 import { cn } from '@/lib/utils'
+import { FC } from 'react'
 
 type Props = {
   className?: string
@@ -9,13 +10,22 @@ type Props = {
   onClick?: () => void
 }
 
-export const AssetBadge = ({ type, className, onClick }: Props) => {
+const generateClassName = (className?: string, onClick?: () => void) => {
+  return cn(
+    'block truncate select-none shrink',
+    onClick && 'cursor-pointer',
+    className,
+  )
+}
+
+export const AssetCardTypeBadge: FC<Props> = ({ className, type, onClick }) => {
   const { t } = useLocalization()
+
   if (type === 'Avatar') {
     return (
       <Badge
         variant="avatar"
-        className={cn('block truncate', className)}
+        className={generateClassName(className, onClick)}
         onClick={onClick}
       >
         {t('general:typeavatar')}
@@ -26,7 +36,7 @@ export const AssetBadge = ({ type, className, onClick }: Props) => {
     return (
       <Badge
         variant="avatarWearable"
-        className={cn('block truncate', className)}
+        className={generateClassName(className, onClick)}
         onClick={onClick}
       >
         {t('general:typeavatarwearable')}
@@ -37,7 +47,7 @@ export const AssetBadge = ({ type, className, onClick }: Props) => {
     return (
       <Badge
         variant="worldObject"
-        className={cn('block truncate', className)}
+        className={generateClassName(className, onClick)}
         onClick={onClick}
       >
         {t('general:typeworldobject')}
@@ -48,7 +58,7 @@ export const AssetBadge = ({ type, className, onClick }: Props) => {
     return (
       <Badge
         variant="otherAsset"
-        className={cn('block truncate', className)}
+        className={generateClassName(className, onClick)}
         onClick={onClick}
       >
         {t('general:typeotherasset')}
@@ -59,7 +69,7 @@ export const AssetBadge = ({ type, className, onClick }: Props) => {
   return (
     <Badge
       variant="outline"
-      className={cn('block truncate', className)}
+      className={generateClassName(className, onClick)}
       onClick={onClick}
     >
       Unknown

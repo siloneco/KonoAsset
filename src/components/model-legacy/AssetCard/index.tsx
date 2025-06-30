@@ -1,6 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { MoreButton } from '../action-buttons/MoreButton'
-import { AssetBadge } from '@/components/model-legacy/AssetBadge'
 import { Label } from '@/components/ui/label'
 import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
@@ -11,6 +10,7 @@ import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
 
 type Props = {
   asset: AssetSummary
@@ -58,14 +58,11 @@ export const AssetCard = ({
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
           />
-          <div className="mt-2 h-8 w-full flex flex-row justify-between items-center text-center">
-            <div className="flex shrink overflow-hidden">
-              <AssetBadge
-                type={asset.assetType}
-                className="select-none cursor-pointer w-full"
-                onClick={() => updateFilter({ assetType: asset.assetType })}
-              />
-            </div>
+          <div className="mt-2 h-8 w-full flex flex-row justify-between items-center gap-2">
+            <AssetCardTypeBadge
+              type={asset.assetType}
+              onClick={() => updateFilter({ assetType: asset.assetType })}
+            />
             {asset.hasMemo && (
               <Button
                 variant="outline"
