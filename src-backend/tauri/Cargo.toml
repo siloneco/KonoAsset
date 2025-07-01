@@ -1,0 +1,53 @@
+[package]
+name = "konoasset"
+version = "1.2.3"
+description = "Asset management tool for VRChat"
+
+authors.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "konoasset_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build.workspace = true
+
+[dependencies]
+# Local crates
+booth.workspace = true
+changelog.workspace = true
+file.workspace = true
+language.workspace = true
+loader.workspace = true
+logging.workspace = true
+model.workspace = true
+storage.workspace = true
+task.workspace = true
+zip.workspace = true
+
+tauri.workspace = true
+tauri-plugin-shell.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+tauri-plugin-dialog.workspace = true
+reqwest.workspace = true
+async_zip.workspace = true
+sanitize-filename.workspace = true
+specta.workspace = true
+specta-typescript.workspace = true
+tauri-specta.workspace = true
+tauri-plugin-deep-link.workspace = true
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance.workspace = true
+tauri-plugin-updater.workspace = true

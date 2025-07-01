@@ -1,0 +1,18 @@
+[package]
+name = "loader"
+version = "0.0.0"
+description = "Data loading library"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+model.workspace = true
+
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+uuid.workspace = true
+monostate = "0.1.13"

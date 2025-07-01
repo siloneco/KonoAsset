@@ -1,0 +1,18 @@
+[package]
+name = "zip"
+version = "0.0.0"
+description = "ZIP library"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+tokio.workspace = true
+tokio-util = { version = "0.7.13", features = ["compat"] }
+log.workspace = true
+async_zip.workspace = true
+async-read-progress = "0.2.0"
+sanitize-filename.workspace = true
+encoding_rs = "0.8.35"

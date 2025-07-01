@@ -1,4 +1,4 @@
-import { PreferencePage } from '@/components/page/Preference'
+import { PreferencePage } from '@/pages/Preference'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/preference')({

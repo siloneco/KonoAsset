@@ -20,7 +20,7 @@
     },
     {
       "groupName": "[Backend] Update dependencies",
-      "matchFileNames": ["src-tauri/Cargo.toml"]
+      "matchFileNames": ["src-backend/**/Cargo.toml"]
     },
     {
       "groupName": "[CI/CD] Update dependencies",
