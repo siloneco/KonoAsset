@@ -1,7 +1,6 @@
 [
   {
-    "version": "1.2.3-rc.0",
-    "preRelease": true,
+    "version": "1.2.3",
     "others": [
       {
         "text": "Improved asset rendering performance",
