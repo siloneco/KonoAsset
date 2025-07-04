@@ -510,7 +510,7 @@ updateProgress: "update-progress"
 /** user-defined types **/
 
 export type AddAssetDeepLink = { path: string[]; boothItemId: number | null }
-export type AppState = { sort: SortState; displayStyle: DisplayStyle }
+export type AppState = { sort?: SortState; displayStyle: DisplayStyle }
 export type AssetDescription = { name: string; creator: string; imageFilename: string | null; tags: string[]; memo: string | null; boothItemId: number | null; dependencies: string[]; createdAt: number; publishedAt: number | null }
 export type AssetImportRequest<T> = { preAsset: T; absolutePaths: string[]; deleteSource: boolean }
 export type AssetRegistrationStatistics = { date: string; avatars: number; avatarWearables: number; worldObjects: number; otherAssets: number }

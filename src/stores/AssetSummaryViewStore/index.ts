@@ -96,8 +96,8 @@ commands.getAppState().then((result) => {
   const { sort, displayStyle } = result.data
 
   useAssetSummaryViewStore.setState({
-    sortBy: sort.sortBy,
-    reverseOrder: sort.reversed,
+    sortBy: sort?.sortBy ?? 'CreatedAt',
+    reverseOrder: sort?.reversed ?? true,
     displayStyle,
   })
 })
