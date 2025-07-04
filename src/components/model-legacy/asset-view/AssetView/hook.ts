@@ -58,14 +58,14 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const {
     sortedAssetSummaries,
     reverseOrder,
-    assetViewStyle,
+    displayStyle,
     refreshAssetSummaries,
   } = useAssetSummaryViewStore(
     useShallow((state) => {
       return {
         sortedAssetSummaries: state.sortedAssetSummaries,
         reverseOrder: state.reverseOrder,
-        assetViewStyle: state.assetViewStyle,
+        displayStyle: state.displayStyle,
         refreshAssetSummaries: state.refreshAssetSummaries,
       }
     }),
@@ -119,7 +119,7 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
 
   return {
     sortedAssetSummary: filterAppliedSortedAssetSummaries,
-    displayStyle: assetViewStyle === 'List' ? 'List' : 'Grid',
+    displayStyle: displayStyle === 'List' ? 'List' : 'Grid',
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,

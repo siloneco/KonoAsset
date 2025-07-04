@@ -10,22 +10,20 @@ import { convertToSelectID, handleSortByChange } from './logic'
 import { OrderSelector } from '../OrderSelector'
 import { Separator } from '@/components/ui/separator'
 import { SizeSelector } from '../SizeSelector'
-import {
-  AssetViewStyle,
-  useAssetSummaryViewStore,
-} from '@/stores/AssetSummaryViewStore'
+import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 import { useShallow } from 'zustand/react/shallow'
+import { DisplayStyle } from '@/lib/bindings'
 
 export const LayoutPopover: FC = () => {
-  const { sortBy, reverseOrder, setSort, assetViewStyle, setAssetViewStyle } =
+  const { sortBy, reverseOrder, setSort, displayStyle, setDisplayStyle } =
     useAssetSummaryViewStore(
       useShallow((state) => ({
         sortBy: state.sortBy,
         reverseOrder: state.reverseOrder,
         setSort: state.setSort,
-        assetViewStyle: state.assetViewStyle,
-        setAssetViewStyle: state.setAssetViewStyle,
+        displayStyle: state.displayStyle,
+        setDisplayStyle: state.setDisplayStyle,
       })),
     )
 
@@ -43,9 +41,9 @@ export const LayoutPopover: FC = () => {
 
   const setViewStyle = useCallback(
     (value: string) => {
-      setAssetViewStyle(value as AssetViewStyle)
+      setDisplayStyle(value as DisplayStyle)
     },
-    [setAssetViewStyle],
+    [setDisplayStyle],
   )
 
   return (
@@ -64,7 +62,7 @@ export const LayoutPopover: FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit mr-2 p-2 flex flex-row">
-        <SizeSelector current={assetViewStyle} setValue={setViewStyle} />
+        <SizeSelector current={displayStyle} setValue={setViewStyle} />
         <Separator orientation="vertical" className="h-52 mx-2 my-auto" />
         <OrderSelector current={currentOrder} setValue={setOrder} />
       </PopoverContent>
