@@ -46,6 +46,7 @@ vi.mock('@/lib/bindings', () => {
       getAppState: vi.fn().mockResolvedValue({
         status: 'ok',
         data: {
+          displayStyle: 'GridMedium',
           sort: {
             sortBy: 'CreatedAt',
             reversed: true,
