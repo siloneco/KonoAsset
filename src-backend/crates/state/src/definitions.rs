@@ -5,6 +5,7 @@ use serde_json::Value;
 #[derive(Debug, Default, Serialize, Deserialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct AppState {
+    #[serde(default)]
     pub sort: SortState,
     #[serde(deserialize_with = "ok_or_default")]
     pub display_style: DisplayStyle,
