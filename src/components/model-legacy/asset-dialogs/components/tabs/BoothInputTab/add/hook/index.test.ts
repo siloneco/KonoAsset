@@ -40,6 +40,22 @@ vi.mock('@/hooks/use-toast', () => {
   }
 })
 
+vi.mock('@/lib/bindings', () => {
+  return {
+    commands: {
+      getAppState: vi.fn().mockResolvedValue({
+        status: 'ok',
+        data: {
+          sort: {
+            sortBy: 'CreatedAt',
+            reversed: true,
+          },
+        },
+      }),
+    },
+  }
+})
+
 describe('BoothInputTab Hook', () => {
   it('correctly maintains the URL input value', () => {
     const mockForm = {
