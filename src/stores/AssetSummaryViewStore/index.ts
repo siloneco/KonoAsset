@@ -16,12 +16,8 @@ type Props = {
 
   refreshAssetSummaries: () => Promise<void>
   deleteAssetSummaryFromFrontend: (id: string) => void
-  setSort: (
-    sortBy: SortBy,
-    reverseOrder: boolean,
-    skipSave?: boolean,
-  ) => Promise<void>
-  setDisplayStyle: (displayStyle: DisplayStyle, skipSave?: boolean) => void
+  setSort: (sortBy: SortBy, reverseOrder: boolean) => Promise<void>
+  setDisplayStyle: (displayStyle: DisplayStyle) => void
 }
 
 export const useAssetSummaryViewStore = create<Props>((set, get) => ({
@@ -48,7 +44,7 @@ export const useAssetSummaryViewStore = create<Props>((set, get) => ({
       return newValue
     })
   },
-  setSort: async (sortBy, reverseOrder, skipSave = false) => {
+  setSort: async (sortBy, reverseOrder) => {
     const prev = get()
     const prevSortBy = prev.sortBy
     const prevDisplayStyle = prev.displayStyle
@@ -66,10 +62,6 @@ export const useAssetSummaryViewStore = create<Props>((set, get) => ({
       })
     }
 
-    if (skipSave) {
-      return
-    }
-
     const appState: AppState = {
       sort: { sortBy, reversed: reverseOrder },
       displayStyle: prevDisplayStyle,
@@ -79,14 +71,10 @@ export const useAssetSummaryViewStore = create<Props>((set, get) => ({
       console.error(error)
     })
   },
-  setDisplayStyle: (displayStyle, skipSave = false) => {
+  setDisplayStyle: (displayStyle) => {
     const prev = get()
 
     set({ displayStyle })
-
-    if (skipSave) {
-      return
-    }
 
     const appState: AppState = {
       sort: { sortBy: prev.sortBy, reversed: prev.reverseOrder },
