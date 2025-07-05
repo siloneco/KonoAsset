@@ -4,6 +4,7 @@ import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
 import { useAssetGridView } from './hook'
 
 type Props = {
+  layoutDivRef: React.RefObject<HTMLDivElement | null>
   sortedAssetSummary: AssetSummary[]
   openSelectUnitypackageDialog: (
     assetId: string,
@@ -18,6 +19,7 @@ type Props = {
 }
 
 export const AssetGridView = ({
+  layoutDivRef,
   sortedAssetSummary,
   openSelectUnitypackageDialog,
   openDataManagementDialog,
@@ -25,8 +27,9 @@ export const AssetGridView = ({
   openMemoDialog,
   openDependencyDialog,
 }: Props) => {
-  const { assetRows, gridColumnCount, divRef } = useAssetGridView({
+  const { assetRows, gridColumnCount } = useAssetGridView({
     sortedAssetSummary,
+    layoutDivRef,
   })
 
   const renderAssetRow = (assetRow: AssetSummary[]) => (
@@ -51,14 +54,12 @@ export const AssetGridView = ({
   )
 
   return (
-    <div className="h-full" ref={divRef}>
-      <RowVirtualScroll
-        items={assetRows}
-        renderItem={renderAssetRow}
-        estimateSize={350}
-        className="h-full"
-        innerDivClassName="pb-24"
-      />
-    </div>
+    <RowVirtualScroll
+      items={assetRows}
+      renderItem={renderAssetRow}
+      estimateSize={350}
+      className="h-full"
+      innerDivClassName="pb-24"
+    />
   )
 }
