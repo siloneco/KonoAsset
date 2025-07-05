@@ -1,30 +1,41 @@
 import { useGetElementProperty } from '@/hooks/use-get-element-property'
 import { AssetSummary } from '@/lib/bindings'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { calculateColumnCount } from '../logic'
 import { useThrottle } from '@/hooks/use-throttle'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
+  layoutDivRef: React.RefObject<HTMLDivElement | null>
 }
 
 type ReturnProps = {
   assetRows: AssetSummary[][]
   gridColumnCount: number
-  divRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const useAssetGridView = ({
   sortedAssetSummary,
+  layoutDivRef,
 }: Props): ReturnProps => {
-  const divRef = useRef<HTMLDivElement | null>(null)
-  const [gridColumnCount, setGridColumnCount] = useState(1)
-  const throttledGridColumnCount = useThrottle(gridColumnCount, 50)
-
-  const { getElementProperty } = useGetElementProperty(divRef)
+  const [initialized, setInitialized] = useState(false)
+  const { getElementProperty } = useGetElementProperty(layoutDivRef)
 
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
+
+  let initialGridColumnCount = 0
+  if (!initialized) {
+    initialGridColumnCount =
+      displayStyle !== 'List'
+        ? calculateColumnCount(getElementProperty('width'), displayStyle)
+        : 0
+
+    setInitialized(true)
+  }
+
+  const [gridColumnCount, setGridColumnCount] = useState(initialGridColumnCount)
+  const throttledGridColumnCount = useThrottle(gridColumnCount, 50)
 
   const updateColumns = useCallback(() => {
     setGridColumnCount(
@@ -44,6 +55,10 @@ export const useAssetGridView = ({
   const assetRows = useMemo(() => {
     const rows: AssetSummary[][] = []
 
+    if (throttledGridColumnCount === 0) {
+      return []
+    }
+
     for (
       let i = 0;
       i < sortedAssetSummary.length;
@@ -58,6 +73,5 @@ export const useAssetGridView = ({
   return {
     assetRows,
     gridColumnCount: throttledGridColumnCount,
-    divRef,
   }
 }
