@@ -8,82 +8,43 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SetupRouteImport } from './routes/setup'
+import { Route as PreferenceRouteImport } from './routes/preference'
+import { Route as IndexRouteImport } from './routes/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SetupImport } from './routes/setup'
-import { Route as PreferenceImport } from './routes/preference'
-import { Route as IndexImport } from './routes/index'
-
-// Create/Update Routes
-
-const SetupRoute = SetupImport.update({
+const SetupRoute = SetupRouteImport.update({
   id: '/setup',
   path: '/setup',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PreferenceRoute = PreferenceImport.update({
+const PreferenceRoute = PreferenceRouteImport.update({
   id: '/preference',
   path: '/preference',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/preference': {
-      id: '/preference'
-      path: '/preference'
-      fullPath: '/preference'
-      preLoaderRoute: typeof PreferenceImport
-      parentRoute: typeof rootRoute
-    }
-    '/setup': {
-      id: '/setup'
-      path: '/setup'
-      fullPath: '/setup'
-      preLoaderRoute: typeof SetupImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
   '/setup': typeof SetupRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
   '/setup': typeof SetupRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/preference': typeof PreferenceRoute
   '/setup': typeof SetupRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/preference' | '/setup'
@@ -92,11 +53,36 @@ export interface FileRouteTypes {
   id: '__root__' | '/' | '/preference' | '/setup'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PreferenceRoute: typeof PreferenceRoute
   SetupRoute: typeof SetupRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/setup': {
+      id: '/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof SetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preference': {
+      id: '/preference'
+      path: '/preference'
+      fullPath: '/preference'
+      preLoaderRoute: typeof PreferenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -104,31 +90,6 @@ const rootRouteChildren: RootRouteChildren = {
   PreferenceRoute: PreferenceRoute,
   SetupRoute: SetupRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/preference",
-        "/setup"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/preference": {
-      "filePath": "preference.tsx"
-    },
-    "/setup": {
-      "filePath": "setup.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
