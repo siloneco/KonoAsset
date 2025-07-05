@@ -37,9 +37,7 @@ export const AssetCard = ({
 }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
 
-  const assetViewStyle = useAssetSummaryViewStore(
-    (state) => state.assetViewStyle,
-  )
+  const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
 
   const onShopNameClicked = useCallback(() => {
     updateFilter({
@@ -79,7 +77,7 @@ export const AssetCard = ({
           <CardTitle
             className={cn(
               'text-lg mt-2 break-words whitespace-pre-wrap',
-              assetViewStyle === 'Small' && 'text-base',
+              displayStyle === 'GridSmall' && 'text-base',
             )}
           >
             {asset.name}
@@ -95,7 +93,7 @@ export const AssetCard = ({
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
-            displayOpenButtonText={assetViewStyle !== 'Small'}
+            displayOpenButtonText={displayStyle !== 'GridSmall'}
             openDependencyDialog={() =>
               openDependencyDialog(asset.name, asset.dependencies)
             }

@@ -24,24 +24,22 @@ export const useAssetGridView = ({
 
   const { getElementProperty } = useGetElementProperty(divRef)
 
-  const assetViewStyle = useAssetSummaryViewStore(
-    (state) => state.assetViewStyle,
-  )
+  const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
 
   const updateColumns = useCallback(() => {
     setGridColumnCount(
-      assetViewStyle !== 'List'
-        ? calculateColumnCount(getElementProperty('width'), assetViewStyle)
+      displayStyle !== 'List'
+        ? calculateColumnCount(getElementProperty('width'), displayStyle)
         : 1,
     )
-  }, [assetViewStyle, getElementProperty])
+  }, [displayStyle, getElementProperty])
 
   useEffect(() => {
     updateColumns()
 
     window.addEventListener('resize', updateColumns)
     return () => window.removeEventListener('resize', updateColumns)
-  }, [assetViewStyle, updateColumns])
+  }, [displayStyle, updateColumns])
 
   const assetRows = useMemo(() => {
     const rows: AssetSummary[][] = []

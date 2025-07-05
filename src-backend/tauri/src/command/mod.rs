@@ -6,6 +6,7 @@ mod external;
 mod file;
 mod language;
 mod preference;
+mod state;
 mod suggest;
 mod update;
 
@@ -79,5 +80,8 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         language::common::load_language_file,
         // DeepLink関係
         deep_link::execute::request_startup_deep_link_execution,
+        // AppState関係
+        state::common::get_app_state,
+        state::common::save_app_state,
     ])
 }

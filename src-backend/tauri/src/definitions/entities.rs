@@ -4,14 +4,6 @@ use model::{Avatar, AvatarWearable, OtherAsset, WorldObject};
 use serde::{Deserialize, Serialize};
 use tauri_specta::Event;
 
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, specta::Type)]
-pub enum SortBy {
-    Name,
-    Creator,
-    CreatedAt,
-    PublishedAt,
-}
-
 #[derive(Serialize, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct LoadResult {

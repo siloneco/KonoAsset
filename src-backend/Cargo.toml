@@ -18,6 +18,7 @@ language = { path = "./crates/language", version = "0.0.0" }
 loader = { path = "./crates/loader", version = "0.0.0" }
 logging = { path = "./crates/logging", version = "0.0.0" }
 model = { path = "./crates/model", version = "0.0.0" }
+state = { path = "./crates/state", version = "0.0.0" }
 storage = { path = "./crates/storage", version = "0.0.0" }
 task = { path = "./crates/task", version = "0.0.0" }
 zip = { path = "./crates/zip", version = "0.0.0" }

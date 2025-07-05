@@ -27,6 +27,7 @@ language.workspace = true
 loader.workspace = true
 logging.workspace = true
 model.workspace = true
+state.workspace = true
 storage.workspace = true
 task.workspace = true
 zip.workspace = true
@@ -51,3 +52,4 @@ tauri-plugin-deep-link.workspace = true
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance.workspace = true
 tauri-plugin-updater.workspace = true
+tauri-plugin-window-state = "2"
