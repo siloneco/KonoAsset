@@ -89,8 +89,9 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
             <XAxis dataKey="sizeInBytes" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={
+              content={(props) => (
                 <ChartTooltipContent
+                  {...props}
                   indicator="line"
                   formatter={(value, _, item) => {
                     return (
@@ -106,11 +107,11 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                     )
                   }}
                 />
-              }
+              )}
             />
             <Bar
               dataKey="sizeInBytes"
-              layout="vertical"
+              // layout="vertical"
               fill="var(--color-avatar-wearable)"
               radius={4}
               animationDuration={loading ? 0 : 500}
@@ -171,8 +172,8 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                 className="fill-foreground"
                 fontSize={12}
                 width={75}
-                formatter={(value: number) => {
-                  return bytesFormatter(value)
+                formatter={(value) => {
+                  return bytesFormatter(value as number)
                 }}
               />
             </Bar>
