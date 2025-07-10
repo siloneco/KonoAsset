@@ -1,6 +1,8 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
 import { checkForUpdate, dismissUpdate, downloadUpdate } from '../logic'
 
+const ANIMATION_DURATION_MS = 300
+
 type ReturnProps = {
   updateDialogOpen: boolean
   setUpdateDialogOpen: (open: boolean) => void
@@ -45,7 +47,7 @@ export const useUpdateDialogContext = (): ReturnProps => {
       setUpdateNotificationVisible(false)
       setIsNotificationClosing(false)
       closeTimeoutRef.current = null
-    }, 300)
+    }, ANIMATION_DURATION_MS)
   }, [setUpdateDownloadTaskId, setUpdateDialogOpen])
 
   const dismissUpdateNotification = useCallback(() => {
@@ -61,7 +63,7 @@ export const useUpdateDialogContext = (): ReturnProps => {
       setUpdateNotificationVisible(false)
       setIsNotificationClosing(false)
       closeTimeoutRef.current = null
-    }, 300)
+    }, ANIMATION_DURATION_MS)
   }, [])
 
   const executeUpdateCheck = useCallback(async () => {
