@@ -91,9 +91,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             />
             <ChartTooltip
               cursor={false}
-              content={(props) => (
-                <ChartTooltipContent {...props} indicator="dot" />
-              )}
+              content={<ChartTooltipContent indicator="dot" />}
             />
             <Area
               dataKey="avatars"
