@@ -1,76 +1,89 @@
-import { buttonVariants } from '@/components/ui/button'
-import { useToast } from '@/hooks/use-toast'
-import { ToastAction } from '@radix-ui/react-toast'
-import { useLocalization } from '@/hooks/use-localization'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useState, useRef, useEffect } from 'react'
 import { checkForUpdate, dismissUpdate, downloadUpdate } from '../logic'
-import { PreferenceContext } from '../../PreferenceContext'
 
 type ReturnProps = {
   updateDialogOpen: boolean
   setUpdateDialogOpen: (open: boolean) => void
   updateDownloadTaskId: string | null
   checkForUpdate: () => Promise<void>
+  updateNotificationVisible: boolean
+  setUpdateNotificationVisible: (visible: boolean) => void
+  startUpdateDownloadingAndOpenDialog: () => Promise<void>
+  dismissUpdateNotification: () => void
+  isNotificationClosing: boolean
 }
 
 export const useUpdateDialogContext = (): ReturnProps => {
-  const { toast } = useToast()
-  const { t } = useLocalization()
-  const { loaded } = useContext(PreferenceContext)
-
   const [updateDownloadTaskId, setUpdateDownloadTaskId] = useState<
     string | null
   >(null)
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false)
+  const [updateNotificationVisible, setUpdateNotificationVisible] =
+    useState(false)
+  const [isNotificationClosing, setIsNotificationClosing] = useState(false)
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const startUpdateDownloadingAndOpenDialog = useCallback(async () => {
     await downloadUpdate(setUpdateDownloadTaskId)
-    setUpdateDialogOpen(true)
-  }, [setUpdateDownloadTaskId, setUpdateDialogOpen])
 
-  const executeUpdateCheck = useCallback(async () => {
-    if (!loaded) {
-      return
+    setUpdateDialogOpen(true)
+    setIsNotificationClosing(true)
+
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
     }
 
+    closeTimeoutRef.current = setTimeout(() => {
+      setUpdateNotificationVisible(false)
+      setIsNotificationClosing(false)
+      closeTimeoutRef.current = null
+    }, 300)
+  }, [setUpdateDownloadTaskId, setUpdateDialogOpen])
+
+  const dismissUpdateNotification = useCallback(() => {
+    dismissUpdate()
+
+    setIsNotificationClosing(true)
+
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+    }
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setUpdateNotificationVisible(false)
+      setIsNotificationClosing(false)
+      closeTimeoutRef.current = null
+    }, 300)
+  }, [])
+
+  const executeUpdateCheck = useCallback(async () => {
     const updateAvailable = await checkForUpdate()
 
     if (!updateAvailable) {
       return
     }
 
-    toast({
-      title: t('top:new-update-toast'),
-      description: t('top:new-update-toast:description'),
-      duration: 30000,
-      onSwipeEnd: () => {
-        dismissUpdate()
-      },
-      action: (
-        <div className="flex flex-col space-y-2">
-          <ToastAction
-            altText="Open update dialog"
-            className={buttonVariants({ variant: 'default' })}
-            onClick={startUpdateDownloadingAndOpenDialog}
-          >
-            {t('top:new-update-toast:button')}
-          </ToastAction>
-          <ToastAction
-            altText="Ignore update"
-            className={buttonVariants({ variant: 'outline' })}
-            onClick={() => dismissUpdate()}
-          >
-            {t('top:new-update-toast:close')}
-          </ToastAction>
-        </div>
-      ),
-    })
-  }, [t, toast, startUpdateDownloadingAndOpenDialog, loaded])
+    setUpdateNotificationVisible(true)
+    setIsNotificationClosing(false)
+  }, [])
 
   return {
     updateDialogOpen,
     setUpdateDialogOpen,
     updateDownloadTaskId,
     checkForUpdate: executeUpdateCheck,
+    updateNotificationVisible,
+    setUpdateNotificationVisible,
+    startUpdateDownloadingAndOpenDialog,
+    dismissUpdateNotification,
+    isNotificationClosing,
   }
 }
