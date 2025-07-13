@@ -49,8 +49,7 @@ async fn delete_asset_from_store<
     }
 
     let path = app_dir.join("data").join(id.to_string());
-    let dir_delete_result =
-        modify_guard::delete_recursive(&path, &DeletionGuard::new(app_dir)).await;
+    let dir_delete_result = modify_guard::delete_recursive(&path, &DeletionGuard::new(app_dir));
 
     if let Err(e) = dir_delete_result {
         return Err(format!("Failed to delete asset directory: {:?}", e));
@@ -78,7 +77,7 @@ pub async fn delete_asset_image(app_dir: &PathBuf, filename: &str) -> Result<boo
     }
 
     let image_delete_result =
-        modify_guard::delete_single_file(&image_path, &DeletionGuard::new(&images_dir_path)).await;
+        modify_guard::delete_single_file(&image_path, &DeletionGuard::new(&images_dir_path));
 
     if let Err(e) = image_delete_result {
         return Err(format!("Failed to delete image file: {:?}", e));
@@ -122,7 +121,6 @@ pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
         }
 
         modify_guard::delete_single_file(&path, &DeletionGuard::new(&images_dir_path))
-            .await
             .map_err(|e| format!("Failed to delete temp image: {:?}", e))?;
     }
 

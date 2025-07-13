@@ -52,25 +52,20 @@ impl DeletionGuard {
     }
 }
 
-pub async fn delete_single_file<P>(path: P, guard: &DeletionGuard) -> Result<(), tokio::io::Error>
+pub fn delete_single_file<P>(path: P, guard: &DeletionGuard) -> Result<(), String>
 where
     P: AsRef<Path>,
 {
-    guard.assert(&path)?;
-    tokio::fs::remove_file(&path).await
+    // legacy support alias
+    delete_recursive(&path, guard)
 }
 
-pub async fn delete_recursive<P>(path: P, guard: &DeletionGuard) -> Result<(), tokio::io::Error>
+pub fn delete_recursive<P>(path: P, guard: &DeletionGuard) -> Result<(), String>
 where
     P: AsRef<Path>,
 {
-    guard.assert(&path)?;
-
-    if path.as_ref().is_dir() {
-        tokio::fs::remove_dir_all(&path).await
-    } else {
-        tokio::fs::remove_file(&path).await
-    }
+    guard.assert(&path).map_err(|e| e.to_string())?;
+    trash::delete(&path).map_err(|e| e.to_string())
 }
 
 pub struct FileTransferGuard {
@@ -241,7 +236,7 @@ where
 
     if delete_source {
         let guard = DeletionGuard::new(&src);
-        delete_single_file(&src, &guard).await?;
+        delete_completely(&src, &guard).await?;
     }
 
     Ok(())
@@ -310,7 +305,7 @@ where
 
     if delete_source {
         let guard = DeletionGuard::new(&src);
-        delete_recursive(&src, &guard).await?;
+        delete_recursive_completely(&src, &guard).await?;
     }
 
     Ok(())
@@ -414,6 +409,30 @@ where
     Ok(())
 }
 
+async fn delete_completely<P>(path: P, guard: &DeletionGuard) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    guard.assert(&path)?;
+    tokio::fs::remove_file(&path).await
+}
+
+async fn delete_recursive_completely<P>(
+    path: P,
+    guard: &DeletionGuard,
+) -> Result<(), tokio::io::Error>
+where
+    P: AsRef<Path>,
+{
+    guard.assert(&path)?;
+
+    if path.as_ref().is_dir() {
+        tokio::fs::remove_dir_all(&path).await
+    } else {
+        tokio::fs::remove_file(&path).await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::io::Write;
@@ -430,61 +449,66 @@ mod tests {
         path
     }
 
-    #[tokio::test]
-    async fn test_delete_single_file_success() {
+    #[test]
+    fn test_delete_single_file_success() {
         let dir = get_test_dir();
         let file_path = dir.join("test.txt");
 
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
 
         let guard = DeletionGuard::new(dir.to_path_buf());
-        let result = delete_single_file(&file_path, &guard).await;
+        let result = delete_single_file(&file_path, &guard);
 
         assert_eq!(result.unwrap(), ());
         assert!(!file_path.exists());
     }
 
-    #[tokio::test]
-    async fn test_delete_single_file_failure() {
+    #[test]
+    fn test_delete_single_file_failure() {
         let dir = get_test_dir();
         let file_path = dir.join("test.txt");
 
         let guard = DeletionGuard::new(dir.join("other_dir"));
-        let result = delete_single_file(&file_path, &guard).await;
+        let result = delete_single_file(&file_path, &guard);
 
         assert!(result.is_err());
     }
 
-    #[tokio::test]
-    async fn test_delete_recursive_success() {
+    #[test]
+    fn test_delete_recursive_success() {
         let dir = get_test_dir();
         let sub_dir = dir.join("delete_recursive_success_sub_dir");
         let file_path = sub_dir.join("test.txt");
 
         std::fs::create_dir_all(&sub_dir).unwrap();
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
 
         let guard = DeletionGuard::new(dir.to_path_buf());
-        let result = delete_recursive(&sub_dir, &guard).await;
+        delete_recursive(&sub_dir, &guard).unwrap();
 
-        assert_eq!(result.unwrap(), ());
         assert!(!sub_dir.exists());
     }
 
-    #[tokio::test]
-    async fn test_delete_recursive_failure() {
+    #[test]
+    fn test_delete_recursive_failure() {
         let dir = get_test_dir();
         let sub_dir = dir.join("delete_recursive_failure_sub_dir");
         let file_path = sub_dir.join("test.txt");
 
         std::fs::create_dir_all(&sub_dir).unwrap();
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
 
         let guard = DeletionGuard::new(dir.join("other_dir"));
-        let result = delete_recursive(&sub_dir, &guard).await;
+        let result = delete_recursive(&sub_dir, &guard);
 
         assert!(result.is_err());
     }
