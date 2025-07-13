@@ -454,8 +454,10 @@ mod tests {
         let dir = get_test_dir();
         let file_path = dir.join("test.txt");
 
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
 
         let guard = DeletionGuard::new(dir.to_path_buf());
         let result = delete_single_file(&file_path, &guard);
@@ -482,13 +484,16 @@ mod tests {
         let file_path = sub_dir.join("test.txt");
 
         std::fs::create_dir_all(&sub_dir).unwrap();
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
+
+        println!("sub_dir: {}", sub_dir.display());
 
         let guard = DeletionGuard::new(dir.to_path_buf());
-        let result = delete_recursive(&sub_dir, &guard);
+        delete_recursive(&sub_dir, &guard).unwrap();
 
-        assert_eq!(result.unwrap(), ());
         assert!(!sub_dir.exists());
     }
 
@@ -499,8 +504,10 @@ mod tests {
         let file_path = sub_dir.join("test.txt");
 
         std::fs::create_dir_all(&sub_dir).unwrap();
-        let mut file = std::fs::File::create(&file_path).unwrap();
-        file.write_all(b"test").unwrap();
+        {
+            let mut file = std::fs::File::create(&file_path).unwrap();
+            file.write_all(b"test").unwrap();
+        }
 
         let guard = DeletionGuard::new(dir.join("other_dir"));
         let result = delete_recursive(&sub_dir, &guard);
