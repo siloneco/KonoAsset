@@ -489,8 +489,6 @@ mod tests {
             file.write_all(b"test").unwrap();
         }
 
-        println!("sub_dir: {}", sub_dir.display());
-
         let guard = DeletionGuard::new(dir.to_path_buf());
         delete_recursive(&sub_dir, &guard).unwrap();
 
