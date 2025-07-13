@@ -60,7 +60,6 @@ export const DirEntryRow: FC<Props> = ({
           <Button
             variant="destructive"
             className="size-8"
-            // onClick={deleteEntry}
             disabled={isDeleting || isDeleted}
           >
             {isDeleting && <Loader2 className="animate-spin" />}
