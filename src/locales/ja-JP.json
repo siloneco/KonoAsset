@@ -128,7 +128,7 @@
     "assetcard:more-button:edit-info": "情報を編集",
     "assetcard:more-button:data": "データ管理",
     "assetcard:more-button:delete-confirm": "アセットを本当に削除しますか？",
-    "assetcard:more-button:delete-confirm:explanation-text-1": "データは完全に削除され、前提アセットの紐づけも解除されます",
+    "assetcard:more-button:delete-confirm:explanation-text-1": "データはゴミ箱へ移動され、前提アセットの紐づけも解除されます",
     "assetcard:more-button:delete-confirm:explanation-text-2": "この操作を取り消すことは出来ません！",
     "assetcard:more-button:success-delete-toast": "正常に削除されました！",
     "assetcard:more-button:fail-delete-toast": "削除に失敗しました",
