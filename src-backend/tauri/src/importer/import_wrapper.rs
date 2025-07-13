@@ -98,9 +98,9 @@ where
             let guard = DeletionGuard::new(path.clone());
 
             let result = if path.is_dir() {
-                modify_guard::delete_recursive(&path, &guard).await
+                modify_guard::delete_recursive(&path, &guard)
             } else {
-                modify_guard::delete_single_file(&path, &guard).await
+                modify_guard::delete_single_file(&path, &guard)
             };
 
             if let Err(err) = result {

@@ -326,8 +326,7 @@ impl AssetStorage {
 
             if old.exists() {
                 log::info!("Removing old dir: {}", old.display());
-                let result =
-                    modify_guard::delete_recursive(&old, &DeletionGuard::new(&old_path)).await;
+                let result = modify_guard::delete_recursive(&old, &DeletionGuard::new(&old_path));
 
                 if let Err(e) = result {
                     log::warn!("Failed to remove old data dir: {:?}", e);
@@ -613,8 +612,7 @@ async fn prune_old_backup<P: AsRef<Path>>(metadata_backup_dir: P) -> Result<(), 
         if is_outdated_timestamp(file_stem) {
             log::debug!("purging outdated metadata backup: {}", path.display());
 
-            if let Err(e) =
-                modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path)).await
+            if let Err(e) = modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path))
             {
                 log::error!("Failed to remove outdated metadata backup: {:?}", e)
             };
