@@ -123,6 +123,7 @@
     "assetcard:more-button:data-management:explanation-text-1": "可添加或删除数据。高级操作请使用资源管理器。",
     "assetcard:more-button:data-management:add-file-or-folder": "添加文件或文件夹：",
     "assetcard:more-button:data-management:explanation-text-2": "也可通过拖放文件到窗口添加新文件或文件夹",
+    "assetcard:more-button:data-management:delete-description": "确认删除此数据？",
     "assetcard:more-button:open-booth": "在BOOTH中打开",
     "assetcard:more-button:open-booth:error-text": "未设置BOOTH URL！",
     "assetcard:more-button:edit-info": "编辑信息",

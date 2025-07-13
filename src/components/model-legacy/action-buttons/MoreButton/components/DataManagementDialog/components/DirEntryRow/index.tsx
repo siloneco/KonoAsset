@@ -3,6 +3,13 @@ import { Check, File, Folder, FolderOpen, Loader2, Trash2 } from 'lucide-react'
 import { FC } from 'react'
 import { useDirEntryRow } from './hook'
 import { cn } from '@/lib/utils'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { useLocalization } from '@/hooks/use-localization'
+import { PopoverClose } from '@radix-ui/react-popover'
 
 type Props = {
   assetId: string
@@ -17,6 +24,8 @@ export const DirEntryRow: FC<Props> = ({
   filename,
   absolutePath,
 }) => {
+  const { t } = useLocalization()
+
   const {
     openInFileManager,
     deleteEntry,
@@ -46,16 +55,32 @@ export const DirEntryRow: FC<Props> = ({
           {openButtonCheckMarked && <Check />}
         </Button>
       )}
-      <Button
-        variant="destructive"
-        className="h-8 w-8"
-        onClick={deleteEntry}
-        disabled={isDeleting || isDeleted}
-      >
-        {isDeleting && <Loader2 className="animate-spin" />}
-        {!isDeleting && !isDeleted && <Trash2 />}
-        {!isDeleting && isDeleted && <Check />}
-      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="destructive"
+            className="size-8"
+            // onClick={deleteEntry}
+            disabled={isDeleting || isDeleted}
+          >
+            {isDeleting && <Loader2 className="animate-spin" />}
+            {!isDeleting && !isDeleted && <Trash2 />}
+            {!isDeleting && isDeleted && <Check />}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-fit max-w-58 space-y-2" side="right">
+          <p>{t('assetcard:more-button:data-management:delete-description')}</p>
+          <PopoverClose asChild>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={deleteEntry}
+            >
+              {t('general:button:delete')}
+            </Button>
+          </PopoverClose>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }
