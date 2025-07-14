@@ -1,0 +1,1 @@
+export { AssetCardTypeBadge } from './AssetCardTypeBadge'
