@@ -10,6 +10,30 @@ type Props = {
   onClick?: () => void
 }
 
+type BadgeConfig = {
+  variant: 'avatar' | 'avatarWearable' | 'worldObject' | 'otherAsset'
+  localizationKey: string
+}
+
+const assetTypeBadgeMapping: Record<AssetType, BadgeConfig> = {
+  Avatar: {
+    variant: 'avatar',
+    localizationKey: 'general:typeavatar',
+  },
+  AvatarWearable: {
+    variant: 'avatarWearable',
+    localizationKey: 'general:typeavatarwearable',
+  },
+  WorldObject: {
+    variant: 'worldObject',
+    localizationKey: 'general:typeworldobject',
+  },
+  OtherAsset: {
+    variant: 'otherAsset',
+    localizationKey: 'general:typeotherasset',
+  },
+}
+
 const generateClassName = (className?: string, onClick?: () => void) => {
   return cn(
     'block truncate select-none shrink',
@@ -21,58 +45,20 @@ const generateClassName = (className?: string, onClick?: () => void) => {
 export const AssetCardTypeBadge: FC<Props> = ({ className, type, onClick }) => {
   const { t } = useLocalization()
 
-  if (type === 'Avatar') {
-    return (
-      <Badge
-        variant="avatar"
-        className={generateClassName(className, onClick)}
-        onClick={onClick}
-      >
-        {t('general:typeavatar')}
-      </Badge>
-    )
-  }
-  if (type === 'AvatarWearable') {
-    return (
-      <Badge
-        variant="avatarWearable"
-        className={generateClassName(className, onClick)}
-        onClick={onClick}
-      >
-        {t('general:typeavatarwearable')}
-      </Badge>
-    )
-  }
-  if (type === 'WorldObject') {
-    return (
-      <Badge
-        variant="worldObject"
-        className={generateClassName(className, onClick)}
-        onClick={onClick}
-      >
-        {t('general:typeworldobject')}
-      </Badge>
-    )
-  }
-  if (type === 'OtherAsset') {
-    return (
-      <Badge
-        variant="otherAsset"
-        className={generateClassName(className, onClick)}
-        onClick={onClick}
-      >
-        {t('general:typeotherasset')}
-      </Badge>
-    )
+  const config = assetTypeBadgeMapping[type] || {
+    variant: 'outline',
+    localizationKey: 'Unknown',
   }
 
   return (
     <Badge
-      variant="outline"
+      variant={config.variant}
       className={generateClassName(className, onClick)}
       onClick={onClick}
     >
-      Unknown
+      {config.localizationKey === 'Unknown'
+        ? config.localizationKey
+        : t(config.localizationKey)}
     </Badge>
   )
 }
