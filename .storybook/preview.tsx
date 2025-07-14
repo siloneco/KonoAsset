@@ -59,7 +59,8 @@ export const globalTypes = {
     toolbar: {
       icon: 'circlehollow',
       items: [
-        { value: 'en-US', icon: 'circle', title: 'English' },
+        { value: 'en-US', icon: 'circle', title: 'English (US)' },
+        { value: 'en-GB', icon: 'circle', title: 'English (UK)' },
         { value: 'ja-JP', icon: 'circle', title: '日本語' },
         { value: 'zh-CN', icon: 'circle', title: '简体中文' },
       ],
