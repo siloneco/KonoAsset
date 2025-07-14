@@ -1,5 +1,5 @@
 import { AssetSummary, FileInfo } from '@/lib/bindings'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useShallow } from 'zustand/react/shallow'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
@@ -9,6 +9,7 @@ type Props = {
 }
 
 type ReturnProps = {
+  layoutDivRef: React.RefObject<HTMLDivElement | null>
   sortedAssetSummary: AssetSummary[]
   displayStyle: 'Grid' | 'List'
   background: 'NoAssets' | 'NoResults'
@@ -35,6 +36,8 @@ type ReturnProps = {
 }
 
 export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
+  const layoutDivRef = useRef<HTMLDivElement | null>(null)
+
   const [selectUnitypackageDialogOpen, setSelectUnitypackageDialogOpen] =
     useState(false)
   const [unitypackages, setUnityPackages] = useState<{
@@ -58,14 +61,14 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const {
     sortedAssetSummaries,
     reverseOrder,
-    assetViewStyle,
+    displayStyle,
     refreshAssetSummaries,
   } = useAssetSummaryViewStore(
     useShallow((state) => {
       return {
         sortedAssetSummaries: state.sortedAssetSummaries,
         reverseOrder: state.reverseOrder,
-        assetViewStyle: state.assetViewStyle,
+        displayStyle: state.displayStyle,
         refreshAssetSummaries: state.refreshAssetSummaries,
       }
     }),
@@ -118,8 +121,9 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   }
 
   return {
+    layoutDivRef,
     sortedAssetSummary: filterAppliedSortedAssetSummaries,
-    displayStyle: assetViewStyle === 'List' ? 'List' : 'Grid',
+    displayStyle: displayStyle === 'List' ? 'List' : 'Grid',
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,

@@ -21,6 +21,7 @@ export const AssetView: FC<Props> = ({
   setShowingAssetCount,
 }) => {
   const {
+    layoutDivRef,
     sortedAssetSummary,
     displayStyle,
     background,
@@ -53,9 +54,10 @@ export const AssetView: FC<Props> = ({
           openDialog={openAddAssetDialog}
         />
       )}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0" ref={layoutDivRef}>
         {displayStyle === 'Grid' && (
           <AssetGridView
+            layoutDivRef={layoutDivRef}
             sortedAssetSummary={sortedAssetSummary}
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
