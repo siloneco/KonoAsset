@@ -7,13 +7,11 @@ import { getDefaultPreferences } from '@/lib/utils'
 export type PreferenceContextType = {
   preference: PreferenceStore
   setPreference: (preference: PreferenceStore, save: boolean) => Promise<void>
-  loaded: boolean
 }
 
 export const PreferenceContext = createContext<PreferenceContextType>({
   preference: getDefaultPreferences(),
   setPreference: async () => {},
-  loaded: false,
 })
 
 type Props = {

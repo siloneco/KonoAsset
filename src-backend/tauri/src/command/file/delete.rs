@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use file::modify_guard::{self, DeletionGuard};
 use storage::asset_storage::AssetStorage;
 use tauri::State;
 use tokio::sync::Mutex;
@@ -28,13 +29,13 @@ pub async fn delete_entry_from_asset_data_dir(
     }
 
     if path.is_file() {
-        tokio::fs::remove_file(&path).await.map_err(|e| {
+        modify_guard::delete_single_file(&path, &DeletionGuard::new(&path)).map_err(|e| {
             let err = format!("Failed to delete file: {:?}", e);
             log::error!("{}", err);
             err
         })?;
     } else if path.is_dir() {
-        tokio::fs::remove_dir_all(&path).await.map_err(|e| {
+        modify_guard::delete_recursive(&path, &DeletionGuard::new(&path)).map_err(|e| {
             let err = format!("Failed to delete directory: {:?}", e);
             log::error!("{}", err);
             err

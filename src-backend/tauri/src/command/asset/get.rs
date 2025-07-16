@@ -1,11 +1,11 @@
 use std::{collections::HashMap, sync::Arc};
 
-use model::AssetSummary;
+use model::{AssetSummary, SortBy};
 use storage::asset_storage::AssetStorage;
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
 
-use crate::definitions::{entities::SortBy, results::GetAssetResult};
+use crate::definitions::results::GetAssetResult;
 
 #[tauri::command]
 #[specta::specta]

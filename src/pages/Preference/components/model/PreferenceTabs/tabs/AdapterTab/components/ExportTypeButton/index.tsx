@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils'
-import { ReactNode } from '@tanstack/react-router'
 import { ChevronsRight } from 'lucide-react'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 type BaseProps = {
   active: boolean

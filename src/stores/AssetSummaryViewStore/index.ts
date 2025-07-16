@@ -1,26 +1,30 @@
-import { AssetSummary, SortBy } from '@/lib/bindings'
+import {
+  AppState,
+  AssetSummary,
+  commands,
+  DisplayStyle,
+  SortBy,
+} from '@/lib/bindings'
 import { create } from 'zustand'
-import { refreshAssetSummaries } from './logic'
-
-export type AssetViewStyle = 'Small' | 'Medium' | 'Large' | 'List'
+import { refreshAssetSummaries, saveAppState } from './logic'
 
 type Props = {
   sortedAssetSummaries: AssetSummary[]
   sortBy: SortBy
   reverseOrder: boolean
-  assetViewStyle: AssetViewStyle
+  displayStyle: DisplayStyle
 
   refreshAssetSummaries: () => Promise<void>
   deleteAssetSummaryFromFrontend: (id: string) => void
   setSort: (sortBy: SortBy, reverseOrder: boolean) => Promise<void>
-  setAssetViewStyle: (assetViewStyle: AssetViewStyle) => void
+  setDisplayStyle: (displayStyle: DisplayStyle) => void
 }
 
 export const useAssetSummaryViewStore = create<Props>((set, get) => ({
   sortedAssetSummaries: [],
   sortBy: 'CreatedAt',
   reverseOrder: true,
-  assetViewStyle: 'Medium',
+  displayStyle: 'GridMedium',
 
   refreshAssetSummaries: async () => {
     const sortBy = get().sortBy
@@ -41,21 +45,59 @@ export const useAssetSummaryViewStore = create<Props>((set, get) => ({
     })
   },
   setSort: async (sortBy, reverseOrder) => {
-    const prevSortBy = get().sortBy
+    const prev = get()
+    const prevSortBy = prev.sortBy
+    const prevDisplayStyle = prev.displayStyle
 
     if (sortBy === prevSortBy) {
       set({
         reverseOrder,
       })
-      return
+    } else {
+      const result = await refreshAssetSummaries(sortBy)
+      set({
+        sortedAssetSummaries: result,
+        sortBy,
+        reverseOrder,
+      })
     }
 
-    const result = await refreshAssetSummaries(sortBy)
-    set({
-      sortedAssetSummaries: result,
-      sortBy,
-      reverseOrder,
+    const appState: AppState = {
+      sort: { sortBy, reversed: reverseOrder },
+      displayStyle: prevDisplayStyle,
+    }
+
+    saveAppState(appState).catch((error) => {
+      console.error(error)
     })
   },
-  setAssetViewStyle: (assetViewStyle) => set({ assetViewStyle }),
+  setDisplayStyle: (displayStyle) => {
+    const prev = get()
+
+    set({ displayStyle })
+
+    const appState: AppState = {
+      sort: { sortBy: prev.sortBy, reversed: prev.reverseOrder },
+      displayStyle,
+    }
+
+    saveAppState(appState).catch((error) => {
+      console.error(error)
+    })
+  },
 }))
+
+commands.getAppState().then((result) => {
+  if (result.status === 'error') {
+    console.error(result.error)
+    return
+  }
+
+  const { sort, displayStyle } = result.data
+
+  useAssetSummaryViewStore.setState({
+    sortBy: sort?.sortBy ?? 'CreatedAt',
+    reverseOrder: sort?.reversed ?? true,
+    displayStyle,
+  })
+})

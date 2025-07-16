@@ -25,8 +25,7 @@ pub async fn reset_application(
             let result = modify_guard::delete_single_file(
                 &preference_path,
                 &DeletionGuard::new(&app_local_data_dir),
-            )
-            .await;
+            );
 
             if let Err(e) = result {
                 log::error!("Failed to delete preferences.json: {}", e);
@@ -53,8 +52,7 @@ pub async fn reset_application(
                 let result = modify_guard::delete_recursive(
                     &metadata_dir,
                     &DeletionGuard::new(&user_data_dir),
-                )
-                .await;
+                );
 
                 if let Err(e) = result {
                     log::error!("Failed to delete metadata directory: {}", e);
@@ -72,8 +70,7 @@ pub async fn reset_application(
                 let result = modify_guard::delete_recursive(
                     &asset_data_dir,
                     &DeletionGuard::new(&user_data_dir),
-                )
-                .await;
+                );
 
                 if let Err(e) = result {
                     log::error!("Failed to delete asset data directory: {}", e);

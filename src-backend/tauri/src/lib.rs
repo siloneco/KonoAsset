@@ -10,11 +10,13 @@ use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use file::modify_guard::{self, FileTransferGuard};
 use language::LocalizationData;
 use model::preference::{PreferenceStore, UpdateChannel};
+use state::StateHandler;
 use statistics::{AssetVolumeEstimatedEvent, AssetVolumeStatisticsCache};
 use storage::{asset_storage::AssetStorage, delete::delete_temporary_images};
 use task::{TaskContainer, TaskStatusChanged};
 use tauri::{AppHandle, Manager, async_runtime::Mutex};
 use tauri_plugin_deep_link::DeepLinkExt;
+use tauri_plugin_window_state::StateFlags;
 use tauri_specta::{Event, collect_events};
 use updater::update_handler::{UpdateHandler, UpdateProgress};
 
@@ -68,6 +70,11 @@ pub fn run() {
 
     tauri_builder
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::new()
+                .with_state_flags(StateFlags::SIZE | StateFlags::MAXIMIZED)
+                .build(),
+        )
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_deep_link::init())
@@ -107,6 +114,7 @@ pub fn run() {
 
             let app_local_data_dir = app.path().app_local_data_dir().unwrap();
             let preference_file_path = app_local_data_dir.join("preference.json");
+            let state_file_path = app_local_data_dir.join("state.json");
 
             app.manage(arc_mutex(InitialSetup::new(preference_file_path)));
 
@@ -122,6 +130,7 @@ pub fn run() {
             let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
             let update_channel = pref_store.update_channel.clone();
+            let state_handler = StateHandler::load_or_default(state_file_path);
 
             let pximg_resolver = PximgResolver::new(data_dir.join("images"), VERSION);
 
@@ -131,6 +140,7 @@ pub fn run() {
                 app.handle().clone(),
                 &update_channel,
             )));
+            app.manage(arc_mutex(state_handler));
 
             let result = load_store_provider(&data_dir, &app_local_data_dir);
             if let Err(err) = result {

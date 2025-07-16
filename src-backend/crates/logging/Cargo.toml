@@ -13,4 +13,4 @@ log.workspace = true
 chrono.workspace = true
 serde.workspace = true
 specta.workspace = true
-ringbuffer = "0.15.0"
+ringbuffer = "0.16.0"
