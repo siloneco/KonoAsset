@@ -1,5 +1,60 @@
 [
   {
+    "version": "1.2.4-rc.0",
+    "preRelease": true,
+    "features": [
+      {
+        "text": "Window size, display size, and sort order are now persisted across restarts",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ウィンドウサイズや表示サイズ、表示順を再起動しても維持するように"
+          }
+        ]
+      },
+      {
+        "text": "Files and folders are now moved to trash when deleted",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "ファイルやフォルダ削除時にそれらをゴミ箱へ移動するように"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed flickering issue when switching in asset grid view",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "Grid表示において切り替え時に画面がちらつくことがある問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed layer confusion when update display overlaps with dialogs",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アップデート表示とダイアログが被るとレイヤーが混同する問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Improved delete button behavior in data management dialog",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "データ管理ダイアログにおける削除ボタンの挙動を改善"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.3",
     "others": [
       {
