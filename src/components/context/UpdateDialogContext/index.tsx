@@ -41,6 +41,7 @@ export const UpdateDialogProvider = ({ children }: Props) => {
             'fixed bottom-4 right-4 z-50 w-96 bg-background rounded-lg p-4',
             'border-2 border-primary ring-2 ring-primary/60',
             'duration-300 ease-out',
+            '[view-transition-name:update-notification]',
             isNotificationClosing
               ? 'animate-out slide-out-to-bottom-30 fade-out'
               : 'animate-in slide-in-from-bottom-30 fade-in',
