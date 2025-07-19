@@ -1,7 +1,7 @@
 {
   "name": "konoasset",
   "private": true,
-  "version": "1.2.4-rc.0",
+  "version": "1.2.4",
   "type": "module",
   "scripts": {
     "dev": "vite",

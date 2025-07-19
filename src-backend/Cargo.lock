@@ -2187,7 +2187,7 @@ dependencies = [
 
 [[package]]
 name = "konoasset"
-version = "1.2.4-rc.0"
+version = "1.2.4"
 dependencies = [
  "async_zip",
  "booth",
