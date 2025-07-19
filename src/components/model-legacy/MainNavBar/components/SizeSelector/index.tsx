@@ -18,13 +18,25 @@ export const SizeSelector: FC<Props> = ({ current, setValue }) => {
         <Proportions className="text-muted-foreground" size={20} />
         {t('mainnavbar:size-settings:title')}
       </Label>
-      <ButtonWithCheckMark value="Large" setter={setValue} current={current}>
+      <ButtonWithCheckMark
+        value="GridLarge"
+        setter={setValue}
+        current={current}
+      >
         {t('mainnavbar:size-settings:large')}
       </ButtonWithCheckMark>
-      <ButtonWithCheckMark value="Medium" setter={setValue} current={current}>
+      <ButtonWithCheckMark
+        value="GridMedium"
+        setter={setValue}
+        current={current}
+      >
         {t('mainnavbar:size-settings:medium')}
       </ButtonWithCheckMark>
-      <ButtonWithCheckMark value="Small" setter={setValue} current={current}>
+      <ButtonWithCheckMark
+        value="GridSmall"
+        setter={setValue}
+        current={current}
+      >
         {t('mainnavbar:size-settings:small')}
       </ButtonWithCheckMark>
       <ButtonWithCheckMark value="List" setter={setValue} current={current}>

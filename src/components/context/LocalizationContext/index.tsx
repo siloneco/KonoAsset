@@ -1,6 +1,6 @@
 import { LanguageCode, LocalizationData } from '@/lib/bindings'
 import { createContext, FC } from 'react'
-import { useLocalizationContext } from './hook'
+import { getLocalizationData, useLocalizationContext } from './hook'
 
 export type LocalizationContextType = {
   data: LocalizationData
@@ -21,10 +21,27 @@ export const LocalizationContext = createContext<LocalizationContextType>({
 
 type Props = {
   children: React.ReactNode
+  forcedLanguage?: Exclude<LanguageCode, { 'user-provided': string }>
 }
 
-export const LocalizationContextProvider: FC<Props> = ({ children }) => {
+export const LocalizationContextProvider: FC<Props> = ({
+  children,
+  forcedLanguage,
+}) => {
   const contextValue = useLocalizationContext()
+
+  if (forcedLanguage) {
+    const forcedContextValue: LocalizationContextType = {
+      ...contextValue,
+      data: getLocalizationData(forcedLanguage),
+    }
+
+    return (
+      <LocalizationContext.Provider value={forcedContextValue}>
+        {children}
+      </LocalizationContext.Provider>
+    )
+  }
 
   return (
     <LocalizationContext.Provider value={contextValue}>

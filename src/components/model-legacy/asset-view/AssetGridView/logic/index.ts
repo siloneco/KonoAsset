@@ -1,4 +1,4 @@
-import { AssetViewStyle } from '@/stores/AssetSummaryViewStore'
+import { DisplayStyle } from '@/lib/bindings'
 
 const SMALL_CARD_WIDTH = 160
 const MEDIUM_CARD_WIDTH = 200
@@ -6,13 +6,13 @@ const LARGE_CARD_WIDTH = 260
 
 export const calculateColumnCount = (
   width: number,
-  size: Omit<AssetViewStyle, 'List'>,
+  size: Omit<DisplayStyle, 'List'>,
 ) => {
-  if (size === 'Small') {
+  if (size === 'GridSmall') {
     return Math.floor(width / SMALL_CARD_WIDTH)
-  } else if (size === 'Medium') {
+  } else if (size === 'GridMedium') {
     return Math.floor(width / MEDIUM_CARD_WIDTH)
-  } else if (size === 'Large') {
+  } else if (size === 'GridLarge') {
     return Math.floor(width / LARGE_CARD_WIDTH)
   }
 

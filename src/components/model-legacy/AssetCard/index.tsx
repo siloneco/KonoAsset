@@ -1,6 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { MoreButton } from '../action-buttons/MoreButton'
-import { AssetBadge } from '@/components/model-legacy/AssetBadge'
 import { Label } from '@/components/ui/label'
 import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
@@ -11,6 +10,7 @@ import { NotebookText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
 
 type Props = {
   asset: AssetSummary
@@ -37,9 +37,7 @@ export const AssetCard = ({
 }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
 
-  const assetViewStyle = useAssetSummaryViewStore(
-    (state) => state.assetViewStyle,
-  )
+  const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
 
   const onShopNameClicked = useCallback(() => {
     updateFilter({
@@ -58,14 +56,11 @@ export const AssetCard = ({
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
           />
-          <div className="mt-2 h-8 w-full flex flex-row justify-between items-center text-center">
-            <div className="flex shrink overflow-hidden">
-              <AssetBadge
-                type={asset.assetType}
-                className="select-none cursor-pointer w-full"
-                onClick={() => updateFilter({ assetType: asset.assetType })}
-              />
-            </div>
+          <div className="mt-2 h-8 w-full flex flex-row justify-between items-center gap-2">
+            <AssetCardTypeBadge
+              type={asset.assetType}
+              onClick={() => updateFilter({ assetType: asset.assetType })}
+            />
             {asset.hasMemo && (
               <Button
                 variant="outline"
@@ -79,7 +74,7 @@ export const AssetCard = ({
           <CardTitle
             className={cn(
               'text-lg mt-2 break-words whitespace-pre-wrap',
-              assetViewStyle === 'Small' && 'text-base',
+              displayStyle === 'GridSmall' && 'text-base',
             )}
           >
             {asset.name}
@@ -95,7 +90,7 @@ export const AssetCard = ({
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
-            displayOpenButtonText={assetViewStyle !== 'Small'}
+            displayOpenButtonText={displayStyle !== 'GridSmall'}
             openDependencyDialog={() =>
               openDependencyDialog(asset.name, asset.dependencies)
             }
