@@ -61,7 +61,7 @@ export const Changelog: FC<Props> = ({ changes }) => {
       </div>
       <div className="flex justify-center p-4">
         <a
-          href={`https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md`}
+          href="https://github.com/siloneco/KonoAsset/blob/develop/CHANGELOG.md"
           target="_blank"
           rel="noopener noreferrer"
         >

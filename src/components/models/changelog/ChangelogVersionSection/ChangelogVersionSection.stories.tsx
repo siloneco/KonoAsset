@@ -46,7 +46,7 @@ export const Truncated: Story = {
     change: {
       ...exampleChange,
       others: [
-        'Other 1: Other 1: This is a longer description to test how the changelog handles longer text entries',
+        'Other 1: This is a longer description to test how the changelog handles longer text entries',
         'Other 2',
       ],
     },

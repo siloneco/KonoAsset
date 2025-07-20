@@ -21,22 +21,22 @@ export const ChangelogVersionSection: FC<Props> = ({ className, change }) => {
       </Label>
       <div className="mt-2 space-y-1">
         {change.features !== null &&
-          change.features.map((feature, index) => (
+          change.features.map((entry, index) => (
             <ChangelogLineEntry key={`feature-${index}`} variant="features">
-              {feature}
+              {entry}
             </ChangelogLineEntry>
           ))}
         {change.fixes !== null &&
-          change.fixes.map((fix, index) => (
+          change.fixes.map((entry, index) => (
             <ChangelogLineEntry key={`fix-${index}`} variant="fixes">
-              {fix}
+              {entry}
             </ChangelogLineEntry>
           ))}
 
         {change.others !== null &&
-          change.others.map((other, index) => (
+          change.others.map((entry, index) => (
             <ChangelogLineEntry key={`other-${index}`} variant="others">
-              {other}
+              {entry}
             </ChangelogLineEntry>
           ))}
       </div>
