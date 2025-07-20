@@ -19,7 +19,7 @@ export const ChangelogVersionSection: FC<Props> = ({ className, change }) => {
           </div>
         )}
       </Label>
-      <div className="mt-2 space-y-1 w-full">
+      <div className="mt-2 space-y-1">
         {change.features !== null &&
           change.features.map((feature, index) => (
             <ChangelogLineEntry key={`feature-${index}`} variant="features">
