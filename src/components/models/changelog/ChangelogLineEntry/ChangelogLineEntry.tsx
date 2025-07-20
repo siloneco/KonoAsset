@@ -52,7 +52,7 @@ export const ChangelogLineEntry: FC<Props> = ({
       <TooltipProvider>
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
-            <span className={cn('shrink truncate')}>{children}</span>
+            <span className="shrink truncate">{children}</span>
           </TooltipTrigger>
           <TooltipContent>
             <p>{children}</p>
