@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import { FC } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
 import { useUpdateDialog } from './hook'
-import { Changelog } from '../Changelog'
+import { Changelog } from '@/components/models/changelog/Changelog/'
 
 type Props = {
   dialogOpen: boolean
