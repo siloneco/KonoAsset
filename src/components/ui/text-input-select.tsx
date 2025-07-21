@@ -253,7 +253,7 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
           const res = onSearchSync(value)
           setSuggestions(res || [])
         }
-        onChange?.(value)
+        onChange?.(value.trim())
         inputProps?.onValueChange?.(value)
       },
       [onSearch, onSearchSync, inputProps, onChange],
