@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
+import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
 
 type Props = {
   asset: AssetSummary
@@ -22,7 +23,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openMemoDialog: (assetId: string) => void
   openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 }
 
@@ -32,12 +32,12 @@ export const AssetCard = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openMemoDialog,
   openDependencyDialog,
 }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
-
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
+
+  const openMemoDialog = useMemoDialogStore((state) => state.open)
 
   const onShopNameClicked = useCallback(() => {
     updateFilter({
