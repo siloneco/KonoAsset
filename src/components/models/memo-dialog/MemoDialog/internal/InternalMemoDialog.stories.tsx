@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { InternalMemoDialog } from './'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'memo-dialog/MemoDialog',
@@ -19,7 +20,7 @@ const meta = {
   },
   args: {
     isOpen: true,
-    setOpen: () => {},
+    setOpen: fn(),
     loading: false,
     name: 'Example Asset Name',
     memo: 'This is an example memo',
@@ -27,10 +28,18 @@ const meta = {
   render: (args) => {
     const [isOpen, setOpen] = useState(args.isOpen)
 
+    const handleSetOpen = useCallback(
+      (open: boolean) => {
+        setOpen(open)
+        args.setOpen(open)
+      },
+      [args],
+    )
+
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Open</Button>
-        <InternalMemoDialog {...args} isOpen={isOpen} setOpen={setOpen} />
+        <Button onClick={() => handleSetOpen(true)}>Open</Button>
+        <InternalMemoDialog {...args} isOpen={isOpen} setOpen={handleSetOpen} />
       </>
     )
   },
