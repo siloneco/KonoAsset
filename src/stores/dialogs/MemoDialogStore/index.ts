@@ -21,9 +21,13 @@ export const useMemoDialogStore = create<Props>((set) => ({
     // currentAsset を null にして loading 状態にする
     set({ isOpen: true, currentAsset: null })
 
-    fetchAssetInfo(assetId).then((asset) => {
-      set({ currentAsset: asset })
-    })
+    fetchAssetInfo(assetId)
+      .then((asset) => {
+        set({ currentAsset: asset })
+      })
+      .catch((error) => {
+        console.error('Failed to fetch asset info for memo dialog:', error)
+      })
   },
   currentAsset: null,
 }))
