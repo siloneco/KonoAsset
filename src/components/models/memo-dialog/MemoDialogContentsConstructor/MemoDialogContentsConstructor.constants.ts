@@ -1,1 +1,1 @@
-export const URL_REGEX = /^https?:\/\/[^\s]+/g
+export const URL_REGEX = /^https?:\/\/[^\s]+/
