@@ -5,6 +5,7 @@ import { MoreButton } from '../../action-buttons/MoreButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
+import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
@@ -16,7 +17,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openMemoDialog: (assetId: string) => void
   openDependencyDialog: (assetName: string, dependencies: string[]) => void
 }
 
@@ -25,9 +25,10 @@ export const AssetListView = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openMemoDialog,
   openDependencyDialog,
 }: Props) => {
+  const openMemoDialog = useMemoDialogStore((state) => state.open)
+
   const renderAssetItem = (asset: AssetSummary) => (
     <SlimAssetDetail key={asset.id} asset={asset}>
       <div className="flex flex-row items-center gap-4">
