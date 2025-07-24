@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react'
+import { FC } from 'react'
 import { URL_REGEX } from './MemoDialogContentsConstructor.constants'
 
 type Props = {
@@ -10,16 +10,16 @@ export const MemoDialogContentsConstructor: FC<Props> = ({
 }) => {
   return (
     <pre className="w-full whitespace-pre-wrap text-base break-words font-sans">
-      {memo.split('\n').map((line) => {
+      {memo.split('\n').map((line, lineIndex) => {
         let buffer: string[] = []
 
         return (
-          <p className="space-x-1" key={line}>
-            {line.split(' ').map((text, index) => {
+          <p className="space-x-1" key={`line-${lineIndex}`}>
+            {line.split(' ').map((text, textIndex) => {
               if (URL_REGEX.test(text)) {
                 const linkComponent = (
                   <a
-                    key={`url-${text}-${index}`}
+                    key={`url-${lineIndex}-${textIndex}`}
                     href={text}
                     className="text-blue-600 dark:text-blue-400 underline"
                     target="_blank"
@@ -37,7 +37,10 @@ export const MemoDialogContentsConstructor: FC<Props> = ({
                 buffer = []
 
                 return (
-                  <span key={`text-url-${index}`} className="space-x-1">
+                  <span
+                    key={`text-url-${lineIndex}-${textIndex}`}
+                    className="space-x-1"
+                  >
                     <span>{bufferedText}</span>
                     {linkComponent}
                   </span>
@@ -46,7 +49,7 @@ export const MemoDialogContentsConstructor: FC<Props> = ({
 
               buffer = [...buffer, text]
 
-              return <Fragment key={`empty-${index}`}></Fragment>
+              return null
             })}
             {buffer.length > 0 && (
               <span key={`buffer-${line}`}>{buffer.join(' ')}</span>
