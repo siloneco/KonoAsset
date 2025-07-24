@@ -14,7 +14,7 @@ import { FC } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalization } from '@/hooks/use-localization'
-import { MemoDialogContentsConstructor } from '../../MemoDialogContentsConstructor/MemoDialogContentsConstructor'
+import { MemoDialogContentsConstructor } from '../../MemoDialogContentsConstructor'
 
 type Props = {
   isOpen: boolean

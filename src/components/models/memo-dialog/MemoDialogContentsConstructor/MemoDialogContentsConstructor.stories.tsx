@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { MemoDialogContentsConstructor } from './MemoDialogContentsConstructor'
+import { MemoDialogContentsConstructor } from '.'
 
 const meta = {
   title: 'memo-dialog/components/MemoDialogContentsConstructor',
