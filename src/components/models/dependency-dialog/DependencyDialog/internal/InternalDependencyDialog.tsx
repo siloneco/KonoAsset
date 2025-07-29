@@ -62,7 +62,7 @@ export const InternalDependencyDialog: FC<Props> = ({
           <ScrollArea className="max-h-96 pr-2">
             <div className="grid grid-cols-1 w-full space-y-2">
               {dependencies.map((item) => (
-                <SlimAssetDetail asset={item} className="w-full">
+                <SlimAssetDetail key={item.id} asset={item} className="w-full">
                   <AssetCardOpenButton
                     id={item.id}
                     displayOpenButtonText
