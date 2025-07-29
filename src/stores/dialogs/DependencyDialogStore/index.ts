@@ -2,7 +2,7 @@ import { AssetDescription, AssetSummary } from '@/lib/bindings'
 import { create } from 'zustand'
 import { fetchDependencies } from './logic'
 
-type CurrentAssetType = Pick<AssetSummary, 'id'> &
+export type DependencyDialogAssetType = Pick<AssetSummary, 'id'> &
   Pick<AssetDescription, 'name'> & {
     dependencies: AssetSummary[]
   }
@@ -12,7 +12,7 @@ type Props = {
   setOpen: (open: boolean) => void
   open: (assetId: string) => void
 
-  currentAsset: CurrentAssetType | null
+  currentAsset: DependencyDialogAssetType | null
 }
 
 export const useDependencyDialogStore = create<Props>((set) => ({

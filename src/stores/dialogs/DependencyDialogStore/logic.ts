@@ -1,16 +1,10 @@
-import { AssetDescription, AssetSummary, commands } from '@/lib/bindings'
+import { AssetSummary, commands } from '@/lib/bindings'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
-
-type CurrentAssetType = Pick<AssetSummary, 'id'> &
-  Pick<AssetDescription, 'name'> & {
-    dependencies: AssetSummary[]
-  }
-
-type ReturnType = CurrentAssetType | null
+import { DependencyDialogAssetType } from '.'
 
 export const fetchDependencies = async (
   assetId: string,
-): Promise<ReturnType> => {
+): Promise<DependencyDialogAssetType | null> => {
   const result = await commands.getAsset(assetId)
 
   if (result.status === 'error') {
