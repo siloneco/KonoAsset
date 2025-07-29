@@ -5,7 +5,7 @@ import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetGridView } from '../AssetGridView'
 import { AssetListView } from '../AssetListView'
 import { MemoDialog } from '@/components/models/memo-dialog/MemoDialog'
-import { DependencyDialog } from '@/components/models/dependency-dialog'
+import { DependencyDialog } from '@/components/models/dependency-dialog/DependencyDialog'
 
 type Props = {
   openAddAssetDialog: () => void

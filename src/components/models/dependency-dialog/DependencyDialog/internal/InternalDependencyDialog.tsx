@@ -4,7 +4,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { FileInfo } from '@/lib/bindings'
+import { AssetSummary, FileInfo } from '@/lib/bindings'
 import {
   Dialog,
   DialogContent,
@@ -14,25 +14,34 @@ import {
 import { FC } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SlimAssetDetail } from '../../model-legacy/SlimAssetDetail'
-import { AssetCardOpenButton } from '../../model-legacy/action-buttons/AssetCardOpenButton'
-import { useDependencyDialogStore } from '@/stores/dialogs/DependencyDialogStore'
 import { useLocalization } from '@/hooks/use-localization'
+import { SlimAssetDetail } from '@/components/model-legacy/SlimAssetDetail'
+import { AssetCardOpenButton } from '@/components/model-legacy/action-buttons/AssetCardOpenButton'
 
 type Props = {
+  isOpen: boolean
+  setOpen: (open: boolean) => void
+
+  loading: boolean
+
+  name: string
+  dependencies: AssetSummary[]
+
   openSelectUnitypackageDialog: (
     assetId: string,
     data: { [x: string]: FileInfo[] },
   ) => void
 }
 
-export const DependencyDialog: FC<Props> = ({
+export const InternalDependencyDialog: FC<Props> = ({
+  isOpen,
+  setOpen,
+  loading,
+  name,
+  dependencies,
   openSelectUnitypackageDialog,
 }) => {
-  const { isOpen, setOpen, currentAsset } = useDependencyDialogStore()
   const { t } = useLocalization()
-
-  const loading = currentAsset === null
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
@@ -40,8 +49,8 @@ export const DependencyDialog: FC<Props> = ({
         <DialogHeader>
           <DialogTitle>{t('dependencydialog:header')}</DialogTitle>
           {loading && <Skeleton className="w-52 h-3 rounded-full" />}
-          <DialogDescription className="max-w-[450px] truncate">
-            {!loading && currentAsset.name}
+          <DialogDescription className="grid grid-cols-1 w-full truncate overflow-hidden">
+            {!loading && <span className="truncate w-full">{name}</span>}
           </DialogDescription>
         </DialogHeader>
         {loading && (
@@ -51,9 +60,9 @@ export const DependencyDialog: FC<Props> = ({
         )}
         {!loading && (
           <ScrollArea className="max-h-96 pr-2">
-            <div className="space-y-1">
-              {currentAsset.dependencies.map((item) => (
-                <SlimAssetDetail asset={item} className="max-w-[650px]">
+            <div className="grid grid-cols-1 w-full space-y-2">
+              {dependencies.map((item) => (
+                <SlimAssetDetail asset={item} className="w-full">
                   <AssetCardOpenButton
                     id={item.id}
                     displayOpenButtonText
