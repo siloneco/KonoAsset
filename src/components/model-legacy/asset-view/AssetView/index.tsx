@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { SelectUnitypackageDialog } from '../../SelectUnitypackageDialog'
-import { DependencyDialog } from '../../DependencyDialog'
 import { useAssetView } from './hook'
 import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetGridView } from '../AssetGridView'
 import { AssetListView } from '../AssetListView'
 import { MemoDialog } from '@/components/models/memo-dialog/MemoDialog'
+import { DependencyDialog } from '@/components/models/dependency-dialog/DependencyDialog'
 
 type Props = {
   openAddAssetDialog: () => void
@@ -27,17 +27,12 @@ export const AssetView: FC<Props> = ({
     background,
 
     openSelectUnitypackageDialog,
-    openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setDependencyDialogOpen,
 
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    dependencyDialogOpen,
-    dependencyDialogAssetName,
-    dependencyDialogDependencies,
   } = useAssetView({
     setShowingAssetCount,
   })
@@ -58,7 +53,6 @@ export const AssetView: FC<Props> = ({
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
-            openDependencyDialog={openDependencyDialog}
           />
         )}
         {displayStyle === 'List' && (
@@ -67,7 +61,6 @@ export const AssetView: FC<Props> = ({
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
-            openDependencyDialog={openDependencyDialog}
           />
         )}
       </div>
@@ -81,11 +74,6 @@ export const AssetView: FC<Props> = ({
         unitypackageFiles={unitypackages}
       />
       <DependencyDialog
-        dialogOpen={dependencyDialogOpen}
-        setDialogOpen={setDependencyDialogOpen}
-        assetName={dependencyDialogAssetName}
-        dependencyIds={dependencyDialogDependencies}
-        openDependencyDialog={openDependencyDialog}
         openSelectUnitypackageDialog={openSelectUnitypackageDialog}
       />
     </div>

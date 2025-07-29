@@ -18,17 +18,12 @@ type ReturnProps = {
     assetId: string,
     data: { [x: string]: FileInfo[] },
   ) => void
-  openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 
   setSelectUnitypackageDialogOpen: (open: boolean) => void
-  setDependencyDialogOpen: (open: boolean) => void
 
   selectUnitypackageDialogOpen: boolean
   selectUnitypackageDialogAssetId: string | null
   unitypackages: { [x: string]: FileInfo[] }
-  dependencyDialogOpen: boolean
-  dependencyDialogAssetName: string | null
-  dependencyDialogDependencies: string[]
 }
 
 export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
@@ -41,13 +36,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   }>({})
   const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
     useState<string | null>(null)
-
-  const [dependencyDialogOpen, setDependencyDialogOpen] = useState(false)
-  const [dependencyDialogAssetName, setDependencyDialogAssetName] = useState<
-    string | null
-  >(null)
-  const [dependencyDialogDependencies, setDependencyDialogDependencies] =
-    useState<string[]>([])
 
   const {
     sortedAssetSummaries,
@@ -100,12 +88,6 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setSelectUnitypackageDialogOpen(true)
   }
 
-  const openDependencyDialog = (assetName: string, dependencyIds: string[]) => {
-    setDependencyDialogAssetName(assetName)
-    setDependencyDialogDependencies(dependencyIds)
-    setDependencyDialogOpen(true)
-  }
-
   return {
     layoutDivRef,
     sortedAssetSummary: filterAppliedSortedAssetSummaries,
@@ -113,16 +95,11 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
 
     openSelectUnitypackageDialog,
-    openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setDependencyDialogOpen,
 
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    dependencyDialogOpen,
-    dependencyDialogAssetName,
-    dependencyDialogDependencies,
   }
 }
