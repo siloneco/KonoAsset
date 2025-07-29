@@ -17,7 +17,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openDependencyDialog: (assetName: string, dependencies: string[]) => void
 }
 
 export const AssetListView = ({
@@ -25,7 +24,6 @@ export const AssetListView = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openDependencyDialog,
 }: Props) => {
   const openMemoDialog = useMemoDialogStore((state) => state.open)
 
@@ -45,9 +43,6 @@ export const AssetListView = ({
           id={asset.id}
           displayOpenButtonText
           hasDependencies={asset.dependencies.length > 0}
-          openDependencyDialog={() =>
-            openDependencyDialog(asset.name, asset.dependencies)
-          }
           openSelectUnitypackageDialog={openSelectUnitypackageDialog}
         />
         <MoreButton

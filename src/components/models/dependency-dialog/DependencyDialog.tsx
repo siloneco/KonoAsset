@@ -4,27 +4,22 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { FileInfo } from '@/lib/bindings'
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SlimAssetDetail } from '../SlimAssetDetail'
+import { SlimAssetDetail } from '../../model-legacy/SlimAssetDetail'
+import { AssetCardOpenButton } from '../../model-legacy/action-buttons/AssetCardOpenButton'
+import { useDependencyDialogStore } from '@/stores/dialogs/DependencyDialogStore'
 import { useLocalization } from '@/hooks/use-localization'
-import { AssetCardOpenButton } from '../action-buttons/AssetCardOpenButton'
-import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 
 type Props = {
-  assetName: string | null
-  dependencyIds: string[]
-  dialogOpen: boolean
-  setDialogOpen: (dialogOpen: boolean) => void
-  openDependencyDialog: (assetName: string, dependencies: string[]) => void
   openSelectUnitypackageDialog: (
     assetId: string,
     data: { [x: string]: FileInfo[] },
@@ -32,68 +27,37 @@ type Props = {
 }
 
 export const DependencyDialog: FC<Props> = ({
-  assetName,
-  dependencyIds,
-  dialogOpen,
-  setDialogOpen,
-  openDependencyDialog,
   openSelectUnitypackageDialog,
 }) => {
-  const [dependencies, setDependencies] = useState<AssetSummary[]>([])
-  const [loading, setLoading] = useState(false)
-
+  const { isOpen, setOpen, currentAsset } = useDependencyDialogStore()
   const { t } = useLocalization()
-  const sortedAssetSummaries = useAssetSummaryViewStore(
-    (state) => state.sortedAssetSummaries,
-  )
 
-  const updateDependencies = useCallback(() => {
-    setLoading(true)
-    try {
-      setDependencies(
-        sortedAssetSummaries.filter((asset) =>
-          dependencyIds.includes(asset.id),
-        ),
-      )
-    } finally {
-      setLoading(false)
-    }
-  }, [sortedAssetSummaries, dependencyIds])
-
-  useEffect(() => {
-    if (dialogOpen) {
-      updateDependencies()
-    }
-  }, [dialogOpen, updateDependencies])
+  const loading = currentAsset === null
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('dependencydialog:header')}</DialogTitle>
           {loading && <Skeleton className="w-52 h-3 rounded-full" />}
           <DialogDescription className="max-w-[450px] truncate">
-            {!loading && assetName}
+            {!loading && currentAsset.name}
           </DialogDescription>
         </DialogHeader>
         {loading && (
           <div className="w-full space-y-2">
-            <Skeleton className="w-full h-14 rounded-lg" />
             <Skeleton className="w-full h-14 rounded-lg" />
           </div>
         )}
         {!loading && (
           <ScrollArea className="max-h-96 pr-2">
             <div className="space-y-1">
-              {dependencies.map((item) => (
+              {currentAsset.dependencies.map((item) => (
                 <SlimAssetDetail asset={item} className="max-w-[650px]">
                   <AssetCardOpenButton
                     id={item.id}
                     displayOpenButtonText
                     hasDependencies={item.dependencies.length > 0}
-                    openDependencyDialog={() =>
-                      openDependencyDialog(item.name, item.dependencies)
-                    }
                     openSelectUnitypackageDialog={openSelectUnitypackageDialog}
                   />
                 </SlimAssetDetail>

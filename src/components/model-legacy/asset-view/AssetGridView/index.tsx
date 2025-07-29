@@ -14,7 +14,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openDependencyDialog: (assetName: string, dependencies: string[]) => void
 }
 
 export const AssetGridView = ({
@@ -23,7 +22,6 @@ export const AssetGridView = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openDependencyDialog,
 }: Props) => {
   const { assetRows, gridColumnCount } = useAssetGridView({
     sortedAssetSummary,
@@ -44,7 +42,6 @@ export const AssetGridView = ({
           openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           openDataManagementDialog={openDataManagementDialog}
           openEditAssetDialog={openEditAssetDialog}
-          openDependencyDialog={openDependencyDialog}
         />
       ))}
     </div>

@@ -22,7 +22,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 }
 
 export const AssetCard = ({
@@ -31,7 +30,6 @@ export const AssetCard = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openDependencyDialog,
 }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
@@ -90,9 +88,6 @@ export const AssetCard = ({
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
             displayOpenButtonText={displayStyle !== 'GridSmall'}
-            openDependencyDialog={() =>
-              openDependencyDialog(asset.name, asset.dependencies)
-            }
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           />
           <MoreButton
