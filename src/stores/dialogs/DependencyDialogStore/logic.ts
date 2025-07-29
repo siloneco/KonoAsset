@@ -56,10 +56,9 @@ const constructAssets = (dependencyIds: string[]): AssetSummary[] => {
     dependencyIds.includes(asset.id),
   )
 
-  const indexMap = new Map(dependencyIds.map((id, index) => [id, index]))
   assets.sort((a, b) => {
-    const aIndex = indexMap.get(a.id) ?? -1
-    const bIndex = indexMap.get(b.id) ?? -1
+    const aIndex = dependencyIds.indexOf(a.id)
+    const bIndex = dependencyIds.indexOf(b.id)
     return aIndex - bIndex
   })
 
