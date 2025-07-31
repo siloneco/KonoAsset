@@ -22,6 +22,9 @@ export const useDragDropStore = create<Props>((set, get) => ({
       const aPriority = a.priority ?? DEFAULT_PRIORITY
       const bPriority = b.priority ?? DEFAULT_PRIORITY
 
+      if (aPriority === bPriority) {
+        return a.uniqueId.localeCompare(b.uniqueId)
+      }
       return aPriority - bPriority
     })
 
