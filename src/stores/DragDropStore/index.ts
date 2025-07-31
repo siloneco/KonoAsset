@@ -14,7 +14,7 @@ export const useDragDropStore = create<Props>((set, get) => ({
   sortedHandlers: [],
   register: (handler) => {
     const beforeSort = [
-      ...get().sortedHandlers.filter(h => h.uniqueId !== handler.uniqueId),
+      ...get().sortedHandlers.filter((h) => h.uniqueId !== handler.uniqueId),
       handler,
     ]
 
@@ -25,6 +25,7 @@ export const useDragDropStore = create<Props>((set, get) => ({
       if (aPriority === bPriority) {
         return a.uniqueId.localeCompare(b.uniqueId)
       }
+
       return aPriority - bPriority
     })
 
