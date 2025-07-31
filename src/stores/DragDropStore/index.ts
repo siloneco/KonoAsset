@@ -29,9 +29,9 @@ export const useDragDropStore = create<Props>((set, get) => ({
       return aPriority - bPriority
     })
 
-    set(() => ({
+    set({
       sortedHandlers,
-    }))
+    })
   },
   onDragDrop: async (event: Event<DragDropEvent>) => {
     const { sortedHandlers } = get()
