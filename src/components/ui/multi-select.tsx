@@ -654,6 +654,47 @@ const MultipleSelector = ({
                 ref={inputRef}
                 value={inputValue}
                 disabled={disabled}
+                onPaste={(e) => {
+                  // Get the pasted text from clipboard
+                  const paste = e.clipboardData?.getData('text')
+                  if (paste && paste.includes('\n')) {
+                    e.preventDefault() // Prevent default paste behavior
+
+                    const lines = paste
+                      .split('\n')
+                      .map((line) => line.trim())
+                      .filter((line) => line.length > 0)
+
+                    if (lines.length > 0) {
+                      // Process each line as a separate option
+                      const newOptions = [...selected]
+
+                      for (const line of lines) {
+                        // Check max selected limit
+                        if (newOptions.length >= maxSelected) {
+                          onMaxSelected?.(newOptions.length)
+                          break
+                        }
+
+                        // Handle negative selection
+                        const processedLine = negativeSelectable
+                          ? line
+                          : line.replace(/^-/, '')
+
+                        // Only add if not already selected
+                        if (!newOptions.includes(processedLine)) {
+                          newOptions.push(processedLine)
+                        }
+                      }
+
+                      setSelected(newOptions)
+                      onChange?.(newOptions)
+                      setInputValue('') // Clear input after processing lines
+                    }
+                  }
+                  // Let normal paste behavior continue for single-line text
+                  inputProps?.onPaste?.(e)
+                }}
                 onValueChange={(value) => {
                   // If negativeSelectable is false, prevent adding hyphen at the start
                   const newValue = negativeSelectable
