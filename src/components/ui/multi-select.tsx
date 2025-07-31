@@ -692,8 +692,10 @@ const MultipleSelector = ({
                       setInputValue('') // Clear input after processing lines
                     }
                   }
-                  // Let normal paste behavior continue for single-line text
-                  inputProps?.onPaste?.(e)
+                  } else {
+                    // Let normal paste behavior continue for single-line text
+                    inputProps?.onPaste?.(e)
+                  }
                 }}
                 onValueChange={(value) => {
                   // If negativeSelectable is false, prevent adding hyphen at the start
