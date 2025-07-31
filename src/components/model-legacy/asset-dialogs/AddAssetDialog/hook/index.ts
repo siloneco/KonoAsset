@@ -1,7 +1,3 @@
-import {
-  DragDropContext,
-  DragDropRegisterConfig,
-} from '@/components/context/DragDropContext'
 import { useToast } from '@/hooks/use-toast'
 import { AssetSummary, AssetType, commands, events } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
@@ -24,6 +20,8 @@ import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { useLocalization } from '@/hooks/use-localization'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
+import { useDragDropStore } from '@/stores/DragDropStore'
+import { DragDropHandler } from '@/stores/DragDropStore/index.types'
 
 type Props = {
   dialogOpen: boolean
@@ -77,7 +75,7 @@ export const useAddAssetDialog = ({
     (state) => state.refreshFilteredIds,
   )
 
-  const { register } = useContext(DragDropContext)
+  const { register } = useDragDropStore()
   const { preference } = useContext(PreferenceContext)
 
   const assetTypeAvatar: AssetType = 'Avatar'
@@ -181,12 +179,13 @@ export const useAddAssetDialog = ({
   )
 
   useEffect(() => {
-    const eventHandlingConfig: DragDropRegisterConfig = {
+    const handler: DragDropHandler = {
       uniqueId: 'add-asset-dialog',
       priority: 100,
+      fn: eventHandlingFn,
     }
 
-    register(eventHandlingConfig, eventHandlingFn)
+    register(handler)
   }, [eventHandlingFn, register])
 
   useEffect(() => {

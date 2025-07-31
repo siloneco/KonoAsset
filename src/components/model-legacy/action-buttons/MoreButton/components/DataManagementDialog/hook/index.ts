@@ -1,12 +1,10 @@
-import {
-  DragDropContext,
-  DragDropRegisterConfig,
-} from '@/components/context/DragDropContext'
 import { commands, SimplifiedDirEntry } from '@/lib/bindings'
+import { useDragDropStore } from '@/stores/DragDropStore'
+import { DragDropHandler } from '@/stores/DragDropStore/index.types'
 import { Event } from '@tauri-apps/api/event'
 import { DragDropEvent } from '@tauri-apps/api/window'
 import { open } from '@tauri-apps/plugin-dialog'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type Props = {
   assetId: string | null
@@ -58,7 +56,7 @@ export const useDataManagementDialog = ({
   const [refreshButtonCheckMarked, setRefreshButtonCheckMarked] =
     useState(false)
 
-  const { register } = useContext(DragDropContext)
+  const { register } = useDragDropStore()
 
   const ongoingImportsRef = useRef<OngoingImportEntry[]>(ongoingImports)
   const dialogOpenRef = useRef<boolean>(dialogOpen)
@@ -191,12 +189,13 @@ export const useDataManagementDialog = ({
   )
 
   useEffect(() => {
-    const eventHandlingConfig: DragDropRegisterConfig = {
+    const dragDropHandler: DragDropHandler = {
       uniqueId: 'data-management-dialog',
       priority: 90,
+      fn: eventHandlingFn,
     }
 
-    register(eventHandlingConfig, eventHandlingFn)
+    register(dragDropHandler)
   }, [eventHandlingFn, register])
 
   return {

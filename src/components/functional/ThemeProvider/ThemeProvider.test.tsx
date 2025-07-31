@@ -1,6 +1,6 @@
 import { afterEach, describe, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import { ThemeProvider } from '.'
+import { ThemeProvider } from './ThemeProvider'
 import { solveMatchMediaIssue } from '@/test/init'
 
 solveMatchMediaIssue()

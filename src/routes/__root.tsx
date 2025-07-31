@@ -1,10 +1,10 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { ThemeProvider } from '@/components/misc/ThemeProvider'
+import { ThemeProvider } from '@/components/functional/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { PreferenceContextProvider } from '@/components/context/PreferenceContext'
 import { LocalizationContextProvider } from '@/components/context/LocalizationContext'
 import { UpdateDialogProvider } from '@/components/context/UpdateDialogContext'
-import { DragDropContextProvider } from '@/components/context/DragDropContext'
+import { DragDropEmitter } from '@/components/functional/DragDropEmitter'
 
 import '../index.css'
 
@@ -19,10 +19,10 @@ export const Route = createRootRoute({
       <PreferenceContextProvider>
         <LocalizationContextProvider>
           <UpdateDialogProvider>
-            <DragDropContextProvider>
+            <DragDropEmitter>
               <Outlet />
               <Toaster />
-            </DragDropContextProvider>
+            </DragDropEmitter>
           </UpdateDialogProvider>
         </LocalizationContextProvider>
       </PreferenceContextProvider>
