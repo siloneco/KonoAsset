@@ -691,7 +691,6 @@ const MultipleSelector = ({
                       onChange?.(newOptions)
                       setInputValue('') // Clear input after processing lines
                     }
-                  }
                   } else {
                     // Let normal paste behavior continue for single-line text
                     inputProps?.onPaste?.(e)
