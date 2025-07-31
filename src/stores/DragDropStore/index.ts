@@ -13,7 +13,10 @@ type Props = {
 export const useDragDropStore = create<Props>((set, get) => ({
   sortedHandlers: [],
   register: (handler) => {
-    const beforeSort = [...get().sortedHandlers, handler]
+    const beforeSort = [
+      ...get().sortedHandlers.filter(h => h.uniqueId !== handler.uniqueId),
+      handler,
+    ]
 
     const sortedHandlers = beforeSort.sort((a, b) => {
       const aPriority = a.priority ?? DEFAULT_PRIORITY
