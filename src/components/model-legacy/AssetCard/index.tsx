@@ -1,5 +1,4 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
-import { MoreButton } from '../action-buttons/MoreButton'
 import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
@@ -11,6 +10,7 @@ import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
 import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
 
 type Props = {
   asset: AssetSummary
@@ -90,7 +90,7 @@ export const AssetCard = ({
             displayOpenButtonText={displayStyle !== 'GridSmall'}
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           />
-          <MoreButton
+          <AssetCardMeatballMenu
             id={asset.id}
             boothItemID={asset.boothItemId ?? undefined}
             openDataManagementDialog={() => {
