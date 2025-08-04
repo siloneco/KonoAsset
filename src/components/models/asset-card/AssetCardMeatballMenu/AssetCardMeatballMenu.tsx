@@ -1,19 +1,18 @@
 import { FC } from 'react'
-
 import { useAssetCardMeatballMenu } from './hook'
 import { InternalAssetCardMeatballMenu } from './internal'
 
 type Props = {
-  className?: string
   id: string
+  className?: string
   boothItemID?: number
   openDataManagementDialog: () => void
   openEditAssetDialog: () => void
 }
 
 export const AssetCardMeatballMenu: FC<Props> = ({
-  className,
   id,
+  className,
   boothItemID,
   openDataManagementDialog,
   openEditAssetDialog,
