@@ -110,11 +110,14 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
                 {t('assetcard:more-button:delete-confirm')}
               </AlertDialogTitle>
               <AlertDialogDescription className="space-y-2">
-                {t('assetcard:more-button:delete-confirm:explanation-text-1')}
+                <span className="inline-block">
+                  {t('assetcard:more-button:delete-confirm:explanation-text-1')}
+                </span>
+                <br />
+                <span className="inline-block font-bold">
+                  {t('assetcard:more-button:delete-confirm:explanation-text-2')}
+                </span>
               </AlertDialogDescription>
-              <p className="text-muted-foreground font-bold text-sm">
-                {t('assetcard:more-button:delete-confirm:explanation-text-2')}
-              </p>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={deleteInProgress}>
