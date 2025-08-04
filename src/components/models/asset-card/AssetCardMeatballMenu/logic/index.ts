@@ -27,7 +27,7 @@ export const fetchBoothUrl = async (id: number): Promise<string | null> => {
   const result = await commands.getBoothUrl(id)
 
   if (result.status === 'error') {
-    console.error(result.error)
+    console.error(`Failed to fetch BOOTH URL for item ${id}: ${result.error}`)
     return null
   }
 
