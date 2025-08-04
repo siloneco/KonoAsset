@@ -1,11 +1,11 @@
 import { AssetSummary, FileInfo } from '@/lib/bindings'
 import { SlimAssetDetail } from '../../SlimAssetDetail'
 import { AssetCardOpenButton } from '../../action-buttons/AssetCardOpenButton'
-import { MoreButton } from '../../action-buttons/MoreButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
 import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
@@ -45,7 +45,7 @@ export const AssetListView = ({
           hasDependencies={asset.dependencies.length > 0}
           openSelectUnitypackageDialog={openSelectUnitypackageDialog}
         />
-        <MoreButton
+        <AssetCardMeatballMenu
           id={asset.id}
           boothItemID={asset.boothItemId ?? undefined}
           openDataManagementDialog={() => openDataManagementDialog(asset.id)}

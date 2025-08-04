@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Preview } from '@storybook/react-vite'
-import { ThemeProvider } from '../src/components/misc/ThemeProvider'
+import { ThemeProvider } from '../src/components/functional/ThemeProvider'
 import { LocalizationContextProvider } from '../src/components/context/LocalizationContext'
 
 import '../src/index.css'
