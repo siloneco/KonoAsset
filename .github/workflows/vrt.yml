@@ -54,13 +54,13 @@ jobs:
       - uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
         with:
           cmd: |
-            language=$(yq -oy '.language' .storybook/default-global-types.json)
-            theme=$(yq -oy '.theme' .storybook/default-global-types.json)
-            echo "language: $language"
-            echo "theme: $theme"
+            yq -i '.language = "${{ matrix.language }}"' .storybook/default-global-types.json
+            yq -i '.theme = "${{ matrix.theme }}"' .storybook/default-global-types.json
+            echo "language: ${{ matrix.language }}"
+            echo "theme: ${{ matrix.theme }}"
 
       - run: pnpm storybook &
-      - run: sleep 30 # wait for storybook to start
+      - run: sleep 15 # wait 15 seconds for storybook to start
       - run: pnpm dlx storycap http://localhost:6006
 
       - run: tar -czvf screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz __screenshots__
