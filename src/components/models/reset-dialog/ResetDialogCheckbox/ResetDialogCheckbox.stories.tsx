@@ -65,3 +65,9 @@ export const WithSubText: Story = {
     ),
   },
 }
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+}
