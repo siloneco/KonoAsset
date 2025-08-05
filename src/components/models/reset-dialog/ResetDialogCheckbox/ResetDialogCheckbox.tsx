@@ -1,19 +1,17 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 type Props = {
-  mainText: string
-  subText?: string
+  children: ReactNode
   checked: boolean
   setChecked: (checked: boolean) => void
   disabled?: boolean
   className?: string
 }
 
-export const CheckboxAndLabel: FC<Props> = ({
-  mainText,
-  subText,
+export const ResetDialogCheckbox: FC<Props> = ({
+  children,
   checked,
   setChecked,
   disabled = false,
@@ -22,18 +20,13 @@ export const CheckboxAndLabel: FC<Props> = ({
   return (
     <div
       className={cn(
-        'ml-4 flex flex-row items-center space-x-2 cursor-pointer select-none',
+        'flex flex-row items-center space-x-2 cursor-pointer select-none',
         className,
       )}
       onClick={() => !disabled && setChecked(!checked)}
     >
       <Checkbox checked={checked} disabled={disabled} />
-      <p>
-        {mainText}
-        {subText !== undefined && (
-          <span className="ml-2 text-muted-foreground">({subText})</span>
-        )}
-      </p>
+      <div>{children}</div>
     </div>
   )
 }
