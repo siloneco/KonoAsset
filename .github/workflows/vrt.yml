@@ -61,7 +61,7 @@ jobs:
             echo "theme: ${{ matrix.theme }}"
 
       - run: pnpm storybook &
-      - run: pnpm dlx storycap http://localhost:6006
+      - run: pnpm storycap http://localhost:6006
 
       - run: tar -czvf screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz __screenshots__
 
