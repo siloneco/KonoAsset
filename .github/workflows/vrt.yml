@@ -6,6 +6,7 @@ on:
       - ".storybook/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "regconfig.json"
       - ".github/workflows/vrt.yml"
     branches:
       - "develop"
@@ -19,6 +20,7 @@ on:
       - ".storybook/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "regconfig.json"
       - ".github/workflows/vrt.yml"
 
 permissions:
