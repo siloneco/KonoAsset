@@ -52,7 +52,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Install fonts
-        run: sudo apt install fonts-ipafont fonts-ipaexfont
+        run: sudo apt install fonts-ipafont fonts-ipaexfont fonts-wqy-zenhei fonts-wqy-microhei
 
       - uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
         with:
