@@ -54,7 +54,7 @@ jobs:
       - name: Install fonts
         run: sudo apt install fonts-ipafont fonts-ipaexfont fonts-wqy-zenhei fonts-wqy-microhei
 
-      - uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
+      - uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
         with:
           cmd: |
             yq -i '.language = "${{ matrix.language }}"' .storybook/default-global-types.json
@@ -67,7 +67,7 @@ jobs:
 
       - run: tar -czvf screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz __screenshots__
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
           path: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
@@ -100,7 +100,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: mkdir -p __screenshots_workspace__
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: __screenshots_workspace__/
 
@@ -151,6 +151,6 @@ jobs:
         theme: [light, dark]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@f275313e70c08f6120db482d7a6b98377786765b # v5
         with:
           name: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
