@@ -5,18 +5,16 @@ import { FC } from 'react'
 
 type Props = {
   children: string
-
   current: string
-
   value: string
   setter: (value: string) => void
 }
 
 export const StatusBarOptionSelectButton: FC<Props> = ({
   children,
+  current,
   value,
   setter,
-  current,
 }) => {
   return (
     <Button
