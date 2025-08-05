@@ -28,3 +28,7 @@ dist-ssr
 coverage
 *storybook.log
 storybook-static
+
+# storycap + vrt
+.reg/
+__screenshots__

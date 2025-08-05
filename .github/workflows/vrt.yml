@@ -1,0 +1,138 @@
+name: Visual Regression Test
+on:
+  push:
+    paths:
+      - "src/**"
+      - ".storybook/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/vrt.yml"
+    branches:
+      - "main"
+      - "pre-release"
+      - "develop"
+  pull_request:
+    types:
+      - reopened
+      - opened
+      - synchronize
+    paths:
+      - "src/**"
+      - ".storybook/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/vrt.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Run Visual Regression Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        theme: [light, dark]
+        language: [en-US, en-GB, ja-JP, zh-CN]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 23
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: node --version
+      - run: pnpm --version
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
+        with:
+          cmd: |
+            language=$(yq -oy '.language' .storybook/default-global-types.json)
+            theme=$(yq -oy '.theme' .storybook/default-global-types.json)
+            echo "language: $language"
+            echo "theme: $theme"
+
+      - run: pnpm storybook &
+      - run: sleep 30 # wait for storybook to start
+      - run: pnpm dlx storycap http://localhost:6006
+
+      - run: tar -czvf screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz __screenshots__
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
+          path: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
+
+  compare:
+    name: Compare Visual Regression Test
+    runs-on: ubuntu-latest
+    needs: capture
+    environment:
+      name: vrt
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 23
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: node --version
+      - run: pnpm --version
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: mkdir -p __screenshots_workspace__
+      - uses: actions/download-artifact@v4
+        with:
+          path: __screenshots_workspace__/
+
+      - run: |
+          find __screenshots_workspace__ -type f -name "*.tar.gz" | while read file; do
+            base=$(basename "$file" .tar.gz)
+            lang=$(echo "$base" | sed -E 's/^screenshots-([^-]+-[^-]+|en-US|en-GB|zh-CN)-([^-]+)$/\1/')
+            theme=$(echo "$base" | sed -E 's/^screenshots-([^-]+-[^-]+|en-US|en-GB|zh-CN)-([^-]+)$/\2/')
+            tar -xzvf "$file" -C __screenshots_workspace__/
+            if [ -d "__screenshots_workspace__/__screenshots__" ]; then
+              find "__screenshots_workspace__/__screenshots__" -type f | while read screenshot; do
+                dir=$(dirname "$screenshot")
+                filename=$(basename "$screenshot")
+                extension="${filename##*.}"
+                basename_no_ext="${filename%.*}"
+                new_filename="${basename_no_ext} (${lang}, ${theme}).${extension}"
+                mv "$screenshot" "${dir}/${new_filename}"
+              done
+            fi
+          done
+
+      - run: mv __screenshots_workspace__/__screenshots__ __screenshots__
+
+      - run: pnpm reg-suit run
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_VRT_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_VRT_SECRET_ACCESS_KEY }}
+
+  delete-artifacts:
+    name: Delete Visual Regression Test Artifacts
+    runs-on: ubuntu-latest
+    needs: compare
+    strategy:
+      matrix:
+        language: [en-US, en-GB, ja-JP, zh-CN]
+        theme: [light, dark]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
