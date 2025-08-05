@@ -7,8 +7,8 @@ import { EditAssetDialog } from '@/components/model-legacy/asset-dialogs/EditAss
 import { useLocalization } from '@/hooks/use-localization'
 import { DataManagementDialog } from '@/components/model-legacy/DataManagementDialog'
 import { useCallback } from 'react'
-import { NavBar } from '@/components/model-legacy/MainNavBar'
 import { AssetView } from '@/components/model-legacy/asset-view/AssetView'
+import { StatusBar } from '@/components/models/status-bar/StatusBar'
 
 export const TopPage = () => {
   const {
@@ -44,7 +44,7 @@ export const TopPage = () => {
       <SidebarProvider>
         <MainSidebar />
         <main className="w-full h-screen flex flex-col">
-          <NavBar displayAssetCount={showingAssetCount} />
+          <StatusBar filterAppliedAssetCount={showingAssetCount} />
           <AssetView
             openAddAssetDialog={() => setAddAssetDialogOpen(true)}
             openEditAssetDialog={openEditAssetDialog}
