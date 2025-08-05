@@ -5,12 +5,14 @@ import { FC } from 'react'
 
 type Props = {
   children: string
+
+  current: string
+
   value: string
   setter: (value: string) => void
-  current: string
 }
 
-export const ButtonWithCheckMark: FC<Props> = ({
+export const StatusBarOptionSelectButton: FC<Props> = ({
   children,
   value,
   setter,

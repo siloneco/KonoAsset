@@ -1,71 +1,79 @@
 import { FC } from 'react'
-import { ButtonWithCheckMark } from '../ButtonWithCheckMark'
 import { useLocalization } from '@/hooks/use-localization'
 import { Label } from '@/components/ui/label'
 import { ArrowDownAz } from 'lucide-react'
+import { StatusBarOptionSelectButton } from '../StatusBarOptionSelectButton'
 
 type Props = {
-  current: string
+  value: string
   setValue: (value: string) => void
 }
 
-export const OrderSelector: FC<Props> = ({ current, setValue }) => {
+export const StatusBarOptionSortSection: FC<Props> = ({ value, setValue }) => {
   const { t } = useLocalization()
 
   return (
     <div>
-      <Label className="px-4 py-2 flex flex-row items-center text-base">
-        <ArrowDownAz className="text-muted-foreground" size={20} />
+      <Label className="px-4 py-2 text-base">
+        <ArrowDownAz className="text-muted-foreground size-5" />
         {t('mainnavbar:sort-settings:title')}
       </Label>
-      <ButtonWithCheckMark
+      <StatusBarOptionSelectButton
         value="CreatedAtDesc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:created-at-desc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
         value="CreatedAtAsc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:created-at-asc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark value="NameAsc" setter={setValue} current={current}>
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
+        value="NameAsc"
+        setter={setValue}
+        current={value}
+      >
         {t('mainnavbar:sort-settings:asset-name-asc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark value="NameDesc" setter={setValue} current={current}>
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
+        value="NameDesc"
+        setter={setValue}
+        current={value}
+      >
         {t('mainnavbar:sort-settings:asset-name-desc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
         value="CreatorAsc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:shop-name-asc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
         value="CreatorDesc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:shop-name-desc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
         value="PublishedAtDesc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:published-at-desc')}
-      </ButtonWithCheckMark>
-      <ButtonWithCheckMark
+      </StatusBarOptionSelectButton>
+      <StatusBarOptionSelectButton
         value="PublishedAtAsc"
         setter={setValue}
-        current={current}
+        current={value}
       >
         {t('mainnavbar:sort-settings:published-at-asc')}
-      </ButtonWithCheckMark>
+      </StatusBarOptionSelectButton>
     </div>
   )
 }
