@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { InternalAssetCardMeatballMenu } from './'
-import { fn } from 'storybook/test'
+import { fn, screen } from 'storybook/test'
 
 const meta = {
   title: 'asset-card/Components/AssetCardMeatballMenu',
@@ -41,11 +41,23 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+  play: async ({ canvas, userEvent }) => {
+    const button = canvas.getByRole('button')
+    await userEvent.click(button)
+  },
+}
 
 export const WithoutBoothUrl: Story = {
   name: 'Without BOOTH URL',
   args: {
     boothUrl: undefined,
+  },
+  play: async ({ canvas, userEvent }) => {
+    const button = canvas.getByRole('button')
+    await userEvent.click(button)
+
+    const boothUrlButton = screen.getByTestId('booth-url-tooltip')
+    await userEvent.hover(boothUrlButton)
   },
 }

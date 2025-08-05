@@ -71,7 +71,7 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
       <DropdownMenuContent align="end">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger className="w-full">
+            <TooltipTrigger className="w-full" data-testid="booth-url-tooltip">
               <DropdownMenuItem asChild disabled={!hasBoothUrl}>
                 <a href={boothUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="text-card-foreground/40" />
