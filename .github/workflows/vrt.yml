@@ -63,7 +63,6 @@ jobs:
             echo "theme: ${{ matrix.theme }}"
 
       - run: pnpm storybook &
-      - run: sleep 5 # wait 5 seconds for storybook to start
       - run: pnpm dlx storycap http://localhost:6006
 
       - run: tar -czvf screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz __screenshots__
@@ -82,6 +81,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
