@@ -84,9 +84,9 @@ jobs:
 
       - name: workaround for detached HEAD
         run: |
+          git config pull.rebase false
           git checkout ${GITHUB_HEAD_REF#refs/heads/} || git checkout -b ${GITHUB_HEAD_REF#refs/heads/} && git pull origin ${GITHUB_HEAD_REF#refs/heads/}
-
-      - run: git fetch --prune --unshallow
+          git fetch --prune --unshallow
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
         with:
