@@ -1,5 +1,5 @@
-import { commands } from '@/lib/bindings'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { executeReset } from '../logic'
 
 type ReturnProps = {
   deleteAppData: boolean
@@ -10,40 +10,34 @@ type ReturnProps = {
   setDeleteMetadata: (deleteMetadata: boolean) => void
   setDeleteAssetData: (deleteAssetData: boolean) => void
 
-  executeReset: () => Promise<void>
-
-  executing: boolean
-
   confirm: boolean
   setConfirm: (confirm: boolean) => void
 
-  submitButtonDisabled: boolean
+  deleteInProgress: boolean
+  onExecuteButtonClick: () => Promise<void>
 }
 
 export const useResetDialog = (): ReturnProps => {
   const [deleteAppData, setDeleteAppData] = useState(false)
   const [deleteMetadata, setDeleteMetadata] = useState(false)
   const [deleteAssetData, setDeleteAssetData] = useState(false)
-  const [executing, setExecuting] = useState(false)
   const [confirm, setConfirm] = useState(false)
+  const [deleteInProgress, setDeleteInProgress] = useState(false)
 
-  const executeReset = async () => {
+  const onExecuteButtonClick = useCallback(async () => {
+    setDeleteInProgress(true)
     try {
-      setExecuting(true)
-      await commands.resetApplication({
-        deleteAssetData,
-        deleteMetadata,
-        resetPreferences: deleteAppData,
-      })
+      await executeReset({ deleteAppData, deleteMetadata, deleteAssetData })
     } finally {
-      setExecuting(false)
+      setDeleteInProgress(false)
     }
-  }
+  }, [deleteAppData, deleteMetadata, deleteAssetData])
 
   return {
     deleteAppData,
     deleteMetadata,
     deleteAssetData,
+
     setDeleteAppData: (v) => {
       setDeleteAppData(v)
       setConfirm(false)
@@ -56,13 +50,11 @@ export const useResetDialog = (): ReturnProps => {
       setDeleteAssetData(v)
       setConfirm(false)
     },
-    executeReset,
-    executing,
+
     confirm,
     setConfirm,
-    submitButtonDisabled:
-      !confirm ||
-      executing ||
-      (!deleteAppData && !deleteMetadata && !deleteAssetData),
+
+    deleteInProgress,
+    onExecuteButtonClick,
   }
 }
