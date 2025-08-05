@@ -51,6 +51,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Install fonts
+        run: sudo apt install fonts-ipafont fonts-ipaexfont
+
       - uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
         with:
           cmd: |
@@ -99,24 +102,36 @@ jobs:
           path: __screenshots_workspace__/
 
       - run: |
+          mkdir -p __screenshots__
           find __screenshots_workspace__ -type f -name "*.tar.gz" | while read file; do
             base=$(basename "$file" .tar.gz)
             lang=$(echo "$base" | sed -E 's/^screenshots-([^-]+-[^-]+|en-US|en-GB|zh-CN)-([^-]+)$/\1/')
             theme=$(echo "$base" | sed -E 's/^screenshots-([^-]+-[^-]+|en-US|en-GB|zh-CN)-([^-]+)$/\2/')
-            tar -xzvf "$file" -C __screenshots_workspace__/
-            if [ -d "__screenshots_workspace__/__screenshots__" ]; then
-              find "__screenshots_workspace__/__screenshots__" -type f | while read screenshot; do
-                dir=$(dirname "$screenshot")
+            
+            # Create unique temp directory for this extraction
+            temp_dir="__screenshots_workspace__/temp_${base}"
+            mkdir -p "$temp_dir"
+            tar -xzvf "$file" -C "$temp_dir"
+            
+            if [ -d "${temp_dir}/__screenshots__" ]; then
+              find "${temp_dir}/__screenshots__" -type f | while read screenshot; do
+                # Calculate relative path from temp screenshots directory
+                rel_path=$(echo "$screenshot" | sed "s|${temp_dir}/__screenshots__/||")
+                target_dir="__screenshots__/$(dirname "$rel_path")"
+                mkdir -p "$target_dir"
+                
                 filename=$(basename "$screenshot")
                 extension="${filename##*.}"
                 basename_no_ext="${filename%.*}"
                 new_filename="${basename_no_ext} (${lang}, ${theme}).${extension}"
-                mv "$screenshot" "${dir}/${new_filename}"
+                
+                mv "$screenshot" "${target_dir}/${new_filename}"
               done
             fi
+            
+            # Clean up temp directory
+            rm -rf "$temp_dir"
           done
-
-      - run: mv __screenshots_workspace__/__screenshots__ __screenshots__
 
       - run: pnpm reg-suit run
         env:
