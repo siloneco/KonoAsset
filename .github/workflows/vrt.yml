@@ -8,8 +8,6 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/vrt.yml"
     branches:
-      - "main"
-      - "pre-release"
       - "develop"
   pull_request:
     types:
