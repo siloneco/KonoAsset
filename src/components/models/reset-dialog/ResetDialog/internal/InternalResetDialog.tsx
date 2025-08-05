@@ -81,36 +81,38 @@ export const InternalResetDialog: FC<Props> = ({
           <Label className="text-base">
             {t('resetdialog:reset:select-items')}
           </Label>
-          <ResetDialogCheckbox
-            checked={deleteAppData}
-            setChecked={setDeleteAppData}
-            disabled={deleteInProgress}
-          >
-            {t('general:appdata')}
-            <span className="ml-2 text-muted-foreground">
-              ({t('general:appdata:subtext')})
-            </span>
-          </ResetDialogCheckbox>
-          <ResetDialogCheckbox
-            checked={deleteMetadata}
-            setChecked={setDeleteMetadata}
-            disabled={deleteInProgress}
-          >
-            {t('general:metadata')}
-            <span className="ml-2 text-muted-foreground">
-              ({t('general:metadata:subtext')})
-            </span>
-          </ResetDialogCheckbox>
-          <ResetDialogCheckbox
-            checked={deleteAssetData}
-            setChecked={setDeleteAssetData}
-            disabled={deleteInProgress}
-          >
-            {t('general:assetdata')}
-            <span className="ml-2 text-muted-foreground">
-              ({t('general:assetdata:subtext')})
-            </span>
-          </ResetDialogCheckbox>
+          <div className="space-y-2 ml-4">
+            <ResetDialogCheckbox
+              checked={deleteAppData}
+              setChecked={setDeleteAppData}
+              disabled={deleteInProgress}
+            >
+              {t('general:appdata')}
+              <span className="ml-2 text-muted-foreground">
+                ({t('general:appdata:subtext')})
+              </span>
+            </ResetDialogCheckbox>
+            <ResetDialogCheckbox
+              checked={deleteMetadata}
+              setChecked={setDeleteMetadata}
+              disabled={deleteInProgress}
+            >
+              {t('general:metadata')}
+              <span className="ml-2 text-muted-foreground">
+                ({t('general:metadata:subtext')})
+              </span>
+            </ResetDialogCheckbox>
+            <ResetDialogCheckbox
+              checked={deleteAssetData}
+              setChecked={setDeleteAssetData}
+              disabled={deleteInProgress}
+            >
+              {t('general:assetdata')}
+              <span className="ml-2 text-muted-foreground">
+                ({t('general:assetdata:subtext')})
+              </span>
+            </ResetDialogCheckbox>
+          </div>
         </div>
         <Separator />
         <div className="mx-auto">
