@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   capture:
-    name: Run Visual Regression Test
+    name: Capture Screenshots
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -73,7 +73,7 @@ jobs:
           path: screenshots-${{ matrix.language }}-${{ matrix.theme }}.tar.gz
 
   compare:
-    name: Compare Visual Regression Test
+    name: Run reg-suit
     runs-on: ubuntu-latest
     needs: capture
     environment:
@@ -142,7 +142,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_VRT_SECRET_ACCESS_KEY }}
 
   delete-artifacts:
-    name: Delete Visual Regression Test Artifacts
+    name: Delete Artifacts
     runs-on: ubuntu-latest
     needs: compare
     steps:
