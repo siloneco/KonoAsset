@@ -1,0 +1,28 @@
+{
+  "core": {
+    "workingDir": ".reg",
+    "actualDir": "__screenshots__",
+    "thresholdRate": 0.001,
+    "ximgdiff": {
+      "invocationType": "client"
+    }
+  },
+  "plugins": {
+    "reg-keygen-git-hash-plugin": true,
+    "reg-notify-github-plugin": {
+      "prComment": true,
+      "prCommentBehavior": "default",
+      "setCommitStatus": false,
+      "shortDescription": true,
+      "clientId": "szQwsDCyMDIx1/fOz8t3LC5OLdE3tzQytzQwNdYvzszJz0tNzgcA"
+    },
+    "reg-publish-s3-plugin": {
+      "bucketName": "konoasset-vrt",
+      "customDomain": "vrt.konoasset.dev",
+      "sdkOptions": {
+        "region": "auto",
+        "endpoint": "https://8b7d7c5c2a6883d9d9989598731e2fb2.r2.cloudflarestorage.com"
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-vitest',
+    'storycap',
   ],
   framework: {
     name: '@storybook/react-vite',

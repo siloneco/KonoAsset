@@ -1,6 +1,4 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
-import { MoreButton } from '../action-buttons/MoreButton'
-import { Label } from '@/components/ui/label'
 import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
 import { AssetSummary, FileInfo } from '@/lib/bindings'
@@ -11,6 +9,8 @@ import { cn } from '@/lib/utils'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
+import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
 
 type Props = {
   asset: AssetSummary
@@ -22,8 +22,6 @@ type Props = {
   ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
-  openMemoDialog: (assetId: string) => void
-  openDependencyDialog: (assetName: string, dependencyIds: string[]) => void
 }
 
 export const AssetCard = ({
@@ -32,12 +30,11 @@ export const AssetCard = ({
   openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
-  openMemoDialog,
-  openDependencyDialog,
 }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
-
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
+
+  const openMemoDialog = useMemoDialogStore((state) => state.open)
 
   const onShopNameClicked = useCallback(() => {
     updateFilter({
@@ -51,7 +48,7 @@ export const AssetCard = ({
   return (
     <Card className="w-full bg-card m-1 py-0" ref={ref}>
       <CardContent className="p-4 w-full h-full">
-        <div className="h-[calc(100%-3rem)] w-full">
+        <div className="h-[calc(100%-3rem)] w-full mb-4">
           <SquareImage
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
@@ -73,30 +70,27 @@ export const AssetCard = ({
           </div>
           <CardTitle
             className={cn(
-              'text-lg mt-2 break-words whitespace-pre-wrap',
+              'text-lg mt-2 break-words whitespace-pre-wrap line-clamp-2',
               displayStyle === 'GridSmall' && 'text-base',
             )}
           >
             {asset.name}
           </CardTitle>
-          <Label
-            className="text-sm cursor-pointer select-text"
+          <p
+            className="text-sm font-normal select-text cursor-pointer text-muted-foreground truncate"
             onClick={onShopNameClicked}
           >
             {asset.creator}
-          </Label>
+          </p>
         </div>
         <div className="flex flex-row w-full mt-2 space-x-2">
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
             displayOpenButtonText={displayStyle !== 'GridSmall'}
-            openDependencyDialog={() =>
-              openDependencyDialog(asset.name, asset.dependencies)
-            }
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           />
-          <MoreButton
+          <AssetCardMeatballMenu
             id={asset.id}
             boothItemID={asset.boothItemId ?? undefined}
             openDataManagementDialog={() => {

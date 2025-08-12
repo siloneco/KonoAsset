@@ -1,7 +1,10 @@
 import React from 'react'
 import type { Preview } from '@storybook/react-vite'
-import { ThemeProvider } from '../src/components/misc/ThemeProvider'
+import { ThemeProvider } from '../src/components/functional/ThemeProvider'
 import { LocalizationContextProvider } from '../src/components/context/LocalizationContext'
+import { withScreenshot } from 'storycap'
+
+import { theme, language } from './default-global-types.json'
 
 import '../src/index.css'
 
@@ -34,6 +37,7 @@ const preview: Preview = {
         </ThemeProvider>
       )
     },
+    withScreenshot(),
   ],
 }
 
@@ -41,7 +45,7 @@ export const globalTypes = {
   theme: {
     name: 'Theme',
     description: 'Global theme for components',
-    defaultValue: 'light',
+    defaultValue: theme,
     toolbar: {
       icon: 'circlehollow',
       items: [
@@ -55,7 +59,7 @@ export const globalTypes = {
   language: {
     name: 'Language',
     description: 'Global language for components',
-    defaultValue: 'en-US',
+    defaultValue: language,
     toolbar: {
       icon: 'circlehollow',
       items: [
