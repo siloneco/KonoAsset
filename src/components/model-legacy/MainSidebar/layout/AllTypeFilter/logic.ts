@@ -18,6 +18,13 @@ export const fetchAllCategories = async (
     return []
   }
 
+  const otherAssetCategoryResult =
+    await commands.getOtherAssetCategories(allowedIds)
+  if (otherAssetCategoryResult.status === 'error') {
+    console.error(otherAssetCategoryResult.error)
+    return []
+  }
+
   const map = new Map<string, number>()
 
   avatarWearableCategoryResult.data.forEach((category) => {
@@ -31,6 +38,16 @@ export const fetchAllCategories = async (
   })
 
   worldObjectCategoryResult.data.forEach((category) => {
+    const existingPriority = map.get(category.value)
+
+    if (existingPriority === undefined) {
+      map.set(category.value, category.priority)
+    } else {
+      map.set(category.value, existingPriority + category.priority)
+    }
+  })
+
+  otherAssetCategoryResult.data.forEach((category) => {
     const existingPriority = map.get(category.value)
 
     if (existingPriority === undefined) {
