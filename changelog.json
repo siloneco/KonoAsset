@@ -1,7 +1,6 @@
 [
   {
-    "version": "1.2.5-rc.0",
-    "preRelease": true,
+    "version": "1.2.5",
     "features": [
       {
         "text": "Pasting multiline text into supported avatar and tag inputs now auto-confirms the input",
