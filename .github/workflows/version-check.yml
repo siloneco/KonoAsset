@@ -29,17 +29,17 @@ jobs:
     name: Version Consistency Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - id: package-json
-        uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
+        uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
         with:
           cmd: yq -oy '.version' package.json
       - id: cargo-toml
-        uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
+        uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
         with:
           cmd: yq -oy '.package.version' src-backend/tauri/Cargo.toml
       - id: tauri-conf-json
-        uses: mikefarah/yq@1187c954ec44c3a0e62c13ca7dc9dadc1ca80ae7 # v4.46.1
+        uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
         with:
           cmd: yq -oy '.version' src-backend/tauri/tauri.conf.json
       - name: Check Version Consistency

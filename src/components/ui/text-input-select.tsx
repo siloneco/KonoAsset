@@ -253,9 +253,7 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
           const res = onSearchSync(value)
           setSuggestions(res || [])
         }
-        if (!value.trim()) {
-          onChange?.('')
-        }
+        onChange?.(value.trim())
         inputProps?.onValueChange?.(value)
       },
       [onSearch, onSearchSync, inputProps, onChange],
@@ -345,12 +343,7 @@ const TextInputSelect = forwardRef<TextInputSelectRef, TextInputSelectProps>(
 
                 setOpen(false)
                 const trimmedInput = inputValue.trim()
-                if (
-                  trimmedInput &&
-                  !suggestions.some((s) => s.value.trim() === trimmedInput)
-                ) {
-                  onChange?.(trimmedInput)
-                }
+                onChange?.(trimmedInput)
                 inputProps?.onBlur?.(event)
               }}
               onFocus={(event) => {

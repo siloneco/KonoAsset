@@ -1,4 +1,4 @@
-import { ResetDialog } from '@/components/model-legacy/ResetDialog'
+import { ResetDialog } from '@/components/models/reset-dialog/ResetDialog/ResetDialog'
 import { Label } from '@/components/ui/label'
 import { useLocalization } from '@/hooks/use-localization'
 

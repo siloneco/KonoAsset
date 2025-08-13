@@ -19,13 +19,13 @@ import {
 import { useAssetCardOpenButton } from './hook'
 import { useLocalization } from '@/hooks/use-localization'
 import { FileInfo } from '@/lib/bindings'
+import { useDependencyDialogStore } from '@/stores/dialogs/DependencyDialogStore'
 
 type Props = {
   className?: string
   id: string
   hasDependencies: boolean
   displayOpenButtonText: boolean
-  openDependencyDialog: () => void
   openSelectUnitypackageDialog: (
     assetId: string,
     data: { [x: string]: FileInfo[] },
@@ -37,7 +37,6 @@ export const AssetCardOpenButton = ({
   id,
   hasDependencies,
   displayOpenButtonText,
-  openDependencyDialog,
   openSelectUnitypackageDialog,
 }: Props) => {
   const {
@@ -51,6 +50,8 @@ export const AssetCardOpenButton = ({
     hasDependencies,
     openSelectUnitypackageDialog,
   })
+
+  const { open: openDependencyDialog } = useDependencyDialogStore()
 
   const { t } = useLocalization()
 
@@ -88,7 +89,7 @@ export const AssetCardOpenButton = ({
             {t('assetcard:open-button:open-dir')}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={openDependencyDialog}
+            onClick={() => openDependencyDialog(id)}
             disabled={!hasDependencies}
           >
             <FolderTree className="text-foreground/50" />

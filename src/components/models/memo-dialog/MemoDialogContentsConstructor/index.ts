@@ -1,0 +1,1 @@
+export { MemoDialogContentsConstructor } from './MemoDialogContentsConstructor'

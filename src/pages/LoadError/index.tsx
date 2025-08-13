@@ -26,9 +26,9 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { useLoadErrorPage } from './hook'
-import { ResetDialog } from '../../components/model-legacy/ResetDialog'
 import { useLocalization } from '@/hooks/use-localization'
 import { CubicLanguageSelector } from './components/CubicLanguageSelector'
+import { ResetDialog } from '@/components/models/reset-dialog/ResetDialog/ResetDialog'
 
 type Props = {
   preferenceLoaded: boolean

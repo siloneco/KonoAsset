@@ -1,5 +1,59 @@
 [
   {
+    "version": "1.2.5",
+    "features": [
+      {
+        "text": "Pasting multiline text into supported avatar and tag inputs now auto-confirms the input",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "対応アバターとタグ入力欄で改行を含むテキストを貼り付けたときに自動で入力が確定されるように"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed shop name not saving correctly in certain cases",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "情報入力でショップ名が正しく保存されないことがある問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed memo input field overflowing its container",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "メモ入力欄が枠からはみ出て表示されることがある問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed 'Other' type not appearing in category filter candidates",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "カテゴリフィルタの候補にその他タイプのカテゴリが表示されない問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Limited asset names to 2 lines and shop names to 1 line",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アセット名の表示行数を2行、ショップ名の表示行数を1行に制限するように変更"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.4",
     "features": [
       {

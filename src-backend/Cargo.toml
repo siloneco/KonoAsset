@@ -37,7 +37,7 @@ uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4.39", features = ["serde"] }
 tauri-plugin-dialog = "2"
 reqwest = { version = "0.12.9", features = ["json", "blocking"] }
-async_zip = { version = "0.0.17", features = ["full"] }
+async_zip = { version = "0.0.18", features = ["full"] }
 sanitize-filename = "0.6.0"
 specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
 specta-typescript = "0.0.9"
@@ -46,5 +46,5 @@ tauri-plugin-deep-link = "2"
 trash = "5"
 
 # [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-single-instance = {version = "2", features = ["deep-link"] }
+tauri-plugin-single-instance = {version = "2.3.2", features = ["deep-link"] }
 tauri-plugin-updater = "2"

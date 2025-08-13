@@ -59,7 +59,7 @@ export const AdditionalInputTab = ({
           {t('addasset:additional-input:explanation-text')}
         </DialogDescription>
       </DialogHeader>
-      <div className="mt-4">
+      <div className="grid grid-cols-1 mt-4">
         <MemoInput memo={memo ?? ''} setMemo={setMemo} />
         <DependencyInput
           dependencies={dependencies}

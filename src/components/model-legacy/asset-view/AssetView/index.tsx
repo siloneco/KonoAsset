@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { SelectUnitypackageDialog } from '../../SelectUnitypackageDialog'
-import { MemoDialog } from '../../MemoDialog'
-import { DependencyDialog } from '../../DependencyDialog'
 import { useAssetView } from './hook'
 import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetGridView } from '../AssetGridView'
 import { AssetListView } from '../AssetListView'
+import { MemoDialog } from '@/components/models/memo-dialog/MemoDialog'
+import { DependencyDialog } from '@/components/models/dependency-dialog/DependencyDialog'
 
 type Props = {
   openAddAssetDialog: () => void
@@ -27,21 +27,12 @@ export const AssetView: FC<Props> = ({
     background,
 
     openSelectUnitypackageDialog,
-    openMemoDialog,
-    openDependencyDialog,
 
     setSelectUnitypackageDialogOpen,
-    setMemoDialogOpen,
-    setDependencyDialogOpen,
 
     selectUnitypackageDialogOpen,
     selectUnitypackageDialogAssetId,
     unitypackages,
-    memoDialogAssetId,
-    memoDialogOpen,
-    dependencyDialogOpen,
-    dependencyDialogAssetName,
-    dependencyDialogDependencies,
   } = useAssetView({
     setShowingAssetCount,
   })
@@ -62,8 +53,6 @@ export const AssetView: FC<Props> = ({
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
-            openMemoDialog={openMemoDialog}
-            openDependencyDialog={openDependencyDialog}
           />
         )}
         {displayStyle === 'List' && (
@@ -72,28 +61,19 @@ export const AssetView: FC<Props> = ({
             openSelectUnitypackageDialog={openSelectUnitypackageDialog}
             openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
-            openMemoDialog={openMemoDialog}
-            openDependencyDialog={openDependencyDialog}
           />
         )}
       </div>
+
+      <MemoDialog />
+
       <SelectUnitypackageDialog
         dialogOpen={selectUnitypackageDialogOpen}
         setDialogOpen={setSelectUnitypackageDialogOpen}
         assetId={selectUnitypackageDialogAssetId}
         unitypackageFiles={unitypackages}
       />
-      <MemoDialog
-        assetId={memoDialogAssetId}
-        dialogOpen={memoDialogOpen}
-        setDialogOpen={setMemoDialogOpen}
-      />
       <DependencyDialog
-        dialogOpen={dependencyDialogOpen}
-        setDialogOpen={setDependencyDialogOpen}
-        assetName={dependencyDialogAssetName}
-        dependencyIds={dependencyDialogDependencies}
-        openDependencyDialog={openDependencyDialog}
         openSelectUnitypackageDialog={openSelectUnitypackageDialog}
       />
     </div>
