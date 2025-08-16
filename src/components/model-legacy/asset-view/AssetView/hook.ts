@@ -1,4 +1,4 @@
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useShallow } from 'zustand/react/shallow'
@@ -13,29 +13,10 @@ type ReturnProps = {
   sortedAssetSummary: AssetSummary[]
   displayStyle: 'Grid' | 'List'
   background: 'NoAssets' | 'NoResults'
-
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
-
-  setSelectUnitypackageDialogOpen: (open: boolean) => void
-
-  selectUnitypackageDialogOpen: boolean
-  selectUnitypackageDialogAssetId: string | null
-  unitypackages: { [x: string]: FileInfo[] }
 }
 
 export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
   const layoutDivRef = useRef<HTMLDivElement | null>(null)
-
-  const [selectUnitypackageDialogOpen, setSelectUnitypackageDialogOpen] =
-    useState(false)
-  const [unitypackages, setUnityPackages] = useState<{
-    [x: string]: FileInfo[]
-  }>({})
-  const [selectUnitypackageDialogAssetId, setSelectUnitypackageDialogAssetId] =
-    useState<string | null>(null)
 
   const {
     sortedAssetSummaries,
@@ -79,27 +60,10 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
     setPrevShowingAssetCount(filterAppliedSortedAssetSummaries.length)
   }
 
-  const openSelectUnitypackageDialog = (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => {
-    setUnityPackages(data)
-    setSelectUnitypackageDialogAssetId(assetId)
-    setSelectUnitypackageDialogOpen(true)
-  }
-
   return {
     layoutDivRef,
     sortedAssetSummary: filterAppliedSortedAssetSummaries,
     displayStyle: displayStyle === 'List' ? 'List' : 'Grid',
     background: sortedAssetSummaries.length === 0 ? 'NoAssets' : 'NoResults',
-
-    openSelectUnitypackageDialog,
-
-    setSelectUnitypackageDialogOpen,
-
-    selectUnitypackageDialogOpen,
-    selectUnitypackageDialogAssetId,
-    unitypackages,
   }
 }

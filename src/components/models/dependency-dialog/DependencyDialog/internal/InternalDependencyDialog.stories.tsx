@@ -30,7 +30,6 @@ const meta = {
     loading: { control: 'boolean' },
     name: { control: 'text' },
     dependencies: { control: 'object' },
-    openSelectUnitypackageDialog: { action: 'openSelectUnitypackageDialog' },
   },
   args: {
     isOpen: true,
@@ -38,7 +37,6 @@ const meta = {
     loading: false,
     name: 'Example Asset Name',
     dependencies: [EXAMPLE_DEPENDENCIES],
-    openSelectUnitypackageDialog: fn(),
   },
   render: (args) => {
     const [isOpen, setOpen] = useState(args.isOpen)

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { RefObject, useCallback } from 'react'
 import { SquareImage } from '@/components/model-legacy/SquareImage'
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import { AssetCardOpenButton } from '@/components/model-legacy/action-buttons/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
@@ -16,10 +16,6 @@ type Props = {
   asset: AssetSummary
   ref?: RefObject<HTMLDivElement | null>
 
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
@@ -27,7 +23,6 @@ type Props = {
 export const AssetCard = ({
   asset,
   ref,
-  openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
@@ -88,7 +83,6 @@ export const AssetCard = ({
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
             displayOpenButtonText={displayStyle !== 'GridSmall'}
-            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
           />
           <AssetCardMeatballMenu
             id={asset.id}

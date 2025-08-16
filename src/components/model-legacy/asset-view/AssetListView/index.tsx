@@ -1,4 +1,4 @@
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import { SlimAssetDetail } from '../../SlimAssetDetail'
 import { AssetCardOpenButton } from '../../action-buttons/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
@@ -9,19 +9,12 @@ import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardM
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: {
-      [x: string]: FileInfo[]
-    },
-  ) => void
   openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
 export const AssetListView = ({
   sortedAssetSummary,
-  openSelectUnitypackageDialog,
   openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
@@ -43,7 +36,6 @@ export const AssetListView = ({
           id={asset.id}
           displayOpenButtonText
           hasDependencies={asset.dependencies.length > 0}
-          openSelectUnitypackageDialog={openSelectUnitypackageDialog}
         />
         <AssetCardMeatballMenu
           id={asset.id}

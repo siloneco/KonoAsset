@@ -18,7 +18,6 @@ import {
 } from 'lucide-react'
 import { useAssetCardOpenButton } from './hook'
 import { useLocalization } from '@/hooks/use-localization'
-import { FileInfo } from '@/lib/bindings'
 import { useDependencyDialogStore } from '@/stores/dialogs/DependencyDialogStore'
 
 type Props = {
@@ -26,10 +25,6 @@ type Props = {
   id: string
   hasDependencies: boolean
   displayOpenButtonText: boolean
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
 }
 
 export const AssetCardOpenButton = ({
@@ -37,7 +32,6 @@ export const AssetCardOpenButton = ({
   id,
   hasDependencies,
   displayOpenButtonText,
-  openSelectUnitypackageDialog,
 }: Props) => {
   const {
     onMainButtonClick,
@@ -48,7 +42,6 @@ export const AssetCardOpenButton = ({
   } = useAssetCardOpenButton({
     id,
     hasDependencies,
-    openSelectUnitypackageDialog,
   })
 
   const { open: openDependencyDialog } = useDependencyDialogStore()
