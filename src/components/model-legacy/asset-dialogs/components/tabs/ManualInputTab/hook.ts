@@ -10,14 +10,10 @@ export type Props = {
 type ReturnProps = {
   assetType: AssetType
   imageFilename: string | null
-  setImageFilename: (path: string | null) => void
-  imageUrlIndex: number
-  setImageUrlIndex: (index: number) => void
   creatorCandidates: TextInputSelectOption[]
 }
 
 export const useManualInputTabHooks = ({ form }: Props): ReturnProps => {
-  const [imageUrlIndex, setImageUrlIndex] = useState(0)
   const [creatorCandidates, setCreatorCandidates] = useState<
     TextInputSelectOption[]
   >([])
@@ -40,10 +36,6 @@ export const useManualInputTabHooks = ({ form }: Props): ReturnProps => {
   return {
     assetType: form.watch('assetType'),
     imageFilename: form.watch('imageFilename'),
-    setImageFilename: (path: string | null) =>
-      form.setValue('imageFilename', path),
-    imageUrlIndex,
-    setImageUrlIndex,
     creatorCandidates,
   }
 }
