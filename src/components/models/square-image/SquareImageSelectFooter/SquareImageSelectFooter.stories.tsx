@@ -23,7 +23,7 @@ const SquareImageSelectFooterWithHooks: FC<
 }
 
 const meta = {
-  title: 'square-image/Components/SquareImageSelectFooter',
+  title: 'square-image/components/SquareImageSelectFooter',
   component: SquareImageSelectFooter,
   parameters: {
     layout: 'centered',
@@ -45,9 +45,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  args: {},
-}
+export const Default: Story = {}
 
 export const Disabled: Story = {
   args: {

@@ -47,7 +47,7 @@ const meta = {
     loading: { control: 'boolean' },
     assetType: {
       control: 'select',
-      options: ['Avatar', 'AvatarWearable', 'WorldObject'],
+      options: ['Avatar', 'AvatarWearable', 'WorldObject', 'OtherAsset'],
     },
     className: { control: 'text' },
   },

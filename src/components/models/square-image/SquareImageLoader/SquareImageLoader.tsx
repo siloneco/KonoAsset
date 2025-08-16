@@ -25,19 +25,14 @@ export const SquareImageLoader: FC<Props> = ({
   if (src !== undefined) {
     return (
       <div className="bg-white size-full flex items-center">
-        <img
-          src={src}
-          alt={ALT}
-          onError={onError}
-          className="bg-white w-full"
-        />
+        <img src={src} alt={ALT} onError={onError} className="w-full" />
       </div>
     )
   }
 
   return (
     <div className="w-full bg-white">
-      <img src={defaultImagePath} alt={ALT} className="opacity-60 size-full" />
+      <img src={defaultImagePath} alt={ALT} className="size-full opacity-60" />
     </div>
   )
 }

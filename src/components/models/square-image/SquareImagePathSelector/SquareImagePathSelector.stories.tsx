@@ -3,7 +3,7 @@ import { fn } from 'storybook/test'
 import { SquareImagePathSelector } from '.'
 
 const meta = {
-  title: 'square-image/Components/SquareImagePathSelector',
+  title: 'square-image/components/SquareImagePathSelector',
   component: SquareImagePathSelector,
   parameters: {
     layout: 'centered',
@@ -30,6 +30,4 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  args: {},
-}
+export const Default: Story = {}

@@ -3,7 +3,7 @@ import { fn } from 'storybook/test'
 import { SquareImageLoader } from '.'
 
 const meta = {
-  title: 'square-image/Components/SquareImageLoader',
+  title: 'square-image/components/SquareImageLoader',
   component: SquareImageLoader,
   parameters: {
     layout: 'centered',
@@ -14,7 +14,7 @@ const meta = {
     loading: { control: 'boolean' },
     assetType: {
       control: 'select',
-      options: ['Avatar', 'AvatarWearable', 'WorldObject'],
+      options: ['Avatar', 'AvatarWearable', 'WorldObject', 'OtherAsset'],
     },
     onError: { action: 'onError' },
   },

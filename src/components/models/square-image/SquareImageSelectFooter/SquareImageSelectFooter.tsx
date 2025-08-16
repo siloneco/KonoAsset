@@ -14,15 +14,14 @@ export const SquareImageSelectFooter: FC<Props> = ({
   maxIndex,
 }) => {
   return (
-    <div className="w-32 flex justify-between mx-auto mt-2">
+    <div className="w-fit flex gap-6 mx-auto mt-2">
       <Button
         variant="outline"
         className="h-8 w-4"
-        type="button"
         disabled={index <= 0}
         onClick={() => setIndex(index - 1)}
       >
-        <ChevronLeft size={16} />
+        <ChevronLeft />
       </Button>
       <p className="text-muted-foreground flex items-center">
         {maxIndex >= 0 && `${index + 1}/${maxIndex + 1}`}
@@ -31,11 +30,10 @@ export const SquareImageSelectFooter: FC<Props> = ({
       <Button
         variant="outline"
         className="h-8 w-4"
-        type="button"
         disabled={maxIndex <= 0 || index === maxIndex}
         onClick={() => setIndex(index + 1)}
       >
-        <ChevronRight size={16} />
+        <ChevronRight />
       </Button>
     </div>
   )

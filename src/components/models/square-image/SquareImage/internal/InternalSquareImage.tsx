@@ -35,9 +35,7 @@ export const InternalSquareImage: FC<Props> = ({
     <div className={cn('w-full', className)}>
       <AspectRatio
         ratio={1}
-        className={cn(
-          'size-full flex items-center rounded-lg overflow-hidden select-none',
-        )}
+        className="size-full flex items-center rounded-lg overflow-hidden select-none"
       >
         <SquareImageLoader
           assetType={assetType}
