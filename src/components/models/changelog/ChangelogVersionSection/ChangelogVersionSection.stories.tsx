@@ -11,7 +11,7 @@ const exampleChange: LocalizedChanges = {
 }
 
 const meta = {
-  title: 'changelog/Components/ChangelogVersionSection',
+  title: 'changelog/components/ChangelogVersionSection',
   component: ChangelogVersionSection,
   parameters: {
     layout: 'centered',

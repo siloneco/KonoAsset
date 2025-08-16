@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChangelogLineEntry } from '.'
 
 const meta = {
-  title: 'changelog/Components/ChangelogLineEntry',
+  title: 'changelog/components/ChangelogLineEntry',
   component: ChangelogLineEntry,
   parameters: {
     layout: 'centered',

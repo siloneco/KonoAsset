@@ -3,7 +3,7 @@ import { fn } from 'storybook/test'
 import { AssetCardTypeBadge } from '.'
 
 const meta = {
-  title: 'asset-card/Components/AssetCardTypeBadge',
+  title: 'asset-card/components/AssetCardTypeBadge',
   component: AssetCardTypeBadge,
   parameters: {
     layout: 'centered',
