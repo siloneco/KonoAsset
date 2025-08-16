@@ -28,7 +28,10 @@ export const DirectoryBlock: FC<Props> = ({
       </div>
       <Card className="w-full p-2 pl-4 gap-2">
         {files.map((file) => (
-          <div className="flex items-center w-full space-x-2">
+          <div
+            key={file.absolutePath}
+            className="flex items-center w-full space-x-2"
+          >
             <SiUnity className="shrink-0" size={18} />
             <p className="truncate">{file.fileName}</p>
             <Button
