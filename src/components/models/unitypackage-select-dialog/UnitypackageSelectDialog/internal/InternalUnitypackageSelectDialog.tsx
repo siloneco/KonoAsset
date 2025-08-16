@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { FileInfo } from '@/lib/bindings'
 import { FC } from 'react'
-import { DirectoryBlock } from '../../DirectoryBlock'
+import { UnitypackageSelectDialogDirectoryBlock } from '../../UnitypackageSelectDialogDirectoryBlock'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useLocalization } from '@/hooks/use-localization'
@@ -52,7 +52,7 @@ export const InternalUnitypackageSelectDialog: FC<Props> = ({
             {Object.keys(unitypackageFiles)
               .sort((a, b) => a.localeCompare(b))
               .map((path) => (
-                <DirectoryBlock
+                <UnitypackageSelectDialogDirectoryBlock
                   key={path}
                   path={path}
                   files={unitypackageFiles[path]}

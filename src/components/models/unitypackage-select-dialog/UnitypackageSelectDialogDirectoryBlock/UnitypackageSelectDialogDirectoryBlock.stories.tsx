@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { DirectoryBlock } from '.'
+import { UnitypackageSelectDialogDirectoryBlock } from '.'
 import { fn } from 'storybook/test'
 
 const meta = {
-  title: 'unitypackage-select-dialog/components/DirectoryBlock',
-  component: DirectoryBlock,
+  title:
+    'unitypackage-select-dialog/components/UnitypackageSelectDialogDirectoryBlock',
+  component: UnitypackageSelectDialogDirectoryBlock,
   parameters: {
     layout: 'centered',
   },
@@ -33,7 +34,7 @@ const meta = {
       )
     },
   ],
-} satisfies Meta<typeof DirectoryBlock>
+} satisfies Meta<typeof UnitypackageSelectDialogDirectoryBlock>
 
 export default meta
 type Story = StoryObj<typeof meta>

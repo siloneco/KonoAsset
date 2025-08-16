@@ -12,7 +12,7 @@ type Props = {
   openFileInFileManager: (filepath: string) => void
 }
 
-export const DirectoryBlock: FC<Props> = ({
+export const UnitypackageSelectDialogDirectoryBlock: FC<Props> = ({
   path,
   files,
   openFileInFileManager,
