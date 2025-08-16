@@ -7,7 +7,6 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { useManualInputTabHooks } from './hook'
-import { SquareImage } from '@/components/model-legacy/SquareImage'
 import { AssetFormType } from '@/lib/form'
 import { Label } from '@/components/ui/label'
 import { AvatarLayout } from './layout/AvatarLayout'
@@ -16,6 +15,7 @@ import { WorldObjectLayout } from './layout/WorldObjectLayout'
 import { useLocalization } from '@/hooks/use-localization'
 import { OtherAssetLayout } from './layout/OtherAssetLayout'
 import TextInputSelect from '@/components/ui/text-input-select'
+import { SquareImage } from '@/components/models/square-image/SquareImage'
 
 type Props = {
   form: AssetFormType
@@ -37,14 +37,8 @@ export const ManualInputTab = ({
   totalTabs,
 }: Props) => {
   const { t } = useLocalization()
-  const {
-    assetType,
-    imageFilename,
-    setImageFilename,
-    imageUrlIndex,
-    setImageUrlIndex,
-    creatorCandidates,
-  } = useManualInputTabHooks({ form })
+  const { assetType, imageFilename, creatorCandidates } =
+    useManualInputTabHooks({ form })
 
   return (
     <>
@@ -62,11 +56,8 @@ export const ManualInputTab = ({
             <SquareImage
               assetType={assetType}
               filename={imageFilename ?? undefined}
-              setFilename={setImageFilename}
-              selectable
               imageUrls={imageUrls}
-              urlImageIndex={imageUrlIndex}
-              setUrlImageIndex={setImageUrlIndex}
+              userImageSelectable
             />
           </div>
           <div className="w-2/3 space-y-6">
