@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
 import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
-import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]

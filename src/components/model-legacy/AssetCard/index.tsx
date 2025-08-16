@@ -10,7 +10,7 @@ import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useAssetFilterStore } from '@/stores/AssetFilterStore'
 import { AssetCardTypeBadge } from '@/components/models/asset-card/AssetCardTypeBadge'
 import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
-import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu'
 
 type Props = {
   asset: AssetSummary
