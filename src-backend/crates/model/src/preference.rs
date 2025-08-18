@@ -88,12 +88,21 @@ impl PreferenceStore {
     {
         let data_dir_path = document_dir.as_ref().join("KonoAsset");
 
+        let locale = sys_locale::get_locale().unwrap_or_else(|| String::from("en-US"));
+        let locale = match locale.as_str() {
+            "ja-JP" => LanguageCode::JaJp,
+            "en-US" => LanguageCode::EnUs,
+            "en-GB" => LanguageCode::EnGb,
+            "zh-CN" => LanguageCode::ZhCn,
+            _ => LanguageCode::EnUs,
+        };
+
         Self {
             file_path: preference_file_path.as_ref().to_path_buf(),
 
             data_dir_path,
             theme: Theme::System,
-            language: LanguageCode::JaJp,
+            language: locale,
 
             delete_on_import: false,
             zip_extraction: true,
