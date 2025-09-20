@@ -40,7 +40,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-      - uses: rui314/setup-mold@7344740a9418dcdcb481c7df83d9fbd1d5072d7d # v1
+      - uses: rui314/setup-mold@725a8794d15fc7563f59595bd9556495c0564878 # v1
         if: matrix.platform == 'ubuntu-22.04'
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
@@ -71,7 +71,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install --frozen-lockfile
 
-      - uses: tauri-apps/tauri-action@564aea5a8075c7a54c167bb0cf5b3255314a7f9d # v0
+      - uses: tauri-apps/tauri-action@e834788a94591d81e3ae0bd9ec06366f5afb8994 # v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
