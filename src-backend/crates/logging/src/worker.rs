@@ -124,7 +124,20 @@ fn purge_outdated_logs(logs_dir: &Path) -> Result<(), std::io::Error> {
             Ok(path) => {
                 let path = path.path();
 
-                let file_stem = path.file_stem().unwrap().to_str().unwrap();
+                let os_stem = match path.file_stem() {
+                    Some(stem) => stem,
+                    None => {
+                        log::debug!("skipping file with no stem: {}", path.display());
+                        continue;
+                    }
+                };
+                let file_stem = match os_stem.to_str() {
+                    Some(s) => s,
+                    None => {
+                        log::debug!("skipping non-UTF-8 file name: {}", path.display());
+                        continue;
+                    }
+                };
 
                 if !file_stem.starts_with("konoasset-") {
                     log::debug!("skipping non-log file: {}", path.display());
