@@ -12,6 +12,14 @@ describe.concurrent('utils', () => {
     expect(isBoothURL('https://example-shop-name.booth.pm/items/1000')).toBe(
       true,
     )
+    // クエリパラメータ付き
+    expect(isBoothURL('https://booth.pm/ja/items/123?sort=new')).toBe(true)
+    expect(
+      isBoothURL(
+        'https://booth.pm/ja/items/123?utm_source=twitter&utm_medium=social',
+      ),
+    ).toBe(true)
+    expect(isBoothURL('https://example.booth.pm/items/123?ref=kono')).toBe(true)
 
     // 異常
     expect(isBoothURL('https://booth.pm/ja/items/abcdefg')).toBe(false)
@@ -32,6 +40,21 @@ describe.concurrent('utils', () => {
     expect(extractBoothItemId('https://example.booth.pm/items/123')).toEqual({
       status: 'ok',
       data: 123,
+    })
+    // クエリパラメータ付き
+    expect(
+      extractBoothItemId('https://booth.pm/ja/items/456?sort=new'),
+    ).toEqual({
+      status: 'ok',
+      data: 456,
+    })
+    expect(
+      extractBoothItemId(
+        'https://example.booth.pm/items/789?utm_source=twitter&utm_medium=social',
+      ),
+    ).toEqual({
+      status: 'ok',
+      data: 789,
     })
 
     // 異常
