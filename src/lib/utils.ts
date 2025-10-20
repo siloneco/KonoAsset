@@ -6,19 +6,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const shopBoothUrlRegex =
-  /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/[0-9]+(?:\?.*)?$/
-const defaultBoothUrlRegex =
-  /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/[0-9]+(?:\?.*)?$/
-
-export function isBoothURL(url: string) {
-  return defaultBoothUrlRegex.test(url) || shopBoothUrlRegex.test(url)
-}
-
 const shopBoothUrlCaptureRegex =
   /^https:\/\/[0-9a-z-]+\.booth\.pm\/items\/([0-9]+)(?:\?.*)?$/
 const defaultBoothUrlCaptureRegex =
   /^https:\/\/booth\.pm\/[a-z-]{2,5}\/items\/([0-9]+)(?:\?.*)?$/
+
+export function isBoothURL(url: string) {
+  return (
+    defaultBoothUrlCaptureRegex.test(url) || shopBoothUrlCaptureRegex.test(url)
+  )
+}
 
 export const extractBoothItemId = (url: string): Result<number, string> => {
   if (!isBoothURL(url)) {
