@@ -42,8 +42,8 @@ export const AssetCard = ({
 
   return (
     <Card className="w-full bg-card m-1 py-0" ref={ref}>
-      <CardContent className="p-4 w-full h-full">
-        <div className="h-[calc(100%-3rem)] w-full mb-4">
+      <CardContent className="size-full p-4 flex flex-col">
+        <div className="size-full shrink mb-2">
           <SquareImage
             assetType={asset.assetType}
             filename={asset.imageFilename ?? undefined}
@@ -78,7 +78,7 @@ export const AssetCard = ({
             {asset.creator}
           </p>
         </div>
-        <div className="flex flex-row w-full mt-2 space-x-2">
+        <div className="flex flex-row w-full mt-2 space-x-2 shrink-0">
           <AssetCardOpenButton
             id={asset.id}
             hasDependencies={asset.dependencies.length > 0}
