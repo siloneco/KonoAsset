@@ -55,7 +55,7 @@ export const DataManagementDialog = ({
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-52 pr-4">
-          <div className="space-y-2 max-w-[446px]">
+          <div className="grid grid-cols-1 gap-2">
             {assetId !== null &&
               entries.map((entry) => (
                 <DirEntryRow
