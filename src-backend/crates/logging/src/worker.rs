@@ -139,13 +139,10 @@ fn purge_outdated_logs(logs_dir: &Path) -> Result<(), std::io::Error> {
                     }
                 };
 
-                if !file_stem.starts_with("konoasset-") {
+                let Some(timestamp) = file_stem.strip_prefix("konoasset-") else {
                     log::debug!("skipping non-log file: {}", path.display());
                     continue;
-                }
-
-                // 先頭の "konoasset-" が10文字なため
-                let timestamp = &file_stem[10..];
+                };
 
                 if is_outdated_timestamp(timestamp) {
                     log::debug!("purging outdated log file: {}", path.display());
