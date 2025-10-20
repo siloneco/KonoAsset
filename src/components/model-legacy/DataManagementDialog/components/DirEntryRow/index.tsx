@@ -39,6 +39,8 @@ export const DirEntryRow: FC<Props> = ({
     isDeleted,
   } = useDirEntryRow({ assetId, absolutePath })
 
+  const displayName = `${filename}${type === 'directory' ? '/' : ''}`
+
   return (
     <div className="flex flex-row items-center space-x-2">
       {type === 'directory' && (
@@ -49,21 +51,17 @@ export const DirEntryRow: FC<Props> = ({
       )}
       <div className="w-full shrink min-w-0">
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger asChild tabIndex={0}>
             <p
               className={cn(
                 'w-fit max-w-full truncate',
                 isDeleted && 'line-through',
               )}
             >
-              {filename}
-              {type === 'directory' && '/'}
+              {displayName}
             </p>
           </TooltipTrigger>
-          <TooltipContent>
-            {filename}
-            {type === 'directory' && '/'}
-          </TooltipContent>
+          <TooltipContent>{displayName}</TooltipContent>
         </Tooltip>
       </div>
       {!isDeleted && (
