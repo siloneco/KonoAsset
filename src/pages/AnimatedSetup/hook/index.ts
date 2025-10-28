@@ -38,7 +38,7 @@ export const useAnimatedSetup = (): ReturnProps => {
       const timer = setTimeout(() => {
         setIsAnimating(false)
         setPreviousTab(null)
-      }, 300)
+      }, 400)
       return () => clearTimeout(timer)
     }
   }, [isAnimating])
