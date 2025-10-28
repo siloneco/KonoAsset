@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - pre-release
-      - develop
+      # - "develop" # キャッシュのために develop でも走らせる
     types:
       - opened
       - synchronize
