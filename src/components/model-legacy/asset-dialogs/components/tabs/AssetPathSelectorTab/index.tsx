@@ -35,9 +35,20 @@ export const AssetPathSelectorTab = ({
   const { preference } = useContext(PreferenceContext)
 
   const openFileOrDirSelector = async (dir: boolean) => {
+    let defaultPath = 'file:\\\\PC'
+
+    try {
+      defaultPath = await downloadDir()
+    } catch (error) {
+      console.error(
+        'Failed to get download directory (fallback to PC dir):',
+        error,
+      )
+    }
+
     const path = await open({
       multiple: true,
-      defaultPath: await downloadDir(),
+      defaultPath,
       directory: dir,
     })
 

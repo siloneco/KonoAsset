@@ -90,10 +90,21 @@ export const useSquareImage = ({
   }, [imageUrls, imageUrlIndex])
 
   const openImageSelectorAndLoad = useCallback(async () => {
+    let defaultPath = 'file:\\\\PC'
+
+    try {
+      defaultPath = await downloadDir()
+    } catch (error) {
+      console.error(
+        'Failed to get download directory (fallback to PC dir):',
+        error,
+      )
+    }
+
     const path = await open({
       multiple: false,
       directory: false,
-      defaultPath: await downloadDir(),
+      defaultPath,
       filters: [
         { name: t('squareimage:image'), extensions: ['png', 'jpg', 'jpeg'] },
       ],
