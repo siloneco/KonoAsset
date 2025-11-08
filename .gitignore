@@ -32,3 +32,6 @@ storybook-static
 # storycap + vrt
 .reg/
 __screenshots__
+
+# rust
+target/*
