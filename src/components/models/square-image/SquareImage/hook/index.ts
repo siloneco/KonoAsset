@@ -9,6 +9,7 @@ type Props = {
   filename?: string
   imageUrls?: string[]
   userImageSelectable: boolean
+  onUserImageSelect?: (filename: string) => void
 }
 
 type ReturnProps = {
@@ -27,6 +28,7 @@ export const useSquareImage = ({
   filename,
   imageUrls,
   userImageSelectable,
+  onUserImageSelect,
 }: Props): ReturnProps => {
   const { t } = useLocalization()
 
@@ -123,11 +125,13 @@ export const useSquareImage = ({
 
     const filename = result.data
 
+    onUserImageSelect?.(filename)
+
     updateSrcFromFilename({
       filename,
       setSrc,
     })
-  }, [t])
+  }, [t, onUserImageSelect])
 
   const selectUserImage = useMemo(() => {
     if (!userImageSelectable) {

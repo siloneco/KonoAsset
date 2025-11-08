@@ -58,6 +58,9 @@ export const ManualInputTab = ({
               filename={imageFilename ?? undefined}
               imageUrls={imageUrls}
               userImageSelectable
+              onUserImageSelect={(filename) => {
+                form.setValue('imageFilename', filename)
+              }}
             />
           </div>
           <div className="w-2/3 space-y-6">

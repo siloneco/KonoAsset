@@ -7,6 +7,7 @@ type Props = {
   filename?: string
   imageUrls?: string[]
   userImageSelectable?: boolean
+  onUserImageSelect?: (filename: string) => void
   assetType: AssetType
   className?: string
 }
@@ -15,6 +16,7 @@ export const SquareImage: FC<Props> = ({
   filename,
   imageUrls,
   userImageSelectable = false,
+  onUserImageSelect,
   assetType,
   className,
 }) => {
@@ -23,6 +25,7 @@ export const SquareImage: FC<Props> = ({
       filename,
       imageUrls,
       userImageSelectable,
+      onUserImageSelect,
     })
 
   return (
