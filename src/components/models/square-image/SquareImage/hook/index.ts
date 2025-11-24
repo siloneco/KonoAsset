@@ -108,7 +108,10 @@ export const useSquareImage = ({
       directory: false,
       defaultPath,
       filters: [
-        { name: t('squareimage:image'), extensions: ['png', 'jpg', 'jpeg'] },
+        {
+          name: t('squareimage:image'),
+          extensions: ['png', 'jpg', 'jpeg', 'webp'],
+        },
       ],
     })
 
