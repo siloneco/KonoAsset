@@ -37,7 +37,7 @@ where
 
     image.apply_orientation(orientation);
 
-    // 常に横幅が300ピクセルにするようにする
+    // 常に横幅を300ピクセル以下にする
     let image = image.thumbnail(300, 100000);
 
     let file = File::create(dest).map_err(|e| format!("Failed to create file: {}", e))?;
@@ -61,6 +61,10 @@ pub async fn optimize_thumbnails(
     dry_run: bool,
     progress_callback: impl Fn(f32, String),
 ) -> Result<HashMap<PathBuf, PathBuf>, String> {
+    if images.is_empty() {
+        return Ok(HashMap::new());
+    }
+
     let mut result = HashMap::new();
 
     let mut cleanups = vec![];
@@ -69,7 +73,7 @@ pub async fn optimize_thumbnails(
     for (index, path) in images.into_iter().enumerate() {
         let filename = match path.file_name() {
             Some(filename) => filename.to_string_lossy().to_string(),
-            None => format!(""),
+            None => String::new(),
         };
 
         let progress = index as f32 / amount_of_images as f32;
