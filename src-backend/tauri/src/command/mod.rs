@@ -57,7 +57,8 @@ pub fn generate_tauri_specta_builder() -> Builder<tauri::Wry> {
         file::open::open_managed_dir,
         file::open::open_logs_dir,
         file::import::import_file_entries_to_asset, // 追加のファイル等をインポート
-        file::import::copy_image_file_to_images,    // 画像新規作成
+        file::image::optimize_and_import_image,     // 画像新規作成
+        file::image::optimize_images_directory,     // 登録済みの画像を最適化する
         file::list::list_asset_dir_entry,           // アセットのディレクトリの内容を取得
         file::delete::delete_entry_from_asset_data_dir, // アセットデータディレクトリからエントリを削除
         file::common::get_directory_path,               // 管理ディレクトリのパス取得

@@ -125,6 +125,50 @@ impl AssetStorage {
         ids
     }
 
+    pub async fn get_used_image_filenames(&self) -> HashSet<String> {
+        let mut filenames = HashSet::new();
+
+        filenames.extend(
+            self.avatar_store
+                .get_all()
+                .await
+                .iter()
+                .filter_map(|a| a.get_description().image_filename.clone()),
+        );
+        filenames.extend(
+            self.avatar_wearable_store
+                .get_all()
+                .await
+                .iter()
+                .filter_map(|a| a.get_description().image_filename.clone()),
+        );
+        filenames.extend(
+            self.world_object_store
+                .get_all()
+                .await
+                .iter()
+                .filter_map(|a| a.get_description().image_filename.clone()),
+        );
+        filenames.extend(
+            self.other_asset_store
+                .get_all()
+                .await
+                .iter()
+                .filter_map(|a| a.get_description().image_filename.clone()),
+        );
+
+        filenames
+    }
+
+    pub async fn replace_thumbnails(&self, map: HashMap<String, String>) -> Result<(), String> {
+        self.avatar_store.replace_thumbnails(&map).await?;
+        self.avatar_wearable_store.replace_thumbnails(&map).await?;
+        self.world_object_store.replace_thumbnails(&map).await?;
+        self.other_asset_store.replace_thumbnails(&map).await?;
+
+        Ok(())
+    }
+
     pub async fn update_asset_and_save(&self, asset: AssetUpdatePayload) -> Result<(), String> {
         match asset {
             AssetUpdatePayload::Avatar(avatar) => {

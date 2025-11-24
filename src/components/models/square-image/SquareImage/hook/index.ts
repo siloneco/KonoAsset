@@ -5,6 +5,29 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { loadImageFromUrl, updateSrcFromFilename } from '../logic'
 
+// 不安定な画像形式やテストできなかったものはコメントアウトしています
+const IMAGE_EXTENSIONS = [
+  'bmp', // BMP
+  // 'dds', // DDS
+  'exr', // OpenEXR
+  // 'ff', // Farbfeld
+  // 'hdr', // Radiance HDR
+  'ico', // ICO
+  'jpg', // JPEG
+  'jpeg', // JPEG
+  'png', // PNG
+  'pnm', // PNM
+  'pam', // PNM (Portable Any Map)
+  'pbm', // PNM (Portable BitMap)
+  'pgm', // PNM (Portable GrayMap)
+  'ppm', // PNM (Portable PixMap)
+  // 'qoi', // QOI
+  'tga', // TGA
+  'tif', // TIFF
+  'tiff', // TIFF
+  'webp', // WebP
+]
+
 type Props = {
   filename?: string
   imageUrls?: string[]
@@ -110,7 +133,7 @@ export const useSquareImage = ({
       filters: [
         {
           name: t('squareimage:image'),
-          extensions: ['png', 'jpg', 'jpeg', 'webp'],
+          extensions: IMAGE_EXTENSIONS,
         },
       ],
     })
@@ -119,7 +142,7 @@ export const useSquareImage = ({
       return
     }
 
-    const result = await commands.copyImageFileToImages(path, true)
+    const result = await commands.optimizeAndImportImage(path, true)
 
     if (result.status === 'error') {
       console.error(result.error)

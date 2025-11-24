@@ -178,6 +178,34 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
         Ok(true)
     }
 
+    pub async fn replace_thumbnails(&self, map: &HashMap<String, String>) -> Result<(), String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let cloned_assets = assets.clone();
+
+            for asset in cloned_assets {
+                let description = asset.get_description();
+
+                let Some(image_filename) = &description.image_filename else {
+                    continue;
+                };
+
+                let Some(new_filename) = map.get(image_filename) else {
+                    continue;
+                };
+
+                let mut new_asset = asset.clone();
+                new_asset.get_description_as_mut().image_filename = Some(new_filename.clone());
+
+                if assets.remove(&asset) {
+                    assets.insert(new_asset);
+                }
+            }
+        }
+
+        self.save().await
+    }
+
     pub async fn merge_from(
         &self,
         other: &JsonAssetContainer<T>,
