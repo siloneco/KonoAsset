@@ -15,6 +15,7 @@ import { UpdateChannelSelector } from '@/components/model-legacy/preference/Upda
 import { open } from '@tauri-apps/plugin-dialog'
 import { LocalizationContext } from '@/components/context/LocalizationContext'
 import { ZipExtractionToggle } from '@/components/model-legacy/preference/ZipExtractionToggle'
+import { ThumbnailOptimizer } from '@/components/models/thumbnail-optimizer/ThumbnailOptimizer'
 
 type Props = {
   id: PreferenceTabIDs
@@ -104,6 +105,7 @@ export const SettingsTab: FC<Props> = ({ id }) => {
             await setPreference({ ...preference, updateChannel: channel }, true)
           }}
         />
+        <ThumbnailOptimizer />
         <ResetButton />
       </div>
     </TabsContent>
