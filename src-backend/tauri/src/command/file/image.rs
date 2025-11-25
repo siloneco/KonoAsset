@@ -88,15 +88,17 @@ pub async fn optimize_images_directory(
     let mut candidate_images = vec![];
     let mut deleted = 0;
 
-    let mut read_dir = tokio::fs::read_dir(&images_dir)
-        .await
-        .map_err(|e| format!("Failed to read directory: {}", e))?;
+    let mut read_dir = tokio::fs::read_dir(&images_dir).await.map_err(|e| {
+        let err = format!("Failed to read directory: {}", e);
+        log::error!("{}", err);
+        err
+    })?;
 
-    while let Some(entry) = read_dir
-        .next_entry()
-        .await
-        .map_err(|e| format!("Failed to read directory: {}", e))?
-    {
+    while let Some(entry) = read_dir.next_entry().await.map_err(|e| {
+        let err = format!("Failed to read directory: {}", e);
+        log::error!("{}", err);
+        err
+    })? {
         let path = entry.path();
         let filename = match path.file_name() {
             Some(filename) => filename.to_string_lossy().to_string(),
@@ -126,8 +128,13 @@ pub async fn optimize_images_directory(
             if dry_run {
                 deleted += 1;
             } else {
-                modify_guard::delete_single_file(path, &DeletionGuard::new(&images_dir))
-                    .map_err(|e| format!("Failed to delete image file: {}", e))?;
+                modify_guard::delete_single_file(path, &DeletionGuard::new(&images_dir)).map_err(
+                    |e| {
+                        let err = format!("Failed to delete image file: {}", e);
+                        log::error!("{}", err);
+                        err
+                    },
+                )?;
                 deleted += 1;
             }
             continue;
@@ -137,14 +144,33 @@ pub async fn optimize_images_directory(
     }
 
     let resizable = if dry_run {
-        file::optimize_thumbnails(candidate_images, dry_run, |_, _| {}).await?
-    } else {
-        file::optimize_thumbnails(candidate_images, dry_run, move |progress, filename| {
-            if let Err(e) = ProgressEvent::new(progress * 0.8f32, filename).emit(app_handle) {
-                log::error!("Failed to emit progress event: {}", e);
+        let result = file::optimize_thumbnails(candidate_images, dry_run, |_, _| {}).await;
+
+        match result {
+            Ok(map) => map,
+            Err(e) => {
+                let err = format!("Failed to optimize thumbnails (dry-run): {}", e);
+                log::error!("{}", err);
+                return Err(err);
             }
-        })
-        .await?
+        }
+    } else {
+        let result =
+            file::optimize_thumbnails(candidate_images, dry_run, move |progress, filename| {
+                if let Err(e) = ProgressEvent::new(progress * 0.8f32, filename).emit(app_handle) {
+                    log::error!("Failed to emit progress event: {}", e);
+                }
+            })
+            .await;
+
+        match result {
+            Ok(map) => map,
+            Err(e) => {
+                let err = format!("Failed to optimize thumbnails: {}", e);
+                log::error!("{}", err);
+                return Err(err);
+            }
+        }
     };
 
     let map = resizable
@@ -168,7 +194,11 @@ pub async fn optimize_images_directory(
             log::error!("Failed to emit progress event: {}", e);
         }
 
-        store.replace_thumbnails(map).await?;
+        store.replace_thumbnails(map).await.map_err(|e| {
+            let err = format!("Failed to replace thumbnails: {}", e);
+            log::error!("{}", err);
+            err
+        })?;
 
         let amount_of_old_images = resizable.len();
 
@@ -178,8 +208,11 @@ pub async fn optimize_images_directory(
                 None => "".to_string(),
             };
 
-            modify_guard::delete_single_file(old, &DeletionGuard::new(&images_dir))
-                .map_err(|e| format!("Failed to delete image file: {}", e))?;
+            if let Err(e) = modify_guard::delete_single_file(old, &DeletionGuard::new(&images_dir))
+            {
+                log::error!("Failed to delete old image: {}", e);
+                continue;
+            }
 
             let progress = 0.9f32 + ((index as f32 / amount_of_old_images as f32) * 0.1f32);
             if let Err(e) =
