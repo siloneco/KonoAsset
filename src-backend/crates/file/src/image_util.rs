@@ -99,8 +99,8 @@ pub async fn optimize_thumbnails(
         let dest = path.with_file_name(format!("{}.webp", Uuid::new_v4().to_string()));
 
         if !dry_run {
-            resize_and_encode_with_webp(&path, &dest)?;
             cleanups.push(DeleteOnDrop::new(dest.clone()));
+            resize_and_encode_with_webp(&path, &dest)?;
         }
 
         result.insert(path, dest);
