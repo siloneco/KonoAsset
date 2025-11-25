@@ -63,7 +63,7 @@ export const ThumbnailOptimizeDialog: FC = () => {
               {loading && <Skeleton className="w-10 h-5" />}
               {!loading && (
                 <>
-                  {amountOfOptimizableThumbnails}{' '}
+                  {amountOfOptimizableThumbnails}
                   {t('preference:thumbnail-optimizer:dialog:info:unit')}
                 </>
               )}
