@@ -112,22 +112,34 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
-            let app_local_data_dir = app.path().app_local_data_dir().unwrap();
+            let app_local_data_dir = match app.path().app_local_data_dir() {
+                Ok(dir) => dir,
+                Err(e) => {
+                    let error = format!("Failed to get app local data directory: {}", e);
+                    log::error!("{}", error);
+                    app.manage(LoadResult::error(false, error));
+
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
+            };
+
             let preference_file_path = app_local_data_dir.join("preference.json");
             let state_file_path = app_local_data_dir.join("state.json");
 
             app.manage(arc_mutex(InitialSetup::new(preference_file_path)));
 
-            let result = load_preference_store(app.handle());
-            if let Err(e) = result {
-                log::error!("{}", e);
-                app.manage(LoadResult::error(false, e));
+            let pref_store = match load_preference_store(app.handle(), &app_local_data_dir) {
+                Ok(pref_store) => pref_store,
+                Err(err) => {
+                    log::error!("{}", err);
+                    app.manage(LoadResult::error(false, err));
 
-                // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                return Ok(());
-            }
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
+            };
 
-            let pref_store = result.unwrap();
             let data_dir = pref_store.get_data_dir().clone();
             let update_channel = pref_store.update_channel.clone();
             let state_handler = StateHandler::load_or_default(state_file_path);
@@ -142,16 +154,16 @@ pub fn run() {
             )));
             app.manage(arc_mutex(state_handler));
 
-            let result = load_store_provider(&data_dir, &app_local_data_dir);
-            if let Err(err) = result {
-                log::error!("{}", err);
-                app.manage(LoadResult::error(true, err));
+            let store_provider = match load_store_provider(&data_dir, &app_local_data_dir) {
+                Ok(store_provider) => store_provider,
+                Err(err) => {
+                    log::error!("{}", err);
+                    app.manage(LoadResult::error(true, err));
 
-                // Err を返すとアプリケーションが終了してしまうため Ok を返す
-                return Ok(());
-            }
-
-            let store_provider = result.unwrap();
+                    // Err を返すとアプリケーションが終了してしまうため Ok を返す
+                    return Ok(());
+                }
+            };
 
             app.manage(arc_mutex(store_provider));
             app.manage(LoadResult::success());
@@ -171,8 +183,8 @@ where
     if let Some(window) = app.get_webview_window("main") {
         let result = window.set_title(title.as_ref());
 
-        if result.is_err() {
-            log::warn!("Failed to set window title: {}", result.unwrap_err());
+        if let Err(err) = result {
+            log::warn!("Failed to set window title: {}", err);
         }
     }
 }
@@ -182,32 +194,34 @@ fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler 
         let mut update_handler = UpdateHandler::new(app);
         let result = update_handler.check_for_update(channel).await;
 
-        if result.is_err() {
-            log::error!("Failed to check for update: {}", result.unwrap_err());
+        if let Err(err) = result {
+            log::error!("Failed to check for update: {}", err);
         }
 
         update_handler
     })
 }
 
-fn load_preference_store(app: &AppHandle) -> Result<PreferenceStore, String> {
-    let preference_path = app
-        .path()
-        .app_local_data_dir()
-        .unwrap()
-        .join("preference.json");
-    let document_dir = app.path().document_dir().unwrap();
+fn load_preference_store(
+    app: &AppHandle,
+    app_local_data_dir: &PathBuf,
+) -> Result<PreferenceStore, String> {
+    let preference_path = app_local_data_dir.join("preference.json");
 
-    let pref_store = loader::wrapper::load_preference_store(preference_path, document_dir);
+    let default_data_dir_path = match app.path().document_dir() {
+        Ok(dir) => dir.join("KonoAsset"),
+        Err(e) => {
+            log::error!(
+                "Failed to get document directory. Falling back to app local data directory: {}",
+                e
+            );
 
-    if let Err(err) = pref_store {
-        return Err(format!(
-            "Failed to load preference.json: {}",
-            err.to_string()
-        ));
-    }
+            app_local_data_dir.join("KonoAsset")
+        }
+    };
 
-    Ok(pref_store.unwrap())
+    loader::wrapper::load_preference_store(preference_path, default_data_dir_path)
+        .map_err(|err| format!("Failed to load preference.json: {}", err.to_string()))
 }
 
 fn load_store_provider(
@@ -216,11 +230,13 @@ fn load_store_provider(
 ) -> Result<AssetStorage, String> {
     let result = AssetStorage::create(data_dir);
 
-    if let Err(err) = result {
-        return Err(format!("Failed to create store provider: {}", err));
-    }
+    let mut store_provider = match result {
+        Ok(store_provider) => store_provider,
+        Err(err) => {
+            return Err(format!("Failed to create store provider: {}", err));
+        }
+    };
 
-    let mut store_provider = result.unwrap();
     let store_provider_ref = &mut store_provider;
 
     let metadata_backup_dir = app_local_dir.join("backups").join("metadata");

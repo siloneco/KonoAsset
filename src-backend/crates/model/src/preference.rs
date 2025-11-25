@@ -81,13 +81,11 @@ pub struct PreferenceStore {
 }
 
 impl PreferenceStore {
-    pub fn default<P, Q>(preference_file_path: P, document_dir: Q) -> Self
+    pub fn default<P, Q>(preference_file_path: P, default_data_dir_path: Q) -> Self
     where
         P: AsRef<Path>,
         Q: AsRef<Path>,
     {
-        let data_dir_path = document_dir.as_ref().join("KonoAsset");
-
         let locale = sys_locale::get_locale().unwrap_or_else(|| String::from("en-US"));
         let locale = match locale.as_str() {
             "ja-JP" => LanguageCode::JaJp,
@@ -100,7 +98,7 @@ impl PreferenceStore {
         Self {
             file_path: preference_file_path.as_ref().to_path_buf(),
 
-            data_dir_path,
+            data_dir_path: default_data_dir_path.as_ref().to_path_buf(),
             theme: Theme::System,
             language: locale,
 
