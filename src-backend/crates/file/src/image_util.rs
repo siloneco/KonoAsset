@@ -41,7 +41,7 @@ where
     let image = image.thumbnail(300, 100000);
 
     let file = File::create(dest).map_err(|e| format!("Failed to create file: {}", e))?;
-    let encoder = JpegEncoder::new(file);
+    let encoder = JpegEncoder::new_with_quality(file, 95);
 
     image
         .write_with_encoder(encoder)
