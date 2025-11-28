@@ -37,7 +37,7 @@ pub async fn optimize_and_import_image(
     let filename = create_dest_filename(temporary);
     let dest = images_dir.join(&filename);
 
-    let result = file::resize_and_encode_with_webp(&path, &dest);
+    let result = file::resize_and_encode_with_jpeg(&path, &dest);
 
     if let Err(e) = result {
         log::error!("Failed to copy image file: {:?}", e);
@@ -120,7 +120,11 @@ pub async fn optimize_images_directory(
             continue;
         }
         // 画像ファイルではない場合はスキップ
-        if extension != "webp" && extension != "jpg" && extension != "jpeg" && extension != "png" {
+        if !extension.eq_ignore_ascii_case("webp")
+            && !extension.eq_ignore_ascii_case("jpg")
+            && !extension.eq_ignore_ascii_case("jpeg")
+            && !extension.eq_ignore_ascii_case("png")
+        {
             continue;
         }
 
@@ -232,8 +236,8 @@ pub async fn optimize_images_directory(
 
 fn create_dest_filename(temporary: bool) -> String {
     if temporary {
-        format!("temp_{}.webp", Uuid::new_v4().to_string())
+        format!("temp_{}.jpg", Uuid::new_v4().to_string())
     } else {
-        format!("{}.webp", Uuid::new_v4().to_string())
+        format!("{}.jpg", Uuid::new_v4().to_string())
     }
 }

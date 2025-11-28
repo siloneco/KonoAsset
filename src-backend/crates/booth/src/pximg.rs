@@ -35,12 +35,12 @@ impl PximgResolver {
         log::info!("Resolving image from URL: {}", url);
 
         let filename = format!("temp_{}.jpg", uuid::Uuid::new_v4());
-        let jpg_path = self.images_dir.join(&filename);
+        let original_path = self.images_dir.join(&filename);
 
-        // jpg は WebP エンコードが終わったら自動で削除する
-        let _cleanup = DeleteOnDrop::new(jpg_path.clone());
+        // 元のファイルはリサイズが終わったら自動で削除する
+        let _cleanup = DeleteOnDrop::new(original_path.clone());
 
-        let result = save_image_from_url(&self.client, url, &jpg_path).await;
+        let result = save_image_from_url(&self.client, url, &original_path).await;
 
         if let Err(e) = result {
             let err = format!("Failed to resolve image from URL: {}", e);
@@ -50,16 +50,17 @@ impl PximgResolver {
 
         log::info!(
             "Resolved image from URL and saved to {}",
-            jpg_path.display()
+            original_path.display()
         );
 
-        let webp_filename = format!("temp_{}.webp", uuid::Uuid::new_v4());
-        let webp_path = self.images_dir.join(&webp_filename);
+        let resized_filename = format!("temp_{}.jpg", uuid::Uuid::new_v4());
+        let resized_path = self.images_dir.join(&resized_filename);
 
-        file::resize_and_encode_with_webp(&jpg_path, &webp_path)?;
+        file::resize_and_encode_with_jpeg(&original_path, &resized_path)?;
 
-        self.file_map.insert(url.to_string(), webp_filename.clone());
-        Ok(webp_filename)
+        self.file_map
+            .insert(url.to_string(), resized_filename.clone());
+        Ok(resized_filename)
     }
 
     pub fn change_images_dir<P>(&mut self, images_dir: P)

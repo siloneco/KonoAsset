@@ -5,12 +5,12 @@ use std::{
     time::Instant,
 };
 
-use image::{DynamicImage, ImageDecoder, ImageFormat, ImageReader, codecs::webp::WebPEncoder};
+use image::{DynamicImage, ImageDecoder, ImageFormat, ImageReader, codecs::jpeg::JpegEncoder};
 use uuid::Uuid;
 
 use crate::DeleteOnDrop;
 
-pub fn resize_and_encode_with_webp<P, Q>(src: P, dest: Q) -> Result<(), String>
+pub fn resize_and_encode_with_jpeg<P, Q>(src: P, dest: Q) -> Result<(), String>
 where
     P: AsRef<Path>,
     Q: AsRef<Path>,
@@ -41,7 +41,7 @@ where
     let image = image.thumbnail(300, 100000);
 
     let file = File::create(dest).map_err(|e| format!("Failed to create file: {}", e))?;
-    let encoder = WebPEncoder::new_lossless(file);
+    let encoder = JpegEncoder::new(file);
 
     image
         .write_with_encoder(encoder)
@@ -92,15 +92,15 @@ pub async fn optimize_thumbnails(
             .into_dimensions()
             .map_err(|e| format!("Failed to get dimensions: {}", e))?;
 
-        if format == ImageFormat::WebP && width <= 300 {
+        if format == ImageFormat::Jpeg && width <= 300 {
             continue;
         }
 
-        let dest = path.with_file_name(format!("{}.webp", Uuid::new_v4().to_string()));
+        let dest = path.with_file_name(format!("{}.jpg", Uuid::new_v4().to_string()));
 
         if !dry_run {
             cleanups.push(DeleteOnDrop::new(dest.clone()));
-            resize_and_encode_with_webp(&path, &dest)?;
+            resize_and_encode_with_jpeg(&path, &dest)?;
         }
 
         result.insert(path, dest);
