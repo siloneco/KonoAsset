@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use model::preference::PreferenceStore;
 use storage::{asset_storage::AssetStorage, delete::delete_asset};
 use tauri::{State, async_runtime::Mutex};
 use uuid::Uuid;
@@ -8,13 +9,19 @@ use uuid::Uuid;
 #[specta::specta]
 pub async fn request_asset_deletion(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     id: Uuid,
 ) -> Result<(), String> {
     log::info!("Deleting asset with id: {:?}", id);
 
+    let use_trash_bin = {
+        let preference = preference.lock().await;
+        preference.use_trash_bin
+    };
+
     let result = {
         let basic_store = basic_store.lock().await;
-        delete_asset(&basic_store, id).await
+        delete_asset(&basic_store, id, use_trash_bin).await
     };
 
     if result.is_ok() {

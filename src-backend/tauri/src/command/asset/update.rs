@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use model::preference::PreferenceStore;
 use storage::{asset_storage::AssetStorage, definitions::AssetUpdatePayload};
 use tauri::{State, async_runtime::Mutex};
 
@@ -7,6 +8,7 @@ use tauri::{State, async_runtime::Mutex};
 #[specta::specta]
 pub async fn update_asset(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     payload: AssetUpdatePayload,
 ) -> Result<bool, String> {
     let cloned_payload = payload.clone();
@@ -34,10 +36,17 @@ pub async fn update_asset(
         }
     };
 
+    let use_trash_bin = {
+        let preference = preference.lock().await;
+        preference.use_trash_bin
+    };
+
     let result = {
         let basic_store = basic_store.lock().await;
 
-        basic_store.update_asset_and_save(cloned_payload).await
+        basic_store
+            .update_asset_and_save(cloned_payload, use_trash_bin)
+            .await
     };
 
     if let Ok(_) = &result {

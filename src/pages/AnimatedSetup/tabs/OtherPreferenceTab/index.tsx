@@ -1,6 +1,7 @@
 import { PreferenceContext } from '@/components/context/PreferenceContext'
 import { DeleteSourceToggle } from '@/components/model-legacy/preference/DeleteSourceToggle'
 import { UpdateChannelSelector } from '@/components/model-legacy/preference/UpdateChannelSelector'
+import { UseTrashBinSelectorToggle } from '@/components/model-legacy/preference/UseTrashBinSelectorToggle'
 import { UseUnitypackageSelectorToggle } from '@/components/model-legacy/preference/UseUnitypackageSelectorToggle'
 import { ZipExtractionToggle } from '@/components/model-legacy/preference/ZipExtractionToggle'
 import { Button } from '@/components/ui/button'
@@ -67,6 +68,15 @@ export const OtherPreferenceTab: FC<Props> = ({ previousTab }) => {
               setEnable={async (enable) => {
                 await setPreference(
                   { ...preference, zipExtraction: enable },
+                  true,
+                )
+              }}
+            />
+            <UseTrashBinSelectorToggle
+              enable={preference.useTrashBin}
+              setEnable={async (enable) => {
+                await setPreference(
+                  { ...preference, useTrashBin: enable },
                   true,
                 )
               }}
