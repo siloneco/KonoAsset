@@ -316,8 +316,8 @@
     "preference:settings:use-unitypackage-selector": "Prioritise opening Unitypackage files",
     "preference:settings:use-unitypackage-selector:explanation-text": "If this setting is enabled, pressing the 'Open' button will select Unitypackage files by default, and if multiple files exist, a selection dialog will appear",
 
-    "preference:settings:use-trash-bin-selector": "Use trash bin",
-    "preference:settings:use-trash-bin-selector:explanation-text": "If this setting is enabled, files will be moved to the trash bin when deleted",
+    "preference:settings:use-trash-bin-selector": "Use Recycle Bin",
+    "preference:settings:use-trash-bin-selector:explanation-text": "If this setting is enabled, files will be moved to the Recycle Bin when deleted",
 
     "preference:settings:zip-extraction-toggle": "Automatically extract ZIP files",
     "preference:settings:zip-extraction-toggle:explanation-text": "When a ZIP file is selected to be added, it will be automatically extracted",

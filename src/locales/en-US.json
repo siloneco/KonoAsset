@@ -319,8 +319,8 @@
     "preference:settings:zip-extraction-toggle": "Automatically extract ZIP files",
     "preference:settings:zip-extraction-toggle:explanation-text": "When a ZIP file is selected to be added, it will be automatically extracted",
 
-    "preference:settings:use-trash-bin-selector": "Use trash bin",
-    "preference:settings:use-trash-bin-selector:explanation-text": "If this setting is enabled, files will be moved to the trash bin when deleted",
+    "preference:settings:use-trash-bin-selector": "Use Recycle Bin",
+    "preference:settings:use-trash-bin-selector:explanation-text": "If this setting is enabled, files will be moved to the Recycle Bin when deleted",
 
     "preference:thumbnail-optimizer:optimize": "Optimize thumbnail images",
     "preference:thumbnail-optimizer:optimize:description": "Resize excessively large thumbnail images and delete unnecessary files to save disk space",
