@@ -113,14 +113,13 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
               </AlertDialogTitle>
               <AlertDialogDescription className="space-y-2">
                 <span className="inline-block">
-                  {useTrashBin &&
-                    t(
-                      'assetcard:more-button:delete-confirm:explanation-text-1:trash',
-                    )}
-                  {!useTrashBin &&
-                    t(
-                      'assetcard:more-button:delete-confirm:explanation-text-1:delete-completely',
-                    )}
+                  {useTrashBin
+                    ? t(
+                        'assetcard:more-button:delete-confirm:explanation-text-1:trash',
+                      )
+                    : t(
+                        'assetcard:more-button:delete-confirm:explanation-text-1:delete-completely',
+                      )}
                 </span>
                 <br />
                 <span className="inline-block font-bold">
