@@ -169,14 +169,21 @@ impl AssetStorage {
         Ok(())
     }
 
-    pub async fn update_asset_and_save(&self, asset: AssetUpdatePayload) -> Result<(), String> {
+    pub async fn update_asset_and_save(
+        &self,
+        asset: AssetUpdatePayload,
+        use_trash_bin: bool,
+    ) -> Result<(), String> {
         match asset {
             AssetUpdatePayload::Avatar(avatar) => {
                 if self.avatar_store.get_asset(avatar.id).await.is_some() {
-                    return self.avatar_store.update_asset_and_save(avatar).await;
+                    return self
+                        .avatar_store
+                        .update_asset_and_save(avatar, use_trash_bin)
+                        .await;
                 }
 
-                migrate_asset_type(self, &self.avatar_store, avatar).await
+                migrate_asset_type(self, &self.avatar_store, avatar, use_trash_bin).await
             }
             AssetUpdatePayload::AvatarWearable(avatar_wearable) => {
                 if self
@@ -187,11 +194,17 @@ impl AssetStorage {
                 {
                     return self
                         .avatar_wearable_store
-                        .update_asset_and_save(avatar_wearable)
+                        .update_asset_and_save(avatar_wearable, use_trash_bin)
                         .await;
                 }
 
-                migrate_asset_type(self, &self.avatar_wearable_store, avatar_wearable).await
+                migrate_asset_type(
+                    self,
+                    &self.avatar_wearable_store,
+                    avatar_wearable,
+                    use_trash_bin,
+                )
+                .await
             }
             AssetUpdatePayload::WorldObject(world_object) => {
                 if self
@@ -202,11 +215,12 @@ impl AssetStorage {
                 {
                     return self
                         .world_object_store
-                        .update_asset_and_save(world_object)
+                        .update_asset_and_save(world_object, use_trash_bin)
                         .await;
                 }
 
-                migrate_asset_type(self, &self.world_object_store, world_object).await
+                migrate_asset_type(self, &self.world_object_store, world_object, use_trash_bin)
+                    .await
             }
             AssetUpdatePayload::OtherAsset(other_asset) => {
                 if self
@@ -217,11 +231,11 @@ impl AssetStorage {
                 {
                     return self
                         .other_asset_store
-                        .update_asset_and_save(other_asset)
+                        .update_asset_and_save(other_asset, use_trash_bin)
                         .await;
                 }
 
-                migrate_asset_type(self, &self.other_asset_store, other_asset).await
+                migrate_asset_type(self, &self.other_asset_store, other_asset, use_trash_bin).await
             }
         }
     }
@@ -370,7 +384,9 @@ impl AssetStorage {
 
             if old.exists() {
                 log::info!("Removing old dir: {}", old.display());
-                let result = modify_guard::delete_recursive(&old, &DeletionGuard::new(&old_path));
+                let result =
+                    modify_guard::delete_recursive_completely(&old, &DeletionGuard::new(&old_path))
+                        .await;
 
                 if let Err(e) = result {
                     log::warn!("Failed to remove old data dir: {:?}", e);
@@ -491,6 +507,7 @@ async fn migrate_asset_type<T>(
     storage: &AssetStorage,
     dest_json_store: &JsonAssetContainer<T>,
     mut asset: T,
+    use_trash_bin: bool,
 ) -> Result<(), String>
 where
     T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + DeserializeOwned + Eq + Hash,
@@ -504,6 +521,7 @@ where
                 &mut asset,
                 &storage.data_dir,
                 avatar.description.image_filename.as_ref(),
+                use_trash_bin,
             )
             .await?;
 
@@ -521,6 +539,7 @@ where
                 &mut asset,
                 &storage.data_dir,
                 avatar_wearable.description.image_filename.as_ref(),
+                use_trash_bin,
             )
             .await?;
 
@@ -541,6 +560,7 @@ where
                 &mut asset,
                 &storage.data_dir,
                 world_object.description.image_filename.as_ref(),
+                use_trash_bin,
             )
             .await?;
 
@@ -557,6 +577,7 @@ where
             &mut asset,
             &storage.data_dir,
             other_asset.description.image_filename.as_ref(),
+            use_trash_bin,
         )
         .await?;
 
@@ -573,6 +594,7 @@ async fn handle_image_change<T: AssetTrait>(
     asset: &mut T,
     data_dir: &Path,
     old_image: Option<&String>,
+    use_trash_bin: bool,
 ) -> Result<(), String> {
     let new_image = asset.get_description().image_filename.as_ref();
 
@@ -583,7 +605,7 @@ async fn handle_image_change<T: AssetTrait>(
     let images_dir = data_dir.join("images");
 
     if let Some(old_image_filename) = old_image {
-        delete_asset_image(&data_dir.to_path_buf(), old_image_filename).await?;
+        delete_asset_image(&data_dir.to_path_buf(), old_image_filename, use_trash_bin).await?;
     }
 
     if let Some(new_image_filename) = new_image {
@@ -656,7 +678,9 @@ async fn prune_old_backup<P: AsRef<Path>>(metadata_backup_dir: P) -> Result<(), 
         if is_outdated_timestamp(file_stem) {
             log::debug!("purging outdated metadata backup: {}", path.display());
 
-            if let Err(e) = modify_guard::delete_recursive(&path, &DeletionGuard::new(&backup_path))
+            if let Err(e) =
+                modify_guard::delete_recursive_completely(&path, &DeletionGuard::new(&backup_path))
+                    .await
             {
                 log::error!("Failed to remove outdated metadata backup: {:?}", e)
             };
@@ -868,7 +892,7 @@ mod tests {
         updated_avatar.description.name = "Updated Avatar".into();
 
         storage
-            .update_asset_and_save(AssetUpdatePayload::Avatar(updated_avatar.clone()))
+            .update_asset_and_save(AssetUpdatePayload::Avatar(updated_avatar.clone()), false)
             .await
             .unwrap();
 
@@ -894,7 +918,10 @@ mod tests {
         };
 
         storage
-            .update_asset_and_save(AssetUpdatePayload::AvatarWearable(avatar_wearable.clone()))
+            .update_asset_and_save(
+                AssetUpdatePayload::AvatarWearable(avatar_wearable.clone()),
+                false,
+            )
             .await
             .unwrap();
 
@@ -925,7 +952,7 @@ mod tests {
         };
 
         storage
-            .update_asset_and_save(AssetUpdatePayload::WorldObject(world_object.clone()))
+            .update_asset_and_save(AssetUpdatePayload::WorldObject(world_object.clone()), false)
             .await
             .unwrap();
 
@@ -962,7 +989,7 @@ mod tests {
         };
 
         storage
-            .update_asset_and_save(AssetUpdatePayload::OtherAsset(other_asset.clone()))
+            .update_asset_and_save(AssetUpdatePayload::OtherAsset(other_asset.clone()), false)
             .await
             .unwrap();
 
@@ -999,7 +1026,7 @@ mod tests {
         };
 
         let result = storage
-            .update_asset_and_save(AssetUpdatePayload::Avatar(non_existent_avatar))
+            .update_asset_and_save(AssetUpdatePayload::Avatar(non_existent_avatar), false)
             .await;
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Asset not found");

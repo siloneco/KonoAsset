@@ -76,6 +76,7 @@ pub struct PreferenceStore {
     pub delete_on_import: bool,
     pub zip_extraction: bool,
     pub use_unitypackage_selected_open: bool,
+    pub use_trash_bin: bool,
 
     pub update_channel: UpdateChannel,
 }
@@ -105,6 +106,7 @@ impl PreferenceStore {
             delete_on_import: false,
             zip_extraction: true,
             use_unitypackage_selected_open: true,
+            use_trash_bin: true,
 
             update_channel: UpdateChannel::Stable,
         }
@@ -124,6 +126,7 @@ impl PreferenceStore {
         self.delete_on_import = other.delete_on_import;
         self.zip_extraction = other.zip_extraction;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
+        self.use_trash_bin = other.use_trash_bin;
         self.update_channel = other.update_channel;
 
         // If the new language is user-provided, skip updating the language field to prevent corruption.

@@ -1,6 +1,7 @@
 use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
 use file::modify_guard::{self, DeletionGuard};
+use model::preference::PreferenceStore;
 use serde::{Deserialize, Serialize};
 use storage::asset_storage::AssetStorage;
 use tauri::{AppHandle, State};
@@ -70,6 +71,7 @@ pub enum DryOrActual {
 #[specta::specta]
 pub async fn optimize_images_directory(
     asset_storage: State<'_, Arc<Mutex<AssetStorage>>>,
+    preference: State<'_, Arc<Mutex<PreferenceStore>>>,
     dry_or_actual: DryOrActual,
     app_handle: State<'_, AppHandle>,
 ) -> Result<ImageOptimizationResult, String> {
@@ -93,6 +95,11 @@ pub async fn optimize_images_directory(
         log::error!("{}", err);
         err
     })?;
+
+    let use_trash_bin = {
+        let preference = preference.lock().await;
+        preference.use_trash_bin
+    };
 
     while let Some(entry) = read_dir.next_entry().await.map_err(|e| {
         let err = format!("Failed to read directory: {}", e);
@@ -131,16 +138,28 @@ pub async fn optimize_images_directory(
         if !used_filenames.contains(&filename) {
             if dry_run {
                 deleted += 1;
-            } else {
-                modify_guard::delete_single_file(path, &DeletionGuard::new(&images_dir)).map_err(
+                continue;
+            }
+
+            if use_trash_bin {
+                modify_guard::trash_recursive(&path, &DeletionGuard::new(&images_dir)).map_err(
                     |e| {
-                        let err = format!("Failed to delete image file: {}", e);
+                        let err = format!("Failed to trash image file: {}", e);
                         log::error!("{}", err);
                         err
                     },
                 )?;
-                deleted += 1;
+            } else {
+                modify_guard::delete_recursive_completely(&path, &DeletionGuard::new(&images_dir))
+                    .await
+                    .map_err(|e| {
+                        let err = format!("Failed to delete image file: {}", e);
+                        log::error!("{}", err);
+                        err
+                    })?;
             }
+
+            deleted += 1;
             continue;
         }
 
@@ -212,9 +231,19 @@ pub async fn optimize_images_directory(
                 None => "".to_string(),
             };
 
-            if let Err(e) = modify_guard::delete_single_file(old, &DeletionGuard::new(&images_dir))
-            {
-                log::error!("Failed to delete old image: {}", e);
+            let delete_error = if use_trash_bin {
+                modify_guard::trash_recursive(old, &DeletionGuard::new(&images_dir))
+                    .map_err(|e| format!("Failed to trash old image: {}", e))
+                    .err()
+            } else {
+                modify_guard::delete_recursive_completely(old, &DeletionGuard::new(&images_dir))
+                    .await
+                    .map_err(|e| format!("Failed to delete old image: {}", e))
+                    .err()
+            };
+
+            if let Some(e) = delete_error {
+                log::error!("{}", e);
                 continue;
             }
 

@@ -9,19 +9,16 @@ type Props = {
   setEnable: (enable: boolean) => void
 }
 
-export const UseUnitypackageSelectorToggle: FC<Props> = ({
-  enable,
-  setEnable,
-}) => {
+export const UseTrashBinSelectorToggle: FC<Props> = ({ enable, setEnable }) => {
   const { t } = useLocalization()
   return (
     <div className="flex flex-row items-center w-full gap-8">
       <div className="space-y-2 shrink min-w-0 overflow-hidden">
         <Label className="text-lg">
-          {t('preference:settings:use-unitypackage-selector')}
+          {t('preference:settings:use-trash-bin-selector')}
         </Label>
         <p className="text-muted-foreground text-sm wrap-break-word">
-          {t('preference:settings:use-unitypackage-selector:explanation-text')}
+          {t('preference:settings:use-trash-bin-selector:explanation-text')}
         </p>
       </div>
       <Switch

@@ -1,8 +1,9 @@
 import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { deleteAsset, fetchBoothUrl } from '../logic'
+import { PreferenceContext } from '@/components/context/PreferenceContext'
 
 type Props = {
   id: string
@@ -12,6 +13,7 @@ type Props = {
 type ReturnProps = {
   boothUrl: string | null
   executeAssetDeletion: () => Promise<void>
+  useTrashBin: boolean
 }
 
 export const useAssetCardMeatballMenu = ({
@@ -22,6 +24,8 @@ export const useAssetCardMeatballMenu = ({
   const { toast } = useToast()
 
   const [boothUrl, setBoothUrl] = useState<string | null>(null)
+
+  const { preference } = useContext(PreferenceContext)
 
   const deleteAssetSummaryFromFrontend = useAssetSummaryViewStore(
     (state) => state.deleteAssetSummaryFromFrontend,
@@ -55,5 +59,6 @@ export const useAssetCardMeatballMenu = ({
   return {
     boothUrl,
     executeAssetDeletion,
+    useTrashBin: preference.useTrashBin,
   }
 }
