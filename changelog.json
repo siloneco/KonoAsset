@@ -1,6 +1,7 @@
 [
   {
     "version": "1.2.6-rc.3",
+    "preRelease": true,
     "features": [
       {
         "text": "Full file names can now be viewed by hovering in the data management dialog",
