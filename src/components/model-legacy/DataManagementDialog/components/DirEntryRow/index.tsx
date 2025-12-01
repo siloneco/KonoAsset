@@ -10,6 +10,11 @@ import {
 } from '@/components/ui/popover'
 import { useLocalization } from '@/hooks/use-localization'
 import { PopoverClose } from '@radix-ui/react-popover'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 type Props = {
   assetId: string
@@ -34,16 +39,31 @@ export const DirEntryRow: FC<Props> = ({
     isDeleted,
   } = useDirEntryRow({ assetId, absolutePath })
 
+  const displayName = `${filename}${type === 'directory' ? '/' : ''}`
+
   return (
     <div className="flex flex-row items-center space-x-2">
       {type === 'directory' && (
-        <Folder size={24} className="text-foreground/40" />
+        <Folder size={24} className="text-foreground/40 shrink-0" />
       )}
-      {type === 'file' && <File size={24} className="text-foreground/40" />}
-      <p className={cn('w-96 truncate', isDeleted && 'line-through')}>
-        {filename}
-        {type === 'directory' && <span>/</span>}
-      </p>
+      {type === 'file' && (
+        <File size={24} className="text-foreground/40 shrink-0" />
+      )}
+      <div className="w-full shrink min-w-0">
+        <Tooltip>
+          <TooltipTrigger asChild tabIndex={0}>
+            <p
+              className={cn(
+                'w-fit max-w-full truncate',
+                isDeleted && 'line-through',
+              )}
+            >
+              {displayName}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>{displayName}</TooltipContent>
+        </Tooltip>
+      </div>
       {!isDeleted && (
         <Button
           variant="secondary"

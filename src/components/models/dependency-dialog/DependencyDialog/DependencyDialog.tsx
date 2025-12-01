@@ -1,19 +1,8 @@
-import { FileInfo } from '@/lib/bindings'
-
 import { FC } from 'react'
 import { useDependencyDialogStore } from '@/stores/dialogs/DependencyDialogStore'
 import { InternalDependencyDialog } from './internal'
 
-type Props = {
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
-}
-
-export const DependencyDialog: FC<Props> = ({
-  openSelectUnitypackageDialog,
-}) => {
+export const DependencyDialog: FC = () => {
   const { isOpen, setOpen, currentAsset } = useDependencyDialogStore()
 
   return (
@@ -23,7 +12,6 @@ export const DependencyDialog: FC<Props> = ({
       loading={currentAsset === null}
       name={currentAsset?.name ?? ''}
       dependencies={currentAsset?.dependencies ?? []}
-      openSelectUnitypackageDialog={openSelectUnitypackageDialog}
     />
   )
 }

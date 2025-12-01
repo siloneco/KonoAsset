@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+use file::DeleteOnDrop;
+
 use super::common::get_reqwest_client;
 
 pub struct PximgResolver {
@@ -33,9 +35,12 @@ impl PximgResolver {
         log::info!("Resolving image from URL: {}", url);
 
         let filename = format!("temp_{}.jpg", uuid::Uuid::new_v4());
-        let path = self.images_dir.join(&filename);
+        let original_path = self.images_dir.join(&filename);
 
-        let result = save_image_from_url(&self.client, url, &path).await;
+        // 元のファイルはリサイズが終わったら自動で削除する
+        let _cleanup = DeleteOnDrop::new(original_path.clone());
+
+        let result = save_image_from_url(&self.client, url, &original_path).await;
 
         if let Err(e) = result {
             let err = format!("Failed to resolve image from URL: {}", e);
@@ -43,10 +48,19 @@ impl PximgResolver {
             return Err(err);
         }
 
-        log::info!("Resolved image from URL and saved to {}", path.display());
+        log::info!(
+            "Resolved image from URL and saved to {}",
+            original_path.display()
+        );
 
-        self.file_map.insert(url.to_string(), filename.clone());
-        Ok(filename)
+        let resized_filename = format!("temp_{}.jpg", uuid::Uuid::new_v4());
+        let resized_path = self.images_dir.join(&resized_filename);
+
+        file::resize_and_encode_with_jpeg(&original_path, &resized_path)?;
+
+        self.file_map
+            .insert(url.to_string(), resized_filename.clone());
+        Ok(resized_filename)
     }
 
     pub fn change_images_dir<P>(&mut self, images_dir: P)

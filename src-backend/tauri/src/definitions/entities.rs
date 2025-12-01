@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
-use model::{Avatar, AvatarWearable, OtherAsset, WorldObject};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use tauri_specta::Event;
 
 #[derive(Serialize, Clone, specta::Type)]
@@ -63,13 +62,4 @@ impl InitialSetup {
     pub fn update(&mut self) {
         self.require_initial_setup = !self.preference_file.exists();
     }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
-#[serde(rename_all = "camelCase")]
-pub enum AssetUpdatePayload {
-    Avatar(Avatar),
-    AvatarWearable(AvatarWearable),
-    WorldObject(WorldObject),
-    OtherAsset(OtherAsset),
 }

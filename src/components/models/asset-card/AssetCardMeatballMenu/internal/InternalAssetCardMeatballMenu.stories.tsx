@@ -3,7 +3,7 @@ import { InternalAssetCardMeatballMenu } from './'
 import { fn, screen } from 'storybook/test'
 
 const meta = {
-  title: 'asset-card/Components/AssetCardMeatballMenu',
+  title: 'asset-card/components/AssetCardMeatballMenu',
   component: InternalAssetCardMeatballMenu,
   parameters: {
     layout: 'centered',
@@ -15,6 +15,7 @@ const meta = {
     openEditAssetDialog: { action: 'openEditAssetDialog' },
     openDataManagementDialog: { action: 'openDataManagementDialog' },
     executeAssetDeletion: { action: 'executeAssetDeletion' },
+    useTrashBin: { control: 'boolean' },
   },
   args: {
     className: '',
@@ -22,6 +23,7 @@ const meta = {
     openEditAssetDialog: fn(),
     openDataManagementDialog: fn(),
     executeAssetDeletion: fn(),
+    useTrashBin: true,
   },
   render: (args) => {
     const executeAssetDeletion = async () => {

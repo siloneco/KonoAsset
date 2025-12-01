@@ -1,7 +1,5 @@
-use std::{path::PathBuf, sync::Arc};
-
-use file::modify_guard::{self, FileTransferGuard};
 use model::preference::PreferenceStore;
+use std::sync::Arc;
 use storage::asset_storage::AssetStorage;
 use task::TaskContainer;
 use tauri::{State, async_runtime::Mutex};
@@ -40,68 +38,4 @@ pub async fn import_file_entries_to_asset(
     }
 
     Ok(task_ids)
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn copy_image_file_to_images(
-    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    path: PathBuf,
-    temporary: bool,
-) -> Result<String, String> {
-    log::info!(
-        "Copying image file to images directory from: {}",
-        path.display()
-    );
-
-    let images_dir = {
-        let store = basic_store.lock().await;
-        store.data_dir().join("images")
-    };
-
-    if !images_dir.exists() {
-        std::fs::create_dir_all(&images_dir).map_err(|e| {
-            log::error!("Failed to create images directory: {:?}", e);
-            e.to_string()
-        })?;
-    }
-
-    let filename = create_dest_filename(&path, temporary);
-
-    log::info!("Filename: {}", &filename);
-    let dest = images_dir.join(&filename);
-
-    let result =
-        modify_guard::copy_file(&path, &dest, false, FileTransferGuard::dest(&images_dir)).await;
-
-    if let Err(e) = result {
-        log::error!("Failed to copy image file: {:?}", e);
-        return Err(e.to_string());
-    }
-
-    log::info!(
-        "Successfully copied image file to images directory (dest: {})",
-        &dest.display()
-    );
-
-    Ok(filename)
-}
-
-fn create_dest_filename(src: &PathBuf, temporary: bool) -> String {
-    let extension = src
-        .extension()
-        .unwrap_or(std::ffi::OsStr::new("png"))
-        .to_str();
-
-    let extension = if let Some(ext) = extension {
-        ext
-    } else {
-        "png"
-    };
-
-    if temporary {
-        format!("temp_{}.{}", Uuid::new_v4().to_string(), extension)
-    } else {
-        format!("{}.{}", Uuid::new_v4().to_string(), extension)
-    }
 }

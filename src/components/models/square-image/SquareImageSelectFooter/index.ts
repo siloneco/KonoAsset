@@ -1,0 +1,1 @@
+export { SquareImageSelectFooter } from './SquareImageSelectFooter'

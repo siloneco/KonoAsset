@@ -1,0 +1,1 @@
+export { InternalSquareImage } from './InternalSquareImage'

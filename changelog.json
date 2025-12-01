@@ -1,7 +1,96 @@
 [
   {
-    "version": "1.2.5-rc.0",
-    "preRelease": true,
+    "version": "1.2.6-rc.3",
+    "features": [
+      {
+        "text": "Full file names can now be viewed by hovering in the data management dialog",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "データ管理ダイアログでファイル名にホバーすることで全文が確認できるように"
+          }
+        ]
+      },
+      {
+        "text": "WebP and other formats can now be selected when manually adding thumbnails",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "サムネイルの手動追加でWebPなどを選択できるように"
+          }
+        ]
+      },
+      {
+        "text": "Added a setting to toggle whether to use the OS trash bin",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "OSのゴミ箱を利用するかどうかを設定で変更できるように"
+          }
+        ]
+      }
+    ],
+    "fixes": [
+      {
+        "text": "Fixed startup failure due to unexpected filenames in logs folder",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "logsフォルダに9文字以下のファイルやフォルダがあると起動できない問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where BOOTH URLs containing query parameters were not accepted",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "クエリパラメータを含むBOOTH URLを受け入れられない問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where thumbnails could not be manually selected in certain environments",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "特定の環境でサムネイルを手動選択できない問題を修正"
+          }
+        ]
+      },
+      {
+        "text": "Fixed an issue where 'Other' assets were not included in the statistics pie chart",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "統計タブの円グラフの合計値にその他のアセットが含まれていない問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Improved the initial setup page",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "初期設定ページを改善"
+          }
+        ]
+      },
+      {
+        "text": "Thumbnails are now resized and converted to JPEG upon import to improve performance",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "サムネイルのインポート時にリサイズとJPEG化を行い、容量とレンダリング処理を軽量化"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.2.5",
     "features": [
       {
         "text": "Pasting multiline text into supported avatar and tag inputs now auto-confirms the input",

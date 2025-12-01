@@ -41,6 +41,7 @@ type Props = {
   openEditAssetDialog: () => void
   openDataManagementDialog: () => void
   executeAssetDeletion: () => Promise<void>
+  useTrashBin: boolean
 }
 
 export const InternalAssetCardMeatballMenu: FC<Props> = ({
@@ -49,6 +50,7 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
   openEditAssetDialog,
   openDataManagementDialog,
   executeAssetDeletion,
+  useTrashBin,
 }) => {
   const { t } = useLocalization()
 
@@ -111,7 +113,13 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
               </AlertDialogTitle>
               <AlertDialogDescription className="space-y-2">
                 <span className="inline-block">
-                  {t('assetcard:more-button:delete-confirm:explanation-text-1')}
+                  {useTrashBin
+                    ? t(
+                        'assetcard:more-button:delete-confirm:explanation-text-1:trash',
+                      )
+                    : t(
+                        'assetcard:more-button:delete-confirm:explanation-text-1:delete-completely',
+                      )}
                 </span>
                 <br />
                 <span className="inline-block font-bold">

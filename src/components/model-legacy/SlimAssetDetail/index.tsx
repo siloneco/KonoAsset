@@ -1,4 +1,4 @@
-import { SquareImage } from '@/components/model-legacy/SquareImage'
+import { SquareImage } from '@/components/models/square-image/SquareImage'
 import { Card } from '@/components/ui/card'
 import { AssetSummary } from '@/lib/bindings'
 import { cn } from '@/lib/utils'

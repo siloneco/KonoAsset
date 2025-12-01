@@ -15,6 +15,8 @@ import { UpdateChannelSelector } from '@/components/model-legacy/preference/Upda
 import { open } from '@tauri-apps/plugin-dialog'
 import { LocalizationContext } from '@/components/context/LocalizationContext'
 import { ZipExtractionToggle } from '@/components/model-legacy/preference/ZipExtractionToggle'
+import { ThumbnailOptimizer } from '@/components/models/thumbnail-optimizer/ThumbnailOptimizer'
+import { UseTrashBinSelectorToggle } from '@/components/model-legacy/preference/UseTrashBinSelectorToggle'
 
 type Props = {
   id: PreferenceTabIDs
@@ -40,7 +42,7 @@ export const SettingsTab: FC<Props> = ({ id }) => {
 
   return (
     <TabsContent value={id} className="mt-0 w-full h-screen">
-      <div className="mt-0 w-full px-12 py-8 space-y-8">
+      <div className="grid grid-cols-1 mt-0 w-full px-12 py-8 space-y-8 overflow-hidden">
         <ThemeSelector
           theme={preference.theme}
           setTheme={async (theme: Theme) => {
@@ -89,6 +91,12 @@ export const SettingsTab: FC<Props> = ({ id }) => {
             )
           }}
         />
+        <UseTrashBinSelectorToggle
+          enable={preference.useTrashBin}
+          setEnable={async (enable: boolean) => {
+            await setPreference({ ...preference, useTrashBin: enable }, true)
+          }}
+        />
         <Separator />
         <LanguageSelector
           language={data.language}
@@ -104,6 +112,7 @@ export const SettingsTab: FC<Props> = ({ id }) => {
             await setPreference({ ...preference, updateChannel: channel }, true)
           }}
         />
+        <ThumbnailOptimizer />
         <ResetButton />
       </div>
     </TabsContent>

@@ -90,7 +90,11 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
         self.save().await
     }
 
-    pub async fn update_asset_and_save(&self, mut asset: T) -> Result<(), String> {
+    pub async fn update_asset_and_save(
+        &self,
+        mut asset: T,
+        use_trash_bin: bool,
+    ) -> Result<(), String> {
         {
             let mut assets = self.assets.lock().await;
             let old_asset = assets
@@ -114,7 +118,7 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
                 let new_image = &asset.get_description().image_filename;
 
                 if let Some(old_image_filename) = old_image {
-                    delete_asset_image(&self.data_dir, old_image_filename).await?;
+                    delete_asset_image(&self.data_dir, old_image_filename, use_trash_bin).await?;
                 }
 
                 if let Some(new_image_filename) = new_image {
@@ -176,6 +180,34 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
         self.save().await?;
 
         Ok(true)
+    }
+
+    pub async fn replace_thumbnails(&self, map: &HashMap<String, String>) -> Result<(), String> {
+        {
+            let mut assets = self.assets.lock().await;
+            let cloned_assets = assets.clone();
+
+            for asset in cloned_assets {
+                let description = asset.get_description();
+
+                let Some(image_filename) = &description.image_filename else {
+                    continue;
+                };
+
+                let Some(new_filename) = map.get(image_filename) else {
+                    continue;
+                };
+
+                let mut new_asset = asset.clone();
+                new_asset.get_description_as_mut().image_filename = Some(new_filename.clone());
+
+                if assets.remove(&asset) {
+                    assets.insert(new_asset);
+                }
+            }
+        }
+
+        self.save().await
     }
 
     pub async fn merge_from(
@@ -303,7 +335,7 @@ mod tests {
         new_avatar.description.name = "Updated Test Avatar".into();
 
         store
-            .update_asset_and_save(new_avatar.clone())
+            .update_asset_and_save(new_avatar.clone(), false)
             .await
             .unwrap();
 
@@ -317,7 +349,7 @@ mod tests {
 
         assert_eq!(
             store
-                .update_asset_and_save(non_existing_avatar.clone())
+                .update_asset_and_save(non_existing_avatar.clone(), false)
                 .await
                 .unwrap_err(),
             "Asset not found".to_string()

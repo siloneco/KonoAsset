@@ -17,10 +17,11 @@ export const AssetCardMeatballMenu: FC<Props> = ({
   openDataManagementDialog,
   openEditAssetDialog,
 }) => {
-  const { boothUrl, executeAssetDeletion } = useAssetCardMeatballMenu({
-    id,
-    boothItemID,
-  })
+  const { boothUrl, executeAssetDeletion, useTrashBin } =
+    useAssetCardMeatballMenu({
+      id,
+      boothItemID,
+    })
 
   return (
     <InternalAssetCardMeatballMenu
@@ -29,6 +30,7 @@ export const AssetCardMeatballMenu: FC<Props> = ({
       openEditAssetDialog={openEditAssetDialog}
       openDataManagementDialog={openDataManagementDialog}
       executeAssetDeletion={executeAssetDeletion}
+      useTrashBin={useTrashBin}
     />
   )
 }

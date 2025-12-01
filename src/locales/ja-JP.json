@@ -129,7 +129,8 @@
     "assetcard:more-button:edit-info": "情報を編集",
     "assetcard:more-button:data": "データ管理",
     "assetcard:more-button:delete-confirm": "アセットを本当に削除しますか？",
-    "assetcard:more-button:delete-confirm:explanation-text-1": "データはゴミ箱へ移動され、前提アセットの紐づけも解除されます",
+    "assetcard:more-button:delete-confirm:explanation-text-1:trash": "データはゴミ箱へ移動され、前提アセットの紐づけも解除されます",
+    "assetcard:more-button:delete-confirm:explanation-text-1:delete-completely": "データは完全に削除され、前提アセットの紐づけも解除されます",
     "assetcard:more-button:delete-confirm:explanation-text-2": "この操作を取り消すことは出来ません！",
     "assetcard:more-button:success-delete-toast": "正常に削除されました！",
     "assetcard:more-button:fail-delete-toast": "削除に失敗しました",
@@ -205,6 +206,19 @@
     "preference:language:loaded-language-file-toast:description:1": "フォールバック済み: ",
     "preference:language:loaded-language-file-toast:description:2": "個、不要な値: ",
     "preference:language:loaded-language-file-toast:description:3": "個",
+
+    "preference:thumbnail-optimizer:optimize": "サムネイル画像を最適化する",
+    "preference:thumbnail-optimizer:optimize:description": "大きすぎるサムネイル画像をリサイズしたり不要なファイルを削除して、ディスク容量を節約します",
+    "preference:thumbnail-optimizer:button:optimize": "最適化する",
+    "preference:thumbnail-optimizer:dialog:title": "サムネイル画像の最適化",
+    "preference:thumbnail-optimizer:dialog:description": "現在使用されているサムネイル画像の最適化を行います",
+    "preference:thumbnail-optimizer:dialog:alert": "念のため実行前にバックアップを作成することをおすすめします",
+    "preference:thumbnail-optimizer:dialog:info:resizables": "最適化可能なサムネイル画像: ",
+    "preference:thumbnail-optimizer:dialog:info:deletables": "使用されておらず、削除可能なサムネイル画像: ",
+    "preference:thumbnail-optimizer:dialog:info:unit": "枚",
+    "preference:thumbnail-optimizer:dialog:running": "実行中",
+    "preference:thumbnail-optimizer:dialog:start": "開始",
+    "preference:thumbnail-optimizer:dialog:completed": "最適化が完了しました！",
 
     "preference:toast-version-copied": "バージョン情報をコピーしました！",
     "preference:back-to-top": "トップ画面に戻る",
@@ -317,6 +331,9 @@
 
     "preference:settings:zip-extraction-toggle": "ZIPファイルを自動で展開する",
     "preference:settings:zip-extraction-toggle:explanation-text": "アセットの追加でZIPファイルが指定されたとき、自動で展開処理を行います",
+
+    "preference:settings:use-trash-bin-selector": "ゴミ箱を使用する",
+    "preference:settings:use-trash-bin-selector:explanation-text": "この設定が有効の場合、ファイルを削除するときにゴミ箱に移動されるようになります",
 
     "top:new-update-toast": "新しいアップデートがあります！",
     "top:new-update-toast:description": "アップデートにはバグ修正、機能追加などが含まれます",

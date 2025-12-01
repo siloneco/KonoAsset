@@ -321,9 +321,17 @@ async importFileEntriesToAsset(assetId: string, paths: string[]) : Promise<Resul
     else return { status: "error", error: e  as any };
 }
 },
-async copyImageFileToImages(path: string, temporary: boolean) : Promise<Result<string, string>> {
+async optimizeAndImportImage(path: string, temporary: boolean) : Promise<Result<string, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("copy_image_file_to_images", { path, temporary }) };
+    return { status: "ok", data: await TAURI_INVOKE("optimize_and_import_image", { path, temporary }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async optimizeImagesDirectory(dryOrActual: DryOrActual) : Promise<Result<ImageOptimizationResult, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("optimize_images_directory", { dryOrActual }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -525,10 +533,12 @@ export type AvatarWearable = { id: string; description: AssetDescription; catego
 export type BoothAssetInfo = { id: number; name: string; creator: string; imageUrls: string[]; publishedAt: number; estimatedAssetType: AssetType | null }
 export type CustomLanguageFileLoadResult = { data: LocalizationData; missing_keys: string[]; additional_keys: string[] }
 export type DisplayStyle = "GridSmall" | "GridMedium" | "GridLarge" | "List"
+export type DryOrActual = "dryRun" | "actualRun"
 export type EntryType = "directory" | "file"
 export type FileInfo = { fileName: string; absolutePath: string }
 export type FilterRequest = { assetType: AssetType | null; queryText: string | null; categories: string[] | null; tags: string[] | null; tagMatchType: MatchType; supportedAvatars: string[] | null; supportedAvatarMatchType: MatchType }
 export type GetAssetResult = { assetType: AssetType; avatar: Avatar | null; avatarWearable: AvatarWearable | null; worldObject: WorldObject | null; otherAsset: OtherAsset | null }
+export type ImageOptimizationResult = { resized: number; deleted: number }
 export type LanguageCode = "ja-JP" | "en-US" | "en-GB" | "zh-CN" | { "user-provided": string }
 export type LoadResult = { success: boolean; preferenceLoaded: boolean; message: string | null }
 export type LocalizationData = { language: LanguageCode; data: Partial<{ [key in string]: string }> }
@@ -541,7 +551,7 @@ export type PreAvatar = { description: AssetDescription }
 export type PreAvatarWearable = { description: AssetDescription; category: string; supportedAvatars: string[] }
 export type PreOtherAsset = { description: AssetDescription; category: string }
 export type PreWorldObject = { description: AssetDescription; category: string }
-export type PreferenceStore = { dataDirPath: string; theme: Theme; language: LanguageCode; deleteOnImport: boolean; zipExtraction: boolean; useUnitypackageSelectedOpen: boolean; updateChannel: UpdateChannel }
+export type PreferenceStore = { dataDirPath: string; theme: Theme; language: LanguageCode; deleteOnImport: boolean; zipExtraction: boolean; useUnitypackageSelectedOpen: boolean; useTrashBin: boolean; updateChannel: UpdateChannel }
 export type PrioritizedEntry = { priority: number; value: string }
 export type ProgressEvent = { percentage: number; filename: string }
 export type ResetApplicationRequest = { resetPreferences: boolean; deleteMetadata: boolean; deleteAssetData: boolean }

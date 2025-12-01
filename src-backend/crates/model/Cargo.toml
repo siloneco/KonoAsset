@@ -13,3 +13,5 @@ authors.workspace = true
 serde.workspace = true
 specta.workspace = true
 uuid.workspace = true
+
+sys-locale = "0.3.2"

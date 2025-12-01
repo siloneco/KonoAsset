@@ -39,7 +39,6 @@ runs:
   steps:
     - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
       with:
-        version: 10
         run_install: false
     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
@@ -61,7 +60,7 @@ runs:
         workspaces: "./src-backend -> target"
 
     - name: Build and Create Release
-      uses: tauri-apps/tauri-action@564aea5a8075c7a54c167bb0cf5b3255314a7f9d # v0
+      uses: tauri-apps/tauri-action@e834788a94591d81e3ae0bd9ec06366f5afb8994 # v0
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ inputs.TAURI_PRIVATE_KEY }}
@@ -74,7 +73,7 @@ runs:
         prerelease: ${{ inputs.releaseChannel == 'pre-release' }}
         args: ${{ inputs.args }}
 
-    - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+    - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
       with:
         result-encoding: string
         script: |
