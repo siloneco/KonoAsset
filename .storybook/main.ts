@@ -7,7 +7,8 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-vitest',
-    'storycap',
+    // 2025年12月時点で、storycap が Storybook 10 に対応していない & そもそも1月からメンテナンスされていないため、無効化
+    // 'storycap',
   ],
   framework: {
     name: '@storybook/react-vite',
