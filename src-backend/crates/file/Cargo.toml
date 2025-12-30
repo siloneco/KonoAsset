@@ -18,5 +18,5 @@ trash.workspace = true
 uuid.workspace = true
 thiserror.workspace = true
 showfile = { version = "0.1.1" }
-opener = { version = "0.5.1" }
+opener = { version = "0.8.0" }
 image = { version = "0.25.9" }
