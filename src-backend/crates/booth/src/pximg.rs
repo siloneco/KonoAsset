@@ -126,7 +126,7 @@ mod tests {
 
         let mut resolver = PximgResolver::new(temp_dir.clone(), "0.0.0+cargo-test");
 
-        let bytes = include_bytes!("../test/thumbnail.jpg");
+        let bytes = include_bytes!("../../../test/images/thumbnail.jpg");
         let string_url = "https://dummy.konoasset.dev/dummy-path.jpg";
 
         let filename = resolver

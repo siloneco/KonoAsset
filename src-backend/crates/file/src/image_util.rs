@@ -93,3 +93,87 @@ pub async fn optimize_thumbnails(
 
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use std::sync::{Arc, Mutex};
+
+    use super::*;
+
+    #[test]
+    fn test_resize_and_encode_with_jpeg() {
+        let temp_dir = PathBuf::from("test/temp/resize_and_encode_with_jpeg/");
+
+        if std::fs::exists(&temp_dir).unwrap() {
+            std::fs::remove_dir_all(&temp_dir).unwrap();
+        }
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let src_bytes = include_bytes!("../../../test/images/thumbnail.jpg");
+
+        let src_path = temp_dir.join("src.jpg");
+        let dest_path = temp_dir.join("dest.jpg");
+
+        std::fs::write(&src_path, src_bytes).unwrap();
+
+        resize_and_encode_with_jpeg(&src_path, &dest_path).unwrap();
+
+        assert!(std::fs::exists(&src_path).unwrap());
+        assert!(std::fs::exists(&dest_path).unwrap());
+
+        let dest_file_size = dest_path.metadata().unwrap().len();
+        let size_100kb = 1024 * 100;
+
+        // サイズが 0KB より大きく、100KB 未満であることを確認
+        assert!(dest_file_size > 0);
+        assert!(dest_file_size < size_100kb);
+    }
+
+    #[tokio::test]
+    async fn test_optimize_thumbnails() {
+        let temp_dir = PathBuf::from("test/temp/optimize_thumbnails/");
+
+        if std::fs::exists(&temp_dir).unwrap() {
+            std::fs::remove_dir_all(&temp_dir).unwrap();
+        }
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let thumbnail1_bytes = include_bytes!("../../../test/images/thumbnail.jpg");
+        let thumbnail2_bytes = include_bytes!("../../../test/images/description-image.jpg");
+
+        std::fs::write(&temp_dir.join("thumbnail1.jpg"), thumbnail1_bytes).unwrap();
+        std::fs::write(&temp_dir.join("thumbnail2.jpg"), thumbnail2_bytes).unwrap();
+
+        let images = vec![
+            temp_dir.join("thumbnail1.jpg"),
+            temp_dir.join("thumbnail2.jpg"),
+        ];
+
+        let progress_recorder = Arc::new(Mutex::new(vec![]));
+
+        let result = optimize_thumbnails(images, false, |progress, filename| {
+            let mut progress_recorder = progress_recorder.lock().unwrap();
+            progress_recorder.push((progress, filename));
+        })
+        .await
+        .unwrap();
+
+        assert_eq!(result.len(), 2);
+
+        for (from, to) in result.iter() {
+            assert!(from.exists());
+            assert!(to.exists());
+
+            let from_filename = from.file_name().unwrap().to_string_lossy().to_string();
+
+            assert_eq!(from_filename.len(), "thumbnail1.jpg".len());
+            assert!(from_filename.starts_with("thumbnail"));
+            assert!(from_filename.ends_with(".jpg"));
+
+            let to_filename = to.file_name().unwrap().to_string_lossy().to_string();
+
+            assert_eq!(to_filename.len(), 40); // UUIDv4 + ".jpg" の長さ = 36 + 4 = 40
+            assert!(to_filename.ends_with(".jpg"));
+        }
+    }
+}
