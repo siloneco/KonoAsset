@@ -4,6 +4,8 @@ pub enum BoothInfoFetchError {
     NotFound(u64),
     #[error("Failed to fetch asset description from BOOTH: {0}")]
     APICallError(#[from] reqwest::Error),
+    #[error("Failed to parse JSON from BOOTH API response: {0}")]
+    JSONParseError(#[from] serde_json::Error),
     #[error("Failed to parse date from BOOTH API response: {0}")]
     DateParseError(#[from] chrono::format::ParseError),
 }

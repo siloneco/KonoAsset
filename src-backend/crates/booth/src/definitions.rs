@@ -14,6 +14,7 @@ pub struct BoothAssetInfo {
 
 #[derive(Deserialize)]
 pub(crate) struct BoothJsonSchema {
+    pub id: u64,
     pub name: String,
     pub shop: BoothShop,
     pub images: Vec<BoothPximg>,
