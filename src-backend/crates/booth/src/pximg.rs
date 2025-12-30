@@ -4,14 +4,17 @@ use std::path::{Path, PathBuf};
 
 use file::DeleteOnDrop;
 
-use super::common::get_reqwest_client;
+use crate::{PximgResolveError, PximgResolverValidationError};
+
+use super::client::get_reqwest_client;
+
+type ImageUrl = String;
+type Filename = String;
 
 pub struct PximgResolver {
     client: reqwest::Client,
     images_dir: PathBuf,
-
-    // key: image url, value: file name
-    file_map: HashMap<String, String>,
+    file_map: HashMap<ImageUrl, Filename>,
 }
 
 impl PximgResolver {
@@ -27,7 +30,7 @@ impl PximgResolver {
         }
     }
 
-    pub async fn resolve(&mut self, url: &str) -> Result<String, String> {
+    pub async fn resolve(&mut self, url: &str) -> Result<String, PximgResolveError> {
         if let Some(filename) = self.file_map.get(url) {
             return Ok(filename.clone());
         }
@@ -40,18 +43,8 @@ impl PximgResolver {
         // 元のファイルはリサイズが終わったら自動で削除する
         let _cleanup = DeleteOnDrop::new(original_path.clone());
 
-        let result = save_image_from_url(&self.client, url, &original_path).await;
-
-        if let Err(e) = result {
-            let err = format!("Failed to resolve image from URL: {}", e);
-            log::error!("{err}");
-            return Err(err);
-        }
-
-        log::info!(
-            "Resolved image from URL and saved to {}",
-            original_path.display()
-        );
+        save_image_from_url(&self.client, url, &original_path).await?;
+        log::info!("Resolved and saved image to {}", original_path.display());
 
         let resized_filename = format!("temp_{}.jpg", uuid::Uuid::new_v4());
         let resized_path = self.images_dir.join(&resized_filename);
@@ -75,7 +68,7 @@ async fn save_image_from_url<P>(
     client: &reqwest::Client,
     url: &str,
     output: P,
-) -> Result<(), Box<dyn std::error::Error>>
+) -> Result<(), PximgResolveError>
 where
     P: AsRef<Path>,
 {
@@ -88,20 +81,27 @@ where
     let mut file = std::fs::File::create(output)?;
     let bytes = client.get(url).send().await?.bytes().await?;
 
-    file.write_all(bytes.as_ref())
-        .map_err(|e| format!("Failed to write image to file: {}", e))?;
+    file.write_all(bytes.as_ref())?;
     Ok(())
 }
 
-fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let url = url.parse::<reqwest::Url>()?;
+fn validate_url(url: &str) -> Result<(), PximgResolverValidationError> {
+    let url = url
+        .parse::<reqwest::Url>()
+        .map_err(|e| PximgResolverValidationError::ParseError(e.to_string()))?;
 
     if url.scheme() != "https" {
-        return Err(format!("Invalid URL: Scheme must be HTTPS but got {}", url.scheme()).into());
+        return Err(PximgResolverValidationError::InvalidScheme(
+            url.scheme().to_string(),
+        ));
     }
 
-    if url.domain() != Some("booth.pximg.net") {
-        return Err("Invalid URL: Domain must be booth.pximg.net".into());
+    let domain = url.domain();
+    if domain != Some("booth.pximg.net") {
+        return Err(PximgResolverValidationError::InvalidDomain(format!(
+            "{:?}",
+            domain
+        )));
     }
 
     Ok(())

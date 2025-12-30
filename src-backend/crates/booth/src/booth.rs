@@ -1,11 +1,9 @@
 use chrono::DateTime;
 use model::AssetType;
-use serde::Deserialize;
 
-use super::{
-    cache::BoothCache,
-    common::{BoothAssetInfo, get_reqwest_client},
-};
+use crate::{BoothInfoFetchError, definitions::BoothJsonSchema};
+
+use super::{cache::BoothCache, client::get_reqwest_client, definitions::BoothAssetInfo};
 
 pub struct BoothFetcher {
     cache: BoothCache,
@@ -22,7 +20,7 @@ impl BoothFetcher {
         }
     }
 
-    pub async fn fetch(&mut self, id: u64) -> Result<BoothAssetInfo, Box<dyn std::error::Error>> {
+    pub async fn fetch(&mut self, id: u64) -> Result<BoothAssetInfo, BoothInfoFetchError> {
         if let Some(cached_result) = (&self.cache).get(id) {
             return Ok(cached_result);
         }
@@ -31,13 +29,11 @@ impl BoothFetcher {
         let response = self.reqwest_client.get(&url).send().await?;
 
         if response.status().as_u16() == 404 {
-            return Err("商品が見つかりませんでした".into());
+            return Err(BoothInfoFetchError::NotFound(id));
         }
 
         let response: BoothJsonSchema = response.json().await?;
 
-        let name = response.name;
-        let creator = response.shop.name;
         let image_urls: Vec<String> = response.images.into_iter().map(|i| i.original).collect();
         let published_at = DateTime::parse_from_rfc3339(&response.published_at)?.timestamp_millis();
 
@@ -57,40 +53,16 @@ impl BoothFetcher {
             _ => None,
         };
 
-        let result = BoothAssetInfo::new(
+        let result = BoothAssetInfo {
             id,
-            name,
-            creator,
+            name: response.name,
+            creator: response.shop.name,
             image_urls,
             published_at,
             estimated_asset_type,
-        );
+        };
 
         self.cache.insert(id, result.clone());
         Ok(result)
     }
-}
-
-#[derive(Deserialize)]
-struct BoothJsonSchema {
-    name: String,
-    shop: BoothShop,
-    images: Vec<BoothPximg>,
-    category: BoothCategory,
-    published_at: String,
-}
-
-#[derive(Deserialize)]
-struct BoothShop {
-    name: String,
-}
-
-#[derive(Deserialize)]
-struct BoothPximg {
-    original: String,
-}
-
-#[derive(Deserialize)]
-struct BoothCategory {
-    id: i32,
 }

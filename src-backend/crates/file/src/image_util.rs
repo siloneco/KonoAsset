@@ -8,9 +8,9 @@ use std::{
 use image::{DynamicImage, ImageDecoder, ImageFormat, ImageReader, codecs::jpeg::JpegEncoder};
 use uuid::Uuid;
 
-use crate::DeleteOnDrop;
+use crate::{DeleteOnDrop, ImageEncodeError};
 
-pub fn resize_and_encode_with_jpeg<P, Q>(src: P, dest: Q) -> Result<(), String>
+pub fn resize_and_encode_with_jpeg<P, Q>(src: P, dest: Q) -> Result<(), ImageEncodeError>
 where
     P: AsRef<Path>,
     Q: AsRef<Path>,
@@ -19,33 +19,21 @@ where
 
     let dest = dest.as_ref();
 
-    let img = ImageReader::open(src)
-        .map_err(|e| format!("Failed to open image: {}", e))?
-        .with_guessed_format()
-        .map_err(|e| format!("Failed to guess image format: {}", e))?;
+    let img = ImageReader::open(src)?.with_guessed_format()?;
 
-    let mut decoder = img
-        .into_decoder()
-        .map_err(|e| format!("Failed to create decoder: {}", e))?;
-
-    let orientation = decoder
-        .orientation()
-        .map_err(|e| format!("Failed to get orientation: {}", e))?;
-
-    let mut image = DynamicImage::from_decoder(decoder)
-        .map_err(|e| format!("Failed to create dynamic image: {}", e))?;
+    let mut decoder = img.into_decoder()?;
+    let orientation = decoder.orientation()?;
+    let mut image = DynamicImage::from_decoder(decoder)?;
 
     image.apply_orientation(orientation);
 
     // 常に横幅を300ピクセル以下にする
     let image = image.thumbnail(300, 100000);
 
-    let file = File::create(dest).map_err(|e| format!("Failed to create file: {}", e))?;
+    let file = File::create(dest)?;
     let encoder = JpegEncoder::new_with_quality(file, 95);
 
-    image
-        .write_with_encoder(encoder)
-        .map_err(|e| format!("Failed to write image: {}", e))?;
+    image.write_with_encoder(encoder)?;
 
     log::info!(
         "Image resized and encoded in {}ms ({})",
@@ -60,7 +48,7 @@ pub async fn optimize_thumbnails(
     images: Vec<PathBuf>,
     dry_run: bool,
     progress_callback: impl Fn(f32, String),
-) -> Result<HashMap<PathBuf, PathBuf>, String> {
+) -> Result<HashMap<PathBuf, PathBuf>, ImageEncodeError> {
     if images.is_empty() {
         return Ok(HashMap::new());
     }
@@ -79,19 +67,12 @@ pub async fn optimize_thumbnails(
         let progress = index as f32 / amount_of_images as f32;
         progress_callback(progress, filename);
 
-        let image = ImageReader::open(&path)
-            .map_err(|e| format!("Failed to open image: {}", e))?
-            .with_guessed_format()
-            .map_err(|e| format!("Failed to guess image format: {}", e))?;
-
+        let image = ImageReader::open(&path)?.with_guessed_format()?;
         let Some(format) = image.format() else {
             continue;
         };
 
-        let (width, _) = image
-            .into_dimensions()
-            .map_err(|e| format!("Failed to get dimensions: {}", e))?;
-
+        let (width, _) = image.into_dimensions()?;
         if format == ImageFormat::Jpeg && width <= 300 {
             continue;
         }
