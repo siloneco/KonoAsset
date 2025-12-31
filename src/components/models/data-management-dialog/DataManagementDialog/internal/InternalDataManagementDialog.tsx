@@ -7,47 +7,55 @@ import {
 } from '@/components/ui/dialog'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useDataManagementDialog } from './hook'
-import { DirEntryRow } from './components/DirEntryRow'
 import { Check, File, Folder, InfoIcon, RefreshCcw } from 'lucide-react'
-import { OngoingImportRow } from './components/OngoingImportRow'
 import { sep } from '@tauri-apps/api/path'
 import { useLocalization } from '@/hooks/use-localization'
+import { FC } from 'react'
+import { useInternalDataManagementDialog } from './hook'
+import { SimplifiedDirEntry } from '@/lib/bindings'
+import { OngoingImportEntry } from '@/stores/dialogs/DataManagementDialogStore/index.types'
+import { DirEntryRow } from '../../DirEntryRow'
+import { OngoingImportRow } from '../../OngoingImportRow'
 
 type Props = {
-  assetId: string | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  isOpen: boolean
+  setOpen: (open: boolean) => void
+
+  // null のときは loading とみなす
+  id: string | null
+  entries: SimplifiedDirEntry[]
+  ongoingImports: OngoingImportEntry[]
+
+  refreshEntries: () => Promise<void>
+  onAddButtonClick: (isDir: boolean) => Promise<void>
 }
 
-export const DataManagementDialog = ({
-  assetId,
-  open,
-  onOpenChange,
-}: Props) => {
-  const {
-    entries,
-    onAddButtonClicked,
-    refreshEntries,
-    refreshButtonCheckMarked,
-    ongoingImports,
-    markOngoingImportAsFinished,
-  } = useDataManagementDialog({ assetId, dialogOpen: open })
+export const InternalDataManagementDialog: FC<Props> = ({
+  isOpen,
+  setOpen,
+  id,
+  entries,
+  ongoingImports,
+  refreshEntries,
+  onAddButtonClick,
+}) => {
   const { t } = useLocalization()
+  const { refreshButtonChecked, onRefreshButtonClicked } =
+    useInternalDataManagementDialog({ refreshEntries })
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[510px]">
+    <Dialog open={isOpen} onOpenChange={setOpen}>
+      <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>
             {t('assetcard:more-button:data-management')}
             <Button
-              className="ml-2 h-8 w-8"
+              className="size-8 ml-2"
               variant="outline"
-              onClick={refreshEntries}
+              onClick={onRefreshButtonClicked}
             >
-              {!refreshButtonCheckMarked && <RefreshCcw />}
-              {refreshButtonCheckMarked && <Check className="text-green-400" />}
+              {!refreshButtonChecked && <RefreshCcw />}
+              {refreshButtonChecked && <Check className="text-green-400" />}
             </Button>
           </DialogTitle>
           <DialogDescription>
@@ -55,12 +63,12 @@ export const DataManagementDialog = ({
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-52 pr-4">
-          <div className="grid grid-cols-1 gap-2">
-            {assetId !== null &&
+          <div className="grid grid-cols-1 gap-1">
+            {id !== null &&
               entries.map((entry) => (
                 <DirEntryRow
                   key={entry.absolutePath}
-                  assetId={assetId}
+                  assetId={id}
                   type={entry.entryType}
                   filename={entry.name}
                   absolutePath={entry.absolutePath}
@@ -74,33 +82,24 @@ export const DataManagementDialog = ({
                   key={entry.taskId}
                   taskId={entry.taskId}
                   filename={filename}
-                  markAsFinished={() =>
-                    markOngoingImportAsFinished(entry.taskId)
-                  }
                 />
               )
             })}
           </div>
         </ScrollArea>
-        <div className="flex flex-row justify-center items-center space-x-2">
-          <p className="text-foreground/80">
+        <div className="flex gap-2 justify-center items-center">
+          <p className="text-muted-foreground">
             {t('assetcard:more-button:data-management:add-file-or-folder')}
           </p>
-          <Button
-            variant="secondary"
-            onClick={async () => await onAddButtonClicked(false)}
-          >
+          <Button variant="secondary" onClick={() => onAddButtonClick(false)}>
             <File />
           </Button>
-          <Button
-            variant="secondary"
-            onClick={async () => await onAddButtonClicked(true)}
-          >
+          <Button variant="secondary" onClick={() => onAddButtonClick(true)}>
             <Folder />
           </Button>
         </div>
-        <div className="flex flex-row justify-center items-center space-x-2">
-          <InfoIcon className="w-6 h-6 text-primary" />
+        <div className="flex gap-1 justify-center items-center">
+          <InfoIcon className="size-6 text-primary" />
           <p className="text-muted-foreground">
             {t('assetcard:more-button:data-management:explanation-text-2')}
           </p>

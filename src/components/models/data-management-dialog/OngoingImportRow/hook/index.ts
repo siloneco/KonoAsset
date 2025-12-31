@@ -1,55 +1,43 @@
-import { Button } from '@/components/ui/button'
+import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands, events, TaskStatus } from '@/lib/bindings'
-import { cn } from '@/lib/utils'
+import { useDataManagementDialogStore } from '@/stores/dialogs/DataManagementDialogStore'
 import { UnlistenFn } from '@tauri-apps/api/event'
-import { Ban, Check, Loader2 } from 'lucide-react'
-import { FC, useEffect, useState } from 'react'
-import { useLocalization } from '@/hooks/use-localization'
+import { useState, useEffect, useCallback } from 'react'
+import { requestTaskCancellation } from '../logic'
 
 type Props = {
   taskId: string
-  filename: string
-  markAsFinished: () => void
 }
 
-export const OngoingImportRow: FC<Props> = ({
-  taskId,
-  filename,
-  markAsFinished,
-}) => {
+type ReturnProps = {
+  status: TaskStatus
+  onCancelButtonClick: () => Promise<void>
+}
+
+export const useOngoingImportRow = ({ taskId }: Props): ReturnProps => {
   const [status, setStatus] = useState<TaskStatus>('Running')
   const { t } = useLocalization()
   const { toast } = useToast()
 
-  const cancelTask = async () => {
-    const result = await commands.cancelTaskRequest(taskId)
+  const { onTaskCompleted } = useDataManagementDialogStore()
 
-    if (result.status === 'ok') {
-      const currentStatus = result.data
+  const cancelTask = useCallback(async () => {
+    const result = await requestTaskCancellation(taskId)
 
-      if (currentStatus === 'Running') {
-        return
-      }
-
-      setStatus(currentStatus)
-      markAsFinished()
-
-      if (currentStatus === 'Failed') {
-        const errorResult = await commands.getTaskError(taskId)
-
-        if (errorResult.status === 'error') {
-          console.error('Failed to get task error:', errorResult.error)
-          return
-        }
-
-        toast({
-          title: t('assetcard:more-button:fail-import-toast'),
-          description: errorResult.data ?? t('general:toast-error-description'),
-        })
-      }
+    if (result === 'Completed' || result === 'Cancelled') {
+      setStatus(result)
+      onTaskCompleted(taskId)
+      return
     }
-  }
+
+    const error = result.error
+
+    toast({
+      title: t('assetcard:more-button:fail-import-toast'),
+      description: error,
+    })
+  }, [onTaskCompleted, t, taskId, toast])
 
   useEffect(() => {
     let isCancelled = false
@@ -74,7 +62,7 @@ export const OngoingImportRow: FC<Props> = ({
 
           onCompletedOrCancelledExecuted = true
           setStatus(status)
-          markAsFinished()
+          onTaskCompleted(taskId)
 
           if (status === 'Failed') {
             commands.getTaskError(taskId).then((result) => {
@@ -88,11 +76,6 @@ export const OngoingImportRow: FC<Props> = ({
             })
           }
         })
-
-        if (isCancelled) {
-          unlistenCompleteFn()
-          return
-        }
 
         if (isCancelled) {
           unlistenCompleteFn()
@@ -116,7 +99,7 @@ export const OngoingImportRow: FC<Props> = ({
         }
 
         setStatus(currentStatus)
-        markAsFinished()
+        onTaskCompleted(taskId)
 
         if (currentStatus === 'Failed') {
           const errorResult = await commands.getTaskError(taskId)
@@ -146,41 +129,10 @@ export const OngoingImportRow: FC<Props> = ({
       isCancelled = true
       unlistenCompleteFn?.()
     }
-  }, [taskId, markAsFinished, t, toast])
+  }, [taskId, onTaskCompleted, t, toast])
 
-  return (
-    <div className="flex flex-row items-center space-x-2">
-      {status === 'Running' && (
-        <Loader2 size={24} className="animate-spin text-muted-foreground" />
-      )}
-      {(status === 'Cancelled' || status === 'Failed') && (
-        <Ban size={20} className="text-red-400" />
-      )}
-      {status === 'Completed' && <Check size={24} className="text-green-600" />}
-      <p className="w-96 truncate">
-        {status === 'Cancelled' && (
-          <span className="text-muted-foreground mr-2">
-            ({t('general:cancelled')})
-          </span>
-        )}
-        {status === 'Failed' && (
-          <span className="text-muted-foreground mr-2">
-            ({t('general:failed')})
-          </span>
-        )}
-        <span
-          className={cn(
-            (status === 'Cancelled' || status === 'Failed') && 'line-through',
-          )}
-        >
-          {filename}
-        </span>
-      </p>
-      {status === 'Running' && (
-        <Button variant="destructive" className="w-8 h-8" onClick={cancelTask}>
-          <Ban />
-        </Button>
-      )}
-    </div>
-  )
+  return {
+    status,
+    onCancelButtonClick: cancelTask,
+  }
 }

@@ -6,7 +6,6 @@ type Props = {
   id: string
   className?: string
   boothItemID?: number
-  openDataManagementDialog: () => void
   openEditAssetDialog: () => void
 }
 
@@ -14,14 +13,17 @@ export const AssetCardMeatballMenu: FC<Props> = ({
   id,
   className,
   boothItemID,
-  openDataManagementDialog,
   openEditAssetDialog,
 }) => {
-  const { boothUrl, executeAssetDeletion, useTrashBin } =
-    useAssetCardMeatballMenu({
-      id,
-      boothItemID,
-    })
+  const {
+    boothUrl,
+    executeAssetDeletion,
+    openDataManagementDialog,
+    useTrashBin,
+  } = useAssetCardMeatballMenu({
+    id,
+    boothItemID,
+  })
 
   return (
     <InternalAssetCardMeatballMenu

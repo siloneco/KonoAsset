@@ -31,16 +31,9 @@ export const AddAssetDialogContext = createContext<AddAssetDialogContextType>({
 type Props = {
   dialogOpen: boolean
   setDialogOpen: (open: boolean) => void
-  openEditDialog: (assetId: string) => void
-  openDataManagementDialog: (assetId: string) => void
 }
 
-export const AddAssetDialog = ({
-  dialogOpen,
-  setDialogOpen,
-  openEditDialog,
-  openDataManagementDialog,
-}: Props) => {
+export const AddAssetDialog = ({ dialogOpen, setDialogOpen }: Props) => {
   const { t } = useLocalization()
 
   const {
@@ -85,10 +78,9 @@ export const AddAssetDialog = ({
         <TabsContent value="duplicate-warning">
           <DuplicateWarningTab
             setTab={setTab}
-            openEditDialog={openEditDialog}
-            openDataManagementDialog={openDataManagementDialog}
             tabIndex={2.5}
             totalTabs={5}
+            closeDialog={() => setDialogOpen(false)}
           />
         </TabsContent>
         <TabsContent value="asset-type-selector">
