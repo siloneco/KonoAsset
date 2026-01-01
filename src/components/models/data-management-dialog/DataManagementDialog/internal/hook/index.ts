@@ -13,14 +13,15 @@ export const useInternalDataManagementDialog = ({
   refreshEntries,
 }: Props): ReturnProps => {
   const [refreshButtonChecked, setRefreshButtonChecked] = useState(false)
+
   const onRefreshButtonClicked = useCallback(async () => {
+    setRefreshButtonChecked(false)
+    await refreshEntries()
     setRefreshButtonChecked(true)
 
-    try {
-      await refreshEntries()
-    } finally {
+    setTimeout(() => {
       setRefreshButtonChecked(false)
-    }
+    }, 1000)
   }, [refreshEntries])
 
   return {
