@@ -10,14 +10,12 @@ import { UnitypackageSelectDialog } from '@/components/models/unitypackage-selec
 type Props = {
   openAddAssetDialog: () => void
   openEditAssetDialog: (assetId: string) => void
-  openDataManagementDialog: (assetId: string) => void
   setShowingAssetCount: (count: number) => void
 }
 
 export const AssetView: FC<Props> = ({
   openAddAssetDialog,
   openEditAssetDialog,
-  openDataManagementDialog,
   setShowingAssetCount,
 }) => {
   const { layoutDivRef, sortedAssetSummary, displayStyle, background } =
@@ -38,14 +36,12 @@ export const AssetView: FC<Props> = ({
           <AssetGridView
             layoutDivRef={layoutDivRef}
             sortedAssetSummary={sortedAssetSummary}
-            openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
           />
         )}
         {displayStyle === 'List' && (
           <AssetListView
             sortedAssetSummary={sortedAssetSummary}
-            openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
           />
         )}

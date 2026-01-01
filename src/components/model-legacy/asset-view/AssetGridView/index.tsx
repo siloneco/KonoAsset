@@ -6,14 +6,12 @@ import { useAssetGridView } from './hook'
 type Props = {
   layoutDivRef: React.RefObject<HTMLDivElement | null>
   sortedAssetSummary: AssetSummary[]
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
 export const AssetGridView = ({
   layoutDivRef,
   sortedAssetSummary,
-  openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
   const { assetRows, gridColumnCount } = useAssetGridView({
@@ -32,7 +30,6 @@ export const AssetGridView = ({
         <AssetCard
           key={asset.id}
           asset={asset}
-          openDataManagementDialog={openDataManagementDialog}
           openEditAssetDialog={openEditAssetDialog}
         />
       ))}
