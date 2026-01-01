@@ -36,7 +36,7 @@ export const DuplicateWarningTab = ({
 
   const importEntriesAs = useCallback(
     async (assetId: string) => {
-      if (!assetPaths) {
+      if (!assetPaths || assetPaths.length === 0) {
         return
       }
 

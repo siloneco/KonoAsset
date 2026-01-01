@@ -73,13 +73,12 @@ export const useDataManagementDialogStore = create<Props>((set, get) => ({
       return
     }
 
-    listDirEntries(current.id).then((entries) => {
-      const ongoingImports = current.ongoingImports.filter(
-        (entry) => entry.completed === false,
-      )
+    const ongoingImports = current.ongoingImports.filter(
+      (entry) => entry.completed === false,
+    )
+    const entries = await listDirEntries(current.id)
 
-      set({ entries: entries ?? [], ongoingImports })
-    })
+    set({ entries: entries ?? [], ongoingImports })
   },
   onTaskCompleted: (taskId: string) => {
     const current = get()
