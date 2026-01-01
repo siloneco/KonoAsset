@@ -23,16 +23,32 @@ export const useDataManagementDialogStore = create<Props>((set, get) => ({
   isOpen: false,
   setOpen: (open: boolean) => {
     set({ isOpen: open })
+
+    if (!open) {
+      // 進行中のインポートタスクをキャンセルする
+      // 閉じるアニメーション中に表示が乱れるのを防ぐために set({ ongoingImports: [] }) はしない
+      get()
+        .ongoingImports.filter((entry) => entry.completed === false)
+        .forEach((entry) =>
+          commands.cancelTaskRequest(entry.taskId).then((result) => {
+            if (result.status === 'error') console.error(result.error)
+          }),
+        )
+    }
   },
   open: (assetId: string) => {
-    set({ isOpen: true, loading: true, id: assetId, entries: [] })
+    set({
+      isOpen: true,
+      loading: true,
+      id: assetId,
+      entries: [],
+      ongoingImports: [],
+    })
 
-    listDirEntries(assetId)
-      .then((entries) => {
-        set({ loading: false, entries: entries ?? [] })
-      })
-      .catch(() => {
-        set({ loading: false, entries: [] })
+    get()
+      .refreshEntries()
+      .finally(() => {
+        set({ loading: false })
       })
   },
 
