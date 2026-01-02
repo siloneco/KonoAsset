@@ -77,9 +77,9 @@ export const useAssetFilterStore = create<Props>((set, get) => ({
       }),
     }
 
-    // category に AND は禁止なので、AND が指定されていたら Unfilled にする
+    // category に AND は禁止なので、AND が指定されていたら Unlabeled にする
     if (newFilters.category.type === 'AND') {
-      newFilters.category.type = 'Unfilled'
+      newFilters.category.type = 'Unlabeled'
     }
 
     set({

@@ -31,11 +31,11 @@ const isFilterEnforced = (filters: AssetFilters) => {
     filters.text.generalQuery.length > 0 ||
     filters.text.advancedNameQuery.length > 0 ||
     filters.text.advancedCreatorQuery.length > 0 ||
-    filters.category.type === 'Unfilled' ||
+    filters.category.type === 'Unlabeled' ||
     filters.category.filters.length > 0 ||
-    filters.tag.type === 'Unfilled' ||
+    filters.tag.type === 'Unlabeled' ||
     filters.tag.filters.length > 0 ||
-    filters.supportedAvatar.type === 'Unfilled' ||
+    filters.supportedAvatar.type === 'Unlabeled' ||
     filters.supportedAvatar.filters.length > 0
   )
 }
@@ -110,8 +110,8 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
   }
 
   if (filters.assetType !== 'Avatar') {
-    if (filters.category.type === 'Unfilled') {
-      requestCategories = { type: 'Unfilled' }
+    if (filters.category.type === 'Unlabeled') {
+      requestCategories = { type: 'Unlabeled' }
     } else if (filters.category.filters.length > 0) {
       requestCategories = {
         type: filters.category.type,
@@ -124,8 +124,8 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
     requestCategories = null
   }
 
-  if (filters.tag.type === 'Unfilled') {
-    requestTags = { type: 'Unfilled' }
+  if (filters.tag.type === 'Unlabeled') {
+    requestTags = { type: 'Unlabeled' }
   } else if (filters.tag.filters.length > 0) {
     requestTags = {
       type: filters.tag.type,
@@ -139,8 +139,8 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
     filters.assetType === 'AvatarWearable' || filters.assetType === 'All'
 
   if (enableSupportedAvatarFilter) {
-    if (filters.supportedAvatar.type === 'Unfilled') {
-      requestSupportedAvatars = { type: 'Unfilled' }
+    if (filters.supportedAvatar.type === 'Unlabeled') {
+      requestSupportedAvatars = { type: 'Unlabeled' }
     } else if (filters.supportedAvatar.filters.length > 0) {
       requestSupportedAvatars = {
         type: filters.supportedAvatar.type,

@@ -1,1 +1,1 @@
-export type MatchType = 'AND' | 'OR' | 'Unfilled'
+export type MatchType = 'AND' | 'OR' | 'Unlabeled'

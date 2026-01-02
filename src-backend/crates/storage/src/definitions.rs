@@ -31,7 +31,7 @@ pub struct FilterRequest {
 pub enum FilterElement<T> {
     AND(Vec<T>),
     OR(Vec<T>),
-    Unfilled,
+    Unlabeled,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]

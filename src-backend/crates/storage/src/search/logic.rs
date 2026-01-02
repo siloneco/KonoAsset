@@ -109,7 +109,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
                         return;
                     }
                 }
-                FilterElement::Unfilled => {
+                FilterElement::Unlabeled => {
                     // 未入力を表示したいので、カテゴリが入力されていたら除外
                     if item_category.is_some() {
                         return;
@@ -160,7 +160,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
                         return;
                     }
                 }
-                FilterElement::Unfilled => {
+                FilterElement::Unlabeled => {
                     // 未入力を表示したいので、タグが入力されていたら除外
                     if !item_tags.is_empty() {
                         return;
@@ -214,7 +214,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
                         return;
                     }
                 }
-                FilterElement::Unfilled => {
+                FilterElement::Unlabeled => {
                     // 未入力を表示したいので、対応アバターが入力されていたら除外
                     if !item_sup_avatars.is_empty() {
                         return;

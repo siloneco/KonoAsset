@@ -71,30 +71,44 @@ export const MultiFilterItemSelector = ({
               className="size-fit bg-primary text-primary-foreground py-1 px-4 rounded-full text-xs flex items-center cursor-pointer select-none shrink-0"
               onClick={onMatchTypeClicked}
             >
-              {matchType === 'Unfilled'
-                ? t('mainsidebar:multi-filter-item-selector:type:unfilled')
+              {matchType === 'Unlabeled'
+                ? t('mainsidebar:multi-filter-item-selector:type:unlabeled')
                 : matchType}
             </div>
           )}
         </div>
       </div>
-      <MultipleSelector
-        className={cn('mt-2', matchType === 'Unfilled' && 'opacity-50')}
-        badgeClassName="max-w-42"
-        options={candidates}
-        value={value}
-        onChange={onValueChange}
-        placeholder={formattedPlaceholder}
-        hidePlaceholderWhenSelected
-        negativeSelectable
-        emptyIndicator={
-          <p className="text-center text-lg text-muted-foreground">
-            {t('mainsidebar:multi-filter-item-selector:no-candidates')}
-          </p>
-        }
-        inputProps={inputProps}
-        disabled={matchType === 'Unfilled'}
-      />
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="w-full">
+            <MultipleSelector
+              className={cn('mt-2', matchType === 'Unlabeled' && 'opacity-50')}
+              badgeClassName="max-w-42"
+              options={candidates}
+              value={value}
+              onChange={onValueChange}
+              placeholder={formattedPlaceholder}
+              hidePlaceholderWhenSelected
+              negativeSelectable
+              emptyIndicator={
+                <p className="text-center text-lg text-muted-foreground">
+                  {t('mainsidebar:multi-filter-item-selector:no-candidates')}
+                </p>
+              }
+              inputProps={inputProps}
+              disabled={matchType === 'Unlabeled'}
+            />
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className={matchType === 'Unlabeled' ? undefined : 'hidden'}
+          >
+            <p>
+              {t('mainsidebar:multi-filter-item-selector:unlabeled-tooltip')}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   )
 }

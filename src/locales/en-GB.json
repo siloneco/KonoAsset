@@ -166,7 +166,8 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "Select an item...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "No candidates available",
-    "mainsidebar:multi-filter-item-selector:type:unfilled": "Unfilled",
+    "mainsidebar:multi-filter-item-selector:type:unlabeled": "Unlabelled",
+    "mainsidebar:multi-filter-item-selector:unlabeled-tooltip": "Input is disabled while filtering by Unlabelled!",
     "mainsidebar:text-search": "Search by text",
     "mainsidebar:advanced-search": "Advanced",
     "mainsidebar:advanced-search:asset-name": "Asset name",

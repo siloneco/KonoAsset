@@ -17,7 +17,7 @@ export const useMultiFilterItemSelector = ({
     if (matchType === 'OR') {
       return 'AND'
     } else if (matchType === 'AND') {
-      return 'Unfilled'
+      return 'Unlabeled'
     } else {
       return 'OR'
     }
