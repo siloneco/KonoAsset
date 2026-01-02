@@ -52,9 +52,7 @@ export const MultiFilterItemSelector = ({
       <div className="grid grid-cols-1 w-full overflow-hidden">
         <div className="flex items-center gap-2">
           <div className="w-full flex items-center shrink min-w-0">
-            <p className="text-base font-bold truncate shrink wrap-break-word">
-              {label}
-            </p>
+            <p className="text-base font-bold truncate shrink">{label}</p>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

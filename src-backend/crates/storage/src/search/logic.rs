@@ -91,7 +91,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
 
                     // ORなので、Includeは「どれか1つでもマッチする」が満たされなかったら除外
                     // なお Include の条件数が0ならスキップ
-                    if include_categories.len() > 0
+                    if !include_categories.is_empty()
                         && !include_categories
                             .iter()
                             .any(|category| category.value() == item_category)
@@ -101,7 +101,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
 
                     // Excludeは常にANDとして処理するので、「全部マッチする」が満たされなかったら除外
                     // なお Exclude の条件数が0ならスキップ
-                    if exclude_categories.len() > 0
+                    if !exclude_categories.is_empty()
                         && !exclude_categories
                             .iter()
                             .all(|category| category.value() != item_category)
@@ -142,7 +142,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
 
                     // ORなので、Includeは「どれか1つでもマッチする」が満たされなかったら除外
                     // なお Include の条件数が0ならスキップ
-                    if include_tags.len() > 0
+                    if !include_tags.is_empty()
                         && !include_tags
                             .iter()
                             .any(|tag| item_tags.contains(tag.value()))
@@ -152,7 +152,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
 
                     // Excludeは常にANDとして処理するので、「全部マッチする」が満たされなかったら除外
                     // なお Exclude の条件数が0ならスキップ
-                    if exclude_tags.len() > 0
+                    if !exclude_tags.is_empty()
                         && !exclude_tags
                             .iter()
                             .all(|tag| !item_tags.contains(tag.value()))
@@ -197,7 +197,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
                         });
 
                     // ORなので、Includeは「どれか1つでもマッチする」が満たされなかったら除外
-                    if include_avatars.len() > 0
+                    if !include_avatars.is_empty()
                         && !include_avatars
                             .iter()
                             .any(|avatar| item_sup_avatars.contains(avatar.value()))
@@ -206,7 +206,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
                     }
 
                     // Excludeは常にANDとして処理するので、「全部マッチする」が満たされなかったら除外
-                    if exclude_avatars.len() > 0
+                    if !exclude_avatars.is_empty()
                         && !exclude_avatars
                             .iter()
                             .all(|avatar| !item_sup_avatars.contains(avatar.value()))
