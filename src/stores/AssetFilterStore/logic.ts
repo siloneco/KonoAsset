@@ -1,4 +1,10 @@
-import { AssetType, commands, FilterRequest } from '@/lib/bindings'
+import {
+  AssetType,
+  commands,
+  FilterElement,
+  FilterRequest,
+  FilterRequirement,
+} from '@/lib/bindings'
 import { AssetFilters } from '.'
 import { extractBoothItemId } from '@/lib/utils'
 
@@ -25,8 +31,11 @@ const isFilterEnforced = (filters: AssetFilters) => {
     filters.text.generalQuery.length > 0 ||
     filters.text.advancedNameQuery.length > 0 ||
     filters.text.advancedCreatorQuery.length > 0 ||
-    filters.category.length > 0 ||
+    filters.category.type === 'Unfilled' ||
+    filters.category.filters.length > 0 ||
+    filters.tag.type === 'Unfilled' ||
     filters.tag.filters.length > 0 ||
+    filters.supportedAvatar.type === 'Unfilled' ||
     filters.supportedAvatar.filters.length > 0
   )
 }
@@ -34,9 +43,9 @@ const isFilterEnforced = (filters: AssetFilters) => {
 const createFilterRequest = (filters: AssetFilters): FilterRequest => {
   let requestAssetType: AssetType | null
   let requestQuery: string | null
-  let requestCategories: string[] | null
-  let requestTags: string[] | null
-  let requestSupportedAvatars: string[] | null
+  let requestCategories: FilterElement<FilterRequirement<string>> | null
+  let requestTags: FilterElement<FilterRequirement<string>> | null
+  let requestSupportedAvatars: FilterElement<FilterRequirement<string>> | null
 
   if (filters.assetType !== 'All') {
     requestAssetType = filters.assetType
@@ -100,25 +109,48 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
     requestQuery = null
   }
 
-  if (filters.assetType !== 'Avatar' && filters.category.length > 0) {
-    requestCategories = filters.category
+  if (filters.assetType !== 'Avatar') {
+    if (filters.category.type === 'Unfilled') {
+      requestCategories = { type: 'Unfilled' }
+    } else if (filters.category.filters.length > 0) {
+      requestCategories = {
+        type: filters.category.type,
+        data: filters.category.filters.map(convertItemsToFilterRequirements),
+      }
+    } else {
+      requestCategories = null
+    }
   } else {
     requestCategories = null
   }
 
-  if (filters.tag.filters.length > 0) {
-    requestTags = filters.tag.filters
+  if (filters.tag.type === 'Unfilled') {
+    requestTags = { type: 'Unfilled' }
+  } else if (filters.tag.filters.length > 0) {
+    requestTags = {
+      type: filters.tag.type,
+      data: filters.tag.filters.map(convertItemsToFilterRequirements),
+    }
   } else {
     requestTags = null
   }
 
   const enableSupportedAvatarFilter =
     filters.assetType === 'AvatarWearable' || filters.assetType === 'All'
-  if (
-    enableSupportedAvatarFilter &&
-    filters.supportedAvatar.filters.length > 0
-  ) {
-    requestSupportedAvatars = filters.supportedAvatar.filters
+
+  if (enableSupportedAvatarFilter) {
+    if (filters.supportedAvatar.type === 'Unfilled') {
+      requestSupportedAvatars = { type: 'Unfilled' }
+    } else if (filters.supportedAvatar.filters.length > 0) {
+      requestSupportedAvatars = {
+        type: filters.supportedAvatar.type,
+        data: filters.supportedAvatar.filters.map(
+          convertItemsToFilterRequirements,
+        ),
+      }
+    } else {
+      requestSupportedAvatars = null
+    }
   } else {
     requestSupportedAvatars = null
   }
@@ -128,10 +160,24 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
     queryText: requestQuery,
     categories: requestCategories,
     tags: requestTags,
-    tagMatchType: filters.tag.type,
     supportedAvatars: requestSupportedAvatars,
-    supportedAvatarMatchType: filters.supportedAvatar.type,
   }
 
   return filterReq
+}
+
+const convertItemsToFilterRequirements = (
+  item: string,
+): FilterRequirement<string> => {
+  if (item.startsWith('-')) {
+    return {
+      type: 'Exclude',
+      data: item.slice(1),
+    }
+  } else {
+    return {
+      type: 'Include',
+      data: item,
+    }
+  }
 }

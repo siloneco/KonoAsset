@@ -166,6 +166,7 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "アイテムを選択...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "候補がありません",
+    "mainsidebar:multi-filter-item-selector:type:unfilled": "未入力",
     "mainsidebar:text-search": "テキストで検索",
     "mainsidebar:advanced-search": "詳細",
     "mainsidebar:advanced-search:asset-name": "アセット名",

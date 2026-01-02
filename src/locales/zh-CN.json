@@ -166,6 +166,7 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "选择项目...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "无可用选项",
+    "mainsidebar:multi-filter-item-selector:type:unfilled": "未填写",
     "mainsidebar:text-search": "文本搜索",
     "mainsidebar:advanced-search": "高级搜索",
     "mainsidebar:advanced-search:asset-name": "资产名称",

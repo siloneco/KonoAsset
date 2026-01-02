@@ -8,7 +8,10 @@ export const DEFAULT_FILTERS: AssetFilters = {
     advancedCreatorQuery: '',
   },
   assetType: 'All',
-  category: [],
+  category: {
+    type: 'OR',
+    filters: [],
+  },
   tag: {
     type: 'OR',
     filters: [],

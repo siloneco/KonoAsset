@@ -1,7 +1,8 @@
-import { AssetType, MatchType } from '@/lib/bindings'
+import { AssetType } from '@/lib/bindings'
 import { create } from 'zustand'
 import { DEFAULT_FILTERS } from './index.constants'
 import { getFilteredAssetIds } from './logic'
+import { MatchType } from '@/lib/index.types'
 
 export type AssetFilters = {
   text: {
@@ -11,7 +12,10 @@ export type AssetFilters = {
     advancedCreatorQuery: string
   }
   assetType: AssetType | 'All'
-  category: string[]
+  category: {
+    type: MatchType
+    filters: string[]
+  }
   tag: {
     type: MatchType
     filters: string[]
@@ -53,7 +57,12 @@ export const useAssetFilterStore = create<Props>((set, get) => ({
         },
       }),
       ...(filter.assetType !== undefined && { assetType: filter.assetType }),
-      ...(filter.category && { category: filter.category }),
+      ...(filter.category && {
+        category: {
+          ...currentFilters.category,
+          ...filter.category,
+        },
+      }),
       ...(filter.tag && {
         tag: {
           ...currentFilters.tag,
@@ -66,6 +75,11 @@ export const useAssetFilterStore = create<Props>((set, get) => ({
           ...filter.supportedAvatar,
         },
       }),
+    }
+
+    // category に AND は禁止なので、AND が指定されていたら Unfilled にする
+    if (newFilters.category.type === 'AND') {
+      newFilters.category.type = 'Unfilled'
     }
 
     set({

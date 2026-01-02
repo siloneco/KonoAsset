@@ -1,7 +1,5 @@
 import MultipleSelector, { Option } from '@/components/ui/multi-select'
-import { Label } from '@/components/ui/label'
 import { useMultiFilterItemSelector } from './hook'
-import { MatchType } from '@/lib/bindings'
 import { useLocalization } from '@/hooks/use-localization'
 import { Command as CommandPrimitive } from 'cmdk'
 import { CircleHelp } from 'lucide-react'
@@ -11,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { MatchType } from '@/lib/index.types'
 
 type Props = {
   label: string
@@ -49,28 +48,34 @@ export const MultiFilterItemSelector = ({
 
   return (
     <div>
-      <div className="flex flex-row">
-        <div className="w-full flex flex-row items-center">
-          <Label className="text-base">{label}</Label>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <CircleHelp className="size-4 ml-1 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t('mainsidebar:help:attribute-exclude-feature-tips')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        {matchType && (
-          <div
-            className="space-x-2 bg-primary text-primary-foreground px-4 rounded-full text-[12px] flex items-center cursor-pointer select-none"
-            onClick={onMatchTypeClicked}
-          >
-            <span>{matchType}</span>
+      <div className="grid grid-cols-1 w-full overflow-hidden">
+        <div className="flex items-center gap-2">
+          <div className="w-full flex items-center shrink min-w-0">
+            <p className="text-base font-bold truncate shrink wrap-break-word">
+              {label}
+            </p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CircleHelp className="size-4 ml-1 text-muted-foreground shrink-0" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('mainsidebar:help:attribute-exclude-feature-tips')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-        )}
+          {matchType && (
+            <div
+              className="size-fit bg-primary text-primary-foreground py-1 px-4 rounded-full text-xs flex items-center cursor-pointer select-none shrink-0"
+              onClick={onMatchTypeClicked}
+            >
+              {matchType === 'Unfilled'
+                ? t('mainsidebar:multi-filter-item-selector:type:unfilled')
+                : matchType}
+            </div>
+          )}
+        </div>
       </div>
       <MultipleSelector
         className="mt-2"
