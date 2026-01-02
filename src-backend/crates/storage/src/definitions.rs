@@ -21,9 +21,31 @@ pub enum MatchType {
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
     pub query_text: Option<String>,
-    pub categories: Option<Vec<String>>,
-    pub tags: Option<Vec<String>>,
-    pub tag_match_type: MatchType,
-    pub supported_avatars: Option<Vec<String>>,
-    pub supported_avatar_match_type: MatchType,
+    pub categories: Option<FilterElement<FilterRequirement<String>>>,
+    pub tags: Option<FilterElement<FilterRequirement<String>>>,
+    pub supported_avatars: Option<FilterElement<FilterRequirement<String>>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(tag = "type", content = "data")]
+pub enum FilterElement<T> {
+    AND(Vec<T>),
+    OR(Vec<T>),
+    Unlabeled,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
+#[serde(tag = "type", content = "data")]
+pub enum FilterRequirement<T> {
+    Include(T),
+    Exclude(T),
+}
+
+impl<T> FilterRequirement<T> {
+    pub fn value(&self) -> &T {
+        match self {
+            FilterRequirement::Include(value) => value,
+            FilterRequirement::Exclude(value) => value,
+        }
+    }
 }

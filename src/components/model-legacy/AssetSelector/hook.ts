@@ -57,9 +57,7 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
       assetType: null,
       categories: null,
       queryText: searchInput,
-      supportedAvatarMatchType: 'OR',
       supportedAvatars: null,
-      tagMatchType: 'OR',
       tags: null,
     }
 

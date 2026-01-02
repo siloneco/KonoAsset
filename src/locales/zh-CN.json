@@ -166,6 +166,8 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "选择项目...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "无可用选项",
+    "mainsidebar:multi-filter-item-selector:type:unlabeled": "未指定",
+    "mainsidebar:multi-filter-item-selector:unlabeled-tooltip": "按\"未指定\"筛选时输入框已禁用！",
     "mainsidebar:text-search": "文本搜索",
     "mainsidebar:advanced-search": "高级搜索",
     "mainsidebar:advanced-search:asset-name": "资产名称",
