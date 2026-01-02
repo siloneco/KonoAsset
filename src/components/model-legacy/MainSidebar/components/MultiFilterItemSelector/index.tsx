@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { MatchType } from '@/lib/index.types'
+import { cn } from '@/lib/utils'
 
 type Props = {
   label: string
@@ -78,7 +79,7 @@ export const MultiFilterItemSelector = ({
         </div>
       </div>
       <MultipleSelector
-        className="mt-2"
+        className={cn('mt-2', matchType === 'Unfilled' && 'opacity-50')}
         badgeClassName="max-w-42"
         options={candidates}
         value={value}
@@ -92,6 +93,7 @@ export const MultiFilterItemSelector = ({
           </p>
         }
         inputProps={inputProps}
+        disabled={matchType === 'Unfilled'}
       />
     </div>
   )
