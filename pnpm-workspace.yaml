@@ -2,3 +2,5 @@ minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   # Renovate security update: vite@7.3.2
   - vite@7.3.2
+  # Renovate security update: storybook@10.2.10
+  - storybook@10.2.10
