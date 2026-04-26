@@ -4,3 +4,5 @@ minimumReleaseAgeExclude:
   - vite@7.3.2
   # Renovate security update: storybook@10.2.10
   - storybook@10.2.10
+  # Renovate security update: postcss@8.5.10
+  - postcss@8.5.10
