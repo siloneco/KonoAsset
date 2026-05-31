@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use uuid::Uuid;
 
+use crate::adapters::WorldObjectJsonAdapter;
+
 use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -11,7 +13,7 @@ use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 pub enum VersionedWorldObjects {
     WorldObjects {
         version: MustBe!(3u64),
-        data: HashSet<WorldObject>,
+        data: HashSet<WorldObjectJsonAdapter>,
     },
     LegacyWorldObjectV2 {
         version: MustBe!(2u64),
@@ -25,7 +27,9 @@ impl TryInto<HashSet<WorldObject>> for VersionedWorldObjects {
 
     fn try_into(self) -> Result<HashSet<WorldObject>, Self::Error> {
         match self {
-            VersionedWorldObjects::WorldObjects { data, .. } => Ok(data),
+            VersionedWorldObjects::WorldObjects { data, .. } => {
+                Ok(data.into_iter().map(|adapter| adapter.into()).collect())
+            }
             VersionedWorldObjects::LegacyWorldObjectV2 { data, .. } => {
                 let mut world_objects = HashSet::new();
                 for item in data {
@@ -55,7 +59,10 @@ impl TryFrom<HashSet<WorldObject>> for VersionedWorldObjects {
     fn try_from(value: HashSet<WorldObject>) -> Result<VersionedWorldObjects, Self::Error> {
         Ok(VersionedWorldObjects::WorldObjects {
             version: MustBe!(3u64),
-            data: value,
+            data: value
+                .into_iter()
+                .map(|world_object| world_object.into())
+                .collect(),
         })
     }
 }

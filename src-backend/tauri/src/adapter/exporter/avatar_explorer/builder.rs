@@ -8,7 +8,7 @@ pub struct AvatarExplorerItemBuilder {
     title: String,
     author: String,
     memo: Option<String>,
-    booth_item_id: Option<u64>,
+    booth_item_id: Option<u32>,
     category: Option<String>,
     created_at: i64,
 

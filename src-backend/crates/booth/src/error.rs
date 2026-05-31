@@ -1,7 +1,7 @@
 #[derive(Debug, thiserror::Error)]
 pub enum BoothInfoFetchError {
     #[error("Item not found with ID: {0}")]
-    NotFound(u64),
+    NotFound(u32),
     #[error("Failed to fetch asset description from BOOTH: {0}")]
     APICallError(#[from] reqwest::Error),
     #[error("Failed to parse JSON from BOOTH API response: {0}")]

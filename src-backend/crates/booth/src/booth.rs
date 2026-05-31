@@ -20,7 +20,7 @@ impl BoothFetcher {
         }
     }
 
-    pub async fn fetch(&mut self, id: u64) -> Result<BoothAssetInfo, BoothInfoFetchError> {
+    pub async fn fetch(&mut self, id: u32) -> Result<BoothAssetInfo, BoothInfoFetchError> {
         if let Some(cached_result) = self.cache.get(id) {
             return Ok(cached_result);
         }
@@ -80,7 +80,7 @@ fn estimate_asset_type_from_category(category_id: i32) -> Option<AssetType> {
     }
 }
 
-fn construct_api_url(id: u64) -> String {
+fn construct_api_url(id: u32) -> String {
     format!("https://booth.pm/ja/items/{}.json", id)
 }
 

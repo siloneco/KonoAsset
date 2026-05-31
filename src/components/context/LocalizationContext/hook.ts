@@ -16,8 +16,13 @@ const LANGUAGE_DATA_MAP = {
   'zh-CN': zhCn['data'],
 }
 
+type LanguageDataMapKeys = Extract<
+  LanguageCode,
+  'ja-JP' | 'en-US' | 'en-GB' | 'zh-CN'
+>
+
 export const getLocalizationData = (
-  code: Exclude<LanguageCode, { 'user-provided': string }>,
+  code: LanguageDataMapKeys,
 ): LocalizationData => {
   return {
     language: code,
@@ -34,9 +39,7 @@ export const useLocalizationContext = (): LocalizationContextType => {
   const { preference } = useContext(PreferenceContext)
   const { toast } = useToast()
 
-  const loadBundledLanguageFile = async (
-    code: Exclude<LanguageCode, { 'user-provided': string }>,
-  ) => {
+  const loadBundledLanguageFile = async (code: LanguageDataMapKeys) => {
     setLocalizationData({
       language: code,
       data: LANGUAGE_DATA_MAP[code],
@@ -44,9 +47,7 @@ export const useLocalizationContext = (): LocalizationContextType => {
   }
 
   useEffect(() => {
-    loadBundledLanguageFile(
-      preference.language as Exclude<LanguageCode, { 'user-provided': string }>,
-    )
+    loadBundledLanguageFile(preference.language as LanguageDataMapKeys)
   }, [preference.language])
 
   const loadLanguageFile = async (path: string) => {

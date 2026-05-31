@@ -84,6 +84,7 @@ impl From<log::Level> for LogLevel {
 #[derive(Serialize, specta::Type, Clone)]
 pub struct LogEntry {
     #[serde(serialize_with = "to_rfc3339_micros")]
+    #[specta(type = chrono::DateTime<chrono::Local>)]
     time: chrono::DateTime<chrono::Local>,
     level: LogLevel,
     target: String,

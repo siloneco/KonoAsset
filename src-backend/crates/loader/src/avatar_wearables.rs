@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeSet, HashSet};
 use uuid::Uuid;
 
+use crate::adapters::AvatarWearableJsonAdapter;
+
 use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -11,7 +13,7 @@ use super::share::{LegacyAssetDescriptionV1, LegacyAssetDescriptionV2};
 pub enum VersionedAvatarWearables {
     AvatarWearables {
         version: MustBe!(3u64),
-        data: HashSet<AvatarWearable>,
+        data: HashSet<AvatarWearableJsonAdapter>,
     },
     LegacyAvatarWearablesV2 {
         version: MustBe!(2u64),
@@ -25,7 +27,9 @@ impl TryInto<HashSet<AvatarWearable>> for VersionedAvatarWearables {
 
     fn try_into(self) -> Result<HashSet<AvatarWearable>, Self::Error> {
         match self {
-            VersionedAvatarWearables::AvatarWearables { data, .. } => Ok(data),
+            VersionedAvatarWearables::AvatarWearables { data, .. } => {
+                Ok(data.into_iter().map(|adapter| adapter.into()).collect())
+            }
             VersionedAvatarWearables::LegacyAvatarWearablesV2 { data, .. } => {
                 let mut avatar_wearables = HashSet::new();
                 for item in data {
@@ -55,7 +59,10 @@ impl TryFrom<HashSet<AvatarWearable>> for VersionedAvatarWearables {
     fn try_from(value: HashSet<AvatarWearable>) -> Result<VersionedAvatarWearables, Self::Error> {
         Ok(VersionedAvatarWearables::AvatarWearables {
             version: MustBe!(3u64),
-            data: value,
+            data: value
+                .into_iter()
+                .map(|avatar_wearable| avatar_wearable.into())
+                .collect(),
         })
     }
 }

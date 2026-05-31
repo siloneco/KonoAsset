@@ -4,8 +4,10 @@ use std::collections::HashMap;
 
 const EXPIRATION_SECONDS: i64 = 60;
 
+type CacheExpirationTimestamp = i64;
+
 pub struct BoothCache {
-    cache: HashMap<u64, (BoothAssetInfo, i64)>,
+    cache: HashMap<u32, (BoothAssetInfo, CacheExpirationTimestamp)>,
 }
 
 impl BoothCache {
@@ -15,7 +17,7 @@ impl BoothCache {
         }
     }
 
-    pub fn get(&self, id: u64) -> Option<BoothAssetInfo> {
+    pub fn get(&self, id: u32) -> Option<BoothAssetInfo> {
         let result = self.cache.get(&id)?;
 
         if result.1 < Local::now().timestamp() {
@@ -25,7 +27,7 @@ impl BoothCache {
         Some(result.0.clone())
     }
 
-    pub fn insert(&mut self, id: u64, value: BoothAssetInfo) {
+    pub fn insert(&mut self, id: u32, value: BoothAssetInfo) {
         self.cache
             .insert(id, (value, Local::now().timestamp() + EXPIRATION_SECONDS));
     }

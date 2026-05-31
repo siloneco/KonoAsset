@@ -262,7 +262,7 @@ where
     Ok(())
 }
 
-fn create_link_file_data(booth_id: u64) -> Vec<u8> {
+fn create_link_file_data(booth_id: u32) -> Vec<u8> {
     let base = "[{000214A0-0000-0000-C000-000000000046}]
 Prop3=19,11
 [InternetShortcut]

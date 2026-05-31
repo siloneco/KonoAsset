@@ -1,3 +1,4 @@
+mod adapters;
 mod share;
 
 mod avatar;

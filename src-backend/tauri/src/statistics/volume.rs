@@ -1,6 +1,6 @@
 use std::{collections::HashSet, path::PathBuf, sync::Arc};
 
-use model::{AssetTrait, AssetType};
+use model::{AssetTrait, AssetType, utils::u64_as_string};
 use serde::Serialize;
 use storage::asset_storage::AssetStorage;
 use tauri::AppHandle;
@@ -14,6 +14,8 @@ pub struct AssetVolumeStatistics {
     pub id: Uuid,
     pub asset_type: AssetType,
     pub name: String,
+    #[specta(type = String)]
+    #[serde(with = "u64_as_string")]
     pub size_in_bytes: u64,
 }
 

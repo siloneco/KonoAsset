@@ -3,6 +3,8 @@ use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::utils::{i64_as_string, option_i64_as_string};
+
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq, specta::Type)]
 pub enum AssetType {
     Avatar,
@@ -51,9 +53,13 @@ pub struct AssetDescription {
     pub image_filename: Option<String>,
     pub tags: Vec<String>,
     pub memo: Option<String>,
-    pub booth_item_id: Option<u64>,
+    pub booth_item_id: Option<u32>,
     pub dependencies: Vec<Uuid>,
+    #[specta(type = String)]
+    #[serde(with = "i64_as_string")]
     pub created_at: i64,
+    #[specta(type = Option<String>)]
+    #[serde(with = "option_i64_as_string")]
     pub published_at: Option<i64>,
 }
 
