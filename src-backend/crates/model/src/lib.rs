@@ -4,6 +4,7 @@ mod summary;
 mod ui;
 
 pub mod preference;
+pub mod utils;
 
 pub use base::AssetType;
 

@@ -30,7 +30,7 @@ pub enum DeepLinkAction {
 #[serde(rename_all = "camelCase")]
 pub struct AddAssetDeepLink {
     pub path: Vec<PathBuf>,
-    pub booth_item_id: Option<u64>,
+    pub booth_item_id: Option<u32>,
 }
 
 impl AddAssetDeepLink {

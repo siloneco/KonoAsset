@@ -21,7 +21,7 @@ use tauri_specta::{Event, collect_events};
 use updater::update_handler::{UpdateHandler, UpdateProgress};
 
 #[cfg(debug_assertions)]
-use specta_typescript::{BigIntExportBehavior, Typescript};
+use specta_typescript::Typescript;
 
 mod adapter;
 mod command;
@@ -46,9 +46,7 @@ pub fn run() {
     #[cfg(debug_assertions)]
     builder
         .export(
-            Typescript::default()
-                .bigint(BigIntExportBehavior::Number)
-                .header("/* eslint-disable */\n// @ts-nocheck"),
+            Typescript::default().header("/* eslint-disable */\n// @ts-nocheck"),
             "../../src/lib/bindings.ts",
         )
         .expect("Failed to export typescript bindings");

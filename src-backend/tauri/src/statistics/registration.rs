@@ -7,10 +7,10 @@ use storage::asset_storage::AssetStorage;
 #[serde(rename_all = "camelCase")]
 pub struct AssetRegistrationStatistics {
     pub date: String,
-    pub avatars: u64,
-    pub avatar_wearables: u64,
-    pub world_objects: u64,
-    pub other_assets: u64,
+    pub avatars: u32,
+    pub avatar_wearables: u32,
+    pub world_objects: u32,
+    pub other_assets: u32,
 }
 
 pub async fn get_asset_registration_statistics(
@@ -39,7 +39,7 @@ pub async fn get_asset_registration_statistics(
     let today = Local::now().date_naive();
 
     // Initialize date range
-    let mut date_counts: HashMap<NaiveDate, (u64, u64, u64, u64)> = HashMap::new();
+    let mut date_counts: HashMap<NaiveDate, (u32, u32, u32, u32)> = HashMap::new();
     let mut current_date = oldest_date;
     while current_date <= today {
         date_counts.insert(current_date, (0, 0, 0, 0));

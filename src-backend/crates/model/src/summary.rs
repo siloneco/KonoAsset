@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::base::{AssetType, Avatar, AvatarWearable, OtherAsset, WorldObject};
+use crate::utils::option_i64_as_string;
 
 #[derive(Serialize, Deserialize, Debug, Clone, specta::Type)]
 #[serde(rename_all = "camelCase")]
@@ -13,7 +14,9 @@ pub struct AssetSummary {
     pub image_filename: Option<String>,
     pub has_memo: bool,
     pub dependencies: Vec<Uuid>,
-    pub booth_item_id: Option<u64>,
+    pub booth_item_id: Option<u32>,
+    #[specta(type = Option<String>)]
+    #[serde(with = "option_i64_as_string")]
     pub published_at: Option<i64>,
 }
 

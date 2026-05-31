@@ -1,20 +1,22 @@
-use model::AssetType;
+use model::{AssetType, utils::i64_as_string};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Clone, Debug, PartialEq, Eq, specta::Type)]
 #[serde(rename_all = "camelCase")]
 pub struct BoothAssetInfo {
-    pub id: u64,
+    pub id: u32,
     pub name: String,
     pub creator: String,
     pub image_urls: Vec<String>,
+    #[specta(type = String)]
+    #[serde(with = "i64_as_string")]
     pub published_at: i64,
     pub estimated_asset_type: Option<AssetType>,
 }
 
 #[derive(Deserialize)]
 pub(crate) struct BoothJsonSchema {
-    pub id: u64,
+    pub id: u32,
     pub name: String,
     pub shop: BoothShop,
     pub images: Vec<BoothPximg>,
