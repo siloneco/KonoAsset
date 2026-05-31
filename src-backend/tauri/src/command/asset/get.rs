@@ -132,7 +132,7 @@ pub async fn get_sorted_asset_summaries(
 #[specta::specta]
 pub async fn get_asset_displays_by_booth_id(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    booth_item_id: u64,
+    booth_item_id: u32,
 ) -> Result<Vec<AssetSummary>, String> {
     let basic_store = basic_store.lock().await;
     let mut result = Vec::new();

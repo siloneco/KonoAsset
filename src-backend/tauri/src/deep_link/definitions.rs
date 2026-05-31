@@ -34,7 +34,7 @@ pub struct AddAssetDeepLink {
 }
 
 impl AddAssetDeepLink {
-    pub fn new(path: Vec<PathBuf>, booth_item_id: Option<u64>) -> Self {
+    pub fn new(path: Vec<PathBuf>, booth_item_id: Option<u32>) -> Self {
         Self {
             path,
             booth_item_id,

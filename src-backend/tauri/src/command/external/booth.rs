@@ -8,7 +8,7 @@ use tauri::{State, async_runtime::Mutex};
 #[specta::specta]
 pub async fn get_asset_info_from_booth(
     booth_fetcher: State<'_, Mutex<BoothFetcher>>,
-    booth_item_id: u64,
+    booth_item_id: u32,
 ) -> Result<BoothAssetInfo, String> {
     log::info!(
         "Fetching asset description from Booth (Booth Item ID = {:?})",
@@ -54,7 +54,7 @@ pub async fn resolve_pximg_filename(
 #[specta::specta]
 pub async fn get_booth_url(
     preference: State<'_, Arc<Mutex<PreferenceStore>>>,
-    id: u64,
+    id: u32,
 ) -> Result<String, String> {
     let app_lang_code = {
         let preference = preference.lock().await;

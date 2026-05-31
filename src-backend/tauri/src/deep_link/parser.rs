@@ -57,7 +57,7 @@ fn parse_as_add_asset(url: &Url) -> Option<AddAssetDeepLink> {
                 path.push(value);
             }
             "id" | "boothid" | "boothitemid" => {
-                let id = value.parse::<u64>();
+                let id = value.parse::<u32>();
 
                 if let Err(e) = id {
                     log::error!(
