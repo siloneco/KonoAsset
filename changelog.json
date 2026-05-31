@@ -1,5 +1,41 @@
 [
   {
+    "version": "1.2.6-rc.4",
+    "preRelease": true,
+    "features": [
+      {
+        "text": "Files can now be smoothly imported to an existing asset directly from the duplicate confirmation dialog",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "重複確認のダイアログからスムーズに既存アセットへファイルをインポートできるように"
+          }
+        ]
+      },
+      {
+        "text": "Assets with no category, supported avatar, or tag specified can now be filtered",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "カテゴリ、対応アバター、タグについて、未指定のアセットを絞り込めるように"
+          }
+        ]
+      }
+    ],
+    "fixes": [],
+    "others": [
+      {
+        "text": "Updated dependencies",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "依存関係のアップデート"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.6-rc.3",
     "preRelease": true,
     "features": [
