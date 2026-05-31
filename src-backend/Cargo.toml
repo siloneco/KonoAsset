@@ -36,12 +36,12 @@ log = { version = "0.4.22", features = ["std"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4.39", features = ["serde"] }
 tauri-plugin-dialog = "2"
-reqwest = { version = "0.12.9", features = ["json", "blocking"] }
+reqwest = { version = "0.13.0", features = ["json", "blocking"] }
 async_zip = { version = "0.0.18", features = ["full"] }
 sanitize-filename = "0.6.0"
-specta = {version = "=2.0.0-rc.22", features = ["uuid", "chrono"] }
-specta-typescript = "0.0.9"
-tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "typescript"] }
+specta = {version = "=2.0.0-rc.25", features = ["uuid", "chrono"] }
+specta-typescript = "0.0.12"
+tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
 tauri-plugin-deep-link = "2"
 trash = "5"
 anyhow = "1.0.100"
