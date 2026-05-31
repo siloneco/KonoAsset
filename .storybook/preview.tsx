@@ -2,7 +2,6 @@ import React from 'react'
 import type { Preview } from '@storybook/react-vite'
 import { ThemeProvider } from '../src/components/functional/ThemeProvider'
 import { LocalizationContextProvider } from '../src/components/context/LocalizationContext'
-import { withScreenshot } from 'storycap'
 
 import { theme, language } from './default-global-types.json'
 
@@ -15,6 +14,13 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
+    },
+
+    a11y: {
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      test: 'todo',
     },
   },
   decorators: [
@@ -37,7 +43,6 @@ const preview: Preview = {
         </ThemeProvider>
       )
     },
-    withScreenshot(),
   ],
 }
 

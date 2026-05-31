@@ -5,53 +5,51 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { AddAssetDialogContext } from '../../../AddAssetDialog'
-import { Folder, OctagonAlert, Pencil } from 'lucide-react'
+import { Download, OctagonAlert } from 'lucide-react'
 import { SlimAssetDetail } from '@/components/model-legacy/SlimAssetDetail'
 import { useLocalization } from '@/hooks/use-localization'
-import { commands } from '@/lib/bindings'
-import { useToast } from '@/hooks/use-toast'
+import { useDataManagementDialogStore } from '@/stores/dialogs/DataManagementDialogStore'
 type Props = {
   setTab: (tab: string) => void
-  openEditDialog: (assetId: string) => void
-  openDataManagementDialog: (assetId: string) => void
 
   tabIndex: number
   totalTabs: number
+
+  closeDialog: () => void
 }
 
 export const DuplicateWarningTab = ({
   setTab,
-  openEditDialog,
-  openDataManagementDialog,
   tabIndex,
   totalTabs,
+  closeDialog,
 }: Props) => {
   const { t } = useLocalization()
-  const { toast } = useToast()
-  const { duplicateWarningItems } = useContext(AddAssetDialogContext)
+  const { assetPaths, duplicateWarningItems } = useContext(
+    AddAssetDialogContext,
+  )
 
-  const openAsset = async (assetId: string) => {
-    const result = await commands.openManagedDir(assetId)
+  const { open: openDataManagementDialog, importItems } =
+    useDataManagementDialogStore()
 
-    if (result.status === 'ok') {
-      return
-    }
+  const importEntriesAs = useCallback(
+    async (assetId: string) => {
+      if (!assetPaths || assetPaths.length === 0) {
+        return
+      }
 
-    toast({
-      title: t('general:failed'),
-      description: result.error,
-    })
-  }
+      closeDialog()
+      openDataManagementDialog(assetId)
 
-  const moveToPreviousTab = () => {
-    setTab('booth-input')
-  }
+      await importItems(assetPaths)
+    },
+    [assetPaths, openDataManagementDialog, importItems, closeDialog],
+  )
 
-  const moveToNextTab = () => {
-    setTab('asset-type-selector')
-  }
+  const moveToPreviousTab = () => setTab('booth-input')
+  const moveToNextTab = () => setTab('asset-type-selector')
 
   return (
     <>
@@ -75,20 +73,9 @@ export const DuplicateWarningTab = ({
         {duplicateWarningItems.map((item) => (
           <div key={item.id} className="mb-4">
             <SlimAssetDetail asset={item} className="max-w-[600px]">
-              <Button onClick={() => openAsset(item.id)}>
-                {t('general:button:open')}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => openEditDialog(item.id)}
-              >
-                <Pencil />
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => openDataManagementDialog(item.id)}
-              >
-                <Folder />
+              <Button onClick={() => importEntriesAs(item.id)}>
+                <Download />
+                {t('addasset:duplicate-warning:import-here')}
               </Button>
             </SlimAssetDetail>
           </div>

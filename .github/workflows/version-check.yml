@@ -29,7 +29,7 @@ jobs:
     name: Version Consistency Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - id: package-json
         uses: mikefarah/yq@6251e95af8df3505def48c71f3119836701495d6 # v4.47.2
         with:

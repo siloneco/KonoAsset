@@ -4,6 +4,7 @@ import { useAssetSummaryViewStore } from '@/stores/AssetSummaryViewStore'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { deleteAsset, fetchBoothUrl } from '../logic'
 import { PreferenceContext } from '@/components/context/PreferenceContext'
+import { useDataManagementDialogStore } from '@/stores/dialogs/DataManagementDialogStore'
 
 type Props = {
   id: string
@@ -13,6 +14,7 @@ type Props = {
 type ReturnProps = {
   boothUrl: string | null
   executeAssetDeletion: () => Promise<void>
+  openDataManagementDialog: () => void
   useTrashBin: boolean
 }
 
@@ -30,6 +32,8 @@ export const useAssetCardMeatballMenu = ({
   const deleteAssetSummaryFromFrontend = useAssetSummaryViewStore(
     (state) => state.deleteAssetSummaryFromFrontend,
   )
+
+  const { open: openDataManagementDialog } = useDataManagementDialogStore()
 
   const executeAssetDeletion = useCallback(async () => {
     await deleteAsset({
@@ -59,6 +63,7 @@ export const useAssetCardMeatballMenu = ({
   return {
     boothUrl,
     executeAssetDeletion,
+    openDataManagementDialog: () => openDataManagementDialog(id),
     useTrashBin: preference.useTrashBin,
   }
 }

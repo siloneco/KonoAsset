@@ -91,6 +91,7 @@
     "addasset:duplicate-warning": "重复确认",
     "addasset:duplicate-warning:explanation-text": "您正在尝试添加已注册的资产",
     "addasset:duplicate-warning:warning-text": "已存在相同BOOTH链接的资产！",
+    "addasset:duplicate-warning:import-here": "导入至此",
     "addasset:duplicate-warning:proceed": "继续添加",
     "addasset:empty-indicator": "开始输入以添加",
     "addasset:manual-input": "手动输入资产信息",
@@ -165,6 +166,8 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "选择项目...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "无可用选项",
+    "mainsidebar:multi-filter-item-selector:type:unlabeled": "未指定",
+    "mainsidebar:multi-filter-item-selector:unlabeled-tooltip": "按\"未指定\"筛选时输入框已禁用！",
     "mainsidebar:text-search": "文本搜索",
     "mainsidebar:advanced-search": "高级搜索",
     "mainsidebar:advanced-search:asset-name": "资产名称",

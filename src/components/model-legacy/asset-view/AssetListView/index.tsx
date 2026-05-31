@@ -9,13 +9,11 @@ import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardM
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
 export const AssetListView = ({
   sortedAssetSummary,
-  openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
   const openMemoDialog = useMemoDialogStore((state) => state.open)
@@ -40,7 +38,6 @@ export const AssetListView = ({
         <AssetCardMeatballMenu
           id={asset.id}
           boothItemID={asset.boothItemId ?? undefined}
-          openDataManagementDialog={() => openDataManagementDialog(asset.id)}
           openEditAssetDialog={() => openEditAssetDialog(asset.id)}
         />
       </div>

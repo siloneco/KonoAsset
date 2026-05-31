@@ -91,6 +91,7 @@
     "addasset:duplicate-warning": "Duplicate confirmation",
     "addasset:duplicate-warning:explanation-text": "Are you trying to add an already registered asset?",
     "addasset:duplicate-warning:warning-text": "An asset with the same BOOTH URL already exists!",
+    "addasset:duplicate-warning:import-here": "Import here",
     "addasset:duplicate-warning:proceed": "Proceed anyway",
     "addasset:empty-indicator": "Start typing to add",
     "addasset:manual-input": "Enter asset information",
@@ -165,6 +166,8 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "Select an item...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "No candidates available",
+    "mainsidebar:multi-filter-item-selector:type:unlabeled": "Unlabeled",
+    "mainsidebar:multi-filter-item-selector:unlabeled-tooltip": "Input is disabled while filtering by Unlabeled!",
     "mainsidebar:text-search": "Search by text",
     "mainsidebar:advanced-search": "Advanced",
     "mainsidebar:advanced-search:asset-name": "Asset name",

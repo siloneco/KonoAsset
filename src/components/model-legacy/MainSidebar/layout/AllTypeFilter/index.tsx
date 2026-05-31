@@ -49,12 +49,14 @@ export const AllTypeFilter = () => {
         label={t('general:category')}
         placeholder={t('mainsidebar:filter:category:placeholder')}
         candidates={categoryCandidates}
-        value={filters.category}
+        value={filters.category.filters}
         onValueChange={(value) =>
           updateFilter({
-            category: value,
+            category: { filters: value },
           })
         }
+        matchType={filters.category.type}
+        setMatchType={(type) => updateFilter({ category: { type } })}
         inputProps={{
           onFocus: () => setIsCategoryFocused(true),
           onBlur: () => setIsCategoryFocused(false),
@@ -69,9 +71,7 @@ export const AllTypeFilter = () => {
         value={filters.supportedAvatar.filters}
         onValueChange={(value) =>
           updateFilter({
-            supportedAvatar: {
-              filters: value,
-            },
+            supportedAvatar: { filters: value },
           })
         }
         matchType={filters.supportedAvatar.type}

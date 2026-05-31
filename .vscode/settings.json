@@ -6,6 +6,7 @@
         "reqwest",
         "specta",
         "tauri",
+        "thiserror",
         "Uncategorized",
         "unitypackage",
         "unitypackages",

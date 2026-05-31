@@ -15,17 +15,10 @@ import { SquareImage } from '@/components/models/square-image/SquareImage'
 type Props = {
   asset: AssetSummary
   ref?: RefObject<HTMLDivElement | null>
-
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
-export const AssetCard = ({
-  asset,
-  ref,
-  openDataManagementDialog,
-  openEditAssetDialog,
-}: Props) => {
+export const AssetCard = ({ asset, ref, openEditAssetDialog }: Props) => {
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
 
@@ -65,7 +58,7 @@ export const AssetCard = ({
           </div>
           <CardTitle
             className={cn(
-              'text-lg mt-2 break-words whitespace-pre-wrap line-clamp-2',
+              'text-lg mt-2 wrap-break-word whitespace-pre-wrap line-clamp-2',
               displayStyle === 'GridSmall' && 'text-base',
             )}
           >
@@ -87,9 +80,6 @@ export const AssetCard = ({
           <AssetCardMeatballMenu
             id={asset.id}
             boothItemID={asset.boothItemId ?? undefined}
-            openDataManagementDialog={() => {
-              openDataManagementDialog(asset.id)
-            }}
             openEditAssetDialog={() => {
               openEditAssetDialog(asset.id)
             }}

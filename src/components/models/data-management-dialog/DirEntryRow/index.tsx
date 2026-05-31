@@ -10,11 +10,6 @@ import {
 } from '@/components/ui/popover'
 import { useLocalization } from '@/hooks/use-localization'
 import { PopoverClose } from '@radix-ui/react-popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 
 type Props = {
   assetId: string
@@ -32,47 +27,38 @@ export const DirEntryRow: FC<Props> = ({
   const { t } = useLocalization()
 
   const {
+    displayName,
     openInFileManager,
     deleteEntry,
-    openButtonCheckMarked,
-    isDeleting,
-    isDeleted,
-  } = useDirEntryRow({ assetId, absolutePath })
+    openButtonChecked,
+    deletePhase,
+  } = useDirEntryRow({ assetId, absolutePath, filename, type })
 
-  const displayName = `${filename}${type === 'directory' ? '/' : ''}`
+  const Icon = type === 'directory' ? Folder : File
 
   return (
     <div className="flex flex-row items-center space-x-2">
-      {type === 'directory' && (
-        <Folder size={24} className="text-foreground/40 shrink-0" />
-      )}
-      {type === 'file' && (
-        <File size={24} className="text-foreground/40 shrink-0" />
-      )}
+      <Icon size={24} className="text-muted-foreground/80 shrink-0" />
       <div className="w-full shrink min-w-0">
-        <Tooltip>
-          <TooltipTrigger asChild tabIndex={0}>
-            <p
-              className={cn(
-                'w-fit max-w-full truncate',
-                isDeleted && 'line-through',
-              )}
-            >
-              {displayName}
-            </p>
-          </TooltipTrigger>
-          <TooltipContent>{displayName}</TooltipContent>
-        </Tooltip>
+        <p
+          title={displayName}
+          className={cn(
+            'truncate',
+            deletePhase === 'deleted' && 'line-through',
+          )}
+        >
+          {displayName}
+        </p>
       </div>
-      {!isDeleted && (
+      {deletePhase !== 'deleted' && (
         <Button
           variant="secondary"
-          className={cn('h-8 w-8', openButtonCheckMarked && 'text-green-400')}
+          className={cn('size-8', openButtonChecked && 'text-green-400')}
           onClick={openInFileManager}
-          disabled={isDeleting || isDeleted}
+          disabled={deletePhase !== 'initial'}
         >
-          {!openButtonCheckMarked && <FolderOpen />}
-          {openButtonCheckMarked && <Check />}
+          {!openButtonChecked && <FolderOpen />}
+          {openButtonChecked && <Check />}
         </Button>
       )}
       <Popover>
@@ -80,11 +66,11 @@ export const DirEntryRow: FC<Props> = ({
           <Button
             variant="destructive"
             className="size-8"
-            disabled={isDeleting || isDeleted}
+            disabled={deletePhase !== 'initial'}
           >
-            {isDeleting && <Loader2 className="animate-spin" />}
-            {!isDeleting && !isDeleted && <Trash2 />}
-            {!isDeleting && isDeleted && <Check />}
+            {deletePhase === 'initial' && <Trash2 />}
+            {deletePhase === 'deleting' && <Loader2 className="animate-spin" />}
+            {deletePhase === 'deleted' && <Check />}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-fit max-w-58 space-y-2" side="right">

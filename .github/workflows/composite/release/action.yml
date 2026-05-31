@@ -40,7 +40,7 @@ runs:
     - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
       with:
         run_install: false
-    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
       with:
         node-version: 23
         cache: pnpm
@@ -73,7 +73,7 @@ runs:
         prerelease: ${{ inputs.releaseChannel == 'pre-release' }}
         args: ${{ inputs.args }}
 
-    - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+    - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
       with:
         result-encoding: string
         script: |

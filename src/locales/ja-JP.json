@@ -91,6 +91,7 @@
     "addasset:duplicate-warning": "重複の確認",
     "addasset:duplicate-warning:explanation-text": "登録済みのアセットを登録しようとしていませんか？",
     "addasset:duplicate-warning:warning-text": "同じBOOTHのリンクが設定されたアセットが存在します！",
+    "addasset:duplicate-warning:import-here": "ここに追加する",
     "addasset:duplicate-warning:proceed": "このまま進む",
     "addasset:empty-indicator": "入力して生成",
     "addasset:manual-input": "アセット情報の入力",
@@ -165,6 +166,8 @@
 
     "mainsidebar:multi-filter-item-selector:placeholder": "アイテムを選択...",
     "mainsidebar:multi-filter-item-selector:no-candidates": "候補がありません",
+    "mainsidebar:multi-filter-item-selector:type:unlabeled": "未指定",
+    "mainsidebar:multi-filter-item-selector:unlabeled-tooltip": "未指定で絞り込んでいる場合、ここに入力することはできません！",
     "mainsidebar:text-search": "テキストで検索",
     "mainsidebar:advanced-search": "詳細",
     "mainsidebar:advanced-search:asset-name": "アセット名",
