@@ -1,10 +1,9 @@
 [
   {
-    "version": "1.2.6-rc.3",
-    "preRelease": true,
+    "version": "1.2.6",
     "features": [
       {
-        "text": "Full file names can now be viewed by hovering in the data management dialog",
+        "text": "Full file names can now be viewed by hovering on the text in the data management dialog",
         "langs": [
           {
             "lang": ["ja-JP"],
@@ -27,6 +26,24 @@
           {
             "lang": ["ja-JP"],
             "text": "OSのゴミ箱を利用するかどうかを設定で変更できるように"
+          }
+        ]
+      },
+      {
+        "text": "Files can now be imported into an existing asset directly from the duplicate confirmation dialog",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "重複確認のダイアログからスムーズに既存アセットへファイルをインポートできるように"
+          }
+        ]
+      },
+      {
+        "text": "Assets with no category, supported avatar, or tag specified can now be filtered",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "カテゴリ、対応アバター、タグについて、未指定のアセットを絞り込めるように"
           }
         ]
       }
@@ -85,6 +102,15 @@
           {
             "lang": ["ja-JP"],
             "text": "サムネイルのインポート時にリサイズとJPEG化を行い、容量とレンダリング処理を軽量化"
+          }
+        ]
+      },
+      {
+        "text": "Updated dependencies",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "依存関係のアップデート"
           }
         ]
       }

@@ -6,3 +6,5 @@ minimumReleaseAgeExclude:
   - storybook@10.2.10
   # Renovate security update: postcss@8.5.10
   - postcss@8.5.10
+  # Renovate security update: @vitest/browser@4.1.6
+  - "@vitest/browser@4.1.6"

@@ -2,7 +2,7 @@ import { useLocalization } from '@/hooks/use-localization'
 import { commands } from '@/lib/bindings'
 import { downloadDir } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { loadImageFromUrl, updateSrcFromFilename } from '../logic'
 
 // 不安定な画像形式やテストできなかったものはコメントアウトしています
@@ -60,6 +60,8 @@ export const useSquareImage = ({
 
   const [imageUrlIndex, setImageUrlIndex] = useState(0)
 
+  const latestLoadIdRef = useRef(0)
+
   useEffect(() => {
     if (!filename) {
       setSrc(undefined)
@@ -105,14 +107,25 @@ export const useSquareImage = ({
       maxIndex: imageUrls.length - 1,
       setIndex: (index: number) => {
         setImageUrlIndex(index)
+        const loadId = ++latestLoadIdRef.current
+
         loadImageFromUrl({
           url: imageUrls[index],
-          setLoading,
-          setSrc,
+          setLoading: (loading) => {
+            if (latestLoadIdRef.current !== loadId) return
+            setLoading(loading)
+          },
+          setSrc: (src) => {
+            if (latestLoadIdRef.current !== loadId) return
+            setSrc(src)
+          },
+        }).then((filename) => {
+          if (latestLoadIdRef.current !== loadId || filename === null) return
+          onUserImageSelect?.(filename)
         })
       },
     }
-  }, [imageUrls, imageUrlIndex])
+  }, [imageUrls, imageUrlIndex, onUserImageSelect])
 
   const openImageSelectorAndLoad = useCallback(async () => {
     let defaultPath = 'file:\\\\PC'
