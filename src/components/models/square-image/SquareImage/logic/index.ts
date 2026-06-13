@@ -11,7 +11,7 @@ export const loadImageFromUrl = async ({
   url,
   setLoading,
   setSrc,
-}: LoadImageFromUrlProps) => {
+}: LoadImageFromUrlProps): Promise<string | null> => {
   // Delay the loading state to prevent flickering
   const timeout = setTimeout(() => setLoading(true), 100)
 
@@ -20,15 +20,17 @@ export const loadImageFromUrl = async ({
 
     if (result.status === 'error') {
       console.error(result.error)
-      return
+      return null
     }
 
     const filename = result.data
 
-    updateSrcFromFilename({
+    await updateSrcFromFilename({
       filename,
       setSrc,
     })
+
+    return filename
   } finally {
     clearTimeout(timeout)
     setLoading(false)
