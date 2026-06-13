@@ -1,0 +1,146 @@
+{
+  "description": "アバター改変をしているときに「あの衣装どこだっけ...？」ってなること、ありませんか？\nKonoAssetは、「このアセットにしよ！」 をもっと簡単にするための VRChat 向けアセット管理ツールです。",
+  "factory_description": null,
+  "id": 6641548,
+  "is_adult": false,
+  "is_buyee_possible": false,
+  "is_end_of_sale": false,
+  "is_placeholder": false,
+  "is_sold_out": false,
+  "name": "KonoAsset - VRChat向けアセット管理ツール",
+  "published_at": "2025-02-27T19:23:41.000+09:00",
+  "price": "¥ 0",
+  "purchase_limit": null,
+  "shipping_info": "支払いから発送までの日数：4日以内",
+  "small_stock": null,
+  "url": "https://silolab.booth.pm/items/6641548",
+  "wish_list_url": "https://booth.pm/items/6641548/wish_list",
+  "wish_lists_count": 7263,
+  "wished": false,
+  "buyee_variations": [],
+  "category": {
+    "id": 215,
+    "name": "3Dツール・システム",
+    "parent": {
+      "name": "3Dモデル",
+      "url": "https://booth.pm/ja/browse/3D%E3%83%A2%E3%83%87%E3%83%AB"
+    },
+    "url": "https://booth.pm/ja/browse/3D%E3%83%84%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0"
+  },
+  "embeds": [],
+  "images": [
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/aa2cd383-a6f9-41f6-a200-f7202533eb16_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/aa2cd383-a6f9-41f6-a200-f7202533eb16_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/77f4673c-3c0c-4d8f-9b5e-f0e4c818fd0b_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/77f4673c-3c0c-4d8f-9b5e-f0e4c818fd0b_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/e53f11f9-3b3a-4ee5-b31a-8e323168a4de_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/e53f11f9-3b3a-4ee5-b31a-8e323168a4de_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/33274e61-3442-4afb-9169-c23410124696_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/33274e61-3442-4afb-9169-c23410124696_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/d377d14a-1356-4cba-bd3a-cc2ff1667b4a_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/d377d14a-1356-4cba-bd3a-cc2ff1667b4a_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/b53b0dc5-3508-4fb7-b402-3dcf163a2e49_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/b53b0dc5-3508-4fb7-b402-3dcf163a2e49_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/93aa4592-b2a6-4879-a2ce-08ba5079c974_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/93aa4592-b2a6-4879-a2ce-08ba5079c974_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/78858ed8-1294-4a5e-a9a1-2b57bc2d6f78_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/78858ed8-1294-4a5e-a9a1-2b57bc2d6f78_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/18bb559e-38cd-4e1a-97f4-f0efdbf4b394_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/18bb559e-38cd-4e1a-97f4-f0efdbf4b394_base_resized.jpg"
+    },
+    {
+      "caption": null,
+      "original": "https://booth.pximg.net/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/d7572322-eb6c-41a1-bd63-0a571727100f_base_resized.jpg",
+      "resized": "https://booth.pximg.net/c/72x72_a2_g5/7e5e7af4-bf80-4938-b27f-dbb516cd8461/i/6641548/d7572322-eb6c-41a1-bd63-0a571727100f_base_resized.jpg"
+    }
+  ],
+  "order": null,
+  "gift": null,
+  "report_url": "https://silolab.booth.pm/items/6641548/report",
+  "share": {
+    "hashtags": ["booth_pm"],
+    "text": "KonoAsset - VRChat向けアセット管理ツール | silolab"
+  },
+  "shop": {
+    "name": "silolab",
+    "subdomain": "silolab",
+    "thumbnail_url": "https://booth.pximg.net/c/48x48/users/6282683/icon_image/0b90d3b5-1fdf-4e0d-ac7a-ac1fdd9be654_base_resized.jpg",
+    "url": "https://silolab.booth.pm/",
+    "verified": false
+  },
+  "sound": null,
+  "tags": [
+    { "name": "VRChat", "url": "https://booth.pm/ja/items?tags%5B%5D=VRChat" }
+  ],
+  "tag_banners": [
+    {
+      "image_url": "https://booth.pximg.net/c/150x150/ee3a7f91-fd48-4797-b534-d10bec8ac3b4/i/5479202/e7026531-3329-45a6-b000-c3257c4a3302_base_resized.jpg",
+      "name": "VRChat",
+      "url": "https://booth.pm/ja/items?tags%5B%5D=VRChat"
+    }
+  ],
+  "tag_combination": {
+    "category": "3Dツール・システム",
+    "tag": "VRChat",
+    "url": "https://booth.pm/ja/browse/3D%E3%83%84%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0?tags%5B%5D=VRChat"
+  },
+  "tracks": null,
+  "variations": [
+    {
+      "buyee_html": null,
+      "downloadable": {
+        "musics": [],
+        "no_musics": [
+          {
+            "file_name": "KonoAsset_v1.2.5",
+            "file_extension": ".zip",
+            "file_size": "5.6 MB",
+            "name": "KonoAsset_v1.2.5.zip",
+            "url": "https://booth.pm/downloadables/7381747"
+          }
+        ]
+      },
+      "factory_image_url": null,
+      "has_download_code": false,
+      "id": 11181441,
+      "is_anshin_booth_pack": false,
+      "is_empty_allocatable_stock_with_preorder": false,
+      "is_empty_stock": false,
+      "is_factory_item": false,
+      "is_mailbin": false,
+      "is_waiting_on_arrival": false,
+      "name": null,
+      "order_url": null,
+      "price": 0,
+      "small_stock": null,
+      "status": "free_download",
+      "type": "digital"
+    }
+  ]
+}

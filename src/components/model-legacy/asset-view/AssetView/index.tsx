@@ -1,41 +1,27 @@
 import { FC } from 'react'
-import { SelectUnitypackageDialog } from '../../SelectUnitypackageDialog'
 import { useAssetView } from './hook'
 import { AssetViewBackground } from '../AssetViewBackground'
 import { AssetGridView } from '../AssetGridView'
 import { AssetListView } from '../AssetListView'
 import { MemoDialog } from '@/components/models/memo-dialog/MemoDialog'
 import { DependencyDialog } from '@/components/models/dependency-dialog/DependencyDialog'
+import { UnitypackageSelectDialog } from '@/components/models/unitypackage-select-dialog/UnitypackageSelectDialog'
 
 type Props = {
   openAddAssetDialog: () => void
   openEditAssetDialog: (assetId: string) => void
-  openDataManagementDialog: (assetId: string) => void
   setShowingAssetCount: (count: number) => void
 }
 
 export const AssetView: FC<Props> = ({
   openAddAssetDialog,
   openEditAssetDialog,
-  openDataManagementDialog,
   setShowingAssetCount,
 }) => {
-  const {
-    layoutDivRef,
-    sortedAssetSummary,
-    displayStyle,
-    background,
-
-    openSelectUnitypackageDialog,
-
-    setSelectUnitypackageDialogOpen,
-
-    selectUnitypackageDialogOpen,
-    selectUnitypackageDialogAssetId,
-    unitypackages,
-  } = useAssetView({
-    setShowingAssetCount,
-  })
+  const { layoutDivRef, sortedAssetSummary, displayStyle, background } =
+    useAssetView({
+      setShowingAssetCount,
+    })
 
   return (
     <div className="h-[calc(100vh-72px)] flex flex-col">
@@ -50,32 +36,20 @@ export const AssetView: FC<Props> = ({
           <AssetGridView
             layoutDivRef={layoutDivRef}
             sortedAssetSummary={sortedAssetSummary}
-            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-            openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
           />
         )}
         {displayStyle === 'List' && (
           <AssetListView
             sortedAssetSummary={sortedAssetSummary}
-            openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-            openDataManagementDialog={openDataManagementDialog}
             openEditAssetDialog={openEditAssetDialog}
           />
         )}
       </div>
 
       <MemoDialog />
-
-      <SelectUnitypackageDialog
-        dialogOpen={selectUnitypackageDialogOpen}
-        setDialogOpen={setSelectUnitypackageDialogOpen}
-        assetId={selectUnitypackageDialogAssetId}
-        unitypackageFiles={unitypackages}
-      />
-      <DependencyDialog
-        openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-      />
+      <UnitypackageSelectDialog />
+      <DependencyDialog />
     </div>
   )
 }

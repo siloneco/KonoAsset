@@ -22,10 +22,11 @@ pub async fn reset_application(
         let preference_path = app_local_data_dir.join("preference.json");
 
         if preference_path.exists() {
-            let result = modify_guard::delete_single_file(
+            let result = modify_guard::delete_recursive_completely(
                 &preference_path,
                 &DeletionGuard::new(&app_local_data_dir),
-            );
+            )
+            .await;
 
             if let Err(e) = result {
                 log::error!("Failed to delete preferences.json: {}", e);
@@ -49,10 +50,11 @@ pub async fn reset_application(
             let metadata_dir = user_data_dir.join("metadata");
 
             if metadata_dir.exists() {
-                let result = modify_guard::delete_recursive(
+                let result = modify_guard::delete_recursive_completely(
                     &metadata_dir,
                     &DeletionGuard::new(&user_data_dir),
-                );
+                )
+                .await;
 
                 if let Err(e) = result {
                     log::error!("Failed to delete metadata directory: {}", e);
@@ -67,10 +69,11 @@ pub async fn reset_application(
             let asset_data_dir = user_data_dir.join("data");
 
             if asset_data_dir.exists() {
-                let result = modify_guard::delete_recursive(
+                let result = modify_guard::delete_recursive_completely(
                     &asset_data_dir,
                     &DeletionGuard::new(&user_data_dir),
-                );
+                )
+                .await;
 
                 if let Err(e) = result {
                     log::error!("Failed to delete asset data directory: {}", e);

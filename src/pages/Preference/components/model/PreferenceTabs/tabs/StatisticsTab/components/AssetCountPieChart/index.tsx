@@ -72,7 +72,7 @@ export const AssetCountPieChart: React.FC<Props> = ({
     },
   ]
 
-  const totalAssets = avatars + avatarWearables + worldObjects
+  const totalAssets = avatars + avatarWearables + worldObjects + otherAssets
 
   return (
     <Card className="flex flex-col w-full h-full">

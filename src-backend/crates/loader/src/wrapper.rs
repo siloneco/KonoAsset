@@ -6,7 +6,7 @@ use crate::VersionedPreferences;
 
 pub fn load_preference_store<P, Q>(
     preference_path: P,
-    document_dir: Q,
+    default_data_dir_path: Q,
 ) -> Result<PreferenceStore, std::io::Error>
 where
     P: AsRef<Path>,
@@ -15,7 +15,10 @@ where
     let path = preference_path.as_ref();
 
     if !path.exists() {
-        return Ok(PreferenceStore::default(preference_path, document_dir));
+        return Ok(PreferenceStore::default(
+            preference_path,
+            default_data_dir_path,
+        ));
     }
 
     log::info!("{}", path.display());
@@ -26,7 +29,10 @@ where
 
     if let Err(e) = preference {
         log::error!("Failed to load preference: {}", e);
-        return Ok(PreferenceStore::default(preference_path, document_dir));
+        return Ok(PreferenceStore::default(
+            preference_path,
+            default_data_dir_path,
+        ));
     }
 
     let mut preference = preference.unwrap();

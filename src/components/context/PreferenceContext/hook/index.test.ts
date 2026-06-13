@@ -11,6 +11,7 @@ const mockPreference: PreferenceStore = {
   useUnitypackageSelectedOpen: true,
   zipExtraction: true,
   deleteOnImport: true,
+  useTrashBin: true,
   updateChannel: 'Stable',
   language: 'en-US',
 }

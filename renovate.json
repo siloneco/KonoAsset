@@ -8,8 +8,9 @@
     ":timezone(Asia/Tokyo)"
   ],
   "labels": ["dependencies"],
-  "schedule": ["after 9:00 before 23:00"],
+  "schedule": ["at 19:00 on Friday"],
   "assignees": ["siloneco"],
+  "minimumReleaseAge": "3 days",
   "lockFileMaintenance": {
     "enabled": true
   },

@@ -5,10 +5,10 @@ import { useTopPage } from './hook'
 import { AddAssetDialog } from '@/components/model-legacy/asset-dialogs/AddAssetDialog'
 import { EditAssetDialog } from '@/components/model-legacy/asset-dialogs/EditAssetDialog'
 import { useLocalization } from '@/hooks/use-localization'
-import { DataManagementDialog } from '@/components/model-legacy/DataManagementDialog'
 import { useCallback } from 'react'
 import { AssetView } from '@/components/model-legacy/asset-view/AssetView'
 import { StatusBar } from '@/components/models/status-bar/StatusBar'
+import { DataManagementDialog } from '@/components/models/data-management-dialog/DataManagementDialog'
 
 export const TopPage = () => {
   const {
@@ -21,10 +21,6 @@ export const TopPage = () => {
     setEditAssetDialogOpen,
     editAssetDialogAssetId,
     editAssetDialogOpen,
-    dataManagementDialogAssetId,
-    dataManagementDialogOpen,
-    setDataManagementDialogOpen,
-    openDataManagementDialog,
   } = useTopPage()
 
   const { t } = useLocalization()
@@ -48,28 +44,18 @@ export const TopPage = () => {
           <AssetView
             openAddAssetDialog={() => setAddAssetDialogOpen(true)}
             openEditAssetDialog={openEditAssetDialog}
-            openDataManagementDialog={openDataManagementDialog}
             setShowingAssetCount={setShowingAssetCount}
           />
           <AddAssetDialog
             dialogOpen={addAssetDialogOpen}
             setDialogOpen={setAddAssetDialogOpen}
-            openEditDialog={openEditAssetDialog}
-            openDataManagementDialog={(id) => {
-              setAddAssetDialogOpen(false)
-              openDataManagementDialog(id)
-            }}
           />
           <EditAssetDialog
             id={editAssetDialogAssetId}
             dialogOpen={editAssetDialogOpen}
             setDialogOpen={setEditAssetDialogOpen}
           />
-          <DataManagementDialog
-            assetId={dataManagementDialogAssetId}
-            open={dataManagementDialogOpen}
-            onOpenChange={setDataManagementDialogOpen}
-          />
+          <DataManagementDialog />
         </main>
       </SidebarProvider>
       <div

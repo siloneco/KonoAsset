@@ -8,13 +8,36 @@ use uuid::Uuid;
 
 use super::{asset_storage::AssetStorage, json_asset_container::JsonAssetContainer};
 
-pub async fn delete_asset(storage: &AssetStorage, id: Uuid) -> Result<(), String> {
+pub async fn delete_asset(
+    storage: &AssetStorage,
+    id: Uuid,
+    use_trash_bin: bool,
+) -> Result<(), String> {
     let app_dir = storage.data_dir();
 
-    let deleted = delete_asset_from_store(&app_dir, &storage.get_avatar_store(), id).await?
-        || delete_asset_from_store(&app_dir, &storage.get_avatar_wearable_store(), id).await?
-        || delete_asset_from_store(&app_dir, &storage.get_world_object_store(), id).await?
-        || delete_asset_from_store(&app_dir, &storage.get_other_asset_store(), id).await?;
+    let deleted = delete_asset_from_store(&app_dir, &storage.get_avatar_store(), id, use_trash_bin)
+        .await?
+        || delete_asset_from_store(
+            &app_dir,
+            &storage.get_avatar_wearable_store(),
+            id,
+            use_trash_bin,
+        )
+        .await?
+        || delete_asset_from_store(
+            &app_dir,
+            &storage.get_world_object_store(),
+            id,
+            use_trash_bin,
+        )
+        .await?
+        || delete_asset_from_store(
+            &app_dir,
+            &storage.get_other_asset_store(),
+            id,
+            use_trash_bin,
+        )
+        .await?;
 
     if !deleted {
         return Err("Asset not found".into());
@@ -32,6 +55,7 @@ async fn delete_asset_from_store<
     app_dir: &PathBuf,
     store: &JsonAssetContainer<T>,
     id: Uuid,
+    use_trash_bin: bool,
 ) -> Result<bool, String> {
     let asset = store.get_asset(id).await;
     if asset.is_none() {
@@ -49,7 +73,13 @@ async fn delete_asset_from_store<
     }
 
     let path = app_dir.join("data").join(id.to_string());
-    let dir_delete_result = modify_guard::delete_recursive(&path, &DeletionGuard::new(app_dir));
+    let dir_delete_result = if use_trash_bin {
+        modify_guard::trash_recursive(&path, &DeletionGuard::new(app_dir))
+    } else {
+        modify_guard::delete_recursive_completely(&path, &DeletionGuard::new(app_dir))
+            .await
+            .map_err(|e| e.to_string())
+    };
 
     if let Err(e) = dir_delete_result {
         return Err(format!("Failed to delete asset directory: {:?}", e));
@@ -63,10 +93,14 @@ async fn delete_asset_from_store<
     let image_filename = image.as_ref().unwrap();
 
     // 画像削除をしてそのまま結果を返す
-    delete_asset_image(app_dir, image_filename).await
+    delete_asset_image(app_dir, image_filename, use_trash_bin).await
 }
 
-pub async fn delete_asset_image(app_dir: &PathBuf, filename: &str) -> Result<bool, String> {
+pub async fn delete_asset_image(
+    app_dir: &PathBuf,
+    filename: &str,
+    use_trash_bin: bool,
+) -> Result<bool, String> {
     let images_dir_path = app_dir.join("images");
     let image_path = images_dir_path.join(filename);
 
@@ -76,8 +110,16 @@ pub async fn delete_asset_image(app_dir: &PathBuf, filename: &str) -> Result<boo
         return Ok(true);
     }
 
-    let image_delete_result =
-        modify_guard::delete_single_file(&image_path, &DeletionGuard::new(&images_dir_path));
+    let image_delete_result = if use_trash_bin {
+        modify_guard::trash_recursive(&image_path, &DeletionGuard::new(&images_dir_path))
+    } else {
+        modify_guard::delete_recursive_completely(
+            &image_path,
+            &DeletionGuard::new(&images_dir_path),
+        )
+        .await
+        .map_err(|e| e.to_string())
+    };
 
     if let Err(e) = image_delete_result {
         return Err(format!("Failed to delete image file: {:?}", e));
@@ -120,7 +162,8 @@ pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
             continue;
         }
 
-        modify_guard::delete_single_file(&path, &DeletionGuard::new(&images_dir_path))
+        modify_guard::delete_recursive_completely(&path, &DeletionGuard::new(&images_dir_path))
+            .await
             .map_err(|e| format!("Failed to delete temp image: {:?}", e))?;
     }
 
@@ -184,7 +227,7 @@ mod tests {
         assert!(image_path.exists());
 
         // Delete the image
-        let result = delete_asset_image(&app_dir, filename).await;
+        let result = delete_asset_image(&app_dir, filename, false).await;
 
         // Verify the result and that the image was deleted
         assert!(result.is_ok());
@@ -192,7 +235,7 @@ mod tests {
         assert!(!image_path.exists());
 
         // Test deleting a non-existent image
-        let result = delete_asset_image(&app_dir, "non_existent.jpg").await;
+        let result = delete_asset_image(&app_dir, "non_existent.jpg", false).await;
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), true);
     }
@@ -268,7 +311,7 @@ mod tests {
         );
 
         // Delete the asset
-        let result = delete_asset_from_store(&app_dir, store, asset_id).await;
+        let result = delete_asset_from_store(&app_dir, store, asset_id, false).await;
 
         // Verify the result and that the asset was deleted
         assert!(result.is_ok());
@@ -284,7 +327,7 @@ mod tests {
 
         // Test deleting a non-existent asset
         let non_existent_id = Uuid::new_v4();
-        let result = delete_asset_from_store(&app_dir, store, non_existent_id).await;
+        let result = delete_asset_from_store(&app_dir, store, non_existent_id, false).await;
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), false);
     }

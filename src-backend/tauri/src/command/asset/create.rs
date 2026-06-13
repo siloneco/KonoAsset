@@ -30,11 +30,21 @@ pub async fn request_avatar_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
-    let zip_extraction = (*preference.lock().await).zip_extraction;
+    let (zip_extraction, use_trash_bin) = {
+        let preference = preference.lock().await;
+        (preference.zip_extraction, preference.use_trash_bin)
+    };
 
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result = import_avatar(&basic_store, request, &cloned_app_handle, zip_extraction).await;
+        let result = import_avatar(
+            &basic_store,
+            request,
+            &cloned_app_handle,
+            zip_extraction,
+            use_trash_bin,
+        )
+        .await;
 
         if let Err(e) = result {
             log::error!("Failed to import avatar: {}", e);
@@ -67,12 +77,21 @@ pub async fn request_avatar_wearable_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
-    let zip_extraction = (*preference.lock().await).zip_extraction;
+    let (zip_extraction, use_trash_bin) = {
+        let preference = preference.lock().await;
+        (preference.zip_extraction, preference.use_trash_bin)
+    };
 
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result =
-            import_avatar_wearable(&basic_store, request, &cloned_app_handle, zip_extraction).await;
+        let result = import_avatar_wearable(
+            &basic_store,
+            request,
+            &cloned_app_handle,
+            zip_extraction,
+            use_trash_bin,
+        )
+        .await;
 
         if let Err(e) = result {
             log::error!("Failed to import avatar wearable: {}", e);
@@ -104,12 +123,21 @@ pub async fn request_world_object_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
-    let zip_extraction = (*preference.lock().await).zip_extraction;
+    let (zip_extraction, use_trash_bin) = {
+        let preference = preference.lock().await;
+        (preference.zip_extraction, preference.use_trash_bin)
+    };
 
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result =
-            import_world_object(&basic_store, request, &cloned_app_handle, zip_extraction).await;
+        let result = import_world_object(
+            &basic_store,
+            request,
+            &cloned_app_handle,
+            zip_extraction,
+            use_trash_bin,
+        )
+        .await;
 
         if let Err(e) = result {
             log::error!("Failed to import world object: {}", e);
@@ -138,12 +166,21 @@ pub async fn request_other_asset_import(
     let cloned_basic_store = (*basic_store).clone();
     let cloned_app_handle = (*handle).clone();
 
-    let zip_extraction = (*preference.lock().await).zip_extraction;
+    let (zip_extraction, use_trash_bin) = {
+        let preference = preference.lock().await;
+        (preference.zip_extraction, preference.use_trash_bin)
+    };
 
     let task = task_container.lock().await.run(async move {
         let basic_store = cloned_basic_store.lock().await;
-        let result =
-            import_other_asset(&basic_store, request, &cloned_app_handle, zip_extraction).await;
+        let result = import_other_asset(
+            &basic_store,
+            request,
+            &cloned_app_handle,
+            zip_extraction,
+            use_trash_bin,
+        )
+        .await;
 
         if let Err(e) = result {
             log::error!("Failed to import other asset: {}", e);

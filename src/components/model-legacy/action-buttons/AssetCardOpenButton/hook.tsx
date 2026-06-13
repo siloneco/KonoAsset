@@ -4,14 +4,11 @@ import { commands, FileInfo } from '@/lib/bindings'
 import { OctagonAlert } from 'lucide-react'
 import { useContext, useState } from 'react'
 import { useLocalization } from '@/hooks/use-localization'
+import { useUnitypackageSelectDialogStore } from '@/stores/dialogs/UnitypackageSelectDialog'
 
 type Props = {
   id: string
   hasDependencies: boolean
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
 }
 
 type ReturnProps = {
@@ -25,7 +22,6 @@ type ReturnProps = {
 export const useAssetCardOpenButton = ({
   id,
   hasDependencies,
-  openSelectUnitypackageDialog,
 }: Props): ReturnProps => {
   const [mainButtonLoading, setMainButtonLoading] = useState(false)
   const [mainButtonChecked, setMainButtonChecked] = useState(false)
@@ -33,6 +29,9 @@ export const useAssetCardOpenButton = ({
   const { t } = useLocalization()
   const { toast } = useToast()
   const { preference } = useContext(PreferenceContext)
+
+  const { open: openSelectUnitypackageDialog } =
+    useUnitypackageSelectDialogStore()
 
   const showDependencyWarning = () => {
     toast({

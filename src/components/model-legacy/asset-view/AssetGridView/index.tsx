@@ -1,26 +1,17 @@
 import { AssetCard } from '../../AssetCard'
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
 import { useAssetGridView } from './hook'
 
 type Props = {
   layoutDivRef: React.RefObject<HTMLDivElement | null>
   sortedAssetSummary: AssetSummary[]
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: {
-      [x: string]: FileInfo[]
-    },
-  ) => void
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
 export const AssetGridView = ({
   layoutDivRef,
   sortedAssetSummary,
-  openSelectUnitypackageDialog,
-  openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
   const { assetRows, gridColumnCount } = useAssetGridView({
@@ -39,8 +30,6 @@ export const AssetGridView = ({
         <AssetCard
           key={asset.id}
           asset={asset}
-          openSelectUnitypackageDialog={openSelectUnitypackageDialog}
-          openDataManagementDialog={openDataManagementDialog}
           openEditAssetDialog={openEditAssetDialog}
         />
       ))}

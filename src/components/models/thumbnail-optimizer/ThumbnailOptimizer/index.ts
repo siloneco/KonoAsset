@@ -1,0 +1,1 @@
+export { ThumbnailOptimizer } from './ThumbnailOptimizer'

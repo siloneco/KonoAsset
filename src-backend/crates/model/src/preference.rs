@@ -76,28 +76,37 @@ pub struct PreferenceStore {
     pub delete_on_import: bool,
     pub zip_extraction: bool,
     pub use_unitypackage_selected_open: bool,
+    pub use_trash_bin: bool,
 
     pub update_channel: UpdateChannel,
 }
 
 impl PreferenceStore {
-    pub fn default<P, Q>(preference_file_path: P, document_dir: Q) -> Self
+    pub fn default<P, Q>(preference_file_path: P, default_data_dir_path: Q) -> Self
     where
         P: AsRef<Path>,
         Q: AsRef<Path>,
     {
-        let data_dir_path = document_dir.as_ref().join("KonoAsset");
+        let locale = sys_locale::get_locale().unwrap_or_else(|| String::from("en-US"));
+        let locale = match locale.as_str() {
+            "ja-JP" => LanguageCode::JaJp,
+            "en-US" => LanguageCode::EnUs,
+            "en-GB" => LanguageCode::EnGb,
+            "zh-CN" => LanguageCode::ZhCn,
+            _ => LanguageCode::EnUs,
+        };
 
         Self {
             file_path: preference_file_path.as_ref().to_path_buf(),
 
-            data_dir_path,
+            data_dir_path: default_data_dir_path.as_ref().to_path_buf(),
             theme: Theme::System,
-            language: LanguageCode::JaJp,
+            language: locale,
 
             delete_on_import: false,
             zip_extraction: true,
             use_unitypackage_selected_open: true,
+            use_trash_bin: true,
 
             update_channel: UpdateChannel::Stable,
         }
@@ -117,6 +126,7 @@ impl PreferenceStore {
         self.delete_on_import = other.delete_on_import;
         self.zip_extraction = other.zip_extraction;
         self.use_unitypackage_selected_open = other.use_unitypackage_selected_open;
+        self.use_trash_bin = other.use_trash_bin;
         self.update_channel = other.update_channel;
 
         // If the new language is user-provided, skip updating the language field to prevent corruption.

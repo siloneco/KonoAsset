@@ -1,0 +1,10 @@
+minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  # Renovate security update: vite@7.3.2
+  - vite@7.3.2
+  # Renovate security update: storybook@10.2.10
+  - storybook@10.2.10
+  # Renovate security update: postcss@8.5.10
+  - postcss@8.5.10
+  # Renovate security update: @vitest/browser@4.1.6
+  - "@vitest/browser@4.1.6"

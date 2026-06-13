@@ -29,6 +29,7 @@ async fn import_asset<T, F>(
     app_handle: Option<&AppHandle>,
     register_fn: F,
     zip_extraction: bool,
+    use_trash_bin: bool,
 ) -> Result<T::AssetType, String>
 where
     T: PreAsset,
@@ -97,10 +98,12 @@ where
 
             let guard = DeletionGuard::new(path.clone());
 
-            let result = if path.is_dir() {
-                modify_guard::delete_recursive(&path, &guard)
+            let result = if use_trash_bin {
+                modify_guard::trash_recursive(&path, &guard)
             } else {
-                modify_guard::delete_single_file(&path, &guard)
+                modify_guard::delete_recursive_completely(&path, &guard)
+                    .await
+                    .map_err(|e| format!("Failed to delete src: {}", e))
             };
 
             if let Err(err) = result {
@@ -117,6 +120,7 @@ pub async fn import_avatar(
     request: AssetImportRequest<PreAvatar>,
     app_handle: &AppHandle,
     zip_extraction: bool,
+    use_trash_bin: bool,
 ) -> Result<Avatar, String> {
     import_asset(
         basic_store,
@@ -126,6 +130,7 @@ pub async fn import_avatar(
             Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
         },
         zip_extraction,
+        use_trash_bin,
     )
     .await
 }
@@ -135,6 +140,7 @@ pub async fn import_avatar_wearable<T>(
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
+    use_trash_bin: bool,
 ) -> Result<AvatarWearable, String>
 where
     T: PreAsset<AssetType = AvatarWearable>,
@@ -152,6 +158,7 @@ where
             })
         },
         zip_extraction,
+        use_trash_bin,
     )
     .await
 }
@@ -161,6 +168,7 @@ pub async fn import_world_object<T>(
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
+    use_trash_bin: bool,
 ) -> Result<WorldObject, String>
 where
     T: PreAsset<AssetType = WorldObject>,
@@ -178,6 +186,7 @@ where
             })
         },
         zip_extraction,
+        use_trash_bin,
     )
     .await
 }
@@ -187,6 +196,7 @@ pub async fn import_other_asset<T>(
     request: AssetImportRequest<T>,
     app_handle: &AppHandle,
     zip_extraction: bool,
+    use_trash_bin: bool,
 ) -> Result<OtherAsset, String>
 where
     T: PreAsset<AssetType = OtherAsset>,
@@ -204,6 +214,7 @@ where
             })
         },
         zip_extraction,
+        use_trash_bin,
     )
     .await
 }
@@ -332,6 +343,7 @@ mod tests {
                 Box::pin(async { provider.get_avatar_store().add_asset_and_save(asset).await })
             },
             true,
+            false,
         )
         .await
         .unwrap();

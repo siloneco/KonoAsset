@@ -1,4 +1,4 @@
-use super::common::BoothAssetInfo;
+use super::definitions::BoothAssetInfo;
 use chrono::Local;
 use std::collections::HashMap;
 
@@ -37,22 +37,47 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_booth_cache() {
-        let id = 12345;
-
-        let asset_info = BoothAssetInfo {
-            id,
+    fn get_example_asset_info() -> BoothAssetInfo {
+        BoothAssetInfo {
+            id: 12345,
             name: "Test Asset".to_string(),
             creator: "Test Creator".to_string(),
             estimated_asset_type: Some(AssetType::Avatar),
             image_urls: vec![],
             published_at: 12345,
-        };
+        }
+    }
+
+    #[test]
+    fn test_cache_hit() {
+        let id = 12345;
+        let asset_info = get_example_asset_info();
 
         let mut cache = BoothCache::new();
         cache.insert(id, asset_info.clone());
 
         assert_eq!(cache.get(id), Some(asset_info));
+    }
+
+    #[test]
+    fn test_cache_miss() {
+        let id = 12345;
+        let cache = BoothCache::new();
+
+        assert_eq!(cache.get(id), None);
+    }
+
+    #[test]
+    fn test_cache_expired() {
+        let id = 12345;
+        let asset_info = get_example_asset_info();
+
+        let mut cache = BoothCache::new();
+
+        cache
+            .cache
+            .insert(id, (asset_info, Local::now().timestamp() - 1));
+
+        assert_eq!(cache.get(id), None);
     }
 }

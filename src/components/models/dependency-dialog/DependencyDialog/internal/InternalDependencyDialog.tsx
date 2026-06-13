@@ -4,7 +4,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import {
   Dialog,
   DialogContent,
@@ -26,11 +26,6 @@ type Props = {
 
   name: string
   dependencies: AssetSummary[]
-
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: { [x: string]: FileInfo[] },
-  ) => void
 }
 
 export const InternalDependencyDialog: FC<Props> = ({
@@ -39,7 +34,6 @@ export const InternalDependencyDialog: FC<Props> = ({
   loading,
   name,
   dependencies,
-  openSelectUnitypackageDialog,
 }) => {
   const { t } = useLocalization()
 
@@ -67,7 +61,6 @@ export const InternalDependencyDialog: FC<Props> = ({
                     id={item.id}
                     displayOpenButtonText
                     hasDependencies={item.dependencies.length > 0}
-                    openSelectUnitypackageDialog={openSelectUnitypackageDialog}
                   />
                 </SlimAssetDetail>
               ))}

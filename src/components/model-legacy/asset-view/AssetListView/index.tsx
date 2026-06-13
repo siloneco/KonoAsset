@@ -1,28 +1,19 @@
-import { AssetSummary, FileInfo } from '@/lib/bindings'
+import { AssetSummary } from '@/lib/bindings'
 import { SlimAssetDetail } from '../../SlimAssetDetail'
 import { AssetCardOpenButton } from '../../action-buttons/AssetCardOpenButton'
 import { Button } from '@/components/ui/button'
 import { NotebookText } from 'lucide-react'
 import { RowVirtualScroll } from '@/components/ui/virtual-scroll'
 import { useMemoDialogStore } from '@/stores/dialogs/MemoDialogStore'
-import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu/AssetCardMeatballMenu'
+import { AssetCardMeatballMenu } from '@/components/models/asset-card/AssetCardMeatballMenu'
 
 type Props = {
   sortedAssetSummary: AssetSummary[]
-  openSelectUnitypackageDialog: (
-    assetId: string,
-    data: {
-      [x: string]: FileInfo[]
-    },
-  ) => void
-  openDataManagementDialog: (assetId: string) => void
   openEditAssetDialog: (assetId: string) => void
 }
 
 export const AssetListView = ({
   sortedAssetSummary,
-  openSelectUnitypackageDialog,
-  openDataManagementDialog,
   openEditAssetDialog,
 }: Props) => {
   const openMemoDialog = useMemoDialogStore((state) => state.open)
@@ -43,12 +34,10 @@ export const AssetListView = ({
           id={asset.id}
           displayOpenButtonText
           hasDependencies={asset.dependencies.length > 0}
-          openSelectUnitypackageDialog={openSelectUnitypackageDialog}
         />
         <AssetCardMeatballMenu
           id={asset.id}
           boothItemID={asset.boothItemId ?? undefined}
-          openDataManagementDialog={() => openDataManagementDialog(asset.id)}
           openEditAssetDialog={() => openEditAssetDialog(asset.id)}
         />
       </div>
