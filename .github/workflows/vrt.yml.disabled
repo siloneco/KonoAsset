@@ -36,9 +36,9 @@ jobs:
         language: [en-US, en-GB, ja-JP, zh-CN]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+      - uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
         with:
-          run_install: false
+          install: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 23
@@ -83,9 +83,9 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+      - uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
         with:
-          run_install: false
+          install: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 23
