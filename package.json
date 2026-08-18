@@ -86,7 +86,7 @@
     "husky": "9.1.7",
     "jsdom": "27.4.0",
     "playwright": "1.59.1",
-    "postcss": "8.5.10",
+    "postcss": "8.5.23",
     "prettier": "3.8.3",
     "reg-keygen-git-hash-plugin": "0.14.5",
     "reg-notify-github-plugin": "0.14.5",
