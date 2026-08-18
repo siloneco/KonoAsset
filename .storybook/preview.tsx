@@ -2,7 +2,6 @@ import React from 'react'
 import type { Preview } from '@storybook/react-vite'
 import { ThemeProvider } from '../src/components/functional/ThemeProvider'
 import { LocalizationContextProvider } from '../src/components/context/LocalizationContext'
-
 import { theme, language } from './default-global-types.json'
 
 import '../src/index.css'

@@ -1,7 +1,5 @@
 import { FC } from 'react'
 import { Card } from '@/components/ui/card'
-
-import './animations.css'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { AppearanceTab } from './tabs/AppearanceTab'
 import { Pagination } from './components/Pagination/Pagination'
@@ -9,6 +7,8 @@ import { DataPathSelectPath } from './tabs/DataPathSelectTab'
 import { OtherPreferenceTab } from './tabs/OtherPreferenceTab'
 import { getTabContentStyle } from './logic'
 import { useAnimatedSetup } from './hook'
+
+import './animations.css'
 
 export type TabType = 'appearance' | 'path' | 'details'
 

@@ -15,4 +15,4 @@ serde.workspace = true
 serde_json.workspace = true
 log.workspace = true
 uuid.workspace = true
-monostate = "0.1.13"
+monostate = "1"

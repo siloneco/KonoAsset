@@ -1,3 +1,5 @@
+allowBuilds:
+  esbuild: true
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   # Renovate security update: vite@7.3.2 || 7.3.5
