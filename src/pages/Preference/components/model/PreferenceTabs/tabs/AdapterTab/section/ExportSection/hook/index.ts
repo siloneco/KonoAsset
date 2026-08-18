@@ -1,10 +1,10 @@
 import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
 import { commands, Result } from '@/lib/bindings'
-import { open, save } from '@tauri-apps/plugin-dialog'
+import { save } from '@tauri-apps/plugin-dialog'
 import { useState } from 'react'
 
-type ExportStyle = 'KonoAsset' | 'AvatarExplorer' | 'HumanReadable'
+type ExportStyle = 'KonoAsset' | 'HumanReadable'
 
 type ReturnProps = {
   currentExportType: ExportStyle | null
@@ -37,20 +37,10 @@ export const useExportSection = (): ReturnProps => {
   }
 
   const selectExportDestination = async () => {
-    const isZip = currentExportType !== 'AvatarExplorer'
-
-    let path: string | null = null
-    if (isZip) {
-      path = await save({
-        defaultPath: 'KonoAsset-exported.zip',
-        filters: [{ name: 'zip', extensions: ['zip'] }],
-      })
-    } else {
-      path = await open({
-        canCreateDirectories: true,
-        directory: true,
-      })
-    }
+    const path = await save({
+      defaultPath: 'KonoAsset-exported.zip',
+      filters: [{ name: 'zip', extensions: ['zip'] }],
+    })
 
     if (path === null) {
       return
@@ -69,8 +59,6 @@ export const useExportSection = (): ReturnProps => {
       result = await commands.exportAsKonoassetZip(exportDestination)
     } else if (currentExportType === 'HumanReadable') {
       result = await commands.exportAsHumanReadableZip(exportDestination)
-    } else if (currentExportType === 'AvatarExplorer') {
-      result = await commands.exportForAvatarExplorer(exportDestination)
     } else {
       console.error('Unsupported export type: ' + currentExportType)
       return

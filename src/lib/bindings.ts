@@ -113,14 +113,6 @@ async exportAsHumanReadableZip(path: string) : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async exportForAvatarExplorer(path: string) : Promise<Result<string, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("export_for_avatar_explorer", { path }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getRegistrationStatistics() : Promise<Result<AssetRegistrationStatistics[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_registration_statistics") };

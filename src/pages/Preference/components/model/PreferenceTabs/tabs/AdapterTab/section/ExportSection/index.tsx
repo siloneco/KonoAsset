@@ -55,19 +55,6 @@ export const ExportSection: FC = () => {
               </ExportTypeButtonDescription>
             </ExportTypeButton>
             <ExportTypeButton
-              active={currentExportType === 'AvatarExplorer'}
-              onClick={() => setExportType('AvatarExplorer')}
-            >
-              <ExportTypeButtonTitle>
-                {t('preference:adapter:export:type:avatar-explorer:title')}
-              </ExportTypeButtonTitle>
-              <ExportTypeButtonDescription>
-                {t(
-                  'preference:adapter:export:type:avatar-explorer:description',
-                )}
-              </ExportTypeButtonDescription>
-            </ExportTypeButton>
-            <ExportTypeButton
               active={currentExportType === 'HumanReadable'}
               onClick={() => setExportType('HumanReadable')}
             >

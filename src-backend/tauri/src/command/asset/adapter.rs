@@ -106,52 +106,6 @@ pub async fn export_as_konoasset_zip(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn export_for_avatar_explorer(
-    basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    task_container: State<'_, Arc<Mutex<TaskContainer>>>,
-    handle: State<'_, AppHandle>,
-    path: PathBuf,
-) -> Result<Uuid, String> {
-    let current_data_dir = basic_store.lock().await.data_dir();
-
-    if path.starts_with(&current_data_dir) {
-        let err = format!(
-            "Export path cannot be inside the data store: {}",
-            path.display()
-        );
-        log::error!("{}", err);
-        return Err(err);
-    }
-
-    log::info!(
-        "Exporting assets for Avatar Explorer to: {}",
-        path.display()
-    );
-
-    let cloned_basic_store = (*basic_store).clone();
-    let cloned_app_handle = (*handle).clone();
-
-    let task = task_container.lock().await.run(async move {
-        adapter::exporter::export_as_avatar_explorer_compatible_structure(
-            cloned_basic_store,
-            &path,
-            &cloned_app_handle,
-        )
-        .await?;
-
-        log::info!(
-            "Successfully exported assets for Avatar Explorer to: {}",
-            path.display()
-        );
-
-        Ok(())
-    });
-
-    task
-}
-
-#[tauri::command]
-#[specta::specta]
 pub async fn export_as_human_readable_zip(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
     task_container: State<'_, Arc<Mutex<TaskContainer>>>,

@@ -247,8 +247,6 @@
     "preference:adapter:export:select-type": "Select output format",
     "preference:adapter:export:type:konoasset:title": "For migrating to KonoAsset on another device",
     "preference:adapter:export:type:konoasset:description": "Export as an uncompressed ZIP file in the format used by KonoAsset",
-    "preference:adapter:export:type:avatar-explorer:title": "For migrating to Avatar Explorer",
-    "preference:adapter:export:type:avatar-explorer:description": "Convert and export in a format that can be read by Avatar Explorer",
     "preference:adapter:export:type:human-readable-zip:title": "For displaying files in File Explorer or equivalent.",
     "preference:adapter:export:type:human-readable-zip:description": "Organize folder names and other details into an easy-to-understand format and export as a ZIP file",
     "preference:adapter:export:select-destination": "Select destination",

@@ -5,6 +5,8 @@
 ### 🐛バグ修正
 
 ### ⚙️その他
+- Avatar Explorer への移行サポートを廃止
+  - [最新の Avatar Explorer](https://github.com/puk06/VRC-Avatar-Explorer/releases/latest) に KonoAsset からデータを移行する機能があるため、そちらをご利用ください
 
 ## 1.2.6
 

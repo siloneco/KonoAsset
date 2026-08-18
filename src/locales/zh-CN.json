@@ -247,8 +247,6 @@
     "preference:adapter:export:select-type": "选择输出格式",
     "preference:adapter:export:type:konoasset:title": "迁移至其他设备的KonoAsset",
     "preference:adapter:export:type:konoasset:description": "以KonoAsset使用的未压缩ZIP格式导出",
-    "preference:adapter:export:type:avatar-explorer:title": "迁移至Avatar Explorer",
-    "preference:adapter:export:type:avatar-explorer:description": "转换为Avatar Explorer可读取的格式导出",
     "preference:adapter:export:type:human-readable-zip:title": "用于文件资源管理器展示",
     "preference:adapter:export:type:human-readable-zip:description": "整理文件夹结构并导出为易读的ZIP文件",
     "preference:adapter:export:select-destination": "选择目标位置",
