@@ -10,3 +10,5 @@ minimumReleaseAgeExclude:
   - postcss@8.5.10 || 8.5.23
   # Renovate security update: @vitest/browser@4.1.6 || 4.1.8 || 4.1.10
   - "@vitest/browser@4.1.6 || 4.1.8 || 4.1.10"
+  # Renovate security update: vitest@4.1.11
+  - vitest@4.1.11
