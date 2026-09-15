@@ -58,6 +58,7 @@ export const useAddAssetDialog = ({
   >([])
   const [importTaskId, setImportTaskId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false)
 
   const [existingPaths, setExistingPaths] = useState<string[]>([])
   const [nonExistingPaths, setNonExistingPaths] = useState<string[]>([])
@@ -205,6 +206,8 @@ export const useAddAssetDialog = ({
 
   useEffect(() => {
     if (!dialogOpen) {
+      submittingRef.current = false
+      setSubmitting(false)
       prevDialogOpenRef.current = dialogOpen
       return
     }
@@ -296,11 +299,13 @@ export const useAddAssetDialog = ({
   }
 
   const submit = async (ignoreNonExistingPaths: boolean) => {
-    if (submitting) {
+    if (submittingRef.current) {
       return
     }
 
+    submittingRef.current = true
     setSubmitting(true)
+    let started = false
 
     try {
       const preAssetResult = createPreAsset({
@@ -345,6 +350,7 @@ export const useAddAssetDialog = ({
       )
 
       if (result.status === 'ok') {
+        started = true
         setImportTaskId(result.data)
         setTab('progress')
         return
@@ -357,7 +363,10 @@ export const useAddAssetDialog = ({
         description: result.error,
       })
     } finally {
-      setSubmitting(false)
+      if (!started) {
+        submittingRef.current = false
+        setSubmitting(false)
+      }
     }
   }
 
