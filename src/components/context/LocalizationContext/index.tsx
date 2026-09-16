@@ -1,6 +1,10 @@
 import { LanguageCode, LocalizationData } from '@/lib/bindings'
 import { createContext, FC } from 'react'
-import { getLocalizationData, useLocalizationContext } from './hook'
+import {
+  getLocalizationData,
+  SpecificLanguageCode,
+  useLocalizationContext,
+} from './hook'
 
 export type LocalizationContextType = {
   data: LocalizationData
@@ -33,7 +37,7 @@ export const LocalizationContextProvider: FC<Props> = ({
   if (forcedLanguage) {
     const forcedContextValue: LocalizationContextType = {
       ...contextValue,
-      data: getLocalizationData(forcedLanguage),
+      data: getLocalizationData(forcedLanguage as SpecificLanguageCode),
     }
 
     return (

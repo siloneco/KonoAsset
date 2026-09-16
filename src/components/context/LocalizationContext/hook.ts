@@ -1,4 +1,4 @@
-import { commands, LanguageCode, LocalizationData } from '@/lib/bindings'
+import { commands, LocalizationData } from '@/lib/bindings'
 import { useContext, useEffect, useState } from 'react'
 import { LocalizationContextType } from '.'
 import { PreferenceContext } from '../PreferenceContext'
@@ -9,6 +9,8 @@ import enGb from '@/locales/en-GB.json'
 import jaJp from '@/locales/ja-JP.json'
 import zhCn from '@/locales/zh-CN.json'
 
+export type SpecificLanguageCode = 'en-US' | 'en-GB' | 'ja-JP' | 'zh-CN'
+
 const LANGUAGE_DATA_MAP = {
   'en-US': enUs['data'],
   'en-GB': enGb['data'],
@@ -17,7 +19,7 @@ const LANGUAGE_DATA_MAP = {
 }
 
 export const getLocalizationData = (
-  code: Exclude<LanguageCode, { 'user-provided': string }>,
+  code: SpecificLanguageCode,
 ): LocalizationData => {
   return {
     language: code,
@@ -34,9 +36,7 @@ export const useLocalizationContext = (): LocalizationContextType => {
   const { preference } = useContext(PreferenceContext)
   const { toast } = useToast()
 
-  const loadBundledLanguageFile = async (
-    code: Exclude<LanguageCode, { 'user-provided': string }>,
-  ) => {
+  const loadBundledLanguageFile = async (code: SpecificLanguageCode) => {
     setLocalizationData({
       language: code,
       data: LANGUAGE_DATA_MAP[code],
@@ -44,9 +44,7 @@ export const useLocalizationContext = (): LocalizationContextType => {
   }
 
   useEffect(() => {
-    loadBundledLanguageFile(
-      preference.language as Exclude<LanguageCode, { 'user-provided': string }>,
-    )
+    loadBundledLanguageFile(preference.language as SpecificLanguageCode)
   }, [preference.language])
 
   const loadLanguageFile = async (path: string) => {

@@ -118,6 +118,7 @@ export const useUpdateDialog = ({
 
         unlistenProgressFn = await events.updateProgress.listen((e) => {
           if (isCancelled) return
+          if (e.payload.progress === null) return
 
           setProgress(e.payload.progress * 100)
         })

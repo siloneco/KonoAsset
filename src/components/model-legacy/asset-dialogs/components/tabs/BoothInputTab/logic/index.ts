@@ -1,4 +1,4 @@
-import { AssetSummary, commands, Result } from '@/lib/bindings'
+import { AssetSummary, commands } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
 
 type Props = {
@@ -22,7 +22,9 @@ export const getAndSetAssetInfoFromBoothToForm = async ({
   boothItemId,
   form,
   setImageUrls,
-}: Props): Promise<Result<ReturnProps, string>> => {
+}: Props): Promise<
+  { status: 'ok'; data: ReturnProps } | { status: 'error'; error: string }
+> => {
   const result = await commands.getAssetInfoFromBooth(boothItemId)
 
   if (result.status === 'error') {

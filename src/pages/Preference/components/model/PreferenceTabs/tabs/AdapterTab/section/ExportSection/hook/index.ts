@@ -1,6 +1,6 @@
 import { useLocalization } from '@/hooks/use-localization'
 import { useToast } from '@/hooks/use-toast'
-import { commands, Result } from '@/lib/bindings'
+import { commands } from '@/lib/bindings'
 import { save } from '@tauri-apps/plugin-dialog'
 import { useState } from 'react'
 
@@ -54,7 +54,7 @@ export const useExportSection = (): ReturnProps => {
       return
     }
 
-    let result: Result<string, string>
+    let result
     if (currentExportType === 'KonoAsset') {
       result = await commands.exportAsKonoassetZip(exportDestination)
     } else if (currentExportType === 'HumanReadable') {
