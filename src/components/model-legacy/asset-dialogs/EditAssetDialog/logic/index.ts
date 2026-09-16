@@ -5,7 +5,6 @@ import {
   commands,
   GetAssetResult,
   OtherAsset,
-  Result,
   WorldObject,
 } from '@/lib/bindings'
 import { AssetFormType } from '@/lib/form'
@@ -18,7 +17,9 @@ type UpdateAssetProps = {
 export const updateAsset = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+}: UpdateAssetProps): Promise<
+  { status: 'ok'; data: boolean } | { status: 'error'; error: string }
+> => {
   const assetType: AssetType = form.getValues('assetType')
 
   if (assetType === 'Avatar') {
@@ -37,7 +38,9 @@ export const updateAsset = async ({
 const updateAvatar = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+}: UpdateAssetProps): Promise<
+  { status: 'ok'; data: boolean } | { status: 'error'; error: string }
+> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
   const imageFilename = form.getValues('imageFilename')
@@ -68,7 +71,9 @@ const updateAvatar = async ({
 const updateAvatarWearable = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+}: UpdateAssetProps): Promise<
+  { status: 'ok'; data: boolean } | { status: 'error'; error: string }
+> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
   const imageFilename = form.getValues('imageFilename')
@@ -103,7 +108,9 @@ const updateAvatarWearable = async ({
 const updateWorldObject = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+}: UpdateAssetProps): Promise<
+  { status: 'ok'; data: boolean } | { status: 'error'; error: string }
+> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
   const imageFilename = form.getValues('imageFilename')
@@ -136,7 +143,9 @@ const updateWorldObject = async ({
 const updateOtherAsset = async ({
   id,
   form,
-}: UpdateAssetProps): Promise<Result<boolean, string>> => {
+}: UpdateAssetProps): Promise<
+  { status: 'ok'; data: boolean } | { status: 'error'; error: string }
+> => {
   const name = form.getValues('name')
   const creator = form.getValues('creator')
   const imageFilename = form.getValues('imageFilename')
@@ -168,7 +177,9 @@ const updateOtherAsset = async ({
 
 export const fetchAssetInformation = async (
   id: string,
-): Promise<Result<GetAssetResult, string>> => {
+): Promise<
+  { status: 'ok'; data: GetAssetResult } | { status: 'error'; error: string }
+> => {
   const result = await commands.getAsset(id)
   return result
 }

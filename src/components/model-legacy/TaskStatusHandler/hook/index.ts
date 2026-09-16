@@ -105,6 +105,7 @@ export const useTaskStatusHandler = ({
 
         unlistenProgressFn = await events.progressEvent.listen((e) => {
           if (isCancelled) return
+          if (e.payload.percentage === null) return
 
           setProgress(e.payload.percentage)
           setFilename(e.payload.filename)

@@ -30,7 +30,6 @@ impl CategoryBasedAssets {
 pub struct AssetExportOverview<A: AssetTrait> {
     pub asset: A,
     pub data_dir: PathBuf,
-    pub image_path: Option<PathBuf>,
 }
 
 impl AssetExportOverview<Avatar> {
@@ -42,16 +41,8 @@ impl AssetExportOverview<Avatar> {
         let id = asset.id.to_string();
 
         let data_dir = root_dir.join("data").join(id);
-        let image_path = match asset.description.image_filename.as_ref() {
-            Some(image_filename) => Some(root_dir.join("images").join(image_filename)),
-            None => None,
-        };
 
-        Self {
-            asset,
-            data_dir,
-            image_path,
-        }
+        Self { asset, data_dir }
     }
 }
 
@@ -64,16 +55,8 @@ impl AssetExportOverview<AvatarWearable> {
         let id = asset.id.to_string();
 
         let data_dir = root_dir.join("data").join(id);
-        let image_path = match asset.description.image_filename.as_ref() {
-            Some(image_filename) => Some(root_dir.join("images").join(image_filename)),
-            None => None,
-        };
 
-        Self {
-            asset,
-            data_dir,
-            image_path,
-        }
+        Self { asset, data_dir }
     }
 }
 
@@ -86,16 +69,8 @@ impl AssetExportOverview<WorldObject> {
         let id = asset.id.to_string();
 
         let data_dir = root_dir.join("data").join(id);
-        let image_path = match asset.description.image_filename.as_ref() {
-            Some(image_filename) => Some(root_dir.join("images").join(image_filename)),
-            None => None,
-        };
 
-        Self {
-            asset,
-            data_dir,
-            image_path,
-        }
+        Self { asset, data_dir }
     }
 }
 
@@ -108,15 +83,7 @@ impl AssetExportOverview<OtherAsset> {
         let id = asset.id.to_string();
 
         let data_dir = root_dir.join("data").join(id);
-        let image_path = match asset.description.image_filename.as_ref() {
-            Some(image_filename) => Some(root_dir.join("images").join(image_filename)),
-            None => None,
-        };
 
-        Self {
-            asset,
-            data_dir,
-            image_path,
-        }
+        Self { asset, data_dir }
     }
 }

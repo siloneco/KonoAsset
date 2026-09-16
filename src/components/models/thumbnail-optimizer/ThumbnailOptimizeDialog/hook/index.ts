@@ -66,6 +66,8 @@ export const useThumbnailOptimizeDialog = (): ReturnProps => {
 
     try {
       unlisten = await events.progressEvent.listen((e) => {
+        if (e.payload.percentage === null) return
+
         setProgress(e.payload.percentage)
         setFilename(e.payload.filename)
       })

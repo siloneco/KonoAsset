@@ -1,6 +1,6 @@
 [package]
 name = "konoasset"
-version = "1.2.6"
+version = "1.2.7-rc.0"
 description = "Asset management tool for VRChat"
 
 authors.workspace = true
@@ -52,4 +52,4 @@ tauri-plugin-deep-link.workspace = true
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance.workspace = true
 tauri-plugin-updater.workspace = true
-tauri-plugin-window-state = "2"
+tauri-plugin-window-state.workspace = true

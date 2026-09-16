@@ -7,7 +7,6 @@ import {
   PreAvatarWearable,
   PreOtherAsset,
   PreWorldObject,
-  Result,
 } from '@/lib/bindings'
 
 type CreatePreAssetProps = {
@@ -22,10 +21,12 @@ export const createPreAsset = ({
   description,
   category,
   supportedAvatars,
-}: CreatePreAssetProps): Result<
-  PreAvatar | PreAvatarWearable | PreWorldObject | PreOtherAsset,
-  string
-> => {
+}: CreatePreAssetProps):
+  | {
+      status: 'ok'
+      data: PreAvatar | PreAvatarWearable | PreWorldObject | PreOtherAsset
+    }
+  | { status: 'error'; error: string } => {
   if (assetType === 'Avatar') {
     const preAsset: PreAvatar = {
       description,
@@ -64,7 +65,9 @@ export const sendAssetImportRequest = async (
   assetPaths: string[],
   preAsset: PreAvatar | PreAvatarWearable | PreWorldObject,
   deleteSource: boolean,
-): Promise<Result<string, string>> => {
+): Promise<
+  { status: 'ok'; data: string } | { status: 'error'; error: string }
+> => {
   if (assetType === 'Avatar') {
     const request: AssetImportRequest<PreAvatar> = {
       preAsset: preAsset as PreAvatar,

@@ -260,8 +260,6 @@
     "preference:adapter:export:select-type": "出力形式を選択",
     "preference:adapter:export:type:konoasset:title": "他デバイスのKonoAssetへ移行するため",
     "preference:adapter:export:type:konoasset:description": "KonoAssetで使用される形式のZIPファイル(無圧縮)で出力します",
-    "preference:adapter:export:type:avatar-explorer:title": "Avatar Explorerへ移行するため",
-    "preference:adapter:export:type:avatar-explorer:description": "Avatar Explorerで読み込める形式に変換して出力します",
     "preference:adapter:export:type:human-readable-zip:title": "エクスプローラー等で表示するため",
     "preference:adapter:export:type:human-readable-zip:description": "フォルダ名などを分かりやすい形式に整理してZIPファイルで出力します",
     "preference:adapter:export:select-destination": "出力先を選択",

@@ -1,8 +1,7 @@
 import { AssetDescription, AssetSummary, commands } from '@/lib/bindings'
 
 type ReturnType =
-  | (Pick<AssetSummary, 'id'> & Pick<AssetDescription, 'name' | 'memo'>)
-  | null
+  (Pick<AssetSummary, 'id'> & Pick<AssetDescription, 'name' | 'memo'>) | null
 
 export const fetchAssetInfo = async (assetId: string): Promise<ReturnType> => {
   const result = await commands.getAsset(assetId)

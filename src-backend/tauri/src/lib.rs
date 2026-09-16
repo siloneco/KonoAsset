@@ -21,7 +21,7 @@ use tauri_specta::{Event, collect_events};
 use updater::update_handler::{UpdateHandler, UpdateProgress};
 
 #[cfg(debug_assertions)]
-use specta_typescript::{BigIntExportBehavior, Typescript};
+use specta_typescript::Typescript;
 
 mod adapter;
 mod command;
@@ -35,20 +35,20 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = generate_tauri_specta_builder().events(collect_events![
-        ProgressEvent,
-        TaskStatusChanged,
-        AddAssetDeepLink,
-        UpdateProgress,
-        AssetVolumeEstimatedEvent,
-    ]);
+    let builder = generate_tauri_specta_builder()
+        .events(collect_events![
+            ProgressEvent,
+            TaskStatusChanged,
+            AddAssetDeepLink,
+            UpdateProgress,
+            AssetVolumeEstimatedEvent,
+        ])
+        .dangerously_cast_bigints_to_number();
 
     #[cfg(debug_assertions)]
     builder
         .export(
-            Typescript::default()
-                .bigint(BigIntExportBehavior::Number)
-                .header("/* eslint-disable */\n// @ts-nocheck"),
+            Typescript::default().header("/* eslint-disable */\n// @ts-nocheck"),
             "../../src/lib/bindings.ts",
         )
         .expect("Failed to export typescript bindings");

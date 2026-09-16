@@ -10,7 +10,7 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
-semver = "1.0.26"
+semver = "1"
 
 # Local crates
 model.workspace = true

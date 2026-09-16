@@ -8,8 +8,7 @@ type Props = {
   open: (assetId: string) => void
 
   currentAsset:
-    | (Pick<AssetSummary, 'id'> & Pick<AssetDescription, 'name' | 'memo'>)
-    | null
+    (Pick<AssetSummary, 'id'> & Pick<AssetDescription, 'name' | 'memo'>) | null
 }
 
 export const useMemoDialogStore = create<Props>((set) => ({

@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { PreferenceStore, Result } from './bindings'
+import { PreferenceStore } from './bindings'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -17,7 +17,9 @@ export function isBoothURL(url: string) {
   )
 }
 
-export const extractBoothItemId = (url: string): Result<number, string> => {
+export const extractBoothItemId = (
+  url: string,
+): { status: 'ok'; data: number } | { status: 'error'; error: string } => {
   if (!isBoothURL(url)) {
     return { status: 'error', error: 'Invalid Booth URL specified' }
   }

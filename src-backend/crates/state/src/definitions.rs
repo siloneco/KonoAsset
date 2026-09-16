@@ -8,6 +8,7 @@ pub struct AppState {
     #[serde(default)]
     pub sort: SortState,
     #[serde(deserialize_with = "ok_or_default")]
+    #[specta(type = DisplayStyle)]
     pub display_style: DisplayStyle,
 }
 
@@ -15,8 +16,10 @@ pub struct AppState {
 #[serde(rename_all = "camelCase")]
 pub struct SortState {
     #[serde(deserialize_with = "ok_or_default")]
+    #[specta(type = SortBy)]
     pub sort_by: SortBy,
     #[serde(deserialize_with = "ok_or_true")]
+    #[specta(type = bool)]
     pub reversed: bool,
 }
 

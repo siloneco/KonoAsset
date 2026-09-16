@@ -10,7 +10,7 @@ authors.workspace = true
 
 [dependencies]
 tokio.workspace = true
-tokio-util = { version = "0.7.13", features = ["compat"] }
+tokio-util.workspace = true
 log.workspace = true
 async_zip.workspace = true
 async-read-progress = "0.2.0"
