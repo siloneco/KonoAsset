@@ -1,5 +1,32 @@
 [
   {
+    "version": "1.2.7-rc.0",
+    "preRelease": true,
+    "features": [],
+    "fixes": [
+      {
+        "text": "Fixed an issue where rapidly clicking the Add Asset button could register the same asset twice",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "アセット追加ボタンを高速で連打したときに二重登録される問題を修正"
+          }
+        ]
+      }
+    ],
+    "others": [
+      {
+        "text": "Removed support for migrating to Avatar Explorer",
+        "langs": [
+          {
+            "lang": ["ja-JP"],
+            "text": "Avatar Explorer への移行サポートを廃止"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.6",
     "features": [
       {
