@@ -48,6 +48,7 @@ export const MainSidebar: FC = () => {
             <Button
               variant="outline"
               size="icon"
+              aria-label={t('preference:settings')}
               className="ml-auto mr-4 flex relative"
               onClick={() => {
                 const viewTransition = window.matchMedia(

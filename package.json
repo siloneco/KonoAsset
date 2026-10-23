@@ -9,10 +9,14 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint src/",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit && tsc --project e2e/tsconfig.json",
     "test": "vitest",
     "test:run": "vitest run",
     "test:with-coverage": "vitest run --coverage",
+    "test:e2e": "pnpm test:e2e:type-check && pnpm test:e2e:build && pnpm test:e2e:run",
+    "test:e2e:type-check": "tsc --project e2e/tsconfig.json",
+    "test:e2e:build": "node e2e/build.ts",
+    "test:e2e:run": "node --test --test-concurrency=2 e2e/*.test.ts",
     "fmt": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
     "fmt:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
     "prepare": "husky",
@@ -98,7 +102,8 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0",
     "vite": "8.2.1",
-    "vitest": "4.1.11"
+    "vitest": "4.1.11",
+    "webdriverio": "10.1.0"
   },
   "packageManager": "pnpm@12.15.0"
 }

@@ -20,13 +20,15 @@ export const ThemeSelector: FC<Props> = ({ theme, setTheme }) => {
   return (
     <div className="flex flex-row items-center">
       <div className="space-y-2">
-        <Label className="text-xl">{t('preference:settings:theme')}</Label>
+        <Label htmlFor="preference-theme" className="text-xl">
+          {t('preference:settings:theme')}
+        </Label>
         <p className="text-muted-foreground text-sm">
           {t('preference:settings:theme:explanation-text')}
         </p>
       </div>
       <Select value={theme} onValueChange={setTheme}>
-        <SelectTrigger className="ml-auto w-[180px]">
+        <SelectTrigger id="preference-theme" className="ml-auto w-[180px]">
           <SelectValue placeholder={t('general:select:placeholder')} />
         </SelectTrigger>
         <SelectContent>

@@ -15,6 +15,9 @@ edition.workspace = true
 name = "konoasset_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+[features]
+e2e = []
+
 [build-dependencies]
 tauri-build.workspace = true
 

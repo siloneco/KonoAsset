@@ -14,7 +14,7 @@ pub async fn reset_application(
     log::info!("Resetting application...");
 
     if request.reset_preferences {
-        let app_local_data_dir = handle.path().app_local_data_dir().map_err(|e| {
+        let app_local_data_dir = crate::app_paths::local_data_dir(&handle).map_err(|e| {
             let err = format!("Unable to get app dir: {}", e);
             log::error!("{}", err);
             err
@@ -87,6 +87,10 @@ pub async fn reset_application(
 
     log::info!("Successfully reset application. Restarting...");
     handle.restart();
+
+    // `AppHandle::restart` returns `!`. rust-analyzer can miss that and type this body as `()`.
+    #[allow(unreachable_code)]
+    Ok(())
 }
 
 #[derive(Deserialize, Clone, specta::Type)]

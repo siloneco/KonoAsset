@@ -2,9 +2,11 @@ use std::{path::PathBuf, sync::Arc};
 
 use booth::{BoothFetcher, PximgResolver};
 use command::generate_tauri_specta_builder;
+#[cfg(all(desktop, not(feature = "e2e")))]
+use deep_link::execute_deep_links;
 use deep_link::{
     definitions::{AddAssetDeepLink, StartupDeepLinkStore},
-    execute_deep_links, parse_args_to_deep_links,
+    parse_args_to_deep_links,
 };
 use definitions::entities::{InitialSetup, LoadResult, ProgressEvent};
 use file::modify_guard::{self, FileTransferGuard};
@@ -15,21 +17,26 @@ use statistics::{AssetVolumeEstimatedEvent, AssetVolumeStatisticsCache};
 use storage::{asset_storage::AssetStorage, delete::delete_temporary_images};
 use task::{TaskContainer, TaskStatusChanged};
 use tauri::{AppHandle, Manager, async_runtime::Mutex};
+#[cfg(all(any(windows, target_os = "linux"), not(feature = "e2e")))]
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_window_state::StateFlags;
 use tauri_specta::{Event, collect_events};
 use updater::update_handler::{UpdateHandler, UpdateProgress};
 
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, not(feature = "e2e")))]
 use specta_typescript::Typescript;
 
 mod adapter;
+mod app_paths;
 mod command;
 mod deep_link;
 mod definitions;
 mod importer;
 mod statistics;
 mod updater;
+
+#[cfg(feature = "e2e")]
+mod e2e;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -45,7 +52,7 @@ pub fn run() {
         ])
         .dangerously_cast_bigints_to_number();
 
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, not(feature = "e2e")))]
     builder
         .export(
             Typescript::default().header("/* eslint-disable */\n// @ts-nocheck"),
@@ -53,28 +60,37 @@ pub fn run() {
         )
         .expect("Failed to export typescript bindings");
 
-    let mut tauri_builder = tauri::Builder::default();
+    let tauri_builder = tauri::Builder::default();
 
-    #[cfg(desktop)]
-    {
-        tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, args, _| {
-            let window = app.get_webview_window("main").expect("no main window");
+    #[cfg(all(desktop, not(feature = "e2e")))]
+    let tauri_builder = tauri_builder.plugin(tauri_plugin_single_instance::init(|app, args, _| {
+        let window = app.get_webview_window("main").expect("no main window");
 
-            let _ = window.unminimize();
-            let _ = window.set_focus();
+        let _ = window.unminimize();
+        let _ = window.set_focus();
 
-            let deep_links = parse_args_to_deep_links(&args);
-            execute_deep_links(&app, &deep_links);
-        }));
-    }
+        let deep_links = parse_args_to_deep_links(&args);
+        execute_deep_links(&app, &deep_links);
+    }));
+
+    let window_state = tauri_plugin_window_state::Builder::new()
+        .with_state_flags(StateFlags::SIZE | StateFlags::MAXIMIZED);
+
+    #[cfg(feature = "e2e")]
+    let window_state = window_state.with_filename(
+        e2e::root()
+            .join("window-state.json")
+            .to_string_lossy()
+            .into_owned(),
+    );
+
+    let context = tauri::generate_context!();
+    #[cfg(feature = "e2e")]
+    let context = e2e::configure_context(context);
 
     tauri_builder
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(
-            tauri_plugin_window_state::Builder::new()
-                .with_state_flags(StateFlags::SIZE | StateFlags::MAXIMIZED)
-                .build(),
-        )
+        .plugin(window_state.build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_deep_link::init())
@@ -83,8 +99,11 @@ pub fn run() {
         .manage(arc_mutex(LocalizationData::default()))
         .manage(arc_mutex(AssetVolumeStatisticsCache::new()))
         .setup(move |app| {
-            logging::initialize_logger(app.path().app_log_dir().unwrap());
+            logging::initialize_logger(app_paths::log_dir(app.handle()).unwrap());
             builder.mount_events(app);
+
+            #[cfg(feature = "e2e")]
+            e2e::create_window(app)?;
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
@@ -99,7 +118,7 @@ pub fn run() {
                 },
             ))));
 
-            #[cfg(any(windows, target_os = "linux"))]
+            #[cfg(all(any(windows, target_os = "linux"), not(feature = "e2e")))]
             {
                 if let Err(e) = app.deep_link().register_all() {
                     log::error!("Failed to register deep links: {}", e);
@@ -112,7 +131,7 @@ pub fn run() {
 
             app.manage(arc_mutex(deep_links));
 
-            let app_local_data_dir = match app.path().app_local_data_dir() {
+            let app_local_data_dir = match app_paths::local_data_dir(app.handle()) {
                 Ok(dir) => dir,
                 Err(e) => {
                     let error = format!("Failed to get app local data directory: {}", e);
@@ -172,7 +191,7 @@ pub fn run() {
 
             Ok(())
         })
-        .run(tauri::generate_context!())
+        .run(context)
         .expect("error while running tauri application");
 }
 
@@ -192,6 +211,10 @@ where
 fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler {
     tauri::async_runtime::block_on(async move {
         let mut update_handler = UpdateHandler::new(app);
+        // E2E startup must not depend on the release server or show update dialogs.
+        if cfg!(feature = "e2e") {
+            return update_handler;
+        }
         let result = update_handler.check_for_update(channel).await;
 
         if let Err(err) = result {

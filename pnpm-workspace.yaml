@@ -1,5 +1,8 @@
 allowBuilds:
+  # E2E uses tauri-driver and the platform WebDriver installed by the developer.
+  edgedriver: false
   esbuild: true
+  geckodriver: false
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   # Renovate security update: vite@7.3.2 || 7.3.5
