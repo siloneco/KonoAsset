@@ -45,7 +45,11 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
   const height = data.length * 30
 
   return (
-    <Card className="flex flex-col w-full shrink">
+    <Card
+      data-testid="asset-disk-usage"
+      aria-busy={loading}
+      className="flex flex-col w-full shrink"
+    >
       <CardHeader>
         <CardTitle>
           <div className="flex flex-row items-center gap-2">

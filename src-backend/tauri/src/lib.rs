@@ -88,11 +88,16 @@ pub fn run() {
     #[cfg(feature = "e2e")]
     let context = e2e::configure_context(context);
 
+    #[cfg(feature = "e2e")]
+    let dialog_plugin = e2e::dialog_plugin();
+    #[cfg(not(feature = "e2e"))]
+    let dialog_plugin = tauri_plugin_dialog::init();
+
     tauri_builder
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(window_state.build())
         .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_dialog::init())
+        .plugin(dialog_plugin)
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(builder.invoke_handler())
         .manage(Mutex::new(BoothFetcher::new(VERSION)))
@@ -226,12 +231,15 @@ fn get_update_handler(app: AppHandle, channel: &UpdateChannel) -> UpdateHandler 
 }
 
 fn load_preference_store(
-    app: &AppHandle,
+    _app: &AppHandle,
     app_local_data_dir: &PathBuf,
 ) -> Result<PreferenceStore, String> {
     let preference_path = app_local_data_dir.join("preference.json");
 
-    let default_data_dir_path = match app.path().document_dir() {
+    #[cfg(feature = "e2e")]
+    let default_data_dir_path = e2e::root().join("assets");
+    #[cfg(not(feature = "e2e"))]
+    let default_data_dir_path = match _app.path().document_dir() {
         Ok(dir) => dir.join("KonoAsset"),
         Err(e) => {
             log::error!(

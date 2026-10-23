@@ -15,7 +15,11 @@ export const NumberDisplay: React.FC<Props> = ({
   className,
 }) => {
   return (
-    <Card className={cn('h-full w-full', className)}>
+    <Card
+      role="group"
+      aria-label={title}
+      className={cn('h-full w-full', className)}
+    >
       <CardHeader>
         <p className="truncate font-bold">{title}</p>
       </CardHeader>

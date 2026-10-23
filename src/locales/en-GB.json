@@ -10,6 +10,7 @@
     "general:button:select": "Select",
     "general:button:save": "Save",
     "general:button:open": "Open",
+    "general:button:refresh": "Refresh",
 
     "general:or": "Or",
     "general:error": "Error",
@@ -115,6 +116,8 @@
     "addasset:get:success-toast": "Asset information updated!",
     "addasset:update-asset": "Update asset",
 
+    "assetcard:actions": "Asset actions",
+    "assetcard:open-button:options": "Open options",
     "assetcard:open-button:show-dependency-warning-toast": "There are prerequisite assets!",
     "assetcard:open-button:show-dependency-warning-toast:description": "You can check prerequisite assets from the downward arrow on the Open button.",
     "assetcard:open-button:open-dir": "Open management folder",

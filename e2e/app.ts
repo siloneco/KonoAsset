@@ -1,6 +1,14 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { once } from 'node:events'
-import { access, mkdir, mkdtemp, open, readFile, rm } from 'node:fs/promises'
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  open,
+  readFile,
+  rm,
+  writeFile,
+} from 'node:fs/promises'
 import type { FileHandle } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import path from 'node:path'
@@ -9,6 +17,7 @@ import { fileURLToPath } from 'node:url'
 import type { TestContext } from 'node:test'
 import { remote } from 'webdriverio'
 import type { PreferenceStore } from '../src/lib/bindings.ts'
+import { resolveDrivers } from './drivers.ts'
 
 type VersionedPreference = {
   version: 6
@@ -53,13 +62,21 @@ async function driverPorts() {
 }
 
 /** Start a fresh real application and WebDriver session for each test. */
-export async function startApp(t: TestContext) {
+export async function startApp(
+  t: TestContext,
+  options: {
+    setup?: boolean
+    preference?: Partial<PreferenceStore>
+    initialData?: (root: string) => Promise<void>
+  } = {},
+) {
   if (!['win32', 'linux'].includes(process.platform)) {
     throw new Error('tauri-driver E2E supports Windows and Linux only')
   }
   await access(application).catch(() => {
     throw new Error('E2E binary is missing. Run pnpm test:e2e:build first.')
   })
+  const { driver: driverPath, nativeDriver } = await resolveDrivers()
 
   const runsDir = path.join(projectRoot, 'src-backend/target/e2e-runs')
   await mkdir(runsDir, { recursive: true })
@@ -82,9 +99,17 @@ export async function startApp(t: TestContext) {
         await browser
           .saveScreenshot(path.join(root, 'failure.png'))
           .catch(() => {})
-        await readFile(preferencePath, 'utf8').then((data) =>
-          t.diagnostic(`Preferences at failure: ${data}`),
-        )
+        await browser
+          .getPageSource()
+          .then((html) => writeFile(path.join(root, 'failure.html'), html))
+          .catch(() => {})
+        await browser
+          .getUrl()
+          .then((url) => t.diagnostic(`URL at failure: ${url}`))
+          .catch(() => {})
+        await readFile(preferencePath, 'utf8')
+          .then((data) => t.diagnostic(`Preferences at failure: ${data}`))
+          .catch(() => {})
       }
     } finally {
       try {
@@ -127,25 +152,35 @@ export async function startApp(t: TestContext) {
       useUnitypackageSelectedOpen: true,
       useTrashBin: true,
       updateChannel: 'Stable',
+      ...options.preference,
     },
   }
-  const preferenceFile = await open(preferencePath, 'w')
-  try {
-    await preferenceFile.writeFile(JSON.stringify(preference, null, 2))
-  } finally {
-    await preferenceFile.close()
-  }
+  if (!options.setup)
+    await writeFile(preferencePath, JSON.stringify(preference, null, 2))
+  await options.initialData?.(root)
+  const tempDir = path.join(root, 'temp')
+  await mkdir(tempDir)
 
   const [port, nativePort] = await driverPorts()
-  const args = ['--port', String(port), '--native-port', String(nativePort)]
-  if (process.env.TAURI_NATIVE_DRIVER) {
-    args.push('--native-driver', process.env.TAURI_NATIVE_DRIVER)
-  }
+  const args = [
+    '--port',
+    String(port),
+    '--native-port',
+    String(nativePort),
+    '--native-driver',
+    nativeDriver,
+  ]
   const driverLog = await open(path.join(root, 'webdriver.log'), 'w')
   resources.driverLog = driverLog
-  const driver = spawn(process.env.TAURI_DRIVER ?? 'tauri-driver', args, {
+  const driver = spawn(driverPath, args, {
     cwd: projectRoot,
-    env: { ...process.env, E2E_ROOT: root },
+    env: {
+      ...process.env,
+      E2E_ROOT: root,
+      TEMP: tempDir,
+      TMP: tempDir,
+      TMPDIR: tempDir,
+    },
     stdio: ['ignore', driverLog.fd, driverLog.fd],
     windowsHide: true,
     detached: process.platform !== 'win32',
@@ -178,19 +213,28 @@ export async function startApp(t: TestContext) {
   }
 
   const capabilities: TauriCapabilities = { 'tauri:options': { application } }
-  const browser = await remote({
-    hostname: '127.0.0.1',
-    port,
-    logLevel: 'warn',
-    connectionRetryCount: 0,
-    connectionRetryTimeout: 30_000,
-    waitforTimeout: 10_000,
-    capabilities,
-  })
+  const connect = () =>
+    remote({
+      hostname: '127.0.0.1',
+      port,
+      logLevel: 'warn',
+      connectionRetryCount: 0,
+      connectionRetryTimeout: 30_000,
+      waitforTimeout: 10_000,
+      capabilities,
+    })
+  const browser = await connect()
   resources.browser = browser
   return {
     browser,
     root,
+    // A new WebDriver session launches a new Rust process with the same isolated data.
+    restart: async () => {
+      await resources.browser!.deleteSession()
+      const next = await connect()
+      resources.browser = next
+      return next
+    },
     readPreference: async () =>
       (
         JSON.parse(

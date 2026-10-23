@@ -18,6 +18,7 @@ export const StatusBarOptionSelectButton: FC<Props> = ({
 }) => {
   return (
     <Button
+      aria-pressed={value === current}
       variant="ghost"
       className="flex w-full justify-start h-8 font-normal"
       onClick={() => setter(value)}

@@ -9,9 +9,9 @@ Do not copy existing tests blindly when they use patterns that differ from these
 
 - Use TypeScript, Node.js 24's `node:test`, WebdriverIO's `remote()`, and the official `tauri-driver`.
 - Run TypeScript using Node.js type stripping. Use `import type` for dependencies needed only for types, and include the `.ts` extension in local runtime imports.
-- Place tests in the current discovery pattern, `e2e/*.test.ts`, with one scenario per file as the default.
+- Place tests in the current discovery pattern, `e2e/scenarios/*.test.ts`, with one scenario per file as the default. Keep shared helpers and build infrastructure directly under `e2e/`.
 - Call `startApp(t)` in each scenario to create a fresh application, WebDriver session, and dataset.
-- Keep concurrency fixed at `--test-concurrency=2` in `package.json`. Do not effectively exceed this limit in regular scenarios by adding concurrent tests within a file or launching extra application instances.
+- Keep concurrency fixed at `--test-concurrency=10` in `package.json`. Do not effectively exceed this limit in regular scenarios by adding concurrent tests within a file or launching extra application instances.
 - `node:assert/strict` evaluates immediately; it does not automatically retry UI assertions. Do not assume WDIO Runner globals such as `browser` / `$` / `expect`, Playwright APIs, or services that are not installed.
 - Use the E2E Cargo feature and dedicated binary. Do not reuse regular builds or real users' profiles for testing.
 
@@ -187,6 +187,7 @@ Reference: [Selenium's guidance on controlling external dependencies](https://ww
 - Store selectors or functions/getters that locate fresh elements in helpers and Page Objects, rather than previously located elements. Pass sessions explicitly or keep them per instance; do not share them globally.
 - Use test names, step-level `t.diagnostic()` messages, and `timeoutMsg` to identify which user action and expected outcome a test is waiting for. Do not separately dump every WebDriver command in bulk.
 - Capture screenshots and save HTML only on failure. Do neither during normal execution or on success.
+- Whenever a failure screenshot is captured, also save the page HTML alongside it. Screenshots are for human review; agents must inspect the saved HTML to determine the screen state, diagnose failures, and plan fixes instead of interpreting the screenshot.
 - On failure, preserve screenshots, HTML, the current URL, relevant values, application/driver logs, and the initialData location where possible. Do not let diagnostic collection or cleanup errors obscure the original failure.
 - Do not hide flaky tests through automatic retries or blanket timeout increases. Determine whether the cause is missing preconditions, stale elements, incorrect completion conditions, shared environment state, or a product defect.
 - Do not consider a fix complete merely because a rerun passed. Address the cause and verify the affected behavior.
@@ -199,14 +200,14 @@ Run the following from the repository root as appropriate for the changes:
 
 ```sh
 pnpm test:e2e:type-check
-pnpm exec eslint e2e/*.ts
-pnpm exec prettier --check "e2e/*.ts" e2e/tsconfig.json
+pnpm exec eslint "e2e/**/*.ts"
+pnpm exec prettier --check "e2e/**/*.ts" e2e/tsconfig.json
 pnpm test:e2e
 ```
 
 - `pnpm test:e2e` performs type checking, builds the frontend and dedicated E2E binary, then runs the scenarios.
 - Use `pnpm test:e2e:run` only when the E2E binary and frontend are up to date. Do not report a pass against an old binary as verification of a new change.
-- Windows requires compatible WebView2 / Edge WebDriver versions. Linux requires WebKitWebDriver and a display environment. Use `TAURI_DRIVER` / `TAURI_NATIVE_DRIVER` to specify executable paths. The current manual `tauri-driver` setup does not target macOS.
+- Windows requires compatible WebView2 / Edge WebDriver versions. Linux requires WebKitWebDriver and a display environment. Drivers are resolved from `TAURI_DRIVER` / `TAURI_NATIVE_DRIVER` overrides, then PATH, then prepared tools under `src-backend/target/e2e-tools/` (see `drivers.ts`). Explicit invalid overrides fail instead of falling back. These local tools are not tracked in Git and must be provisioned on a fresh environment. The current manual `tauri-driver` setup does not target macOS.
 - Run changed scenarios individually. For changes to initialData, startup, cleanup, or shared helpers, also verify that two concurrent runs do not interfere. If only one scenario exists, do not report one successful run as verification of two concurrent runs.
 - When fixing instability, repeat tests as needed to verify the reproduction conditions. Do not add unrelated tests or rerun the entire suite without bounds.
 - Documentation-only changes do not require type checking or an E2E rerun. Do not claim that checks passed when they were not run.

@@ -26,6 +26,7 @@ export const LogsTab: FC<Props> = ({ id }) => {
             {t('preference:logs:open-logs-folder')}
           </Button>
           <Button
+            aria-label={t('general:button:refresh')}
             variant="secondary"
             className="h-10 w-10"
             onClick={reloadLogs}

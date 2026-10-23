@@ -16,7 +16,7 @@
     "test:e2e": "pnpm test:e2e:type-check && pnpm test:e2e:build && pnpm test:e2e:run",
     "test:e2e:type-check": "tsc --project e2e/tsconfig.json",
     "test:e2e:build": "node e2e/build.ts",
-    "test:e2e:run": "node --test --test-concurrency=2 e2e/*.test.ts",
+    "test:e2e:run": "node --test --test-concurrency=10 e2e/scenarios/*.test.ts",
     "fmt": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
     "fmt:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
     "prepare": "husky",

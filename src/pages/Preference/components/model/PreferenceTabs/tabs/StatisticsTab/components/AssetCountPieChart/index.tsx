@@ -75,7 +75,10 @@ export const AssetCountPieChart: React.FC<Props> = ({
   const totalAssets = avatars + avatarWearables + worldObjects + otherAssets
 
   return (
-    <Card className="flex flex-col w-full h-full">
+    <Card
+      data-testid="asset-type-chart"
+      className="flex flex-col w-full h-full"
+    >
       <CardHeader className="items-center pb-0">
         <CardTitle>
           {t('preference:statistics:asset-count-pie-chart:title')}

@@ -56,7 +56,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
   } satisfies ChartConfig
 
   return (
-    <Card>
+    <Card data-testid="asset-history-chart">
       <CardHeader>
         <CardTitle>
           {t('preference:statistics:asset-count-area-chart:title')}

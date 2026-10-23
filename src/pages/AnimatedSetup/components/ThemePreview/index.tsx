@@ -2,6 +2,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { FC } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   theme: 'light' | 'dark'
@@ -60,9 +61,19 @@ const themeColors = {
 
 export const ThemePreview: FC<Props> = ({ theme, className, onClick }) => {
   const colors = themeColors[theme]
+  const { t } = useLocalization()
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={t(`preference:settings:theme:${theme}`)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          onClick?.()
+        }
+      }}
       className={cn(
         'flex flex-row h-32 w-full rounded-lg border-2 overflow-hidden select-none',
         { 'cursor-pointer': onClick !== undefined },

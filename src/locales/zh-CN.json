@@ -10,6 +10,7 @@
     "general:button:select": "选择",
     "general:button:save": "保存",
     "general:button:open": "打开",
+    "general:button:refresh": "刷新",
 
     "general:or": "或",
     "general:error": "错误",
@@ -115,6 +116,8 @@
     "addasset:get:success-toast": "资产信息已更新！",
     "addasset:update-asset": "更新资产",
 
+    "assetcard:actions": "资源操作",
+    "assetcard:open-button:options": "打开选项",
     "assetcard:open-button:show-dependency-warning-toast": "存在前置资产！",
     "assetcard:open-button:show-dependency-warning-toast:description": "可通过打开按钮的下拉箭头查看前置资产",
     "assetcard:open-button:open-dir": "打开管理文件夹",

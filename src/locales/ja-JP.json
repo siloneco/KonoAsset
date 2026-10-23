@@ -10,6 +10,7 @@
     "general:button:select": "選択",
     "general:button:save": "保存",
     "general:button:open": "開く",
+    "general:button:refresh": "更新",
 
     "general:or": "または",
     "general:error": "エラー",
@@ -115,6 +116,8 @@
     "addasset:get:success-toast": "アセット情報を変更しました！",
     "addasset:update-asset": "アセットを更新",
 
+    "assetcard:actions": "アセットの操作",
+    "assetcard:open-button:options": "開くメニュー",
     "assetcard:open-button:show-dependency-warning-toast": "前提アセットがあります！",
     "assetcard:open-button:show-dependency-warning-toast:description": "開くボタンの下矢印から前提アセットを確認できます",
     "assetcard:open-button:open-dir": "管理フォルダを開く",
