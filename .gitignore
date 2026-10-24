@@ -25,6 +25,7 @@ dist-ssr
 *.sw?
 
 # vitest coverage output
+.vitest/
 coverage
 *storybook.log
 storybook-static
