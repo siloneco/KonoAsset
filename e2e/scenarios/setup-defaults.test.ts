@@ -12,6 +12,21 @@ test(
     // The default language follows the OS; all bundled languages are accepted here.
     const next =
       '//*[@role="tabpanel" and @data-state="active"]//button[normalize-space(.)="次へ" or normalize-space(.)="Next" or normalize-space(.)="下一步"]'
+    await browser.$(next).waitForDisplayed()
+    // The opening animation moves the button after it first becomes visible.
+    await browser.waitUntil(
+      async () =>
+        browser.execute(() =>
+          document
+            .getAnimations()
+            .every(
+              (animation) =>
+                animation.effect?.getTiming().iterations === Infinity ||
+                animation.playState === 'finished',
+            ),
+        ),
+      { timeoutMsg: '初回設定の開始アニメーションが完了しませんでした' },
+    )
     await browser.$(next).click()
     await browser.$('[data-slot="tabs"][aria-busy="false"]').waitForDisplayed()
     await browser

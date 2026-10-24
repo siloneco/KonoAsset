@@ -66,7 +66,7 @@ impl PximgResolver {
             }
 
             let mut file = std::fs::File::create(&original_path)?;
-            file.write(&bytes)?;
+            file.write_all(bytes)?;
             file.flush()?;
         }
 
