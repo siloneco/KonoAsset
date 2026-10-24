@@ -2630,7 +2630,6 @@ dependencies = [
  "log",
  "logging",
  "model",
- "reqwest",
  "sanitize-filename",
  "serde",
  "serde_json",
@@ -2657,7 +2656,6 @@ dependencies = [
 name = "language"
 version = "0.0.0"
 dependencies = [
- "log",
  "model",
  "serde",
  "serde_json",
@@ -4931,7 +4929,6 @@ dependencies = [
  "loader",
  "log",
  "model",
- "reqwest",
  "serde",
  "serde_json",
  "specta",

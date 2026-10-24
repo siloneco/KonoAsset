@@ -15,4 +15,3 @@ model.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 specta.workspace = true
-log.workspace = true
