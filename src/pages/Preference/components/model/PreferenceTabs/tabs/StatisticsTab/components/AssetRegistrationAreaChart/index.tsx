@@ -68,6 +68,7 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
       <CardContent>
         <ChartContainer config={chartConfig} className="max-h-48 w-full">
           <AreaChart
+            aria-label={t('preference:statistics:asset-count-area-chart:title')}
             accessibilityLayer
             data={data}
             margin={{
@@ -96,33 +97,33 @@ export const AssetRegistrationAreaChart: React.FC<Props> = ({ data }) => {
             <Area
               dataKey="avatars"
               type="linear"
-              fill="var(--color-avatar)"
+              fill="var(--color-avatars)"
               fillOpacity={0.7}
-              stroke="var(--color-avatar)"
+              stroke="var(--color-avatars)"
               stackId="a"
             />
             <Area
               dataKey="avatarWearables"
               type="linear"
-              fill="var(--color-avatar-wearable)"
+              fill="var(--color-avatarWearables)"
               fillOpacity={0.7}
-              stroke="var(--color-avatar-wearable)"
+              stroke="var(--color-avatarWearables)"
               stackId="a"
             />
             <Area
               dataKey="worldObjects"
               type="linear"
-              fill="var(--color-world-object)"
+              fill="var(--color-worldObjects)"
               fillOpacity={0.7}
-              stroke="var(--color-world-object)"
+              stroke="var(--color-worldObjects)"
               stackId="a"
             />
             <Area
               dataKey="otherAssets"
               type="linear"
-              fill="var(--color-other-asset)"
+              fill="var(--color-otherAssets)"
               fillOpacity={0.7}
-              stroke="var(--color-other-asset)"
+              stroke="var(--color-otherAssets)"
               stackId="a"
             />
           </AreaChart>

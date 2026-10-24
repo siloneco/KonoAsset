@@ -35,6 +35,13 @@ test(
           .getAttribute('aria-busy')) === 'false',
       { timeoutMsg: '未登録時の容量集計が完了しませんでした' },
     )
+    await browser.waitUntil(
+      async () =>
+        (await browser.$('[data-testid="asset-type-chart"] svg').getText())
+          .replace(/\s+/g, '')
+          .includes('0アセット'),
+      { timeoutMsg: '未登録でもタイプ別グラフの合計0が表示されませんでした' },
+    )
     await browser.$(button('トップ画面に戻る')).click()
     await browser.$(button('アセットを追加する')).click()
     await browser.$(button('ファイルを選択する')).waitForDisplayed()

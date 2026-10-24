@@ -72,26 +72,57 @@ test(
         ).includes('5'),
       { timeoutMsg: 'タイプ別グラフに4タイプと合計5が表示されませんでした' },
     )
+    // A sector's bounding-box center can point into a different donut sector.
+    // Use the chart's keyboard navigation to select each type unambiguously.
     await browser
-      .$('[data-testid="asset-type-chart"] path[name="avatars"]')
-      .moveTo()
-    await browser.waitUntil(
-      async () => {
-        const tooltip = browser.$(
-          '[data-testid="asset-type-chart"] .recharts-tooltip-wrapper',
-        )
-        return (
-          (await tooltip.isDisplayed()) &&
-          (await tooltip.getText()).includes('アバター素体') &&
-          (await tooltip.getText()).includes('1')
-        )
-      },
-      { timeoutMsg: 'タイプ別グラフのホバーで内訳を確認できませんでした' },
-    )
+      .$('[role="application"][aria-label="タイプごとのアセット登録数"]')
+      .click()
+    for (const [key, expected] of [
+      ['ArrowRight', 'アバター関連アセット2'],
+      ['ArrowLeft', 'アバター素体1'],
+      ['ArrowRight', 'アバター関連アセット2'],
+      ['ArrowRight', 'ワールドアセット1'],
+      ['ArrowRight', 'その他1'],
+    ]) {
+      await browser.keys(key)
+      await browser.waitUntil(
+        async () => {
+          const tooltip = browser.$(
+            '[data-testid="asset-type-chart"] .recharts-tooltip-wrapper',
+          )
+          return (
+            (await tooltip.isDisplayed()) &&
+            (await tooltip.getText()).replace(/\s+/g, '').includes(expected)
+          )
+        },
+        { timeoutMsg: `タイプ別グラフで${expected}を確認できませんでした` },
+      )
+    }
     const history = '[data-testid="asset-history-chart"]'
     await browser.$(`${history} svg[role="application"]`).scrollIntoView()
     await browser.$(`${history} svg[role="application"]`).click()
-    for (let i = 0; i < 8; i++) await browser.keys('ArrowLeft')
+    await browser.$(`${history} [data-slot="card-title"]`).moveTo()
+    const expectHistoryDate = async (offset: number) => {
+      const date = new Date(today - (5 - offset) * 86_400_000)
+        .toISOString()
+        .slice(0, 10)
+      await browser.waitUntil(
+        async () => {
+          const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
+          return (
+            (await tooltip.isDisplayed()) &&
+            (await tooltip.getText()).includes(date)
+          )
+        },
+        { timeoutMsg: `登録履歴で${date}を選択できませんでした` },
+      )
+    }
+    // Mouse hover and keyboard selection have separate state in Recharts 3.
+    // Navigate to a neighbour before returning to the first keyboard entry.
+    await browser.keys('ArrowRight')
+    await expectHistoryDate(1)
+    await browser.keys('ArrowLeft')
+    await expectHistoryDate(0)
     await browser.waitUntil(
       async () => {
         const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
@@ -99,12 +130,20 @@ test(
         return (
           (await tooltip.isDisplayed()) &&
           text.includes(firstDate) &&
-          text.includes('アバター素体1')
+          [
+            'アバター素体1',
+            'アバター関連アセット0',
+            'ワールドアセット0',
+            'その他0',
+          ].every((expected) => text.includes(expected))
         )
       },
       { timeoutMsg: '登録履歴の最初の日を確認できませんでした' },
     )
-    for (let i = 0; i < 8; i++) await browser.keys('ArrowRight')
+    for (let i = 1; i <= 5; i++) {
+      await browser.keys('ArrowRight')
+      await expectHistoryDate(i)
+    }
     await browser.waitUntil(
       async () => {
         const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
@@ -159,6 +198,15 @@ test(
         ),
         (el) => el.getAttribute('name')!,
       ),
+    )
+    await browser.waitUntil(
+      async () => {
+        const text = await browser
+          .$('[data-testid="asset-disk-usage"]')
+          .getText()
+        return assets.every((asset) => text.includes(asset.name))
+      },
+      { timeoutMsg: '容量グラフの棒にアセット名が表示されませんでした' },
     )
     assert.deepEqual(
       plottedNames.toSorted(),

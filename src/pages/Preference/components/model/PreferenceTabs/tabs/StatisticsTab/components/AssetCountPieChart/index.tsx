@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Label, Pie, PieChart } from 'recharts'
+import { Pie, PieChart } from 'recharts'
 
 import {
   Card,
@@ -54,21 +54,21 @@ export const AssetCountPieChart: React.FC<Props> = ({
   } satisfies ChartConfig
 
   const chartData = [
-    { type: 'avatars', count: avatars, fill: 'var(--color-avatar)' },
+    { type: 'avatars', count: avatars, fill: 'var(--color-avatars)' },
     {
       type: 'avatarWearables',
       count: avatarWearables,
-      fill: 'var(--color-avatar-wearable)',
+      fill: 'var(--color-avatarWearables)',
     },
     {
       type: 'worldObjects',
       count: worldObjects,
-      fill: 'var(--color-world-object)',
+      fill: 'var(--color-worldObjects)',
     },
     {
       type: 'otherAssets',
       count: otherAssets,
-      fill: 'var(--color-other-asset)',
+      fill: 'var(--color-otherAssets)',
     },
   ]
 
@@ -92,7 +92,9 @@ export const AssetCountPieChart: React.FC<Props> = ({
           config={chartConfig}
           className="mx-auto aspect-square max-h-[400px]"
         >
-          <PieChart>
+          <PieChart
+            aria-label={t('preference:statistics:asset-count-pie-chart:title')}
+          >
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
@@ -104,39 +106,15 @@ export const AssetCountPieChart: React.FC<Props> = ({
               innerRadius={80}
               strokeWidth={5}
               startAngle={-270}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalAssets.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          {t(
-                            'preference:statistics:asset-count-pie-chart:unit',
-                          )}
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
-              />
-            </Pie>
+            />
+            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
+              <tspan x="50%" className="fill-foreground text-3xl font-bold">
+                {totalAssets.toLocaleString()}
+              </tspan>
+              <tspan x="50%" dy={24} className="fill-muted-foreground">
+                {t('preference:statistics:asset-count-pie-chart:unit')}
+              </tspan>
+            </text>
           </PieChart>
         </ChartContainer>
       </CardContent>
