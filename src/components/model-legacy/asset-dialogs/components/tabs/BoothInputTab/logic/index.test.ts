@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getAndSetAssetInfoFromBoothToForm } from '.'
-import { AssetSummary, BoothAssetInfo } from '@/lib/bindings'
+import { AssetSummary, BoothAssetInfo, commands } from '@/lib/bindings'
 import assert from 'node:assert'
 
 const mockAssetSummary: AssetSummary = {
@@ -135,8 +135,12 @@ describe('BoothInputTab Logic', () => {
     expect(result.status).toBe('error')
   })
 
-  it("fallbacks to 'Avatar' if estimatedAssetType is not provided on getAndSetAssetDescriptionFromBoothToForm function", async () => {
+  it("falls back to 'OtherAsset' if estimatedAssetType is null", async () => {
     const mockSetImageUrls = vi.fn()
+    vi.mocked(commands.getAssetInfoFromBooth).mockResolvedValueOnce({
+      status: 'ok',
+      data: { ...mockBoothAssetInfo, estimatedAssetType: null },
+    })
 
     const result = await getAndSetAssetInfoFromBoothToForm({
       boothItemId: 123,
@@ -146,7 +150,7 @@ describe('BoothInputTab Logic', () => {
     })
 
     expect(mockForm.setValue).toHaveBeenCalledTimes(6)
-    expect(mockForm.setValue.mock.calls[4]).toEqual(['assetType', 'Avatar'])
+    expect(mockForm.setValue.mock.calls[4]).toEqual(['assetType', 'OtherAsset'])
 
     expect(result.status).toBe('ok')
   })
