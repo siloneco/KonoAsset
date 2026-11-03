@@ -97,11 +97,11 @@ export async function startApp(
     try {
       if (hasFailed() && browser) {
         await browser
-          .saveScreenshot(path.join(root, 'failure.png'))
-          .catch(() => {})
-        await browser
           .getPageSource()
           .then((html) => writeFile(path.join(root, 'failure.html'), html))
+          .catch(() => {})
+        await browser
+          .saveScreenshot(path.join(root, 'failure.png'))
           .catch(() => {})
         await browser
           .getUrl()

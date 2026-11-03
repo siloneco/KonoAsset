@@ -1,13 +1,15 @@
-import assert from 'node:assert/strict'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { pickers } from '../fixtures.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, waitForUi } from '../ui.ts'
 
+// Given: A fresh app and an isolated destination folder.
+// When: Choose language, theme, storage, and import behavior, then restart.
+// Then: The chosen settings are saved and restored.
 test(
-  '初回起動で言語・テーマ・保存先・動作を設定して利用を開始し、再起動後も保持する',
+  'Complete first-run setup and restore the chosen settings after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -67,11 +69,17 @@ test(
     )
     const next = await app.restart()
     await openSettings(next)
-    assert.equal(await next.$('#preference-theme').getText(), 'ダーク')
-    assert.equal(
-      await next
-        .$('[role="switch"][aria-label="ZIPファイルを自動で展開する"]')
-        .getAttribute('aria-checked'),
+    await waitForUi(
+      next,
+      async () => await next.$('#preference-theme').getText(),
+      'ダーク',
+    )
+    await waitForUi(
+      next,
+      async () =>
+        await next
+          .$('[role="switch"][aria-label="ZIPファイルを自動で展開する"]')
+          .getAttribute('aria-checked'),
       'false',
     )
   },

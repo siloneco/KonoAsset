@@ -375,6 +375,8 @@
 
     "setup:button:done": "开始使用！",
 
+    "ui:multi-select:remove": "取消选择",
+    "ui:multi-select:clear-all": "清除所有选择",
     "ui:multi-select:create-new": "新建",
     "ui:multi-select:not-selected-tooltip": "具有此属性的资产将不会显示"
   }

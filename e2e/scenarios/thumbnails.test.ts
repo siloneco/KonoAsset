@@ -4,10 +4,13 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
-import { button, card, openSettings } from '../ui.ts'
+import { button, card, openSettings, closeDialog, waitForUi } from '../ui.ts'
 
+// Given: A library with one used image and one unused image.
+// When: Cancel optimization, then optimize the images and restart.
+// Then: Cancellation preserves both files and optimization retains the used thumbnail and removes the unused file.
 test(
-  '使用中画像の最適化と不要画像の削除を行い、再起動後もサムネイルを表示できる',
+  'Cancel thumbnail optimization, then optimize and retain thumbnails after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -51,20 +54,26 @@ test(
       )
     }
     await expectCounts(1, 1)
-    await browser.$(button('キャンセル', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('キャンセル', '//*[@role="dialog"]')).click(),
+    )
     await access(path.join(root, 'assets/images/used.jpg'))
     await access(path.join(root, 'assets/images/unused.jpg'))
     await expectCounts(1, 1)
-    await browser.$(button('開始', '//*[@role="dialog"]')).click()
+    await closeDialog(browser, () =>
+      browser.$(button('開始', '//*[@role="dialog"]')).click(),
+    )
     await browser.$('div=最適化が完了しました！').waitForDisplayed()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
     await expectCounts(0, 0)
-    assert.equal(
-      await browser.$(button('開始', '//*[@role="dialog"]')).isEnabled(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser.$(button('開始', '//*[@role="dialog"]')).isEnabled(),
       false,
     )
-    await browser.$(button('キャンセル', '//*[@role="dialog"]')).click()
+    await closeDialog(browser, () =>
+      browser.$(button('キャンセル', '//*[@role="dialog"]')).click(),
+    )
     await browser.$(button('トップ画面に戻る')).click()
     const imageMetadata = JSON.parse(
       await readFile(path.join(root, 'assets/metadata/avatars.json'), 'utf8'),

@@ -1,12 +1,14 @@
-import assert from 'node:assert/strict'
 import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { pickers } from '../fixtures.ts'
-import { addManually, button } from '../ui.ts'
+import { addManually, button, closeDialog, waitForUi } from '../ui.ts'
 
+// Given: A picker response containing only a nonexistent local file.
+// When: Submit the asset, inspect the warning, return, and cancel.
+// Then: Import cannot continue and the library remains empty.
 test(
-  '追加対象がすべて無いときは続行できず、戻って中止できる',
+  'Prevent importing missing files and allow returning to cancel',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, {
@@ -23,18 +25,22 @@ test(
     await addManually(browser, 'その他', 'Missing import')
     await browser.$(button('アセットを追加', '//*[@role="dialog"]')).click()
     await browser.$('h2*=追加するファイル/フォルダの確認').waitForDisplayed()
-    assert.equal(await browser.$(button('続行する')).isEnabled(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(button('続行する')).isEnabled(),
+      false,
+    )
     await browser.$('[role="dialog"] [data-slot="tooltip-trigger"]').moveTo()
     await browser.$('[role="tooltip"]').waitForDisplayed()
-    assert.equal(
-      await browser.$('[role="tooltip"]').getText(),
+    await waitForUi(
+      browser,
+      async () => await browser.$('[role="tooltip"]').getText(),
       'インポートできるアイテムが無いため、続行できません',
     )
     await browser.$('li*=missing.txt').waitForDisplayed()
     await browser.$(button('戻る', '//*[@role="dialog"]')).click()
     await browser.$('textarea').waitForDisplayed()
-    await browser.keys('Escape')
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () => browser.keys('Escape'))
     await browser.$('p=アセットが1つも登録されていません').waitForDisplayed()
   },
 )

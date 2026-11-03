@@ -4,10 +4,13 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { pickers } from '../fixtures.ts'
-import { addManually, button } from '../ui.ts'
+import { addManually, button, closeDialog, waitForUi } from '../ui.ts'
 
+// Given: A picker response containing one existing and one missing file.
+// When: Inspect the import warning and continue.
+// Then: Only the existing file is imported and displayed in the library.
 test(
-  '一部のファイルが無いときに警告を確認し、存在するファイルだけ取り込める',
+  'Warn about missing files and import only the files that exist',
   { timeout: 90_000 },
   async (t) => {
     const { browser, root } = await startApp(t, {
@@ -30,25 +33,32 @@ test(
     await browser.$('h2*=追加するファイル/フォルダの確認').waitForDisplayed()
     await browser.$('li*=exists.txt').waitForDisplayed()
     await browser.$('li*=missing.txt').waitForDisplayed()
-    assert.equal(
-      await browser
-        .$(
-          '//*[@role="dialog"]//div[normalize-space(.)="インポートされるアイテム (1)"]/following-sibling::ul/li',
-        )
-        .getText(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$(
+            '//*[@role="dialog"]//div[normalize-space(.)="インポートされるアイテム (1)"]/following-sibling::ul/li',
+          )
+          .getText(),
       path.join(root, 'input/exists.txt'),
     )
-    assert.equal(
-      await browser
-        .$(
-          '//*[@role="dialog"]//div[normalize-space(.)="存在しないためスキップされるアイテム (1)"]/following-sibling::ul/li',
-        )
-        .getText(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$(
+            '//*[@role="dialog"]//div[normalize-space(.)="存在しないためスキップされるアイテム (1)"]/following-sibling::ul/li',
+          )
+          .getText(),
       path.join(root, 'input/missing.txt'),
     )
-    assert.equal(await browser.$(button('続行する')).isEnabled(), true)
-    await browser.$(button('続行する')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await waitForUi(
+      browser,
+      async () => await browser.$(button('続行する')).isEnabled(),
+      true,
+    )
+    await closeDialog(browser, () => browser.$(button('続行する')).click())
     await browser.waitUntil(
       async () =>
         (await browser.$('main').getText()).includes('Partial import'),

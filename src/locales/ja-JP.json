@@ -375,6 +375,8 @@
 
     "setup:button:done": "利用をはじめる！",
 
+    "ui:multi-select:remove": "選択を解除",
+    "ui:multi-select:clear-all": "すべての選択を解除",
     "ui:multi-select:create-new": "新しく作成",
     "ui:multi-select:not-selected-tooltip": "これが指定されているアセットは表示されません"
   }

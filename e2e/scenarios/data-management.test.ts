@@ -4,10 +4,19 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library, pickers } from '../fixtures.ts'
-import { assetMenu, button, expectAssets } from '../ui.ts'
+import {
+  assetMenu,
+  button,
+  expectAssets,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: A library and isolated local files prepared for import.
+// When: Add a file and folder, delete the file, and reopen data management.
+// Then: The deleted file stays absent and the other managed data remains.
 test(
-  '管理データにファイルとフォルダを追加し、対象だけ削除して最新一覧を確認できる',
+  'Add managed files and folders and delete only the selected file',
   { timeout: 90_000 },
   async (t) => {
     const { browser, root } = await startApp(t, {
@@ -76,13 +85,18 @@ test(
     await browser
       .$('[role="dialog"] [role="group"][aria-label="extra/"]')
       .waitForDisplayed()
-    await browser.$(button('完了', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('完了', '//*[@role="dialog"]')).click(),
+    )
     await assetMenu(browser, 'Coat', 'データ管理')
     await browser
       .$('[role="dialog"] [role="group"][aria-label="Coat.txt"]')
       .waitForDisplayed()
-    assert.equal(await browser.$(row).isExisting(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(row).isExisting(),
+      false,
+    )
     const data = path.join(root, 'assets/data', assets[2].id)
     await assert.rejects(access(path.join(data, 'additional.txt')), {
       code: 'ENOENT',

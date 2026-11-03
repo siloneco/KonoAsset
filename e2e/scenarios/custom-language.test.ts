@@ -5,8 +5,11 @@ import { startApp } from '../app.ts'
 import { pickers } from '../fixtures.ts'
 import { openSettings } from '../ui.ts'
 
+// Given: A local translation file with one missing and one unused entry.
+// When: Load that file through the language selector.
+// Then: Custom labels, the selected language, and fallback counts are shown.
 test(
-  '独自の言語ファイルを読み込み、翻訳とフォールバック・余分なキーの件数を確認できる',
+  'Load a custom language and report fallback and unused entries',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, {

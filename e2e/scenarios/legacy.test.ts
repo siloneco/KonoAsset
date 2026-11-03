@@ -4,10 +4,20 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { button, expectAssets, manualEdit, openSettings } from '../ui.ts'
+import {
+  button,
+  expectAssets,
+  manualEdit,
+  openSettings,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: A library with legacy preferences and asset metadata.
+// When: Open the library, change the theme, save an asset, and restart.
+// Then: Legacy data remains usable and edited data is saved in the current format.
 test(
-  '旧形式の設定と全タイプのアセットを読み込み、編集して現行形式で保存できる',
+  'Load legacy settings and assets and save them in the current format',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -33,7 +43,11 @@ test(
       assets.map((a) => a.name),
     )
     await openSettings(app.browser)
-    assert.equal(await app.browser.$('#preference-theme').getText(), 'ダーク')
+    await waitForUi(
+      app.browser,
+      async () => await app.browser.$('#preference-theme').getText(),
+      'ダーク',
+    )
     await app.browser.$('#preference-theme').click()
     await app.browser
       .$('//*[@role="option" and normalize-space(.)="ライト"]')
@@ -45,9 +59,14 @@ test(
     await app.browser.$(button('トップ画面に戻る')).click()
     await manualEdit(app.browser, 'Coat')
     await app.browser.$(button('次へ', '//*[@role="dialog"]')).click()
-    assert.equal(await app.browser.$('textarea').getValue(), 'Coat のメモ')
-    await app.browser.$(button('アセットを更新', '//*[@role="dialog"]')).click()
-    await app.browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await waitForUi(
+      app.browser,
+      async () => await app.browser.$('textarea').getValue(),
+      'Coat のメモ',
+    )
+    await closeDialog(app.browser, () =>
+      app.browser.$(button('アセットを更新', '//*[@role="dialog"]')).click(),
+    )
     const updated = JSON.parse(
       await readFile(
         path.join(app.root, 'assets/metadata/avatarWearables.json'),

@@ -2,8 +2,11 @@ import test from 'node:test'
 import { startApp } from '../app.ts'
 import { openSettings } from '../ui.ts'
 
+// Given: An app with the bundled language options.
+// When: Select each language, return to Japanese, and restart.
+// Then: Labels follow the selection and the saved Japanese language is restored.
 test(
-  '4言語を切り替えて表示を確認し、日本語の選択を再起動後も保持する',
+  'Switch bundled languages and restore the selected language after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t)

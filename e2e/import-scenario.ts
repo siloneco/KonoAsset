@@ -5,7 +5,15 @@ import type { TestContext } from 'node:test'
 import { startApp } from './app.ts'
 import { pickers } from './fixtures.ts'
 import { zip } from './archive.ts'
-import { addManually, button, openSettings, submitAsset } from './ui.ts'
+import {
+  addManually,
+  button,
+  openSettings,
+  submitAsset,
+  closeDialog,
+  waitForUi,
+  setPreferenceSwitch,
+} from './ui.ts'
 
 export async function importScenario(
   t: TestContext,
@@ -60,34 +68,35 @@ export async function importScenario(
     await browser
       .$(button('ファイルを選択する', '//*[@role="dialog"]'))
       .waitForDisplayed()
-    await browser.$(button('キャンセル', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('キャンセル', '//*[@role="dialog"]')).click(),
+    )
     await browser.$('p=アセットが1つも登録されていません').waitForDisplayed()
   }
   if (config.mode === 'archive') {
     await openSettings(browser)
-    await browser
-      .$('[role="switch"][aria-label="ZIPファイルを自動で展開する"]')
-      .click()
-    await browser
-      .$(
-        '[role="switch"][aria-label="インポート後に元ファイル/フォルダを削除する"]',
-      )
-      .click()
-    await browser.waitUntil(
-      async () =>
-        (await app.readPreference()).deleteOnImport &&
-        !(await app.readPreference()).zipExtraction,
-      { timeoutMsg: 'ZIP保持と元データ削除の設定が保存されませんでした' },
+    await setPreferenceSwitch(
+      app,
+      'ZIPファイルを自動で展開する',
+      'zipExtraction',
+      false,
+    )
+    await setPreferenceSwitch(
+      app,
+      'インポート後に元ファイル/フォルダを削除する',
+      'deleteOnImport',
+      true,
     )
     await browser.$(button('トップ画面に戻る')).click()
   }
   await addManually(browser, config.type, name, config.mode === 'folder')
   if (config.mode === 'archive') {
-    assert.equal(
-      await browser
-        .$('[role="dialog"] [role="checkbox"]')
-        .getAttribute('aria-checked'),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('[role="dialog"] [role="checkbox"]')
+          .getAttribute('aria-checked'),
       'true',
     )
   }

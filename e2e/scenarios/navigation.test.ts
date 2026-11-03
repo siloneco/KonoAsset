@@ -1,11 +1,13 @@
-import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { startApp } from '../app.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, waitForUi } from '../ui.ts'
 
+// Given: An app with no registered assets.
+// When: Visit settings pages and inspect the About page without following external links.
+// Then: The expected controls, version, and links are shown and the home page is reachable.
 test(
-  '設定の各ページを開いてバージョンと関連リンクを確認し、トップに戻れる',
+  'Navigate the settings pages and return to the library',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t)
@@ -38,8 +40,9 @@ test(
       'https://x.com/Jan_kumaVRC',
       'https://x.com/pukorufu',
     ]) {
-      assert.equal(
-        await browser.$(`a[href="${href}"]`).getAttribute('target'),
+      await waitForUi(
+        browser,
+        async () => await browser.$(`a[href="${href}"]`).getAttribute('target'),
         '_blank',
       )
     }
@@ -47,6 +50,10 @@ test(
     await browser.$('#preference-theme').waitForDisplayed()
     await browser.$(button('トップ画面に戻る')).click()
     await browser.$('p=アセットが1つも登録されていません').waitForDisplayed()
-    assert.equal(new URL(await browser.getUrl()).pathname, '/')
+    await waitForUi(
+      browser,
+      async () => new URL(await browser.getUrl()).pathname,
+      '/',
+    )
   },
 )

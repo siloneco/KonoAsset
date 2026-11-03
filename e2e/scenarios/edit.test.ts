@@ -12,10 +12,15 @@ import {
   manualEdit,
   removeDependency,
   replaceInput,
+  closeDialog,
+  waitForUi,
 } from '../ui.ts'
 
+// Given: A library containing editable assets with different original values.
+// When: Edit and save one asset, discard changes to another, and restart.
+// Then: Saved values persist and discarded changes do not leak between forms.
 test(
-  'Edit asset information, tags, avatars, memo and dependencies, then verify after reopening and restarting',
+  'Edit asset details, discard unrelated changes, and restore saved values after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, { initialData: library })
@@ -25,16 +30,20 @@ test(
       assets.map((a) => a.name),
     )
     await manualEdit(browser, 'Coat')
-    assert.equal(
-      await browser
-        .$('input[placeholder="アセットの名前を入力..."]')
-        .getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('input[placeholder="アセットの名前を入力..."]')
+          .getValue(),
       'Coat',
     )
-    assert.equal(
-      await browser
-        .$('input[placeholder="ショップの名前を入力..."]')
-        .getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('input[placeholder="ショップの名前を入力..."]')
+          .getValue(),
       'Maple-B',
     )
     await replaceInput(
@@ -68,7 +77,9 @@ test(
       .$('[role="dialog"] [role="option"][data-value="Birch"]')
       .click()
     await browser
-      .$('//*[@role="dialog"]//*[@data-badge][span="Birch"]//button')
+      .$(
+        '//*[@role="dialog"]//label[normalize-space(.)="対応アバター"]/following-sibling::*//button[@aria-label="選択を解除: Birch"]',
+      )
       .click()
     await browser.$(avatarInput).setValue('Birch')
     await browser
@@ -79,31 +90,40 @@ test(
     await addDependency(browser, 'Aster')
     await removeDependency(browser, 'Aster')
     await addDependency(browser, 'Desk')
-    await browser.$(button('アセットを更新', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('アセットを更新', '//*[@role="dialog"]')).click(),
+    )
     await browser.waitUntil(
       async () => (await browser.$(card('Coat')).getText()).includes('Coat 改'),
       { timeoutMsg: '変更した名前が一覧に表示されませんでした' },
     )
     await manualEdit(browser, 'Coat')
-    assert.equal(
-      await browser
-        .$('input[placeholder="アセットの名前を入力..."]')
-        .getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('input[placeholder="アセットの名前を入力..."]')
+          .getValue(),
       'Coat 改',
     )
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
-    assert.equal(await browser.$('textarea').getValue(), '編集したメモ\n2行目')
+    await waitForUi(
+      browser,
+      async () => await browser.$('textarea').getValue(),
+      '編集したメモ\n2行目',
+    )
     await browser
       .$(`[role="dialog"] ${card('Desk')} button[aria-label="削除"]`)
       .waitForDisplayed()
-    await browser.keys('Escape')
+    await closeDialog(browser, () => browser.keys('Escape'))
     // Opening a different asset must not reuse the edited form's values.
     await manualEdit(browser, 'Blouse')
-    assert.equal(
-      await browser
-        .$('input[placeholder="アセットの名前を入力..."]')
-        .getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('input[placeholder="アセットの名前を入力..."]')
+          .getValue(),
       'Blouse',
     )
     await replaceInput(
@@ -111,16 +131,17 @@ test(
       'input[placeholder="アセットの名前を入力..."]',
       '保存しない変更',
     )
-    await browser.keys('Escape')
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () => browser.keys('Escape'))
     await manualEdit(browser, 'Blouse')
-    assert.equal(
-      await browser
-        .$('input[placeholder="アセットの名前を入力..."]')
-        .getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser
+          .$('input[placeholder="アセットの名前を入力..."]')
+          .getValue(),
       'Blouse',
     )
-    await browser.keys('Escape')
+    await closeDialog(browser, () => browser.keys('Escape'))
     const saved = JSON.parse(
       await readFile(
         path.join(root, 'assets/metadata/avatarWearables.json'),
@@ -136,8 +157,10 @@ test(
     assert.deepEqual(saved.description.dependencies, [assets[3].id])
     const next = await app.restart()
     await manualEdit(next, 'Coat')
-    assert.equal(
-      await next.$('input[placeholder="アセットの名前を入力..."]').getValue(),
+    await waitForUi(
+      next,
+      async () =>
+        await next.$('input[placeholder="アセットの名前を入力..."]').getValue(),
       'Coat 改',
     )
   },

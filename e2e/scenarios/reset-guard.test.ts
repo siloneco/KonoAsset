@@ -4,18 +4,29 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { button, expectAssets, openSettings } from '../ui.ts'
+import {
+  button,
+  expectAssets,
+  openSettings,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: A library containing registered assets and files.
+// When: Select reset targets, confirm, change the selection, and cancel.
+// Then: Confirmation is cleared and cancellation leaves the library intact.
 test(
-  '初期化の削除対象を選び直すと確認が解除され、キャンセルでデータを保持する',
+  'Reset deletion confirmation when the selection changes and preserve data on cancellation',
   { timeout: 90_000 },
   async (t) => {
     const { browser, root } = await startApp(t, { initialData: library })
     await openSettings(browser)
     await browser.$(button('初期化する')).click()
     await browser.$('[role="alertdialog"]').waitForDisplayed()
-    assert.equal(
-      (await browser.$$('[role="alertdialog"] [role="checkbox"]')).length,
+    await waitForUi(
+      browser,
+      async () =>
+        (await browser.$$('[role="alertdialog"] [role="checkbox"]')).length,
       4,
     )
     const confirm =
@@ -23,7 +34,11 @@ test(
     const metadata =
       '//*[@role="alertdialog"]//div[span[contains(.,"アセット情報")]]/preceding-sibling::*[@role="checkbox"]'
     const remove = button('削除する', '//*[@role="alertdialog"]')
-    assert.equal(await browser.$(remove).isEnabled(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(remove).isEnabled(),
+      false,
+    )
     await browser.$(metadata).click()
     await browser.$(confirm).click()
     await browser.$(remove).waitForEnabled()
@@ -34,8 +49,11 @@ test(
         !(await browser.$(remove).isEnabled()),
       { timeoutMsg: '削除対象の変更で確認が解除されませんでした' },
     )
-    await browser.$(button('キャンセル', '//*[@role="alertdialog"]')).click()
-    await browser.$('[role="alertdialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(
+      browser,
+      () => browser.$(button('キャンセル', '//*[@role="alertdialog"]')).click(),
+      '[role="alertdialog"]',
+    )
     await browser.$(button('トップ画面に戻る')).click()
     await expectAssets(
       browser,

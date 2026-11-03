@@ -4,10 +4,13 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library, pickers } from '../fixtures.ts'
-import { button, card, expectAssets, manualEdit } from '../ui.ts'
+import { button, card, expectAssets, manualEdit, closeDialog } from '../ui.ts'
 
+// Given: A library and a local image selected by the file picker.
+// When: Choose a new thumbnail, save the asset, and restart.
+// Then: The chosen thumbnail is displayed before and after restart.
 test(
-  '画像を選んでサムネイルを変更し、保存後と再起動後の一覧で表示できる',
+  'Change an asset thumbnail and retain it after restarting the app',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -32,7 +35,7 @@ test(
       assets.map((a) => a.name),
     )
     await manualEdit(browser, 'Coat')
-    await browser.$('[data-testid="square-image-path-selector"]').click()
+    await browser.$('[role="dialog"] button[aria-label="選択: 画像"]').click()
     await browser.waitUntil(
       async () =>
         browser.execute(() => {
@@ -44,8 +47,9 @@ test(
       { timeoutMsg: '選択画像が編集画面に表示されませんでした' },
     )
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
-    await browser.$(button('アセットを更新', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('アセットを更新', '//*[@role="dialog"]')).click(),
+    )
     const saved = JSON.parse(
       await readFile(
         path.join(root, 'assets/metadata/avatarWearables.json'),

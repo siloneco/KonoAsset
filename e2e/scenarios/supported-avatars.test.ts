@@ -3,8 +3,11 @@ import { startApp } from '../app.ts'
 import { libraryWithUnlabeledWearable } from '../fixtures.ts'
 import { chooseFilter, clearFilters, expectAssets } from '../ui.ts'
 
+// Given: A library containing wearables with overlapping and missing supported avatars.
+// When: Combine avatar filters, change matching mode, and clear the filters.
+// Then: Only matching wearables are displayed.
 test(
-  '対応アバターをOR・AND・除外・未指定で絞り込める',
+  'Filter wearables by included, combined, excluded, and missing avatars',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, {

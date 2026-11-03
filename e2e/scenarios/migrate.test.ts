@@ -4,10 +4,19 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library, pickers } from '../fixtures.ts'
-import { button, expectAssets, openSettings } from '../ui.ts'
+import {
+  button,
+  expectAssets,
+  openSettings,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: A library and an empty destination folder.
+// When: Cancel changing the location, then migrate and restart.
+// Then: Cancellation preserves the original location and migration preserves the assets.
 test(
-  '保存先変更を中止でき、データを移行した後も再起動してアセットを利用できる',
+  'Cancel changing the data location, then migrate and retain the library after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -28,16 +37,19 @@ test(
     await openSettings(browser)
     await browser.$(button('変更する')).click()
     await browser.$('[role="dialog"] input[value$="assets"]').waitForDisplayed()
-    assert.equal(
-      await browser.$('[role="dialog"] input[value$="assets"]').getValue(),
+    await waitForUi(
+      browser,
+      async () =>
+        await browser.$('[role="dialog"] input[value$="assets"]').getValue(),
       path.join(root, 'assets'),
     )
     await browser.$('[role="dialog"] [role="checkbox"]').click()
     await browser
       .$('p=十分に理解している場合のみ行ってください')
       .waitForDisplayed()
-    await browser.$(button('キャンセル', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('キャンセル', '//*[@role="dialog"]')).click(),
+    )
     assert.equal(
       (await app.readPreference()).dataDirPath,
       path.join(root, 'assets'),
@@ -45,8 +57,9 @@ test(
     await browser.$(button('変更する')).click()
     await browser.$(button('選択', '//*[@role="dialog"]')).click()
     await browser.$(button('移行', '//*[@role="dialog"]')).waitForEnabled()
-    await browser.$(button('移行', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('移行', '//*[@role="dialog"]')).click(),
+    )
     await browser.waitUntil(
       async () =>
         (await app.readPreference()).dataDirPath === path.join(root, 'moved'),

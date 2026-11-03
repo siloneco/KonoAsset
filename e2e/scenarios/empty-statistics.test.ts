@@ -1,9 +1,12 @@
 import test from 'node:test'
 import { startApp } from '../app.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, closeDialog } from '../ui.ts'
 
+// Given: An empty library.
+// When: Open statistics, return home, and cancel adding an asset.
+// Then: Statistics show zero and the library remains empty.
 test(
-  'アセット未登録でも統計を確認して追加画面へ進める',
+  'View empty statistics and return to adding the first asset',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t)
@@ -45,8 +48,9 @@ test(
     await browser.$(button('トップ画面に戻る')).click()
     await browser.$(button('アセットを追加する')).click()
     await browser.$(button('ファイルを選択する')).waitForDisplayed()
-    await browser.$(button('キャンセル', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('キャンセル', '//*[@role="dialog"]')).click(),
+    )
     await browser.$('p=アセットが1つも登録されていません').waitForDisplayed()
   },
 )

@@ -375,6 +375,8 @@
 
     "setup:button:done": "Get Started!",
 
+    "ui:multi-select:remove": "Remove selection",
+    "ui:multi-select:clear-all": "Clear all selections",
     "ui:multi-select:create-new": "Create new",
     "ui:multi-select:not-selected-tooltip": "Assets with this attribute will not be displayed"
   }

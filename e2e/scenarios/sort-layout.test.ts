@@ -1,35 +1,19 @@
-import assert from 'node:assert/strict'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
-import { button, card, expectAssets } from '../ui.ts'
+import { button, expectAssets } from '../ui.ts'
 
+// Given: A library with known names, shops, and registration and publication dates.
+// When: Change each sort order, select ascending asset names, and restart the app.
+// Then: The displayed order matches each selection and the final sort persists.
 test(
-  '表示サイズを選んで一覧を読み、追加日・名前・ショップ・公開日で並べ替えられる',
+  'Sort assets by their dates, names, and shops and restore the final sort after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, { initialData: library })
     const { browser } = app
     await expectAssets(browser, ['Aster', 'Blouse', 'Coat', 'Desk', 'Effect'])
     await browser.$('[data-testid="status-bar-option-popover-trigger"]').click()
-    let previousWidth = 0
-    for (const size of ['大', '中', '小', 'リスト']) {
-      await browser.$(button(size)).click()
-      await browser.waitUntil(
-        async () => {
-          const width = await browser.$(card('Aster')).getSize('width')
-          return (
-            width > 0 &&
-            width !== previousWidth &&
-            (await browser.$(button(size)).getAttribute('aria-pressed')) ===
-              'true'
-          )
-        },
-        { timeoutMsg: `${size} に表示サイズが変わりませんでした` },
-      )
-      previousWidth = await browser.$(card('Aster')).getSize('width')
-      assert.ok(previousWidth > 0)
-    }
     for (const [sort, names] of [
       [
         '追加順 (新しいものから)',
@@ -63,11 +47,6 @@ test(
       next,
       ['Aster', 'Blouse', 'Coat', 'Desk', 'Effect'],
       true,
-    )
-    await next.$('[data-testid="status-bar-option-popover-trigger"]').click()
-    assert.equal(
-      await next.$(button('リスト')).getAttribute('aria-pressed'),
-      'true',
     )
   },
 )

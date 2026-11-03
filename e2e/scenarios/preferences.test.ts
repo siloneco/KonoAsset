@@ -1,9 +1,12 @@
 import test from 'node:test'
 import { startApp } from '../app.ts'
-import { openSettings } from '../ui.ts'
+import { openSettings, setPreferenceSwitch } from '../ui.ts'
 
+// Given: An app with known initial file operation preferences.
+// When: Change each file operation switch and restart.
+// Then: Each displayed and persisted switch value matches the selection.
 test(
-  'ファイル操作の設定を変更して保存し、再起動後に復元できる',
+  'Save file operation preferences and restore them after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t)
@@ -15,15 +18,7 @@ test(
       ['ゴミ箱を使用する', 'useTrashBin', false],
     ] as const
     for (const [label, key, value] of switches) {
-      await app.browser.$(`[role="switch"][aria-label="${label}"]`).click()
-      await app.browser.waitUntil(
-        async () =>
-          (await app.browser
-            .$(`[role="switch"][aria-label="${label}"]`)
-            .getAttribute('aria-checked')) === String(value) &&
-          (await app.readPreference())[key] === value,
-        { timeoutMsg: `${label} が保存されませんでした` },
-      )
+      await setPreferenceSwitch(app, label, key, value)
     }
     const browser = await app.restart()
     await openSettings(browser)

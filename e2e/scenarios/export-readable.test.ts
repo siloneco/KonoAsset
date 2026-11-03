@@ -5,10 +5,13 @@ import test from 'node:test'
 import { startApp } from '../app.ts'
 import { library, pickers } from '../fixtures.ts'
 import { unzip } from '../archive.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, waitForUi } from '../ui.ts'
 
+// Given: A library and a local export destination.
+// When: Cancel choosing a destination, then choose one and export.
+// Then: Export is disabled without a destination and the archive contains the expected files.
 test(
-  'エクスプローラー用ZIPをタイプ・カテゴリ・名前の階層で書き出せる',
+  'Export a readable archive organized by asset type, category, and name',
   { timeout: 90_000 },
   async (t) => {
     const { browser, root } = await startApp(t, {
@@ -23,7 +26,11 @@ test(
     await openSettings(browser, 'データの移行')
     await browser.$('div=エクスプローラー等で表示するため').click()
     await browser.$(button('選択')).click()
-    assert.equal(await browser.$(button('出力する')).isEnabled(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(button('出力する')).isEnabled(),
+      false,
+    )
     await browser.$(button('選択')).click()
     await browser.$(button('出力する')).waitForEnabled()
     await browser.$(button('出力する')).click()

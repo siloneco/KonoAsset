@@ -3,8 +3,11 @@ import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
 import { card, clearFilters, expectAssets } from '../ui.ts'
 
+// Given: A library containing every supported asset type and several shops.
+// When: Choose types, filter from card details, and clear the filters.
+// Then: The list shows the expected matching assets.
 test(
-  'タイプとカードのショップ・タイプから目的のアセットを絞り込める',
+  'Filter assets using their type and the shop and type shown on their cards',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, { initialData: library })

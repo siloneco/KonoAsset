@@ -608,6 +608,8 @@ const MultipleSelector = ({
                     {isNot && negativeSelectable && <Ban className="h-3 w-3" />}
                     <span className="truncate">{displayValue}</span>
                     <button
+                      type="button"
+                      aria-label={`${t('ui:multi-select:remove')}: ${displayValue}`}
                       className={cn(
                         'ml-1 rounded-full outline-hidden ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
                         disabled && 'hidden',
@@ -749,6 +751,7 @@ const MultipleSelector = ({
           </ScrollArea>
           <button
             type="button"
+            aria-label={t('ui:multi-select:clear-all')}
             onClick={() => {
               setSelected([])
               onChange?.([])

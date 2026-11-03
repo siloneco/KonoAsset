@@ -2,9 +2,13 @@ import assert from 'node:assert/strict'
 import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
+import { waitForUi } from '../ui.ts'
 
+// Given: A fresh app without an existing preference file.
+// When: Complete setup without changing the defaults and restart.
+// Then: Default preferences are saved and the library opens directly on restart.
 test(
-  '初回設定を変更せずに完了しても設定ファイルが作られ、次回は通常起動する',
+  'Complete first-run setup with defaults and skip setup after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, { setup: true })
@@ -46,6 +50,10 @@ test(
     assert.equal(saved.deleteOnImport, false)
     const restarted = await app.restart()
     await restarted.$('main').waitForDisplayed()
-    assert.equal(new URL(await restarted.getUrl()).pathname, '/')
+    await waitForUi(
+      restarted,
+      async () => new URL(await restarted.getUrl()).pathname,
+      '/',
+    )
   },
 )

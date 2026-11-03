@@ -1,12 +1,14 @@
-import assert from 'node:assert/strict'
 import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { library, pickers } from '../fixtures.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, waitForUi } from '../ui.ts'
 
+// Given: The current library and a separate valid library.
+// When: Try importing the current store, refresh logs, then import the separate store.
+// Then: The error is visible in the refreshed logs and the retry adds the imported assets.
 test(
-  '誤った移行元のエラーをログ更新で確認し、正しいフォルダから取り込み直せる',
+  'Inspect a failed import in the logs and recover by importing a valid library',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, {
@@ -33,11 +35,15 @@ test(
     await browser.$(button('フォルダからインポート')).click()
     await browser.$('div=インポートに失敗しました').waitForDisplayed()
     await browser.$(button('ログの確認')).click()
+    await browser.$('p*=logging to file').waitForExist()
     const error = 'p*=Cannot import assets from the same data store'
-    assert.equal(await browser.$(error).isExisting(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(error).isExisting(),
+      false,
+    )
     await browser.$('button[aria-label="更新"]').click()
     await browser.$(error).waitForDisplayed()
-    await browser.$('p*=logging to file').waitForExist()
     await browser.$(button('データの移行')).click()
     await browser.$(button('フォルダからインポート')).click()
     await browser.$('div=インポートが完了しました！').waitForDisplayed()

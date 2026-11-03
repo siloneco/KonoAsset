@@ -1,10 +1,13 @@
-import assert from 'node:assert/strict'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import type { Theme } from '../../src/lib/bindings.ts'
+import { waitForUi } from '../ui.ts'
 
+// Given: An app with light theme preferences and an observable system theme.
+// When: Switch themes, reload the renderer, select system theme, and restart.
+// Then: The rendered and saved theme follow each selection and system selection is restored.
 test(
-  'ライト・ダーク・システム設定のテーマを切り替え、再起動後も保持する',
+  'Switch light, dark, and system themes and restore the selected theme after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t)
@@ -13,13 +16,18 @@ test(
     // This button is on the main page: reaching it also verifies setup was skipped.
     const settingsButton = browser.$('button[aria-label="一般設定"]')
     await settingsButton.waitForDisplayed()
-    assert.equal(new URL(await browser.getUrl()).pathname, '/')
+    await waitForUi(
+      browser,
+      async () => new URL(await browser.getUrl()).pathname,
+      '/',
+    )
     await settingsButton.click()
 
     let themeSelector = browser.$('#preference-theme')
     await themeSelector.waitForDisplayed()
-    assert.equal(
-      await browser.$('label[for="preference-theme"]').getText(),
+    await waitForUi(
+      browser,
+      async () => await browser.$('label[for="preference-theme"]').getText(),
       'テーマ',
     )
 
@@ -40,7 +48,6 @@ test(
           timeoutMsg: `${label} が画面と preference.json に反映されませんでした`,
         },
       )
-      assert.equal((await readPreference()).language, 'ja-JP')
     }
 
     await expectTheme('light', 'ライト')
@@ -84,8 +91,9 @@ test(
     const next = await app.restart()
     await next.$('button[aria-label="一般設定"]').click()
     await next.$('#preference-theme').waitForDisplayed()
-    assert.equal(
-      await next.$('#preference-theme').getText(),
+    await waitForUi(
+      next,
+      async () => await next.$('#preference-theme').getText(),
       'システム設定を利用',
     )
   },

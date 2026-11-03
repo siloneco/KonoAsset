@@ -5,10 +5,13 @@ import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library, pickers } from '../fixtures.ts'
 import { unzip } from '../archive.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, waitForUi } from '../ui.ts'
 
+// Given: A library whose IDs already exist in the target data store.
+// When: Export a backup and import it into the same library.
+// Then: Both copies remain usable with distinct IDs and intact data.
 test(
-  'KonoAsset形式で書き出して再インポートし、ID重複があってもデータを保持できる',
+  'Export and reimport a library while preserving assets with duplicate IDs',
   { timeout: 90_000 },
   async (t) => {
     const { browser, root } = await startApp(t, {
@@ -23,7 +26,11 @@ test(
     })
     await openSettings(browser, 'データの移行')
     await browser.$('div=他デバイスのKonoAssetへ移行するため').click()
-    assert.equal(await browser.$(button('出力する')).isEnabled(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(button('出力する')).isEnabled(),
+      false,
+    )
     await browser.$(button('選択')).click()
     await browser.$(button('出力する')).waitForEnabled()
     await browser.$(button('出力する')).click()

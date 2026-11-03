@@ -4,10 +4,13 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library, pickers } from '../fixtures.ts'
-import { button, openSettings } from '../ui.ts'
+import { button, openSettings, closeDialog } from '../ui.ts'
 
+// Given: A library, an occupied destination, and a separate empty destination.
+// When: Try migrating to the occupied folder, then switch to the empty folder without moving data.
+// Then: The error is reported, existing files remain intact, and the new location persists after restart.
 test(
-  '保存先移行の失敗後にやり直し、移行せず空の保存先へ切り替えて元データを残せる',
+  'Recover from a failed data migration without overwriting existing files',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -50,8 +53,9 @@ test(
     await browser
       .$('p=十分に理解している場合のみ行ってください')
       .waitForDisplayed()
-    await browser.$(button('変更', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('変更', '//*[@role="dialog"]')).click(),
+    )
     await browser.waitUntil(
       async () =>
         (await app.readPreference()).dataDirPath === path.join(root, 'empty'),

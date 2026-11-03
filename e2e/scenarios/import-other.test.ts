@@ -1,8 +1,11 @@
 import test from 'node:test'
 import { importScenario } from '../import-scenario.ts'
 
+// Given: An empty library and an isolated ZIP archive.
+// When: Disable extraction, enable source deletion, and import the ZIP.
+// Then: The ZIP remains archived inside the asset and its original file is removed.
 test(
-  '設定と追加画面の削除指定を同期し、ZIPを展開せず登録して元ZIPを削除する',
+  'Import an unextracted ZIP and delete the source using the saved import preferences',
   { timeout: 90_000 },
   async (t) => {
     await importScenario(t, {

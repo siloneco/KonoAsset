@@ -4,10 +4,20 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { button, card, expectAssets, openSettings } from '../ui.ts'
+import {
+  button,
+  card,
+  expectAssets,
+  openSettings,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: An asset containing Unitypackages in both its root and a nested folder.
+// When: Open and close the package selector, change its preference, and restart.
+// Then: The package list is correct, the new preference persists, and the files remain intact.
 test(
-  '複数のUnitypackageを一覧で確認して閉じ、次回の開き方の設定を保存できる',
+  'Inspect multiple Unitypackages and save how the asset should open next time',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -29,8 +39,9 @@ test(
     await browser.$('p=one.unitypackage').waitForDisplayed()
     await browser.$('p=two.unitypackage').waitForDisplayed()
     await browser.$('span=nested/').waitForDisplayed()
-    await browser.$(button('閉じる', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('閉じる', '//*[@role="dialog"]')).click(),
+    )
     await browser.$(card('Coat')).$('button=開く').click()
     await browser.$('h2=どのファイルを利用しますか？').waitForDisplayed()
     await browser.$('[role="dialog"] [role="checkbox"]').click()
@@ -38,14 +49,17 @@ test(
       async () => !(await app.readPreference()).useUnitypackageSelectedOpen,
       { timeoutMsg: '次回は管理フォルダを開く設定が保存されませんでした' },
     )
-    await browser.$(button('閉じる', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('閉じる', '//*[@role="dialog"]')).click(),
+    )
     const next = await app.restart()
     await openSettings(next)
-    assert.equal(
-      await next
-        .$('[role="switch"][aria-label="Unitypackageを優先して開く"]')
-        .getAttribute('aria-checked'),
+    await waitForUi(
+      next,
+      async () =>
+        await next
+          .$('[role="switch"][aria-label="Unitypackageを優先して開く"]')
+          .getAttribute('aria-checked'),
       'false',
     )
     assert.equal(

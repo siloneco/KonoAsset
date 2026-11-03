@@ -1,7 +1,62 @@
 import type { startApp } from './app.ts'
+import { isDeepStrictEqual } from 'node:util'
 import { assets } from './fixtures.ts'
 
 export type Browser = Awaited<ReturnType<typeof startApp>>['browser']
+
+// Re-run the query on each poll instead of keeping a potentially stale element.
+export async function waitForUi<T>(
+  browser: Browser,
+  read: () => Promise<T>,
+  expected: T,
+  timeoutMsg = `UI did not reach the expected state: ${JSON.stringify(expected)}`,
+) {
+  await browser.waitUntil(
+    async () => isDeepStrictEqual(await read(), expected),
+    {
+      timeoutMsg,
+    },
+  )
+}
+
+export async function closeDialog(
+  browser: Browser,
+  action: () => Promise<unknown>,
+  selector = '[role="dialog"]',
+) {
+  await browser.$(selector).waitForDisplayed()
+  await action()
+  await browser.$(selector).waitForDisplayed({ reverse: true })
+}
+
+export async function setPreferenceSwitch(
+  app: Awaited<ReturnType<typeof startApp>>,
+  label: string,
+  key:
+    | 'deleteOnImport'
+    | 'zipExtraction'
+    | 'useTrashBin'
+    | 'useUnitypackageSelectedOpen',
+  value: boolean,
+) {
+  const selector = `[role="switch"][aria-label="${label}"]`
+  await app.browser.$(selector).waitForDisplayed()
+  if (
+    (await app.browser.$(selector).getAttribute('aria-checked')) !==
+    String(value)
+  )
+    await app.browser.$(selector).click()
+  await waitForUi(
+    app.browser,
+    async () => [
+      await app.browser.$(selector).getAttribute('aria-checked'),
+      (await app.readPreference())[key],
+    ],
+    [String(value), value],
+    `${label} was not applied and saved`,
+  )
+}
+
 export const button = (name: string, scope = '') =>
   `${scope}//button[normalize-space(.)="${name}"]`
 export const card = (name: string) =>
@@ -80,6 +135,7 @@ export async function assetMenu(
   action: string,
 ) {
   await browser.$(`${card(name)} button[aria-label="アセットの操作"]`).click()
+  await browser.$('[role="menu"]').waitForDisplayed()
   await browser
     .$(`//*[@role="menuitem" and normalize-space(.)="${action}"]`)
     .click()
@@ -87,6 +143,7 @@ export async function assetMenu(
 
 export async function manualEdit(browser: Browser, name: string) {
   await assetMenu(browser, name, '情報を編集')
+  await browser.$('[role="dialog"]').waitForDisplayed()
   await browser.$(button('スキップする', '//*[@role="dialog"]')).click()
   await browser.$(button('次へ', '//*[@role="dialog"]')).click()
   await browser
@@ -122,6 +179,7 @@ export async function addManually(
   directory = false,
 ) {
   await browser.$('button[aria-label="アセットを追加"]').click()
+  await browser.$('[role="dialog"]').waitForDisplayed()
   await browser
     .$(
       button(
@@ -142,8 +200,9 @@ export async function addManually(
 }
 
 export async function submitAsset(browser: Browser, name: string) {
-  await browser.$(button('アセットを追加', '//*[@role="dialog"]')).click()
-  await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+  await closeDialog(browser, () =>
+    browser.$(button('アセットを追加', '//*[@role="dialog"]')).click(),
+  )
   await browser.$(`main [data-asset-id]`).waitForDisplayed()
   await browser.waitUntil(
     async () => (await browser.$('main').getText()).includes(name),

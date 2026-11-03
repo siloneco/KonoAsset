@@ -4,10 +4,21 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { assetMenu, button, card, expectAssets, manualEdit } from '../ui.ts'
+import {
+  assetMenu,
+  button,
+  card,
+  expectAssets,
+  manualEdit,
+  closeDialog,
+  waitForUi,
+} from '../ui.ts'
 
+// Given: A library where another asset depends on the deletion target.
+// When: Cancel deletion, confirm deletion, and restart the app.
+// Then: Cancellation preserves data and confirmed deletion removes only the target and its references.
 test(
-  '削除を取り消して保持し、再確認後は対象だけを削除できる',
+  'Cancel asset deletion, then delete it and retain the remaining library after restart',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, {
@@ -29,8 +40,12 @@ test(
     )
     await assetMenu(browser, 'Coat', '削除')
     await browser.$('[role="alertdialog"]').waitForDisplayed()
-    await browser.$(button('キャンセル', '//*[@role="alertdialog"]')).click()
-    await browser.$('[role="alertdialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(
+      browser,
+      () => browser.$(button('キャンセル', '//*[@role="alertdialog"]')).click(),
+      '[role="alertdialog"]',
+    )
+    await browser.$('[role="menu"]').waitForDisplayed()
     await browser.keys('Escape')
     await browser.$('[role="menu"]').waitForExist({ reverse: true })
     await expectAssets(
@@ -39,17 +54,23 @@ test(
     )
     await access(path.join(root, 'assets/data', assets[2].id, 'Coat.txt'))
     await assetMenu(browser, 'Coat', '削除')
-    await browser.$(button('削除', '//*[@role="alertdialog"]')).click()
-    await browser.$('[role="alertdialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(
+      browser,
+      () => browser.$(button('削除', '//*[@role="alertdialog"]')).click(),
+      '[role="alertdialog"]',
+    )
     await expectAssets(browser, ['Aster', 'Blouse', 'Desk', 'Effect'])
     await manualEdit(browser, 'Blouse')
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
     await browser.$('p=選択されていません').waitForDisplayed()
-    await browser.keys('Escape')
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () => browser.keys('Escape'))
     await browser.$('input[placeholder="キーワードを入力..."]').setValue('Coat')
     await expectAssets(browser, [])
-    assert.equal(await browser.$(card('Coat')).isExisting(), false)
+    await waitForUi(
+      browser,
+      async () => await browser.$(card('Coat')).isExisting(),
+      false,
+    )
     const metadata = JSON.parse(
       await readFile(
         path.join(root, 'assets/metadata/avatarWearables.json'),

@@ -1,13 +1,15 @@
-import assert from 'node:assert/strict'
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { button, card, expectAssets } from '../ui.ts'
+import { button, card, expectAssets, closeDialog, waitForUi } from '../ui.ts'
 
+// Given: A library with memos and dependencies, without BOOTH URLs.
+// When: Open memos, dependencies, and the unavailable BOOTH action.
+// Then: The selected details and a useful explanation are displayed.
 test(
-  'アセットごとのメモと前提アセットを確認し、BOOTH未設定時の案内を読める',
+  'Inspect asset memos and dependencies and explain unavailable BOOTH links',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, {
@@ -35,8 +37,9 @@ test(
           ),
         { timeoutMsg: `${name} のメモが表示されませんでした` },
       )
-      await browser.$(button('閉じる', '//*[@role="dialog"]')).click()
-      await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+      await closeDialog(browser, () =>
+        browser.$(button('閉じる', '//*[@role="dialog"]')).click(),
+      )
     }
     await browser.$(`${card('Coat')} button[aria-label="開くメニュー"]`).click()
     await browser
@@ -44,21 +47,28 @@ test(
       .click()
     await browser.$(`[role="dialog"] ${card('Aster')}`).waitForDisplayed()
     await browser.$(`[role="dialog"] ${card('Desk')}`).waitForDisplayed()
-    assert.equal(
-      (await browser.$$('[role="dialog"] [data-asset-id]')).length,
+    await waitForUi(
+      browser,
+      async () => (await browser.$$('[role="dialog"] [data-asset-id]')).length,
       2,
     )
-    await browser.$(button('閉じる', '//*[@role="dialog"]')).click()
-    await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
+    await closeDialog(browser, () =>
+      browser.$(button('閉じる', '//*[@role="dialog"]')).click(),
+    )
     await browser
       .$(`${card('Coat')} button[aria-label="アセットの操作"]`)
       .click()
     const booth = '//*[@role="menuitem" and normalize-space(.)="BOOTHで開く"]'
-    assert.equal(await browser.$(booth).getAttribute('aria-disabled'), 'true')
+    await waitForUi(
+      browser,
+      async () => await browser.$(booth).getAttribute('aria-disabled'),
+      'true',
+    )
     await browser.$('[data-testid="booth-url-tooltip"]').moveTo()
     await browser.$('[role="tooltip"]').waitForDisplayed()
-    assert.equal(
-      await browser.$('[role="tooltip"]').getText(),
+    await waitForUi(
+      browser,
+      async () => await browser.$('[role="tooltip"]').getText(),
       'BOOTH URLが設定されていません！',
     )
   },

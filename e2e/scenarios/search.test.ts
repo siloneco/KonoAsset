@@ -3,8 +3,11 @@ import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
 import { clearFilters, expectAssets } from '../ui.ts'
 
+// Given: A library containing overlapping names and shops.
+// When: Use normal, advanced, and exclusion searches, then clear them.
+// Then: Matching assets are displayed and clearing the search restores the library.
 test(
-  '名前とショップを通常・詳細・除外検索し、該当なしから復帰できる',
+  'Search asset names and shops and recover from an empty result',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, { initialData: library })

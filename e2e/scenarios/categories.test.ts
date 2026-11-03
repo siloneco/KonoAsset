@@ -3,8 +3,11 @@ import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
 import { chooseFilter, clearFilters, expectAssets } from '../ui.ts'
 
+// Given: A library containing several categories and an uncategorized asset.
+// When: Include, combine, exclude, and clear category filters.
+// Then: Only matching assets remain and clearing filters restores the list.
 test(
-  'カテゴリを複数指定・除外・未指定で絞り込める',
+  'Filter assets by included, excluded, and missing categories',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, { initialData: library })

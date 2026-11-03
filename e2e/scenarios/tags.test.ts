@@ -3,8 +3,11 @@ import { startApp } from '../app.ts'
 import { library } from '../fixtures.ts'
 import { chooseFilter, clearFilters, expectAssets } from '../ui.ts'
 
+// Given: A library with overlapping tags and other filter values.
+// When: Include, combine, exclude, and clear tags, then combine the other filters.
+// Then: Only assets matching the selected filters are displayed.
 test(
-  'タグをOR・AND・除外・未指定で探し、タイプや検索と組み合わせられる',
+  'Combine tag filters with asset type, category, avatar, and search filters',
   { timeout: 90_000 },
   async (t) => {
     const { browser } = await startApp(t, { initialData: library })
