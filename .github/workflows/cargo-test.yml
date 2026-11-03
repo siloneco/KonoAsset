@@ -4,6 +4,7 @@ on:
     paths:
       - "src-backend/**"
       - "changelog.json"
+      - "rust-toolchain.toml"
       - ".github/workflows/cargo-test.yml"
     branches:
       - "main"
@@ -17,7 +18,12 @@ on:
     paths:
       - "src-backend/**"
       - "changelog.json"
+      - "rust-toolchain.toml"
       - ".github/workflows/cargo-test.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -25,40 +31,25 @@ permissions:
 jobs:
   test:
     name: Run cargo test
+    env:
+      # Keep backtrace line numbers without large type/variable debug information.
+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+      CARGO_PROFILE_TEST_DEBUG: line-tables-only
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - platform: "macos-latest" # (Arm based macs / M1 and above)
-          #   args: "--target aarch64-apple-darwin"
-
-          # - platform: "macos-latest" # (Intel based macs)
-          #   args: "--target x86_64-apple-darwin"
-
-          # - platform: "ubuntu-22.04"
-          #   args: ""
-
           - platform: "windows-latest"
-            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v7.0.1
-
-      - uses: rui314/setup-mold@v1
-        if: matrix.platform == 'ubuntu-22.04'
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.9.3
         with:
           workspaces: "./src-backend -> target"
 
-      - name: install dependencies (Ubuntu)
-        if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-
       - name: Run Test
         working-directory: src-backend
-        run: cargo test --all-features
+        run: cargo test --locked --all-features

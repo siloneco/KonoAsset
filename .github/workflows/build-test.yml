@@ -10,19 +10,31 @@ on:
       - opened
       - synchronize
       - reopened
-    paths-ignore:
-      - "**.md"
-      - "renovate.json"
-      - ".vscode/**"
+    paths: &build-paths
+      - "src/**"
+      - "public/**"
+      - "src-backend/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "rust-toolchain.toml"
+      - "changelog.json"
+      - "index.html"
+      - "vite.config.*"
+      - "tsconfig*.json"
+      - "postcss.config.*"
+      - ".github/workflows/build-test.yml"
+      - ".github/workflows/actions.lock"
   push:
-    paths-ignore:
-      - "**.md"
-      - "renovate.json"
-      - ".vscode/**"
+    paths: *build-paths
     branches:
       - "main"
       - "pre-release"
       - "develop"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-tauri:
@@ -34,54 +46,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - platform: "macos-latest" # (Arm based macs / M1 and above)
-          #   args: "--target aarch64-apple-darwin"
-
-          # - platform: "macos-latest" # (Intel based macs)
-          #   args: "--target x86_64-apple-darwin"
-
-          # - platform: "ubuntu-22.04"
-          #   args: ""
-
           - platform: "windows-latest"
-            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: rui314/setup-mold@v1
-        if: matrix.platform == 'ubuntu-22.04'
 
-      - uses: pnpm/setup@v3.1.1
-        with:
-          install: false
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
-          cache: pnpm
+          package-manager-cache: false
+      - uses: pnpm/setup@v3.1.1
+        with:
+          cache: true
           cache-dependency-path: pnpm-lock.yaml
+          require-lockfile: true
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - uses: Swatinem/rust-cache@v2.9.3
         with:
           prefix-key: "v0-rust-${{ runner.os }}"
+          shared-key: test-tauri
           workspaces: "./src-backend -> target"
-
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-
-      - name: install frontend dependencies
-        run: pnpm install --frozen-lockfile
 
       - uses: tauri-apps/tauri-action@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: "--no-bundle ${{ matrix.args }}"
+          args: "--no-bundle"

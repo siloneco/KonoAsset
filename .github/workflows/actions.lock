@@ -8,13 +8,11 @@ workflows:
         - 'actions/setup-node@v7.1.0'
         - 'dtolnay/rust-toolchain@stable'
         - 'pnpm/setup@v3.1.1'
-        - 'rui314/setup-mold@v1'
         - 'swatinem/rust-cache@v2.9.3'
         - 'tauri-apps/tauri-action@v1.0.0'
     '.github/workflows/cargo-test.yml':
         - 'actions/checkout@v7.0.1'
         - 'dtolnay/rust-toolchain@stable'
-        - 'rui314/setup-mold@v1'
         - 'swatinem/rust-cache@v2.9.3'
     '.github/workflows/frontend-code-style.yml':
         - 'actions/checkout@v7.0.1'
@@ -78,11 +76,6 @@ dependencies:
         commit: 'sha1-a0881977cd8ea73b1ed212236c99ca10dcc80cf4'
         owner_id: 21320719
         repo_id: 1235693694
-    'rui314/setup-mold@v1':
-        ref: 'v1'
-        commit: 'sha1-339e96b4ff1f3bd865856ba4cbbe8818a7acb038'
-        owner_id: 47400
-        repo_id: 479867630
     'ryand56/r2-upload-action@v1.5':
         ref: 'v1.5'
         commit: 'sha1-33ebb7a494b3a8a3c5ed2ea6bbdc72e707090317'
