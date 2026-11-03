@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     fs::File,
+    io::{BufWriter, Write},
     path::{Path, PathBuf},
     time::Instant,
 };
@@ -30,10 +31,11 @@ where
     // 常に横幅を300ピクセル以下にする
     let image = image.thumbnail(300, 100000);
 
-    let file = File::create(dest)?;
-    let encoder = JpegEncoder::new_with_quality(file, 95);
+    let mut writer = BufWriter::new(File::create(dest)?);
+    let encoder = JpegEncoder::new_with_quality(&mut writer, 95);
 
     image.write_with_encoder(encoder)?;
+    writer.flush()?;
 
     log::info!(
         "Image resized and encoded in {}ms ({})",
