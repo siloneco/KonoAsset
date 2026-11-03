@@ -1,8 +1,6 @@
 import test from 'node:test'
-import { readFile, writeFile } from 'node:fs/promises'
-import path from 'node:path'
 import { startApp } from '../app.ts'
-import { assets, library } from '../fixtures.ts'
+import { libraryWithRegistrationHistory } from '../fixtures.ts'
 import { focusWithKeyboard, openSettings } from '../ui.ts'
 
 // Given: A library with one registration per day inside the rolling history window.
@@ -19,25 +17,7 @@ test(
       now.getUTCDate(),
     )
     const { browser } = await startApp(t, {
-      initialData: async (root) => {
-        await library(root)
-        // Keep the history inside the app's rolling 180-day window explicitly.
-        for (const type of [
-          'avatars',
-          'avatarWearables',
-          'worldObjects',
-          'otherAssets',
-        ]) {
-          const file = path.join(root, 'assets/metadata', `${type}.json`)
-          const metadata = JSON.parse(await readFile(file, 'utf8'))
-          for (const a of metadata.data)
-            a.description.createdAt =
-              today -
-              (5 - assets.findIndex((fixture) => fixture.id === a.id)) *
-                86_400_000
-          await writeFile(file, JSON.stringify(metadata))
-        }
-      },
+      initialData: libraryWithRegistrationHistory,
     })
     await openSettings(browser, '統計')
     const history = '[data-testid="asset-history-chart"]'

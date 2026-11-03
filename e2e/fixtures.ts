@@ -103,6 +103,31 @@ export async function library(root: string) {
   }
 }
 
+export async function libraryWithRegistrationHistory(root: string) {
+  await library(root)
+  const now = new Date()
+  const today = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+  )
+  // Keep all four asset types inside the rolling 180-day history window.
+  for (const type of [
+    'avatars',
+    'avatarWearables',
+    'worldObjects',
+    'otherAssets',
+  ]) {
+    const file = path.join(root, 'assets/metadata', `${type}.json`)
+    const metadata = JSON.parse(await readFile(file, 'utf8'))
+    for (const a of metadata.data)
+      a.description.createdAt =
+        today -
+        (5 - assets.findIndex((fixture) => fixture.id === a.id)) * 86_400_000
+    await writeFile(file, JSON.stringify(metadata))
+  }
+}
+
 export async function libraryWithUnlabeledWearable(root: string) {
   await library(root)
   const metadata = path.join(root, 'assets/metadata')
