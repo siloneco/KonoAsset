@@ -45,6 +45,7 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
         Some(text) => Some(split_by_space(text)),
         None => None,
     };
+    let creator_query = req.creator_query.as_deref().map(unify_text);
 
     items.iter().for_each(|item| {
         // アセットタイプの検査
@@ -224,6 +225,12 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
         }
 
         // テキスト検索
+        if let Some(creator_query) = &creator_query
+            && !check_creator_query(&item.description.creator, creator_query)
+        {
+            return;
+        }
+
         if let Some(text_filters) = &text_filters {
             // テキストのチェックで弾かれたら除外
             if !check_text_contains(&item.description, text_filters) {
@@ -236,6 +243,23 @@ fn filter_items<'a>(items: &'a [FilterOptimizedAssets], req: &FilterRequest) -> 
     });
 
     results
+}
+
+fn check_creator_query(creator: &str, normalized_query: &str) -> bool {
+    let creator = unify_text(creator);
+
+    // ショップ名全体が一致する場合にハイフンを除外条件として扱わない
+    if creator == normalized_query {
+        return true;
+    }
+
+    normalized_query.split_whitespace().all(|text| {
+        if let Some(excluded) = text.strip_prefix('-') {
+            excluded.is_empty() || !creator.contains(excluded)
+        } else {
+            creator.contains(text)
+        }
+    })
 }
 
 fn check_text_contains(description: &AssetDescription, texts: &Vec<&str>) -> bool {
@@ -319,6 +343,82 @@ fn unify_text(text: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_creator_query_prefers_exact_shop_name() {
+        for (creator, query, expected) in [
+            ("a -b", "a -b", true),
+            ("hogefuga -subtitle-", "hogefuga -subtitle-", true),
+            ("-shop", "-shop", true),
+            ("a  -b", "a  -b", true),
+            ("a　-b", "a　-b", true),
+            ("Ｓｈｏｐ -アバター１", "shop -あばたー1", true),
+            ("a -b extra", "a -b", false),
+            ("a shop", "a -b", true),
+            ("b shop", "a -b", false),
+            ("a -b", "-b", false),
+            ("a -b", "a -missing", true),
+            ("a -b", "a -missing -b", false),
+            ("a -b", "a -", true),
+            ("a -b", "a b", true),
+            ("a -b", "", true),
+        ] {
+            assert_eq!(
+                check_creator_query(creator, &unify_text(query)),
+                expected,
+                "creator: {creator:?}, query: {query:?}",
+            );
+        }
+    }
+
+    #[test]
+    fn test_exact_shop_name_respects_other_filters() {
+        let asset = model::OtherAsset::create(
+            AssetDescription {
+                name: "Coat".to_string(),
+                creator: "a -b".to_string(),
+                image_filename: None,
+                tags: vec!["clothing".to_string()],
+                memo: None,
+                booth_item_id: None,
+                dependencies: vec![],
+                created_at: 0,
+                published_at: None,
+            },
+            "outfit".to_string(),
+        );
+        let items = [FilterOptimizedAssets::from(&asset)];
+        let mut req = FilterRequest {
+            asset_type: None,
+            query_text: None,
+            creator_query: Some("a -b".to_string()),
+            categories: None,
+            tags: None,
+            supported_avatars: None,
+        };
+        assert_eq!(filter_items(&items, &req), vec![&asset.id]);
+
+        req.query_text = Some("name:Coat".to_string());
+        assert_eq!(filter_items(&items, &req), vec![&asset.id]);
+        req.query_text = Some("-name:Coat".to_string());
+        assert!(filter_items(&items, &req).is_empty());
+        req.query_text = None;
+
+        req.asset_type = Some(model::AssetType::Avatar);
+        assert!(filter_items(&items, &req).is_empty());
+        req.asset_type = None;
+
+        req.categories = Some(FilterElement::OR(vec![FilterRequirement::Include(
+            "furniture".to_string(),
+        )]));
+        assert!(filter_items(&items, &req).is_empty());
+        req.categories = None;
+
+        req.tags = Some(FilterElement::AND(vec![FilterRequirement::Exclude(
+            "clothing".to_string(),
+        )]));
+        assert!(filter_items(&items, &req).is_empty());
+    }
 
     #[test]
     fn test_split_by_space() {

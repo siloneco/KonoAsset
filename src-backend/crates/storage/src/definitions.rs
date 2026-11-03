@@ -21,6 +21,7 @@ pub enum MatchType {
 pub struct FilterRequest {
     pub asset_type: Option<AssetType>,
     pub query_text: Option<String>,
+    pub creator_query: Option<String>,
     pub categories: Option<FilterElement<FilterRequirement<String>>>,
     pub tags: Option<FilterElement<FilterRequirement<String>>>,
     pub supported_avatars: Option<FilterElement<FilterRequirement<String>>>,
