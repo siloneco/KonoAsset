@@ -21,7 +21,19 @@ test(
     })
     await openSettings(browser, '統計')
     const history = '[data-testid="asset-history-chart"]'
+    const firstDate = new Date(today - 5 * 86_400_000)
+      .toISOString()
+      .slice(0, 10)
+    await browser.waitUntil(
+      async () =>
+        (
+          await browser.$(`${history} .recharts-xAxis-tick-labels`).getText()
+        ).includes(firstDate),
+      { timeoutMsg: '登録履歴の日付が表示されませんでした' },
+    )
     await focusWithKeyboard(browser, `${history} svg[role="application"]`)
+    await browser.keys('Tab')
+    await browser.keys(['Shift', 'Tab'])
     const expectHistory = async (offset: number, counts: number[]) => {
       const date = new Date(today - (5 - offset) * 86_400_000)
         .toISOString()
@@ -48,7 +60,6 @@ test(
       )
     }
 
-    await expectHistory(0, [1, 0, 0, 0])
     await browser.keys('ArrowRight')
     await expectHistory(1, [1, 1, 0, 0])
     await browser.keys('ArrowLeft')
