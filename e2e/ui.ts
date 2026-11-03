@@ -19,6 +19,29 @@ export async function waitForUi<T>(
   )
 }
 
+export async function waitForSetup(browser: Browser) {
+  await waitForUi(
+    browser,
+    async () =>
+      browser.$('[role="tabpanel"][data-state="active"]').isDisplayed(),
+    true,
+  )
+  // The opening animation moves and clips the controls after they first render.
+  await browser.waitUntil(
+    async () =>
+      browser.execute(() =>
+        document
+          .getAnimations()
+          .every(
+            (animation) =>
+              animation.effect?.getTiming().iterations === Infinity ||
+              animation.playState === 'finished',
+          ),
+      ),
+    { timeoutMsg: '初回設定の開始アニメーションが完了しませんでした' },
+  )
+}
+
 export async function closeDialog(
   browser: Browser,
   action: () => Promise<unknown>,

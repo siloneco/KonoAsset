@@ -3,7 +3,7 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { pickers } from '../fixtures.ts'
-import { button, openSettings, waitForUi } from '../ui.ts'
+import { button, openSettings, waitForSetup, waitForUi } from '../ui.ts'
 
 // Given: A fresh app and an isolated destination folder.
 // When: Choose language, theme, storage, and import behavior, then restart.
@@ -28,7 +28,13 @@ test(
     })
     const { browser, root } = app
     const active = '//*[@role="tabpanel" and @data-state="active"]'
+    await waitForSetup(browser)
     await browser.$('div=日本語').click()
+    await waitForUi(
+      browser,
+      async () => browser.$(button('次へ', active)).isDisplayed(),
+      true,
+    )
     for (const [label, theme] of [
       ['ライト', 'light'],
       ['ダーク', 'dark'],

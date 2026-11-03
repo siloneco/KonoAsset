@@ -213,8 +213,8 @@ export async function startApp(
   }
 
   const capabilities: TauriCapabilities = { 'tauri:options': { application } }
-  const connect = () =>
-    remote({
+  const connect = async () => {
+    const browser = await remote({
       hostname: '127.0.0.1',
       port,
       // Suppress WebDriver warning chatter while keeping errors visible.
@@ -224,17 +224,27 @@ export async function startApp(
       waitforTimeout: 10_000,
       capabilities,
     })
+    // Edge can attach to about:blank before Tauri navigates and React renders.
+    // Give startup its own deadline, including when launching after a restart.
+    resources.browser = browser
+    await browser.waitUntil(
+      async () =>
+        browser.execute(() => Boolean(document.querySelector('#root > div'))),
+      {
+        timeout: 30_000,
+        timeoutMsg: 'Application UI did not load after starting the session',
+      },
+    )
+    return browser
+  }
   const browser = await connect()
-  resources.browser = browser
   return {
     browser,
     root,
     // A new WebDriver session launches a new Rust process with the same isolated data.
     restart: async () => {
       await resources.browser!.deleteSession()
-      const next = await connect()
-      resources.browser = next
-      return next
+      return connect()
     },
     readPreference: async () =>
       (
