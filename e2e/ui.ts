@@ -42,6 +42,20 @@ export async function waitForSetup(browser: Browser) {
   )
 }
 
+export async function focusWithKeyboard(browser: Browser, selector: string) {
+  await browser.$(selector).waitForDisplayed()
+  for (let attempt = 0; attempt < 20; attempt++) {
+    if (await browser.$(selector).isFocused()) return
+    await browser.keys('Tab')
+  }
+  await waitForUi(
+    browser,
+    async () => browser.$(selector).isFocused(),
+    true,
+    `Could not reach ${selector} using the keyboard`,
+  )
+}
+
 export async function closeDialog(
   browser: Browser,
   action: () => Promise<unknown>,

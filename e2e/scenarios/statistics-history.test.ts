@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { openSettings } from '../ui.ts'
+import { focusWithKeyboard, openSettings } from '../ui.ts'
 
 // Given: A library with one registration per day inside the rolling history window.
 // When: Navigate the registration history using the keyboard.
@@ -18,9 +18,6 @@ test(
       now.getUTCMonth(),
       now.getUTCDate(),
     )
-    const firstDate = new Date(today - 5 * 86_400_000)
-      .toISOString()
-      .slice(0, 10)
     const { browser } = await startApp(t, {
       initialData: async (root) => {
         await library(root)
@@ -44,66 +41,47 @@ test(
     })
     await openSettings(browser, '統計')
     const history = '[data-testid="asset-history-chart"]'
-    await browser.$(`${history} svg[role="application"]`).scrollIntoView()
-    await browser.$(`${history} svg[role="application"]`).click()
-    await browser.$(`${history} [data-slot="card-title"]`).moveTo()
-    const expectHistoryDate = async (offset: number) => {
+    await focusWithKeyboard(browser, `${history} svg[role="application"]`)
+    const expectHistory = async (offset: number, counts: number[]) => {
       const date = new Date(today - (5 - offset) * 86_400_000)
         .toISOString()
         .slice(0, 10)
+      const labels = [
+        'アバター素体',
+        'アバター関連アセット',
+        'ワールドアセット',
+        'その他',
+      ]
       await browser.waitUntil(
         async () => {
           const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
+          const text = (await tooltip.getText()).replace(/\s+/g, '')
           return (
             (await tooltip.isDisplayed()) &&
-            (await tooltip.getText()).includes(date)
+            text.includes(date) &&
+            labels.every((label, index) =>
+              text.includes(`${label}${counts[index]}`),
+            )
           )
         },
-        { timeoutMsg: `登録履歴で${date}を選択できませんでした` },
+        { timeoutMsg: `登録履歴で${date}の内訳を確認できませんでした` },
       )
     }
-    // Mouse hover and keyboard selection have separate state in Recharts 3.
-    // Navigate to a neighbour before returning to the first keyboard entry.
+
+    await expectHistory(0, [1, 0, 0, 0])
     await browser.keys('ArrowRight')
-    await expectHistoryDate(1)
+    await expectHistory(1, [1, 1, 0, 0])
     await browser.keys('ArrowLeft')
-    await expectHistoryDate(0)
-    await browser.waitUntil(
-      async () => {
-        const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
-        const text = (await tooltip.getText()).replace(/\s+/g, '')
-        return (
-          (await tooltip.isDisplayed()) &&
-          text.includes(firstDate) &&
-          [
-            'アバター素体1',
-            'アバター関連アセット0',
-            'ワールドアセット0',
-            'その他0',
-          ].every((expected) => text.includes(expected))
-        )
-      },
-      { timeoutMsg: '登録履歴の最初の日を確認できませんでした' },
-    )
-    for (let i = 1; i <= 5; i++) {
+    await expectHistory(0, [1, 0, 0, 0])
+    for (const [offset, counts] of [
+      [1, [1, 1, 0, 0]],
+      [2, [1, 2, 0, 0]],
+      [3, [1, 2, 1, 0]],
+      [4, [1, 2, 1, 1]],
+      [5, [1, 2, 1, 1]],
+    ] as const) {
       await browser.keys('ArrowRight')
-      await expectHistoryDate(i)
+      await expectHistory(offset, [...counts])
     }
-    await browser.waitUntil(
-      async () => {
-        const tooltip = browser.$(`${history} .recharts-tooltip-wrapper`)
-        const text = (await tooltip.getText()).replace(/\s+/g, '')
-        return (
-          (await tooltip.isDisplayed()) &&
-          [
-            'アバター素体1',
-            'アバター関連アセット2',
-            'ワールドアセット1',
-            'その他1',
-          ].every((expected) => text.includes(expected))
-        )
-      },
-      { timeoutMsg: '登録履歴の最後の内訳が現在の登録数と一致しませんでした' },
-    )
   },
 )
