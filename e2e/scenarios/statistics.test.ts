@@ -77,11 +77,14 @@ test(
       await browser
         .$('[data-testid="asset-disk-usage"] path[name="Blouse"]')
         .scrollIntoView()
-      await browser
-        .$('[data-testid="asset-disk-usage"] path[name="Blouse"]')
-        .moveTo()
       await browser.waitUntil(
         async () => {
+          await browser
+            .$('[data-testid="asset-disk-usage"] [data-slot="card-title"]')
+            .moveTo()
+          await browser
+            .$('[data-testid="asset-disk-usage"] path[name="Blouse"]')
+            .moveTo()
           const tooltip = browser.$(
             '[data-testid="asset-disk-usage"] .recharts-tooltip-wrapper',
           )
