@@ -14,6 +14,13 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'dtolnay/rust-toolchain@stable'
         - 'swatinem/rust-cache@v2.9.3'
+    '.github/workflows/e2e-test.yml':
+        - 'actions/checkout@v7.0.1'
+        - 'actions/setup-node@v7.1.0'
+        - 'actions/upload-artifact@v7.0.2'
+        - 'dtolnay/rust-toolchain@stable'
+        - 'pnpm/setup@v3.1.1'
+        - 'swatinem/rust-cache@v2.9.3'
     '.github/workflows/frontend-code-style.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-node@v7.1.0'
@@ -56,6 +63,11 @@ dependencies:
         commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
         owner_id: 44036562
         repo_id: 189476904
+    'actions/upload-artifact@v7.0.2':
+        ref: 'v7.0.2'
+        commit: 'sha1-cf430e030ddbb5b0abf93d22962f4752f3646cd9'
+        owner_id: 44036562
+        repo_id: 192625955
     'crazy-max/ghaction-virustotal@v5.0.0':
         ref: 'v5.0.0'
         commit: 'sha1-936d8c5c00afe97d3d9a1af26d017cfdf26800a2'
