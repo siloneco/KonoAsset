@@ -4,10 +4,18 @@ import path from 'node:path'
 import test from 'node:test'
 import { startApp } from '../app.ts'
 import { assets, library } from '../fixtures.ts'
-import { button, card, expectAssets, manualEdit, replaceInput } from '../ui.ts'
+import {
+  addDependency,
+  button,
+  card,
+  expectAssets,
+  manualEdit,
+  removeDependency,
+  replaceInput,
+} from '../ui.ts'
 
 test(
-  '登録情報・タグ・対応アバター・メモ・前提を編集し、再表示と再起動で確認できる',
+  'Edit asset information, tags, avatars, memo and dependencies, then verify after reopening and restarting',
   { timeout: 90_000 },
   async (t) => {
     const app = await startApp(t, { initialData: library })
@@ -68,17 +76,9 @@ test(
       .click()
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
     await replaceInput(browser, 'textarea', '編集したメモ\n2行目')
-    await browser
-      .$('input[placeholder="前提アセットを検索..."]')
-      .setValue('Aster')
-    await browser.$(`[role="dialog"] ${card('Aster')} button`).click()
-    await browser.$(`[role="dialog"] ${card('Aster')} button`).click()
-    await replaceInput(
-      browser,
-      'input[placeholder="前提アセットを検索..."]',
-      'Desk',
-    )
-    await browser.$(`[role="dialog"] ${card('Desk')} button`).click()
+    await addDependency(browser, 'Aster')
+    await removeDependency(browser, 'Aster')
+    await addDependency(browser, 'Desk')
     await browser.$(button('アセットを更新', '//*[@role="dialog"]')).click()
     await browser.$('[role="dialog"]').waitForDisplayed({ reverse: true })
     await browser.waitUntil(
@@ -94,7 +94,9 @@ test(
     )
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
     assert.equal(await browser.$('textarea').getValue(), '編集したメモ\n2行目')
-    await browser.$(`[role="dialog"] ${card('Desk')}`).waitForDisplayed()
+    await browser
+      .$(`[role="dialog"] ${card('Desk')} button[aria-label="削除"]`)
+      .waitForDisplayed()
     await browser.keys('Escape')
     // Opening a different asset must not reuse the edited form's values.
     await manualEdit(browser, 'Blouse')

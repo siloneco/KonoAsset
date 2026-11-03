@@ -81,6 +81,7 @@ export const AssetSelector: FC<Props> = ({
                   )}
                 >
                   <Button
+                    aria-label={t('general:button:select')}
                     className="h-10 w-10"
                     onClick={() => addAndClose(item.id)}
                   >

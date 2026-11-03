@@ -94,6 +94,27 @@ export async function manualEdit(browser: Browser, name: string) {
     .waitForDisplayed()
 }
 
+export async function addDependency(browser: Browser, name: string) {
+  await replaceInput(
+    browser,
+    '[role="dialog"] input[placeholder="前提アセットを検索..."]',
+    name,
+  )
+  await browser
+    .$(`[role="dialog"] ${card(name)} button[aria-label="選択"]`)
+    .click()
+  await browser
+    .$(`[role="dialog"] ${card(name)} button[aria-label="削除"]`)
+    .waitForDisplayed()
+}
+
+export async function removeDependency(browser: Browser, name: string) {
+  const selector = `[role="dialog"] ${card(name)} button[aria-label="削除"]`
+  await browser.$(selector).waitForDisplayed()
+  await browser.$(selector).click()
+  await browser.$(selector).waitForExist({ reverse: true })
+}
+
 export async function addManually(
   browser: Browser,
   type: string,
