@@ -49,6 +49,7 @@ export const AnimatedSetupPage: FC = () => {
           className="w-[800px] px-8 py-6 h-100 overflow-hidden relative"
         >
           <Tabs
+            aria-busy={getTabContentStyleProps.isAnimating}
             value={tab}
             onValueChange={(value) => handleTabChange(value as TabType)}
             // アニメーションが崩れず動作するために relative は必要

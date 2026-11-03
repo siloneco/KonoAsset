@@ -1,6 +1,6 @@
 [package]
 name = "konoasset"
-version = "1.2.7-rc.0"
+version = "1.2.7-rc.1"
 description = "Asset management tool for VRChat"
 
 authors.workspace = true
@@ -14,6 +14,9 @@ edition.workspace = true
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
 name = "konoasset_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
+
+[features]
+e2e = []
 
 [build-dependencies]
 tauri-build.workspace = true
@@ -41,7 +44,6 @@ log.workspace = true
 uuid.workspace = true
 chrono.workspace = true
 tauri-plugin-dialog.workspace = true
-reqwest.workspace = true
 async_zip.workspace = true
 sanitize-filename.workspace = true
 specta.workspace = true

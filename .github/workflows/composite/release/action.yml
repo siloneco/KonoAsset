@@ -37,30 +37,25 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
-      with:
-        install: false
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: 24
-        cache: pnpm
-        cache-dependency-path: pnpm-lock.yaml
-
-    - run: node --version
-      shell: bash
-    - run: pnpm --version
-      shell: bash
-
-    - run: pnpm install --frozen-lockfile
-      shell: bash
-
-    - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
-    - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        package-manager-cache: false
+    - uses: pnpm/setup@v3.1.1
       with:
+        cache: true
+        cache-dependency-path: pnpm-lock.yaml
+        require-lockfile: true
+
+    - uses: dtolnay/rust-toolchain@stable
+    - uses: Swatinem/rust-cache@v2.9.3
+      with:
+        prefix-key: "v0-rust-${{ runner.os }}"
+        shared-key: test-tauri
         workspaces: "./src-backend -> target"
 
     - name: Build and Create Release
-      uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1
+      uses: tauri-apps/tauri-action@v1.0.0
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ inputs.TAURI_PRIVATE_KEY }}
@@ -73,7 +68,7 @@ runs:
         prerelease: ${{ inputs.releaseChannel == 'pre-release' }}
         args: ${{ inputs.args }}
 
-    - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+    - uses: actions/github-script@v9.0.0
       with:
         result-encoding: string
         script: |
@@ -106,7 +101,7 @@ runs:
         cp ./upload/manifests/stable.json ./upload/manifests/pre-release.json
 
     - name: Upload artifacts
-      uses: ryand56/r2-upload-action@b801a390acbdeb034c5e684ff5e1361c06639e7c # v1.4
+      uses: ryand56/r2-upload-action@v1.5
       with:
         r2-account-id: ${{ inputs.R2_ACCOUNT_ID }}
         r2-access-key-id: ${{ inputs.R2_ACCESS_KEY_ID }}
@@ -116,7 +111,7 @@ runs:
         destination-dir: ./
 
     - name: VirusTotal Scan
-      uses: crazy-max/ghaction-virustotal@936d8c5c00afe97d3d9a1af26d017cfdf26800a2 # v5
+      uses: crazy-max/ghaction-virustotal@v5.0.0
       with:
         vt_api_key: ${{ inputs.VT_API_KEY }}
         request_rate: 4

@@ -25,13 +25,10 @@ dist-ssr
 *.sw?
 
 # vitest coverage output
+.vitest/
 coverage
 *storybook.log
 storybook-static
-
-# storycap + vrt
-.reg/
-__screenshots__
 
 # rust
 target/*

@@ -1,3 +1,4 @@
+import { useLocalization } from '@/hooks/use-localization'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { RefObject, useCallback } from 'react'
 import { AssetSummary } from '@/lib/bindings'
@@ -19,6 +20,7 @@ type Props = {
 }
 
 export const AssetCard = ({ asset, ref, openEditAssetDialog }: Props) => {
+  const { t } = useLocalization()
   const updateFilter = useAssetFilterStore((state) => state.updateFilter)
   const displayStyle = useAssetSummaryViewStore((state) => state.displayStyle)
 
@@ -34,7 +36,11 @@ export const AssetCard = ({ asset, ref, openEditAssetDialog }: Props) => {
   }, [updateFilter, asset.creator])
 
   return (
-    <Card className="w-full bg-card m-1 py-0" ref={ref}>
+    <Card
+      className="w-full bg-card m-1 py-0"
+      ref={ref}
+      data-asset-id={asset.id}
+    >
       <CardContent className="size-full p-4 flex flex-col">
         <div className="size-full shrink mb-2">
           <SquareImage
@@ -48,6 +54,7 @@ export const AssetCard = ({ asset, ref, openEditAssetDialog }: Props) => {
             />
             {asset.hasMemo && (
               <Button
+                aria-label={t('general:memo')}
                 variant="outline"
                 className="size-8"
                 onClick={() => openMemoDialog(asset.id)}

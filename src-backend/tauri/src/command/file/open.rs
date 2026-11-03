@@ -2,7 +2,7 @@ use std::{path::PathBuf, sync::Arc};
 
 use model::preference::PreferenceStore;
 use storage::asset_storage::AssetStorage;
-use tauri::{AppHandle, Manager, State, async_runtime::Mutex};
+use tauri::{AppHandle, State, async_runtime::Mutex};
 
 #[tauri::command]
 #[specta::specta]
@@ -47,9 +47,7 @@ pub async fn open_asset_data_dir(
 #[tauri::command]
 #[specta::specta]
 pub fn open_app_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
-    let path = handle
-        .path()
-        .app_local_data_dir()
+    let path = crate::app_paths::local_data_dir(&handle)
         .map_err(|e| format!("Unable to get app dir: {}", e))?;
     file::open_in_file_manager(&path)
 }
@@ -63,9 +61,7 @@ pub fn open_file_in_file_manager(path: PathBuf) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub async fn open_logs_dir(handle: State<'_, AppHandle>) -> Result<(), String> {
-    let path = handle
-        .path()
-        .app_log_dir()
-        .map_err(|e| format!("Unable to get log dir: {}", e))?;
+    let path =
+        crate::app_paths::log_dir(&handle).map_err(|e| format!("Unable to get log dir: {}", e))?;
     file::open_in_file_manager(&path)
 }

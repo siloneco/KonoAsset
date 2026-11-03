@@ -39,6 +39,7 @@ export const InternalStatusBar: FC<Props> = ({
           </p>
           <div className="w-28 ml-auto mr-1 flex justify-end">
             <Button
+              data-testid="clear-filters"
               className={cn(
                 'h-8',
                 totalAssetCount === displayAmount && 'hidden',

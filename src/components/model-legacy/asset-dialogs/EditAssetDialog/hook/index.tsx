@@ -119,13 +119,18 @@ export const useEditAssetDialog = ({
   }, [form, setImageUrls])
 
   useEffect(() => {
-    if (!dialogOpen) {
+    if (dialogOpen) {
+      clearForm()
+      setTab('booth-input')
+      setLoadingAssetData(true)
+    } else {
       // 閉じるときにタブが変わってしまうのが見えるため遅延を入れる
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         clearForm()
         setTab('booth-input')
         setLoadingAssetData(true)
       }, 500)
+      return () => clearTimeout(timer)
     }
   }, [dialogOpen, clearForm])
 

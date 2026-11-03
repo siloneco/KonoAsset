@@ -53,7 +53,11 @@ export const LanguageSelector: FC<Props> = ({
       </div>
       <div className="flex flex-row ml-auto space-x-2">
         <Select value={selectValueLanguage} onValueChange={onSelectValueChange}>
-          <SelectTrigger className="ml-auto w-[180px]">
+          <SelectTrigger
+            id="preference-language"
+            aria-label={t('preference:settings:language')}
+            className="ml-auto w-[180px]"
+          >
             <SelectValue placeholder={t('general:select:placeholder')} />
           </SelectTrigger>
           <SelectContent>

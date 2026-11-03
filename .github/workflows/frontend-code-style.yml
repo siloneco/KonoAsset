@@ -5,6 +5,12 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "e2e/**"
+      - "tsconfig*.json"
+      - "vite.config.*"
+      - "eslint.config.*"
+      - ".prettier*"
       - ".github/workflows/frontend-code-style.yml"
     branches:
       - "main"
@@ -15,7 +21,17 @@ on:
       - "src/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "e2e/**"
+      - "tsconfig*.json"
+      - "vite.config.*"
+      - "eslint.config.*"
+      - ".prettier*"
       - ".github/workflows/frontend-code-style.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   frontend-code-style-test:
@@ -25,20 +41,17 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
-        with:
-          install: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
-          cache: pnpm
+          package-manager-cache: false
+      - uses: pnpm/setup@v3.1.1
+        with:
+          cache: true
+          save-cache: false
           cache-dependency-path: pnpm-lock.yaml
-
-      - run: node --version
-      - run: pnpm --version
-
-      - run: pnpm install --frozen-lockfile
+          require-lockfile: true
 
       - run: pnpm run lint
       - run: pnpm run type-check

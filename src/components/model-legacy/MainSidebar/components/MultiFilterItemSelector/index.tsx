@@ -48,7 +48,7 @@ export const MultiFilterItemSelector = ({
       : placeholder
 
   return (
-    <div>
+    <div role="group" aria-label={label}>
       <div className="grid grid-cols-1 w-full overflow-hidden">
         <div className="flex items-center gap-2">
           <div className="w-full flex items-center shrink min-w-0">
@@ -66,6 +66,15 @@ export const MultiFilterItemSelector = ({
           </div>
           {matchType && (
             <div
+              role="button"
+              aria-label={`${label}: ${matchType === 'Unlabeled' ? t('mainsidebar:multi-filter-item-selector:type:unlabeled') : matchType}`}
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  onMatchTypeClicked()
+                }
+              }}
               className="size-fit bg-primary text-primary-foreground py-1 px-4 rounded-full text-xs flex items-center cursor-pointer select-none shrink-0"
               onClick={onMatchTypeClicked}
             >

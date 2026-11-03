@@ -1,14 +1,18 @@
 import { ImagePlus } from 'lucide-react'
 import { FC } from 'react'
 import { cn } from '@/lib/utils'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   selectUserImage: () => Promise<void>
 }
 
 export const SquareImagePathSelector: FC<Props> = ({ selectUserImage }) => {
+  const { t } = useLocalization()
   return (
-    <div
+    <button
+      type="button"
+      aria-label={`${t('general:button:select')}: ${t('squareimage:image')}`}
       className="size-full group absolute top-0 left-0 cursor-pointer"
       onClick={selectUserImage}
       data-testid="square-image-path-selector"
@@ -24,6 +28,6 @@ export const SquareImagePathSelector: FC<Props> = ({ selectUserImage }) => {
           <ImagePlus size={50} />
         </div>
       </div>
-    </div>
+    </button>
   )
 }

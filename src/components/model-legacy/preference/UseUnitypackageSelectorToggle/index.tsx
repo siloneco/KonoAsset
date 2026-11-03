@@ -25,6 +25,7 @@ export const UseUnitypackageSelectorToggle: FC<Props> = ({
         </p>
       </div>
       <Switch
+        aria-label={t('preference:settings:use-unitypackage-selector')}
         className="ml-auto shrink-0"
         checked={enable}
         onCheckedChange={setEnable}

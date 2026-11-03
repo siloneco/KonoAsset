@@ -1,0 +1,120 @@
+name: Windows E2E Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - pre-release
+      - develop
+    paths: &e2e-paths
+      - "e2e/**"
+      - "src/**"
+      - "public/**"
+      - "src-backend/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "rust-toolchain.toml"
+      - "changelog.json"
+      - "index.html"
+      - "vite.config.*"
+      - "tsconfig*.json"
+      - "postcss.config.*"
+      - ".github/workflows/e2e-test.yml"
+      - ".github/workflows/actions.lock"
+  pull_request:
+    paths: *e2e-paths
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run Windows E2E Tests
+    # WebView2 automation on Server 2025 has an upstream regression:
+    # https://github.com/actions/runner-images/issues/14738
+    runs-on: windows-2022
+    timeout-minutes: 45
+    env:
+      TAURI_DRIVER_VERSION: "2.1.0"
+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/setup@v3.1.1
+        with:
+          cache: true
+          cache-dependency-path: pnpm-lock.yaml
+          require-lockfile: true
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.3
+        with:
+          key: windows-e2e-tauri-driver-${{ env.TAURI_DRIVER_VERSION }}
+          workspaces: "./src-backend -> target/e2e"
+          cache-directories: src-backend/target/e2e-tools
+
+      - name: Install tauri-driver
+        shell: pwsh
+        run: |
+          $driver = Join-Path $PWD 'src-backend/target/e2e-tools/bin/tauri-driver.exe'
+          # The cache key includes the version; tauri-driver has no --version flag.
+          if (!(Test-Path -LiteralPath $driver)) {
+            cargo install --locked --version $env:TAURI_DRIVER_VERSION --root src-backend/target/e2e-tools tauri-driver
+            if ($LASTEXITCODE -ne 0) { throw 'Failed to install tauri-driver' }
+          }
+          "TAURI_DRIVER=$driver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Install Edge WebDriver matching WebView2
+        shell: pwsh
+        run: |
+          $runtime = Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}'
+          $runtimeVersion = [version]$runtime.pv
+          $driverDirectory = Join-Path $env:RUNNER_TEMP 'edge-webdriver'
+          New-Item -ItemType Directory -Force -Path $driverDirectory | Out-Null
+          # Microsoft serves the version file with a UTF-16 BOM.
+          $versionFile = Join-Path $driverDirectory 'version.txt'
+          Invoke-WebRequest "https://msedgedriver.microsoft.com/LATEST_RELEASE_$($runtimeVersion.Major)_WINDOWS" -OutFile $versionFile
+          $driverVersion = (Get-Content -LiteralPath $versionFile -Raw).Trim()
+          if (([version]$driverVersion).ToString(3) -ne $runtimeVersion.ToString(3)) {
+            throw "Edge WebDriver $driverVersion does not match WebView2 $runtimeVersion"
+          }
+          Write-Host "WebView2: $runtimeVersion; Edge WebDriver: $driverVersion"
+          $archive = Join-Path $driverDirectory 'edgedriver.zip'
+          Invoke-WebRequest "https://msedgedriver.microsoft.com/$driverVersion/edgedriver_win64.zip" -OutFile $archive
+          Expand-Archive -LiteralPath $archive -DestinationPath $driverDirectory -Force
+          "TAURI_NATIVE_DRIVER=$(Join-Path $driverDirectory 'msedgedriver.exe')" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Type-check E2E tests
+        run: pnpm test:e2e:type-check
+      - name: Build E2E application
+        run: pnpm test:e2e:build
+      - name: Run E2E tests
+        id: e2e
+        timeout-minutes: 15
+        run: >-
+          node --test --test-concurrency=4
+          --test-reporter=spec --test-reporter=junit
+          --test-reporter-destination=stdout
+          --test-reporter-destination=e2e-results.xml
+          e2e/scenarios/*.test.ts
+      - name: Upload E2E results and failure diagnostics
+        if: ${{ !cancelled() && steps.e2e.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: windows-e2e-results
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            e2e-results.xml
+            src-backend/target/e2e-runs/**/failure.html
+            src-backend/target/e2e-runs/**/failure.png
+            src-backend/target/e2e-runs/**/webdriver.log
+            src-backend/target/e2e-runs/**/logs/**

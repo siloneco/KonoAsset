@@ -14,7 +14,12 @@ export const OngoingImportRow: FC<Props> = ({ taskId, filename }) => {
   const { status, onCancelButtonClick } = useOngoingImportRow({ taskId })
 
   return (
-    <div className="w-full flex gap-2 items-center">
+    <div
+      role="status"
+      aria-label={filename}
+      data-status={status}
+      className="w-full flex gap-2 items-center"
+    >
       {status === 'Running' && (
         <Loader2 size={24} className="animate-spin text-muted-foreground" />
       )}

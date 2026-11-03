@@ -67,6 +67,7 @@ fn estimate_asset_type_from_category(category_id: i32) -> Option<AssetType> {
         208 //   3Dキャラクター
         => Some(AssetType::Avatar),
         209 | // 3D衣装
+        230 | // 3D髪型
         217 | // 3D装飾品
         210 | // 3D小道具
         214 | // 3Dテクスチャ
@@ -128,6 +129,12 @@ mod tests {
         // 3D衣装
         assert_eq!(
             estimate_asset_type_from_category(209),
+            Some(AssetType::AvatarWearable)
+        );
+
+        // 3D髪型
+        assert_eq!(
+            estimate_asset_type_from_category(230),
             Some(AssetType::AvatarWearable)
         );
 

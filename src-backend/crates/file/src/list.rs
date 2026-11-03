@@ -104,20 +104,26 @@ mod tests {
 
         assert_eq!(result.len(), 3);
 
-        assert!(result
-            .iter()
-            .any(|entry| entry.entry_type == EntryType::Directory
-                && entry.name == "dir1"
-                && entry.absolute_path == absolute_path.join("dir1")));
-        assert!(result
-            .iter()
-            .any(|entry| entry.entry_type == EntryType::File
-                && entry.name == "file1.txt"
-                && entry.absolute_path == absolute_path.join("file1.txt")));
-        assert!(result
-            .iter()
-            .any(|entry| entry.entry_type == EntryType::File
-                && entry.name == "file2.txt"
-                && entry.absolute_path == absolute_path.join("file2.txt")));
+        assert!(
+            result
+                .iter()
+                .any(|entry| entry.entry_type == EntryType::Directory
+                    && entry.name == "dir1"
+                    && entry.absolute_path == absolute_path.join("dir1"))
+        );
+        assert!(
+            result
+                .iter()
+                .any(|entry| entry.entry_type == EntryType::File
+                    && entry.name == "file1.txt"
+                    && entry.absolute_path == absolute_path.join("file1.txt"))
+        );
+        assert!(
+            result
+                .iter()
+                .any(|entry| entry.entry_type == EntryType::File
+                    && entry.name == "file2.txt"
+                    && entry.absolute_path == absolute_path.join("file2.txt"))
+        );
     }
 }

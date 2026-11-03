@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  LabelList,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts'
 
 import {
   Card,
@@ -42,10 +34,25 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
     },
   } satisfies ChartConfig
 
-  const height = data.length * 30
+  const height = Math.max(data.length, 1) * 30
+  const chartData = data.map((entry) => ({
+    ...entry,
+    fill:
+      entry.assetType === 'Avatar'
+        ? 'var(--avatar)'
+        : entry.assetType === 'AvatarWearable'
+          ? 'var(--avatar-wearable)'
+          : entry.assetType === 'WorldObject'
+            ? 'var(--world-object)'
+            : 'var(--other-asset)',
+  }))
 
   return (
-    <Card className="flex flex-col w-full shrink">
+    <Card
+      data-testid="asset-disk-usage"
+      aria-busy={loading}
+      className="flex flex-col w-full shrink"
+    >
       <CardHeader>
         <CardTitle>
           <div className="flex flex-row items-center gap-2">
@@ -68,8 +75,9 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
           }}
         >
           <BarChart
+            aria-label={t('preference:statistics:volume-bar-chart:title')}
             accessibilityLayer
-            data={data}
+            data={chartData}
             layout="vertical"
             margin={{
               right: 60,
@@ -100,7 +108,11 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                           <p className="text-muted-foreground">
                             {t('preference:statistics:volume-bar-chart:size')}
                           </p>
-                          <p>{bytesFormatter(value as number)}</p>
+                          <p>
+                            {typeof value === 'number'
+                              ? bytesFormatter(value)
+                              : null}
+                          </p>
                         </div>
                       </div>
                     )
@@ -110,25 +122,10 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
             />
             <Bar
               dataKey="sizeInBytes"
-              layout="vertical"
-              fill="var(--color-avatar-wearable)"
+              fill="var(--color-asset)"
               radius={4}
               animationDuration={loading ? 0 : 500}
             >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={
-                    entry.assetType === 'Avatar'
-                      ? 'var(--avatar)'
-                      : entry.assetType === 'AvatarWearable'
-                        ? 'var(--avatar-wearable)'
-                        : entry.assetType === 'WorldObject'
-                          ? 'var(--world-object)'
-                          : 'var(--other-asset)'
-                  }
-                />
-              ))}
               <LabelList
                 dataKey="name"
                 position="insideLeft"
@@ -136,8 +133,19 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                 className="fill-primary-foreground"
                 fontSize={12}
                 content={(props) => {
-                  const { index, x, y, height, offset, value, width } = props
-                  const item = data[index!]
+                  const { index, viewBox, offset = 8 } = props
+                  const item = index === undefined ? undefined : data[index]
+                  if (
+                    !item ||
+                    !viewBox ||
+                    !('x' in viewBox) ||
+                    !('y' in viewBox) ||
+                    !('width' in viewBox) ||
+                    !('height' in viewBox)
+                  ) {
+                    return null
+                  }
+                  const { x = 0, y = 0, width = 0, height = 0 } = viewBox
 
                   let fillColor = 'var(--foreground)'
 
@@ -153,13 +161,13 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
 
                   return (
                     <text
-                      x={((x ?? 0) as number) + (offset as number)}
-                      y={(y as number) + (height as number) / 2}
+                      x={x + offset}
+                      y={y + height / 2}
                       dominantBaseline="middle"
                       fill={fillColor}
                       textAnchor="start"
                     >
-                      {truncateText(value, width as number)}
+                      {truncateText(item.name, width)}
                     </text>
                   )
                 }}
@@ -171,9 +179,9 @@ export const AssetDiskSizeBarChart: React.FC<Props> = ({ data, loading }) => {
                 className="fill-foreground"
                 fontSize={12}
                 width={75}
-                formatter={(value: number) => {
-                  return bytesFormatter(value)
-                }}
+                formatter={(value) =>
+                  typeof value === 'number' ? bytesFormatter(value) : ''
+                }
               />
             </Bar>
           </BarChart>
@@ -195,7 +203,7 @@ const bytesFormatter = (value: number) => {
   }
 }
 
-const truncateText = (text: string | number | undefined, width: number) => {
+const truncateText = (text: string, width: number) => {
   const strText = `${text}`
   let totalWidth = 0
   let endIndex = 0

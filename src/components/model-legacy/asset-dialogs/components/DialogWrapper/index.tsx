@@ -4,6 +4,7 @@ import { Tabs } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 import { FC } from 'react'
+import { useLocalization } from '@/hooks/use-localization'
 
 type Props = {
   children: React.ReactNode
@@ -24,13 +25,17 @@ export const DialogWrapper: FC<Props> = ({
   hideTrigger = false,
   preventCloseOnOutsideClick = false,
 }) => {
+  const { t } = useLocalization()
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       {!hideTrigger && (
         <DialogTrigger asChild>
           <div className="fixed right-24 bottom-[92px]">
             <div className="fixed w-16 h-16 rounded-full bg-background" />
-            <Button className="fixed w-16 h-16 rounded-full">
+            <Button
+              aria-label={t('addasset:add-asset')}
+              className="fixed w-16 h-16 rounded-full"
+            >
               <Plus className="size-8" />
             </Button>
           </div>

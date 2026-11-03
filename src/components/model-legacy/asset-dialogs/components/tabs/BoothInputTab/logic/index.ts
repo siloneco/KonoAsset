@@ -37,7 +37,7 @@ export const getAndSetAssetInfoFromBoothToForm = async ({
   form.setValue('creator', data.creator)
   form.setValue('publishedAt', data.publishedAt)
   form.setValue('boothItemId', boothItemId)
-  form.setValue('assetType', data.estimatedAssetType ?? 'Avatar')
+  form.setValue('assetType', data.estimatedAssetType ?? 'OtherAsset')
 
   setImageUrls(data.imageUrls)
   if (data.imageUrls.length > 0) {

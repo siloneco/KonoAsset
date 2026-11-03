@@ -54,6 +54,7 @@ export const DependencyInput: FC<Props> = ({
                     className="w-full max-w-[588px] bg-background border-0 border-b"
                   >
                     <Button
+                      aria-label={t('general:button:delete')}
                       className="w-10 h-10"
                       variant="destructive"
                       onClick={() => {

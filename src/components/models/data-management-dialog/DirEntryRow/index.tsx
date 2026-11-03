@@ -37,7 +37,12 @@ export const DirEntryRow: FC<Props> = ({
   const Icon = type === 'directory' ? Folder : File
 
   return (
-    <div className="flex flex-row items-center space-x-2">
+    <div
+      role="group"
+      aria-label={displayName}
+      data-deleted={deletePhase === 'deleted'}
+      className="flex flex-row items-center space-x-2"
+    >
       <Icon size={24} className="text-muted-foreground/80 shrink-0" />
       <div className="w-full shrink min-w-0">
         <p
@@ -52,6 +57,7 @@ export const DirEntryRow: FC<Props> = ({
       </div>
       {deletePhase !== 'deleted' && (
         <Button
+          aria-label={t('general:button:open')}
           variant="secondary"
           className={cn('size-8', openButtonChecked && 'text-green-400')}
           onClick={openInFileManager}
@@ -64,6 +70,7 @@ export const DirEntryRow: FC<Props> = ({
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            aria-label={t('general:button:delete')}
             variant="destructive"
             className="size-8"
             disabled={deletePhase !== 'initial'}

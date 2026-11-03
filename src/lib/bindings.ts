@@ -204,6 +204,7 @@ export type FilterElement<T> = { type: "AND"; data: T[] } | { type: "OR"; data: 
 export type FilterRequest = {
 	assetType: AssetType | null,
 	queryText: string | null,
+	creatorQuery: string | null,
 	categories: FilterElement<FilterRequirement<string>> | null,
 	tags: FilterElement<FilterRequirement<string>> | null,
 	supportedAvatars: FilterElement<FilterRequirement<string>> | null,

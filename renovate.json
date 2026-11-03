@@ -11,6 +11,9 @@
   "schedule": ["at 19:00 on Friday"],
   "assignees": ["siloneco"],
   "minimumReleaseAge": "3 days",
+  "constraints": {
+    "ghActionsLock": "v0.4.1"
+  },
   "lockFileMaintenance": {
     "enabled": true
   },
@@ -25,7 +28,9 @@
     },
     {
       "groupName": "[CI/CD] Update dependencies",
-      "matchFileNames": [".github/workflows/**/*.yml"]
+      "matchFileNames": [".github/workflows/**/*.yml"],
+      "matchManagers": ["github-actions"],
+      "pinDigests": false
     }
   ]
 }

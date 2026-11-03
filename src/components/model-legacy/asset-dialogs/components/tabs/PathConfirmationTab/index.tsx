@@ -90,14 +90,16 @@ export const PathConfirmationTab = ({
         </Button>
         <TooltipProvider>
           <Tooltip delayDuration={0}>
-            <TooltipTrigger>
-              <Button
-                className="ml-auto"
-                onClick={submit}
-                disabled={existingPaths.length === 0}
-              >
-                {t('addasset:path-confirmation:continue-button')}
-              </Button>
+            <TooltipTrigger asChild>
+              <span tabIndex={existingPaths.length === 0 ? 0 : undefined}>
+                <Button
+                  className="ml-auto"
+                  onClick={submit}
+                  disabled={existingPaths.length === 0}
+                >
+                  {t('addasset:path-confirmation:continue-button')}
+                </Button>
+              </span>
             </TooltipTrigger>
             {existingPaths.length === 0 && (
               <TooltipContent>

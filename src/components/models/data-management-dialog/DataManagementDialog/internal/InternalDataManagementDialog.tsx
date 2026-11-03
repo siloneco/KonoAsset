@@ -50,6 +50,7 @@ export const InternalDataManagementDialog: FC<Props> = ({
           <DialogTitle>
             {t('assetcard:more-button:data-management')}
             <Button
+              aria-label={t('general:button:refresh')}
               className="size-8 ml-2"
               variant="outline"
               onClick={onRefreshButtonClicked}
@@ -91,10 +92,18 @@ export const InternalDataManagementDialog: FC<Props> = ({
           <p className="text-muted-foreground">
             {t('assetcard:more-button:data-management:add-file-or-folder')}
           </p>
-          <Button variant="secondary" onClick={() => onAddButtonClick(false)}>
+          <Button
+            aria-label={t('addasset:select-file')}
+            variant="secondary"
+            onClick={() => onAddButtonClick(false)}
+          >
             <File />
           </Button>
-          <Button variant="secondary" onClick={() => onAddButtonClick(true)}>
+          <Button
+            aria-label={t('addasset:select-directory')}
+            variant="secondary"
+            onClick={() => onAddButtonClick(true)}
+          >
             <Folder />
           </Button>
         </div>

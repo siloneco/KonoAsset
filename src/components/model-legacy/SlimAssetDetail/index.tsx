@@ -12,7 +12,10 @@ type Props = {
 
 export const SlimAssetDetail: FC<Props> = ({ children, className, asset }) => {
   return (
-    <Card className={cn('w-full flex flex-row p-2 space-x-4 gap-0', className)}>
+    <Card
+      data-asset-id={asset.id}
+      className={cn('w-full flex flex-row p-2 space-x-4 gap-0', className)}
+    >
       <div
         className={cn(
           'w-2 h-12 rounded-full',

@@ -72,7 +72,10 @@ export const AssetCardOpenButton = ({
       <Separator orientation="vertical" className="bg-card" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="rounded-l-none h-10 w-2 p-3 m-0">
+          <Button
+            aria-label={t('assetcard:open-button:options')}
+            className="rounded-l-none h-10 w-2 p-3 m-0"
+          >
             <ChevronDown />
           </Button>
         </DropdownMenuTrigger>

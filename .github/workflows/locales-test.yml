@@ -17,6 +17,10 @@ on:
       - "src/locales/**"
       - ".github/workflows/locales-test.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -25,8 +29,8 @@ jobs:
     name: Run Localization File Test
     runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/github-script@v9.0.0
         with:
           script: |
             const { default: checkLocaleKeys } = await import('${{ github.workspace }}/.github/workflows/scripts/locales-test.js')

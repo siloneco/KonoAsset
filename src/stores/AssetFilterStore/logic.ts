@@ -87,23 +87,7 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
         }
       }
 
-      for (const splitted of filters.text.advancedCreatorQuery.split(' ')) {
-        if (splitted.length === 0) {
-          continue
-        }
-
-        if (splitted.startsWith('-')) {
-          if (splitted.length === 1) {
-            continue
-          }
-
-          queries.push(`-creator:${splitted.slice(1)}`)
-        } else {
-          queries.push(`creator:${splitted}`)
-        }
-      }
-
-      requestQuery = queries.join(' ')
+      requestQuery = queries.length > 0 ? queries.join(' ') : null
     }
   } else {
     requestQuery = null
@@ -158,6 +142,11 @@ const createFilterRequest = (filters: AssetFilters): FilterRequest => {
   const filterReq: FilterRequest = {
     assetType: requestAssetType,
     queryText: requestQuery,
+    creatorQuery:
+      filters.text.mode === 'advanced' &&
+      filters.text.advancedCreatorQuery.length > 0
+        ? filters.text.advancedCreatorQuery
+        : null,
     categories: requestCategories,
     tags: requestTags,
     supportedAvatars: requestSupportedAvatars,

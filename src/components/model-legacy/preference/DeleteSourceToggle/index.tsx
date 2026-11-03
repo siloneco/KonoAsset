@@ -22,6 +22,7 @@ export const DeleteSourceToggle: FC<Props> = ({ enable, setEnable }) => {
         </p>
       </div>
       <Switch
+        aria-label={t('preference:settings:delete-source')}
         className="ml-auto shrink-0"
         checked={enable}
         onCheckedChange={setEnable}

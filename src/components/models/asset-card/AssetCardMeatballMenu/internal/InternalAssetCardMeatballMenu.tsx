@@ -66,7 +66,11 @@ export const InternalAssetCardMeatballMenu: FC<Props> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" className={cn('size-10', className)}>
+        <Button
+          aria-label={t('assetcard:actions')}
+          variant="secondary"
+          className={cn('size-10', className)}
+        >
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
