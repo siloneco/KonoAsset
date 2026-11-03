@@ -217,7 +217,8 @@ export async function startApp(
     remote({
       hostname: '127.0.0.1',
       port,
-      logLevel: 'warn',
+      // Suppress WebDriver warning chatter while keeping errors visible.
+      logLevel: 'error',
       connectionRetryCount: 0,
       connectionRetryTimeout: 30_000,
       waitforTimeout: 10_000,
