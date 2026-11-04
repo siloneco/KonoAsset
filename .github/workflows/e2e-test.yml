@@ -100,7 +100,7 @@ jobs:
         id: e2e
         timeout-minutes: 15
         run: >-
-          node --test --test-concurrency=4
+          node --test --test-concurrency=1
           --test-reporter=spec --test-reporter=junit
           --test-reporter-destination=stdout
           --test-reporter-destination=e2e-results.xml

@@ -12,6 +12,7 @@ import {
   manualEdit,
   removeDependency,
   replaceInput,
+  selectMultipleOption,
   closeDialog,
   waitForUi,
 } from '../ui.ts'
@@ -61,30 +62,19 @@ test(
       '[role="dialog"] input[placeholder="カテゴリを選択..."]',
       '新カテゴリ',
     )
-    await browser
-      .$(
-        '//*[@role="dialog"]//label[normalize-space(.)="タグ"]/following-sibling::*//input',
-      )
-      .setValue('共通')
-    await browser
-      .$('[role="dialog"] [role="option"][data-value="共通"]')
-      .click()
+    await selectMultipleOption(
+      browser,
+      '//*[@role="dialog"]//label[normalize-space(.)="タグ"]/following-sibling::*',
+      '共通',
+    )
     // Select an existing avatar suggestion, then remove it again before choosing it.
-    const avatarInput =
-      '//*[@role="dialog"]//label[normalize-space(.)="対応アバター"]/following-sibling::*//input'
-    await browser.$(avatarInput).setValue('Birch')
-    await browser
-      .$('[role="dialog"] [role="option"][data-value="Birch"]')
-      .click()
-    await browser
-      .$(
-        '//*[@role="dialog"]//label[normalize-space(.)="対応アバター"]/following-sibling::*//button[@aria-label="選択を解除: Birch"]',
-      )
-      .click()
-    await browser.$(avatarInput).setValue('Birch')
-    await browser
-      .$('[role="dialog"] [role="option"][data-value="Birch"]')
-      .click()
+    const avatarScope =
+      '//*[@role="dialog"]//label[normalize-space(.)="対応アバター"]/following-sibling::*'
+    await selectMultipleOption(browser, avatarScope, 'Birch')
+    const removeBirch = `${avatarScope}//button[@aria-label="選択を解除: Birch"]`
+    await browser.$(removeBirch).click()
+    await browser.$(removeBirch).waitForExist({ reverse: true })
+    await selectMultipleOption(browser, avatarScope, 'Birch')
     await browser.$(button('次へ', '//*[@role="dialog"]')).click()
     await replaceInput(browser, 'textarea', '編集したメモ\n2行目')
     await addDependency(browser, 'Aster')

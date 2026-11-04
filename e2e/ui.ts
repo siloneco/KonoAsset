@@ -158,12 +158,28 @@ export async function chooseFilter(
   group: string,
   value: string,
 ) {
-  const scope = `[role="group"][aria-label="${group}"]`
-  await browser.$(`${scope} input`).setValue(value)
-  await browser
-    .$(`${scope} [role="option"][data-value="${value.replace(/^-/, '')}"]`)
-    .click()
+  await selectMultipleOption(
+    browser,
+    `//*[@role="group" and @aria-label="${group}"]`,
+    value,
+  )
   await browser.keys('Escape')
+}
+
+// scope is the XPath of the field containing both its input and suggestions.
+export async function selectMultipleOption(
+  browser: Browser,
+  scope: string,
+  value: string,
+) {
+  await replaceInput(browser, `${scope}//input`, value)
+  const displayValue = value.replace(/^-/, '')
+  const option = `${scope}//*[@role="option" and @data-value="${displayValue}"]`
+  await browser.$(option).waitForDisplayed()
+  await browser.$(option).click()
+  await browser
+    .$(`${scope}//button[@aria-label="選択を解除: ${displayValue}"]`)
+    .waitForDisplayed()
 }
 
 export async function assetMenu(
