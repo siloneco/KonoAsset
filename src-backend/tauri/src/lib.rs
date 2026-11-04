@@ -112,7 +112,8 @@ pub fn run() {
             #[cfg(feature = "e2e")]
             e2e::create_window(app)?;
 
-            show_main_window(app.handle(), window_state_flags);
+            show_main_window(app.handle(), window_state_flags)
+                .inspect_err(|e| log::error!("{}", e))?;
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
@@ -204,20 +205,20 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn show_main_window(app: &AppHandle, flags: StateFlags) {
-    let Some(window) = app.get_webview_window("main") else {
-        return;
-    };
+fn show_main_window(app: &AppHandle, flags: StateFlags) -> tauri::Result<()> {
+    let window = app
+        .get_webview_window("main")
+        .ok_or(tauri::Error::WindowNotFound)?;
 
     if let Err(err) = window.restore_state(flags) {
         log::warn!("Failed to restore window state: {}", err);
     }
-    if let Err(err) = window.show() {
-        log::error!("Failed to show window: {}", err);
-    }
+    window.show()?;
     if let Err(err) = window.set_focus() {
         log::warn!("Failed to focus window: {}", err);
     }
+
+    Ok(())
 }
 
 fn set_window_title<S>(app: &AppHandle, title: S)
