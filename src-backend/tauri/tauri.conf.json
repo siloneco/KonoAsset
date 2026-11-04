@@ -13,6 +13,7 @@
     "windows": [
       {
         "title": "konoasset",
+        "visible": false,
         "width": 1200,
         "height": 700,
         "minHeight": 400,
