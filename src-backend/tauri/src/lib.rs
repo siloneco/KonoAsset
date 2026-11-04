@@ -19,7 +19,7 @@ use task::{TaskContainer, TaskStatusChanged};
 use tauri::{AppHandle, Manager, async_runtime::Mutex};
 #[cfg(all(any(windows, target_os = "linux"), not(feature = "e2e")))]
 use tauri_plugin_deep_link::DeepLinkExt;
-use tauri_plugin_window_state::StateFlags;
+use tauri_plugin_window_state::{StateFlags, WindowExt};
 use tauri_specta::{Event, collect_events};
 use updater::update_handler::{UpdateHandler, UpdateProgress};
 
@@ -73,8 +73,10 @@ pub fn run() {
         execute_deep_links(&app, &deep_links);
     }));
 
+    let window_state_flags = StateFlags::SIZE | StateFlags::MAXIMIZED | StateFlags::POSITION;
     let window_state = tauri_plugin_window_state::Builder::new()
-        .with_state_flags(StateFlags::SIZE | StateFlags::MAXIMIZED);
+        .with_state_flags(window_state_flags)
+        .skip_initial_state("main");
 
     #[cfg(feature = "e2e")]
     let window_state = window_state.with_filename(
@@ -109,6 +111,9 @@ pub fn run() {
 
             #[cfg(feature = "e2e")]
             e2e::create_window(app)?;
+
+            show_main_window(app.handle(), window_state_flags)
+                .inspect_err(|e| log::error!("{}", e))?;
 
             set_window_title(app.handle(), format!("KonoAsset v{}", VERSION));
 
@@ -198,6 +203,22 @@ pub fn run() {
         })
         .run(context)
         .expect("error while running tauri application");
+}
+
+fn show_main_window(app: &AppHandle, flags: StateFlags) -> tauri::Result<()> {
+    let window = app
+        .get_webview_window("main")
+        .ok_or(tauri::Error::WindowNotFound)?;
+
+    if let Err(err) = window.restore_state(flags) {
+        log::warn!("Failed to restore window state: {}", err);
+    }
+    window.show()?;
+    if let Err(err) = window.set_focus() {
+        log::warn!("Failed to focus window: {}", err);
+    }
+
+    Ok(())
 }
 
 fn set_window_title<S>(app: &AppHandle, title: S)
