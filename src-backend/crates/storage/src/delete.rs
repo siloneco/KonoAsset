@@ -142,10 +142,6 @@ pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
         let entry = entry.map_err(|e| format!("Failed to read entry: {:?}", e))?;
         let path = entry.path();
 
-        if !path.is_file() {
-            continue;
-        }
-
         let file_name = path.file_name();
 
         if file_name.is_none() {
@@ -158,7 +154,7 @@ pub async fn delete_temporary_images(app_dir: &PathBuf) -> Result<(), String> {
         }
         let file_name = file_name.unwrap();
 
-        if !file_name.starts_with("temp_") {
+        if !file_name.starts_with("temp_") || !path.is_file() {
             continue;
         }
 
