@@ -44,10 +44,10 @@ log = { version = "0.4", features = ["std"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 reqwest = { version = "0.13", features = ["json", "blocking"] }
-async_zip = { version = "0.0.18", features = ["full"] }
+async_zip = { version = "0.0.19", features = ["full"] }
 sanitize-filename = "0.6.0"
-specta = {version = "=2.0.0-rc.25", features = ["uuid", "chrono"] }
-specta-typescript = "0.0.12"
-tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
+specta = {version = "=2.0.0-rc.27", features = ["uuid", "chrono"] }
+specta-typescript = "0.0.14"
+tauri-specta = { version = "=2.0.0-rc.26", features = ["derive", "typescript"] }
 trash = "5"
 thiserror = "2"
