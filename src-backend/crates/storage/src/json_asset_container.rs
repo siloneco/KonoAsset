@@ -2,6 +2,7 @@ use std::{
     collections::{HashMap, HashSet},
     fs::File,
     hash::Hash,
+    io::{BufWriter, Write},
     path::{Path, PathBuf},
 };
 
@@ -65,12 +66,12 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
             return Ok(());
         }
 
-        let file = File::open(path.clone())
-            .map_err(|e| format!("Failed to open file at {}: {}", path.display(), e))?;
+        let bytes = std::fs::read(&path)
+            .map_err(|e| format!("Failed to read file at {}: {}", path.display(), e))?;
 
         {
             let mut assets = self.assets.lock().await;
-            let result: T::VersionedType = serde_json::from_reader(file)
+            let result: T::VersionedType = serde_json::from_slice(&bytes)
                 .map_err(|e| format!("Failed to deserialize: {:?} ( file: {} )", e, filename))?;
 
             let data: HashSet<T> = result.try_into()?;
@@ -242,11 +243,16 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
             T::VersionedType::try_from(assets.clone())?
         };
 
-        let result = serde_json::to_writer(file, &data);
+        let mut writer = BufWriter::new(file);
+        let result = serde_json::to_writer(&mut writer, &data);
 
         if let Err(e) = result {
             return Err(format!("Failed to serialize file: {}", e));
         }
+
+        writer
+            .flush()
+            .map_err(|e| format!("Failed to write file at {}: {}", path.display(), e))?;
 
         Ok(())
     }
