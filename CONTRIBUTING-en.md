@@ -77,7 +77,7 @@ See the [LICENSE](LICENSE) file for details.
 Install the following dependencies:
 
 - [Rust](https://www.rust-lang.org/tools/install)
-- [Node.js (v23)](https://nodejs.org/en/download/package-manager)
+- [Node.js (v26)](https://nodejs.org/en/download/package-manager)
 - [pnpm](https://pnpm.io/ja/installation) (`npm i -g pnpm`)
 
 We recommend using [VSCode](https://code.visualstudio.com/), but you can use any editor you prefer.

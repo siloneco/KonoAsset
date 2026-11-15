@@ -6,6 +6,7 @@ on:
       - "changelog.json"
       - "rust-toolchain.toml"
       - ".github/workflows/cargo-test.yml"
+      - ".github/workflows/actions.lock"
     branches:
       - "main"
       - "pre-release"
@@ -20,6 +21,7 @@ on:
       - "changelog.json"
       - "rust-toolchain.toml"
       - ".github/workflows/cargo-test.yml"
+      - ".github/workflows/actions.lock"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -45,7 +47,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
       - uses: Swatinem/rust-cache@v2.9.3
         with:
           workspaces: "./src-backend -> target"

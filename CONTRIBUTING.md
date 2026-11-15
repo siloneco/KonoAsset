@@ -81,7 +81,7 @@ PR 作成後に、その言語に長けた人へ翻訳ファイルの作成を�
 以下をインストールしてください。
 
 - [Rust](https://www.rust-lang.org/tools/install)
-- [Node.js (v23)](https://nodejs.org/en/download/package-manager)
+- [Node.js (v26)](https://nodejs.org/en/download/package-manager)
 - [pnpm](https://pnpm.io/ja/installation) (`npm i -g pnpm`)
 
 エディタは [VSCode](https://code.visualstudio.com/) を推奨していますが、好みに応じて自由なものを利用できます。

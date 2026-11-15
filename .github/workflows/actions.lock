@@ -6,19 +6,19 @@ workflows:
     '.github/workflows/build-test.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-node@v7.1.0'
-        - 'dtolnay/rust-toolchain@stable'
+        - 'dtolnay/rust-toolchain@master'
         - 'pnpm/setup@v3.1.1'
         - 'swatinem/rust-cache@v2.9.3'
         - 'tauri-apps/tauri-action@v1.0.0'
     '.github/workflows/cargo-test.yml':
         - 'actions/checkout@v7.0.1'
-        - 'dtolnay/rust-toolchain@stable'
+        - 'dtolnay/rust-toolchain@master'
         - 'swatinem/rust-cache@v2.9.3'
     '.github/workflows/e2e-test.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-node@v7.1.0'
         - 'actions/upload-artifact@v7.0.2'
-        - 'dtolnay/rust-toolchain@stable'
+        - 'dtolnay/rust-toolchain@master'
         - 'pnpm/setup@v3.1.1'
         - 'swatinem/rust-cache@v2.9.3'
     '.github/workflows/frontend-code-style.yml':
@@ -37,7 +37,7 @@ workflows:
         - 'actions/github-script@v9.0.0'
         - 'actions/setup-node@v7.1.0'
         - 'crazy-max/ghaction-virustotal@v5.0.0'
-        - 'dtolnay/rust-toolchain@stable'
+        - 'dtolnay/rust-toolchain@master'
         - 'pnpm/setup@v3.1.1'
         - 'ryand56/r2-upload-action@v1.5'
         - 'swatinem/rust-cache@v2.9.3'
@@ -73,9 +73,9 @@ dependencies:
         commit: 'sha1-936d8c5c00afe97d3d9a1af26d017cfdf26800a2'
         owner_id: 1951866
         repo_id: 259383357
-    'dtolnay/rust-toolchain@stable':
-        ref: 'stable'
-        commit: 'sha1-b725eda525362e7cf34af9a7243cac1e3f01a7ec'
+    'dtolnay/rust-toolchain@master':
+        ref: 'master'
+        commit: 'sha1-df2a88e9fe4098bad09cb42c3dec7187f15861fc'
         owner_id: 1940490
         repo_id: 260749683
     'mikefarah/yq@v4.54.1':

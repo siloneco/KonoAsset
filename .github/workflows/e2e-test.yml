@@ -47,14 +47,16 @@ jobs:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version: 24
+          node-version: 26
           package-manager-cache: false
       - uses: pnpm/setup@v3.1.1
         with:
           cache: true
           cache-dependency-path: pnpm-lock.yaml
           require-lockfile: true
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
       - uses: Swatinem/rust-cache@v2.9.3
         with:
           key: windows-e2e-tauri-driver-${{ env.TAURI_DRIVER_VERSION }}
