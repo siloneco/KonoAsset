@@ -52,9 +52,8 @@ const constructAssets = (dependencyIds: string[]): AssetSummary[] => {
   const assetSummaries =
     useAssetSummaryViewStore.getState().sortedAssetSummaries
 
-  const assets = assetSummaries.filter((asset) =>
-    dependencyIds.includes(asset.id),
-  )
+  const dependencyIdSet = new Set(dependencyIds)
+  const assets = assetSummaries.filter((asset) => dependencyIdSet.has(asset.id))
 
   assets.sort((a, b) => {
     const aIndex = dependencyIds.indexOf(a.id)
