@@ -1,8 +1,7 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs::File,
     hash::Hash,
-    io::{BufWriter, Write},
+    io,
     path::{Path, PathBuf},
 };
 
@@ -235,26 +234,15 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
     async fn save(&self) -> Result<(), String> {
         let path = self.data_dir.join("metadata").join(T::filename());
 
-        let file = File::create(&path)
-            .map_err(|e| format!("Failed to create file at {}: {}", path.display(), e))?;
-
         let data = {
             let assets = self.assets.lock().await;
             T::VersionedType::try_from(assets.clone())?
         };
 
-        let mut writer = BufWriter::new(file);
-        let result = serde_json::to_writer(&mut writer, &data);
-
-        if let Err(e) = result {
-            return Err(format!("Failed to serialize file: {}", e));
-        }
-
-        writer
-            .flush()
-            .map_err(|e| format!("Failed to write file at {}: {}", path.display(), e))?;
-
-        Ok(())
+        file::write_atomic(&path, |w| {
+            serde_json::to_writer(w, &data).map_err(io::Error::from)
+        })
+        .map_err(|e| format!("Failed to write file at {}: {}", path.display(), e))
     }
 }
 

@@ -298,10 +298,9 @@ fn load_store_provider(
             log::error!("Failed to migrate legacy backup dir: {}", e);
         }
 
-        store_provider_ref
-            .create_backup(metadata_backup_dir)
-            .await?;
-        store_provider_ref.load_all_assets_from_files().await
+        // 読み込みに成功してからバックアップする(壊れたJSONのバックアップ化と、正常な古いバックアップの削除を防ぐ)
+        store_provider_ref.load_all_assets_from_files().await?;
+        store_provider_ref.create_backup(metadata_backup_dir).await
     });
 
     if let Err(err) = result {

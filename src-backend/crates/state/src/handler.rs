@@ -31,18 +31,10 @@ impl StateHandler {
     }
 
     pub fn save(&self) -> Result<(), String> {
-        let file = File::create(&self.path);
-
-        if let Err(e) = file {
-            return Err(format!("Failed to create state file: {}", e));
-        }
-
-        let file = file.unwrap();
-        if let Err(e) = serde_json::to_writer(file, &self.state) {
-            return Err(format!("Failed to write state to file: {}", e));
-        }
-
-        Ok(())
+        file::write_atomic(&self.path, |w| {
+            serde_json::to_writer(w, &self.state).map_err(std::io::Error::from)
+        })
+        .map_err(|e| format!("Failed to write state to file: {}", e))
     }
 
     pub fn get_state(&self) -> &AppState {

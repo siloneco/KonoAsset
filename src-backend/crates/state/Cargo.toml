@@ -12,6 +12,7 @@ authors.workspace = true
 [dependencies]
 # Local crates
 model.workspace = true
+file.workspace = true
 
 # External crates
 serde.workspace = true
