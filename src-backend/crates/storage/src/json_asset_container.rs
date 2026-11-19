@@ -158,9 +158,10 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
     }
 
     pub async fn delete_dependency(&self, id: Uuid) -> Result<bool, String> {
-        {
+        let changed = {
             let mut assets = self.assets.lock().await;
             let cloned_assets = assets.clone();
+            let mut changed = false;
 
             for asset in cloned_assets {
                 let dependencies = &asset.get_description().dependencies;
@@ -174,11 +175,17 @@ impl<T: AssetTrait + HashSetVersionedLoader<T> + Clone + Serialize + Deserialize
 
                     assets.remove(&asset);
                     assets.insert(new_asset);
+                    changed = true;
                 }
             }
-        }
 
-        self.save().await?;
+            changed
+        };
+
+        // 依存していたアセットがなければ書き込まない(NASなどでは全ファイルの書き直しが重い)
+        if changed {
+            self.save().await?;
+        }
 
         Ok(true)
     }
@@ -380,5 +387,44 @@ mod tests {
 
         let fetched_new_avatar = store.get_asset(new_avatar_uuid).await.unwrap();
         assert_eq!(fetched_new_avatar.description.dependencies.len(), 0);
+    }
+
+    #[tokio::test]
+    async fn test_delete_dependency_saves_only_when_something_changed() {
+        let data_dir = "test/temp/json_store/delete_dependency";
+
+        if std::fs::exists(data_dir).unwrap() {
+            std::fs::remove_dir_all(data_dir).unwrap();
+        }
+
+        let store: JsonAssetContainer<Avatar> = JsonAssetContainer::create(data_dir).unwrap();
+        let metadata_file = Path::new(data_dir)
+            .join("metadata")
+            .join(Avatar::filename());
+
+        let dependency_id = Uuid::new_v4();
+        let avatar = Avatar::create(AssetDescription {
+            name: "Avatar".into(),
+            creator: "Creator".into(),
+            image_filename: None,
+            tags: vec![],
+            memo: None,
+            booth_item_id: None,
+            dependencies: vec![dependency_id],
+            created_at: 0,
+            published_at: None,
+        });
+        store.add_asset_and_save(avatar.clone()).await.unwrap();
+
+        // 誰も依存していないIDなら、ファイルを書き直さない
+        std::fs::remove_file(&metadata_file).unwrap();
+        store.delete_dependency(Uuid::new_v4()).await.unwrap();
+        assert!(!metadata_file.exists());
+
+        // 依存しているIDなら、依存を外して保存する
+        store.delete_dependency(dependency_id).await.unwrap();
+        assert!(metadata_file.exists());
+        let saved = store.get_asset(avatar.id).await.unwrap();
+        assert!(saved.description.dependencies.is_empty());
     }
 }
