@@ -18,9 +18,8 @@ pub struct PrioritizedEntry {
 #[specta::specta]
 pub async fn get_creator_names(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let basic_store = basic_store.lock().await;
     let mut creators: HashMap<String, u32> = HashMap::new();
 
@@ -141,9 +140,8 @@ pub async fn get_creator_names(
 #[specta::specta]
 pub async fn get_all_asset_tags(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let basic_store = basic_store.lock().await;
     let mut tags: HashMap<String, u32> = HashMap::new();
 
@@ -252,9 +250,8 @@ pub async fn get_all_asset_tags(
 #[specta::specta]
 pub async fn get_avatar_wearable_categories(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let mut categories: HashMap<String, u32> = HashMap::new();
 
     basic_store
@@ -299,9 +296,8 @@ pub async fn get_avatar_wearable_categories(
 #[specta::specta]
 pub async fn get_world_object_categories(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let mut categories: HashMap<String, u32> = HashMap::new();
 
     basic_store
@@ -346,9 +342,8 @@ pub async fn get_world_object_categories(
 #[specta::specta]
 pub async fn get_other_asset_categories(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let mut categories: HashMap<String, u32> = HashMap::new();
 
     basic_store
@@ -393,9 +388,8 @@ pub async fn get_other_asset_categories(
 #[specta::specta]
 pub async fn get_avatar_wearable_supported_avatars(
     basic_store: State<'_, Arc<Mutex<AssetStorage>>>,
-    allowed_ids: Option<Vec<Uuid>>,
+    allowed_ids: Option<HashSet<Uuid>>,
 ) -> Result<Vec<PrioritizedEntry>, String> {
-    let allowed_ids: Option<HashSet<Uuid>> = allowed_ids.map(|ids| ids.into_iter().collect());
     let mut supported_avatars: HashMap<String, u32> = HashMap::new();
 
     basic_store
