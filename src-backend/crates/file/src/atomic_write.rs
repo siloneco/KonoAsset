@@ -4,22 +4,27 @@ use std::{
     path::{Path, PathBuf},
 };
 
-/// `path` の隣の `.tmp` に書き込んでから rename で置き換える。
+use uuid::Uuid;
+
+/// `path` の隣の一時ファイルに書き込んでから rename で置き換える。
 /// 書き込み途中で失敗しても、元のファイルは壊れない。
+/// 一時ファイル名は保存ごとに一意にし、同じNASを複数の端末が使っていても互いに干渉しない。
 pub fn write_atomic(
     path: &Path,
     write: impl FnOnce(&mut BufWriter<File>) -> io::Result<()>,
 ) -> io::Result<()> {
     let mut tmp = path.as_os_str().to_owned();
-    tmp.push(".tmp");
+    tmp.push(format!(".{}.tmp", Uuid::new_v4()));
     let tmp = PathBuf::from(tmp);
 
     let result = (|| {
-        let mut writer = BufWriter::new(File::create(&tmp)?);
-        write(&mut writer)?;
-        writer.flush()?;
-        // 電源断でも rename 後に空ファイルが残らないよう、rename 前にディスクへ書き切る
-        writer.get_ref().sync_all()?;
+        {
+            let mut writer = BufWriter::new(File::create_new(&tmp)?);
+            write(&mut writer)?;
+            writer.flush()?;
+            // 電源断でも rename 後に空ファイルが残らないよう、rename 前にディスクへ書き切る
+            writer.get_ref().sync_all()?;
+        } // writer をここで閉じてから rename する
         std::fs::rename(&tmp, path)
     })();
 
@@ -36,7 +41,8 @@ mod tests {
 
     #[test]
     fn test_write_atomic_keeps_original_on_failure() {
-        let dir = std::env::temp_dir().join("konoasset_write_atomic_test");
+        let dir =
+            std::env::temp_dir().join(format!("konoasset_write_atomic_test_{}", Uuid::new_v4()));
         std::fs::create_dir_all(&dir).unwrap();
         let path = dir.join("data.json");
 
@@ -49,10 +55,11 @@ mod tests {
         });
         assert!(result.is_err());
         assert_eq!(std::fs::read(&path).unwrap(), b"old");
-        assert!(!dir.join("data.json.tmp").exists());
+        assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 1); // 一時ファイルが残らない
 
         write_atomic(&path, |w| w.write_all(b"new")).unwrap();
         assert_eq!(std::fs::read(&path).unwrap(), b"new");
+        assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 1);
 
         std::fs::remove_dir_all(&dir).unwrap();
     }
