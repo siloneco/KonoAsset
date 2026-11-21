@@ -47,8 +47,9 @@ export const useAssetView = ({ setShowingAssetCount }: Props): ReturnProps => {
         : sortedAssetSummaries
     }
 
+    const filteredIdSet = new Set(filteredIds)
     const filterApplied = sortedAssetSummaries.filter((asset) =>
-      filteredIds.includes(asset.id),
+      filteredIdSet.has(asset.id),
     )
 
     return reverseOrder ? filterApplied.reverse() : filterApplied

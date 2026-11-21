@@ -21,7 +21,7 @@ type ReturnProps = {
 export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
   const [open, setOpen] = useState(false)
   const [searchInput, setSearchInput] = useState('')
-  const [filtered, setFiltered] = useState<string[]>([])
+  const [filtered, setFiltered] = useState<Set<string>>(new Set())
 
   const inputRef = useRef<HTMLInputElement>(null)
   const [popoverMaxHeight, setPopoverMaxHeight] = useState<number>(300)
@@ -49,7 +49,7 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
 
   const updateFiltered = useCallback(async () => {
     if (searchInput.length <= 0) {
-      setFiltered([])
+      setFiltered(new Set())
       return
     }
 
@@ -65,7 +65,7 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
     const result = await commands.getFilteredAssetIds(req)
 
     if (result.status === 'ok') {
-      setFiltered(result.data)
+      setFiltered(new Set(result.data))
     }
   }, [searchInput])
 
@@ -93,7 +93,7 @@ export const useAssetSelector = ({ onSelected }: Props): ReturnProps => {
       return true
     }
 
-    return filtered.includes(id)
+    return filtered.has(id)
   }
 
   return {

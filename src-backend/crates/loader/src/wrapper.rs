@@ -42,18 +42,15 @@ where
 }
 
 pub fn save_preference_store(preference: &PreferenceStore) -> Result<(), std::io::Error> {
-    let path = &preference.file_path;
+    let versioned = match VersionedPreferences::try_from(preference.clone()) {
+        Ok(versioned) => versioned,
+        Err(e) => {
+            log::error!("Failed to save preference: {}", e);
+            return Ok(());
+        }
+    };
 
-    let writer = std::fs::File::create(path)?;
-
-    let versioned = VersionedPreferences::try_from(preference.clone());
-
-    if let Err(e) = versioned {
-        log::error!("Failed to save preference: {}", e);
-        return Ok(());
-    }
-
-    serde_json::to_writer(writer, &versioned.unwrap())?;
-
-    Ok(())
+    file::write_atomic(&preference.file_path, |w| {
+        serde_json::to_writer(w, &versioned).map_err(std::io::Error::from)
+    })
 }

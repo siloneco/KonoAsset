@@ -87,13 +87,19 @@ export const useAssetFilterStore = create<Props>((set, get) => ({
     })
 
     getFilteredAssetIds(newFilters).then((filteredIds) => {
+      // 返ってくる前にフィルターが変わっていたら、古い結果で上書きしない
+      if (get().filters !== newFilters) return
+
       set({
         filteredIds,
       })
     })
   },
   refreshFilteredIds: async () => {
-    const filteredIds = await getFilteredAssetIds(get().filters)
+    const filters = get().filters
+    const filteredIds = await getFilteredAssetIds(filters)
+    if (get().filters !== filters) return
+
     set({
       filteredIds,
     })
