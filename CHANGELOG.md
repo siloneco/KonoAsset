@@ -11,6 +11,7 @@
 - データの保存先がNASのときに起動やアセットの保存で長時間待たされることがある問題を修正
 - メタデータの保存に失敗するとデータが失われることがある問題を修正 ( Thanks to [@VuloB1](https://github.com/VuloB1) )
 - フィルターを素早く変更したときに古い検索結果が表示される問題を修正 ( Thanks to [@VuloB1](https://github.com/VuloB1) )
+- アセット削除時に無関係なメタデータも保存する問題を修正 ( Thanks to [@VuloB1](https://github.com/VuloB1) )
 
 ### ⚙️その他
 - Avatar Explorer への移行サポートを廃止
