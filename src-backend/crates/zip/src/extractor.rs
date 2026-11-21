@@ -131,12 +131,15 @@ where
                     );
                 });
 
-            let mut writer = tokio::fs::OpenOptions::new()
+            let file = tokio::fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
                 .open(&absolute_path)
                 .await
                 .map_err(|e| format!("Failed to create file: {}", e))?;
+            // 8KBごとの書き込みだと書き込みの往復が多くなる(特にNAS)ため、まとめて書き込む。
+            // 残りは tokio::io::copy が最後に flush するので、ここで明示的な flush は不要
+            let mut writer = tokio::io::BufWriter::with_capacity(1 << 20, file);
 
             tokio::io::copy(&mut entry_reader.compat(), &mut writer)
                 .await
@@ -205,5 +208,33 @@ mod tests {
 
         assert_eq!(std::fs::read_to_string(&dummy1_txt_path).unwrap(), "dummy1");
         assert_eq!(std::fs::read_to_string(&dummy2_txt_path).unwrap(), "dummy2");
+    }
+
+    #[tokio::test]
+    async fn test_extract_file_larger_than_write_buffer() {
+        use async_zip::{Compression, ZipEntryBuilder, tokio::write::ZipFileWriter};
+
+        let dir = "test/temp/large-file";
+        let src = format!("{dir}/large.zip");
+        let dest = format!("{dir}/extracted");
+
+        if std::fs::exists(dir).unwrap() {
+            tokio::fs::remove_dir_all(dir).await.unwrap();
+        }
+        tokio::fs::create_dir_all(dir).await.unwrap();
+
+        // 書き込みバッファ(1MB)を複数回またぐ大きさ。内容が一致しないと取りこぼしに気づける
+        let data: Vec<u8> = (0..3 * 1024 * 1024 + 123)
+            .map(|i| (i % 251) as u8)
+            .collect();
+
+        let mut writer = ZipFileWriter::with_tokio(tokio::fs::File::create(&src).await.unwrap());
+        let entry = ZipEntryBuilder::new("large.bin".into(), Compression::Stored);
+        writer.write_entry_whole(entry, &data).await.unwrap();
+        writer.close().await.unwrap();
+
+        extract_zip(&src, &dest, |_, _| {}).await.unwrap();
+
+        assert_eq!(std::fs::read(format!("{dest}/large.bin")).unwrap(), data);
     }
 }

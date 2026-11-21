@@ -17,6 +17,7 @@
 - Avatar Explorer への移行サポートを廃止
   - [最新の Avatar Explorer](https://github.com/puk06/VRC-Avatar-Explorer/releases/latest) に KonoAsset からデータを移行する機能があるため、そちらをご利用ください
 - 不明なカテゴリが指定されたアセットをデフォルトでその他にサジェストするように変更
+- zipファイルの展開時のファイル書き込みを高速化 ( Thanks to [@VuloB1](https://github.com/VuloB1) )
 - 依存関係のアップデート
 
 ## 1.2.6
