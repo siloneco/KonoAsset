@@ -10,6 +10,7 @@ authors.workspace = true
 
 [dependencies]
 model.workspace = true
+file.workspace = true
 
 serde.workspace = true
 serde_json.workspace = true
